@@ -2177,6 +2177,17 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const setScreen = navigateToScreen;
   const [openFamId, setOpenFamId] = useState(null);
   const [openHousehold, setOpenHousehold] = useState(null);
+  const [flexHighlightId, setFlexHighlightId] = useState(null);
+  // From the dashboard's Today's briefing, jump straight into the specific
+  // family's subsidy record or flex care request instead of the general screen.
+  const goToSubsidyFamily = useCallback((famId) => {
+    setOpenFamId(famId);
+    navigateToScreen("subsidy");
+  }, [navigateToScreen]);
+  const goToFlexRequest = useCallback((reqId) => {
+    setFlexHighlightId(reqId);
+    navigateToScreen("bookings");
+  }, [navigateToScreen]);
   // Search results for a specific child/family jump straight to their record in
   // the Families directory rather than dropping the provider into the full list.
   const goToFamily = useCallback((famId) => {
@@ -2339,10 +2350,10 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
           <main style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
             <Topbar screen={screen} setScreen={setScreen} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} />
             <div style={{ flex: 1, overflowY: "auto", padding: "28px 32px 60px" }}>
-              {screen === "dashboard" && <Dashboard setScreen={setScreen} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} />}
+              {screen === "dashboard" && <Dashboard setScreen={setScreen} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
               {screen === "families" && <Families families={families} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} />}
-              {screen === "bookings" && <Bookings families={families} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} />}
+              {screen === "bookings" && <Bookings families={families} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
               {screen === "staff" && <StaffScreen staff={staff} families={families} updateStaffMember={updateStaffMember} addStaffMember={addStaffMember} removeStaffMember={removeStaffMember} />}
               {screen === "calendar" && <CalendarScreen schedule={weeklySchedule} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} />}
               {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} />}
@@ -2609,7 +2620,7 @@ function computeSetupItems({ providerInfo, weeklySchedule, staff, families, pros
   ];
 }
 
-function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNotices, saveDismissedNotices, tuitionRates, saveTuitionRates, weeklySchedule, staff, prospects, compDocs, providerInfo, flexCareRequests, saveFlexCare }) {
+function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNotices, saveDismissedNotices, tuitionRates, saveTuitionRates, weeklySchedule, staff, prospects, compDocs, providerInfo, flexCareRequests, saveFlexCare, goToSubsidyFamily, goToFlexRequest }) {
   const t = useT();
   const [newTask, setNewTask] = useState("");
   const [collapsed, setCollapsed] = useState({});
@@ -2682,7 +2693,7 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
               )}
               {expiring.map((f) => (
                 <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
-                  <button onClick={() => setScreen("subsidy")} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
+                  <button onClick={() => goToSubsidyFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
                     <Dot c="#F2C88A" /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {programOf(f.programId)?.label}</span>
                   </button>
                   <button onClick={() => resolveNotice(f.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
@@ -2695,7 +2706,7 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
               )}
               {flexNeedingAttention.map((r) => (
                 <div key={r.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
-                  <button onClick={() => setScreen("bookings")} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
+                  <button onClick={() => goToFlexRequest(r.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
                     <Dot c={r.status === "pending" ? "#F2C88A" : "#8FBFAE"} /><b style={{ fontSize: 13 }}>{r.child}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {t(r.type)}, {r.date} · {r.status === "pending" ? t("awaiting approval") : t("payment unconfirmed")}</span>
                   </button>
                   {r.status === "pending" ? (
@@ -2703,7 +2714,7 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
                       <CheckCircle2 size={11} /> {t("Approve")}
                     </button>
                   ) : (
-                    <button onClick={() => setScreen("bookings")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                    <button onClick={() => goToFlexRequest(r.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
                       {t("Review")}
                     </button>
                   )}
@@ -2770,7 +2781,7 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
         {expiring.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("Nothing needs attention right now.")}</div>}
         {expiring.map((f) => (
           <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 18px", borderBottom: `1px solid ${C.line}` }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }} onClick={() => setScreen("subsidy")}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }} onClick={() => goToSubsidyFamily(f.id)}>
               <Dot c={f.color} /><b style={{ fontSize: 13.5 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 13 }}>— {programOf(f.programId)?.label}</span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -2788,7 +2799,7 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
           right={<span style={{ fontSize: 12, color: C.inkSoft }}>{pendingFlex.length} {t("pending")} · {unpaidFlex.length} {t("unpaid")}</span>}>
           {flexNeedingAttention.map((r) => (
             <div key={r.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 18px", borderBottom: `1px solid ${C.line}` }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }} onClick={() => setScreen("bookings")}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }} onClick={() => goToFlexRequest(r.id)}>
                 <Dot c={r.status === "pending" ? C.amber : C.sky} /><b style={{ fontSize: 13.5 }}>{r.child}</b>
                 <span style={{ color: C.inkSoft, fontSize: 13 }}>— {t(r.type)}, {r.date}</span>
               </div>
@@ -2799,7 +2810,7 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
                     <CheckCircle2 size={12} /> {t("Approve")}
                   </button>
                 ) : (
-                  <button onClick={() => setScreen("bookings")} title={t("Review")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 9px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 600, color: C.teal }}>
+                  <button onClick={() => goToFlexRequest(r.id)} title={t("Review")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 9px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 600, color: C.teal }}>
                     {t("Review")}
                   </button>
                 )}
@@ -3438,8 +3449,14 @@ function StatBlock({ label, value }) {
 
 
 /* --------------------------------- bookings ------------------------------------ */
-function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCare, attendanceLog, saveAttendanceLog, onSave }) {
+function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCare, attendanceLog, saveAttendanceLog, onSave, highlightId }) {
   const t = useT();
+  const highlightRef = React.useRef(null);
+  useEffect(() => {
+    if (highlightId && highlightRef.current) {
+      highlightRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [highlightId]);
   const TODAY = new Date(2026, 6, 27); // Monday, July 27, 2026 — this screen's fixed "today"
   const WEEKDAY_BY_INDEX = { 1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday" };
   const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -3659,7 +3676,11 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
             const isCash = r.parentPaymentMethod === "Cash";
             const isDenying = denyingId === r.id;
             return (
-              <div key={r.id} style={{ padding: "11px 18px", borderBottom: `1px solid ${C.line}`, background: needsPaymentAttention && isCash ? C.amberTint : "transparent" }}>
+              <div key={r.id} ref={r.id === highlightId ? highlightRef : null} style={{
+                padding: "11px 18px", borderBottom: `1px solid ${C.line}`,
+                background: r.id === highlightId ? C.tealTint : (needsPaymentAttention && isCash ? C.amberTint : "transparent"),
+                boxShadow: r.id === highlightId ? `inset 0 0 0 1px ${C.teal}` : "none",
+              }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <div>
                     <b style={{ fontSize: 13 }}>{r.child}</b> <span style={{ color: C.inkSoft, fontSize: 12 }}>· {t(r.type)} · {r.date}</span>
@@ -6288,6 +6309,13 @@ function SubsidyDrawer({ fam, onClose, onSave, logAccess }) {
     if (ok) setTimeout(() => setSaveState("idle"), 1800);
   };
 
+  const [resolving, setResolving] = useState(false);
+  const markResolved = async () => {
+    setResolving(true);
+    await onSave(fam.id, { status: "active" });
+    setResolving(false);
+  };
+
   return (
     <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 232, zIndex: 40, display: "flex", justifyContent: "flex-end" }}>
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.35)" }} />
@@ -6300,7 +6328,14 @@ function SubsidyDrawer({ fam, onClose, onSave, logAccess }) {
             <div>
               <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>{fam.child}</div>
               <div style={{ fontSize: 12.5, color: C.inkSoft }}>{fam.age} · parent/guardian {fam.parent}</div>
-              <div style={{ marginTop: 6 }}><Pill {...trStatus(t, fam.status)} /></div>
+              <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 8 }}>
+                <Pill {...trStatus(t, fam.status)} />
+                {fam.status !== "active" && (
+                  <button onClick={markResolved} disabled={resolving} style={{ display: "flex", alignItems: "center", gap: 5, padding: "4px 9px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11, fontWeight: 600, color: C.teal }}>
+                    <CheckCircle2 size={11} /> {resolving ? t("Saving…") : t("Mark resolved")}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
           <button onClick={onClose} style={{ background: "none", border: "none", color: C.inkSoft, padding: 4 }}><X size={19} /></button>
