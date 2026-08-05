@@ -2504,6 +2504,8 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
 function Topbar({ screen, setScreen, families, staff, goBack, canGoBack, goToFamily }) {
   const t = useT();
   const title = NAV.find((n) => n.id === screen)?.label || "";
+  // Reflects the real current date whenever the page loads/refreshes.
+  const [todayLabel] = useState(() => new Date().toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" }));
   const [query, setQuery] = useState("");
   const [focused, setFocused] = useState(false);
   const q = query.trim().toLowerCase();
@@ -2545,7 +2547,7 @@ function Topbar({ screen, setScreen, families, staff, goBack, canGoBack, goToFam
         )}
         <div>
           <div style={{ fontFamily: "'Fraunces', serif", fontSize: 22, fontWeight: 600 }}>{t(title)}</div>
-          <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>Sunday, July 26, 2026</div>
+          <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>{todayLabel}</div>
         </div>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
