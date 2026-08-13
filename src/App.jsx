@@ -1575,7 +1575,100 @@ function usePersistentState(key, initial) {
 /* ===================================================================
    LANDING + ONBOARDING
    =================================================================== */
-function LandingChooser({ onDemo, onSignUp, onAdmin }) {
+/* --------------------------------- sign in / sign up ------------------------------------ */
+// Real Firebase Authentication — this is a genuine account, not a demo mock. Once the
+// backend + Cloud SQL wiring exists, a successful sign-in here will load that specific
+// provider's real data instead of dropping into the shared demo dataset.
+function LoginScreen({ onAuthenticated, onBack }) {
+  const [mode, setMode] = useState("signin"); // "signin" | "signup"
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  const friendlyError = (code) => {
+    switch (code) {
+      case "auth/invalid-email": return "That doesn't look like a valid email address.";
+      case "auth/user-not-found": return "No account found with that email.";
+      case "auth/wrong-password":
+      case "auth/invalid-credential": return "Incorrect email or password.";
+      case "auth/email-already-in-use": return "An account already exists with that email.";
+      case "auth/weak-password": return "Password should be at least 6 characters.";
+      default: return "Something went wrong — please try again.";
+    }
+  };
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setBusy(true);
+    try {
+      const { signInWithEmailAndPassword, createUserWithEmailAndPassword } = await import("firebase/auth");
+      const { auth } = await import("./firebase.js");
+      const cred = mode === "signin"
+        ? await signInWithEmailAndPassword(auth, email, password)
+        : await createUserWithEmailAndPassword(auth, email, password);
+      onAuthenticated(cred.user);
+    } catch (err) {
+      setError(friendlyError(err.code));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div style={{
+      minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex",
+      flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24,
+      backgroundImage: BANIG_PATTERN(C.line, 0.5), backgroundSize: "16px 16px",
+    }}>
+      <style>{FONTS}</style>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 28 }}>
+        <AlagaMark size={44} color={C.tealDark} />
+        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 34, fontWeight: 900, color: C.tealDark }}>alaga</div>
+      </div>
+
+      <form onSubmit={submit} style={{ width: "100%", maxWidth: 380, background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: 28 }}>
+        <div style={{ display: "flex", gap: 4, marginBottom: 20, background: C.cream, borderRadius: 10, padding: 4 }}>
+          {["signin", "signup"].map((m) => (
+            <button key={m} type="button" onClick={() => { setMode(m); setError(""); }} style={{
+              flex: 1, padding: "9px 0", borderRadius: 7, border: "none", fontWeight: 700, fontSize: 13,
+              background: mode === m ? "#fff" : "transparent", color: mode === m ? C.tealDark : C.inkSoft,
+              boxShadow: mode === m ? C.line && "0 1px 2px rgba(0,0,0,0.06)" : "none",
+            }}>
+              {m === "signin" ? "Sign in" : "Create account"}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft, marginBottom: 6 }}>Email</div>
+        <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@yourdaycare.com"
+          style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: `1px solid ${C.line}`, fontSize: 14, marginBottom: 14, fontFamily: "inherit" }} />
+
+        <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft, marginBottom: 6 }}>Password</div>
+        <input type="password" required minLength={6} autoComplete={mode === "signin" ? "current-password" : "new-password"}
+          value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
+          style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: `1px solid ${C.line}`, fontSize: 14, marginBottom: 6, fontFamily: "inherit" }} />
+
+        {error && <div style={{ color: C.danger, fontSize: 12.5, marginTop: 6, marginBottom: 6 }}>{error}</div>}
+
+        <button type="submit" disabled={busy} style={{
+          width: "100%", marginTop: 14, padding: "12px 0", borderRadius: 10, border: "none",
+          background: C.tealDark, color: "#fff", fontWeight: 700, fontSize: 14.5, opacity: busy ? 0.7 : 1,
+        }}>
+          {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
+        </button>
+      </form>
+
+      <button onClick={onBack} style={{ marginTop: 18, background: "none", border: "none", color: C.inkSoft, fontSize: 13, fontWeight: 600 }}>
+        ← Back
+      </button>
+    </div>
+  );
+}
+
+function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn }) {
   return (
     <div style={{
       minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24,
@@ -1586,9 +1679,16 @@ function LandingChooser({ onDemo, onSignUp, onAdmin }) {
         <AlagaMark size={82} color={C.tealDark} />
         <div style={{ fontFamily: "'Fraunces', serif", fontSize: 68, fontWeight: 900, color: C.tealDark }}>alaga</div>
       </div>
-      <div style={{ color: C.inkSoft, fontSize: 12, fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 36, textAlign: "center", maxWidth: 420, lineHeight: 1.8 }}>
+      <div style={{ color: C.inkSoft, fontSize: 12, fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 20, textAlign: "center", maxWidth: 420, lineHeight: 1.8 }}>
         The foundation for<br />your childcare business.
       </div>
+
+      <button onClick={onSignIn} style={{
+        marginBottom: 28, background: C.tealDark, color: "#fff", border: "none", borderRadius: 10,
+        padding: "10px 22px", fontWeight: 700, fontSize: 13.5,
+      }}>
+        Sign in to your account
+      </button>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, maxWidth: 720, width: "100%" }}>
         <button onClick={onDemo} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 10 }}>
@@ -2140,6 +2240,125 @@ function AdminProviderDrawer({ provider, mrrValue, onClose, statusMeta }) {
   );
 }
 
+/* --------------------------- welcome / today's briefing --------------------------- */
+// A full-screen "front porch" a provider sees before landing in the dashboard —
+// a time-of-day greeting, a weekly encouragement, and a plain-language rundown of
+// what actually needs their attention today, all pulled from real workspace data.
+const BRIEFING_THEMES = [
+  { word: "Steadiness", line: "Some days move slow. That's not falling behind — that's showing up fully, for every child who needs you to." },
+  { word: "Patience", line: "The tantrum, the tears, the tenth question — none of it is too much. You have room for all of it." },
+  { word: "Trust", line: "Every family who walks in the door is trusting you with what matters most to them. That trust is earned one ordinary day at a time." },
+  { word: "Rest", line: "Taking care of yourself isn't separate from taking care of them — it's part of the same job." },
+  { word: "Growth", line: "The quiet, unglamorous work you do today is exactly what these kids will carry with them." },
+  { word: "Community", line: "You're not just running a daycare — you're holding a small piece of your neighborhood together." },
+  { word: "Presence", line: "You don't have to get today perfect. You just have to be there for it." },
+  { word: "Warmth", line: "A steady, familiar face at the door is worth more to a small child than almost anything else." },
+];
+function isoWeekNumber(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
+
+function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, flexCareRequests, dismissedNotices, isEmpty, onEnter }) {
+  const now = new Date();
+  const hour = now.getHours();
+  const greetWord = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const firstName = (providerInfo.contactName || providerInfo.name || "there").split(" ")[0];
+  const dateLabel = now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+  const theme = BRIEFING_THEMES[isoWeekNumber(now) % BRIEFING_THEMES.length];
+
+  const subsidizedFams = families.filter((f) => f.subsidized);
+  const expiring = subsidizedFams.filter((f) => f.status !== "active" && !dismissedNotices.includes(f.id));
+  const pendingFlex = flexCareRequests.filter((r) => r.status === "pending");
+  const unpaidFlex = flexCareRequests.filter((r) => r.status === "approved" && !r.paymentConfirmed);
+  const unreadThreads = threads.filter((th) => th.unread);
+  const toursScheduled = prospects.filter((p) => p.stage === "Tour Scheduled");
+  const missingCerts = staff.filter((s) => Object.values(s.certs || {}).some((v) => v === "missing"));
+
+  const items = [];
+  if (families.length > 0) {
+    items.push({ tone: "ok", text: <>You have <strong>{families.length}</strong> {families.length === 1 ? "child" : "children"} in your care — <strong>{subsidizedFams.length}</strong> subsidized and <strong>{families.length - subsidizedFams.length}</strong> private-pay.</> });
+  }
+  if (expiring.length > 0) {
+    items.push({ tone: "warn", text: <><strong>{expiring.length}</strong> subsidy {expiring.length === 1 ? "authorization needs" : "authorizations need"} your attention.</> });
+  }
+  if (pendingFlex.length + unpaidFlex.length > 0) {
+    items.push({ tone: "warn", text: <><strong>{pendingFlex.length + unpaidFlex.length}</strong> flex care {pendingFlex.length + unpaidFlex.length === 1 ? "request needs" : "requests need"} approval or payment confirmation.</> });
+  }
+  if (toursScheduled.length > 0) {
+    items.push({ tone: "ok", text: <>You have <strong>{toursScheduled.length}</strong> {toursScheduled.length === 1 ? "tour" : "tours"} on the calendar — {toursScheduled.map((p) => p.name).join(", ")}.</> });
+  }
+  if (unreadThreads.length > 0) {
+    items.push({ tone: "msg", text: <><strong>{unreadThreads.length}</strong> unread {unreadThreads.length === 1 ? "message" : "messages"} from families.</> });
+  }
+  if (missingCerts.length > 0) {
+    items.push({ tone: "warn", text: <><strong>{missingCerts.map((s) => s.name).join(", ")}</strong> {missingCerts.length === 1 ? "has" : "have"} a certification on file that still needs to be completed.</> });
+  }
+  if (items.length === 0) {
+    items.push({ tone: "ok", text: isEmpty ? "No families enrolled yet — once they join, your daily rundown will show up here." : "Nothing urgent today — a good day to get ahead on paperwork." });
+  }
+
+  const toneColor = { ok: C.teal, warn: C.amber, msg: C.sky };
+
+  return (
+    <div style={{
+      minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
+      padding: "48px 20px", background: `radial-gradient(ellipse 900px 500px at 15% 0%, #FFFDF8 0%, transparent 60%), ${C.cream}`,
+      fontFamily: "'Work Sans', sans-serif",
+    }}>
+      <style>{FONTS}</style>
+      <div style={{ width: "100%", maxWidth: 540 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 22 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <AlagaMark size={28} color={C.tealDark} arch backdrop={false} />
+            <div style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: C.teal, fontWeight: 600 }}>alaga · provider workspace</div>
+          </div>
+        </div>
+
+        <div style={{ fontFamily: "'Fraunces', serif", fontOpticalSizing: "auto", fontWeight: 500, fontSize: 34, lineHeight: 1.18, color: C.ink, marginBottom: 6 }}>
+          {greetWord}, {firstName}
+        </div>
+        <div style={{ fontSize: 13.5, color: C.inkSoft, marginBottom: 26 }}>
+          {dateLabel} · {providerInfo.name}{providerInfo.city ? `, ${providerInfo.city}` : ""}
+        </div>
+
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 22, padding: "14px 16px", background: C.tealTint, borderRadius: 14 }}>
+          <Sparkles size={16} color={C.teal} style={{ flexShrink: 0, marginTop: 3 }} />
+          <div>
+            <div style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", color: C.teal, marginBottom: 3 }}>This week: {theme.word}</div>
+            <p style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 15, lineHeight: 1.45, color: C.tealDark }}>{theme.line}</p>
+          </div>
+        </div>
+
+        <div style={{ position: "relative", borderRadius: 14, overflow: "hidden", marginBottom: 16, border: `1px solid ${C.line}`, background: C.paper }}>
+          <div style={{ padding: "10px 16px", fontSize: 11, fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", color: C.inkSoft, borderBottom: `1px solid ${C.line}` }}>
+            Today, at a glance
+          </div>
+          <div>
+            {items.map((it, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "12px 16px", borderBottom: i < items.length - 1 ? `1px solid ${C.line}` : "none" }}>
+                <Dot c={toneColor[it.tone]} />
+                <div style={{ fontSize: 13.5, color: C.ink, lineHeight: 1.45 }}>{it.text}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <button onClick={onEnter} style={{
+          width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+          padding: "13px 20px", borderRadius: 11, border: "none", background: C.tealDark, color: "#fff",
+          fontWeight: 700, fontSize: 14.5, marginBottom: 10,
+        }}>
+          Step into the day <ArrowRight size={15} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData, onExitToLanding }) {
   const sfx = isEmpty ? "-empty" : "";
   const [providerInfo, saveProviderInfo] = usePersistentState(`provider-profile${sfx}`, {
@@ -2155,6 +2374,9 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const baseThreads = isEmpty ? [] : MESSAGE_THREADS;
 
   const [mode, setMode] = useState("provider"); // "provider" | "parent"
+  // Providers land on the welcome briefing every time they open the workspace —
+  // it's a front porch, not a one-time onboarding step.
+  const [showBriefing, setShowBriefing] = useState(true);
   const [screen, setScreenRaw] = useState("dashboard");
   const [screenHistory, setScreenHistory] = useState([]);
   // navigateToScreen replaces plain setScreen everywhere a nav happens, so the
@@ -2334,6 +2556,24 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
     ${a11y.reducedMotion ? ".a11y-scale * { transition: none !important; animation: none !important; }" : ""}
   `;
 
+  if (showBriefing) {
+    return (
+      <LanguageContext.Provider value={{ lang: langCode, t }}>
+        <WelcomeBriefing
+          providerInfo={providerInfo}
+          families={families}
+          staff={staff}
+          prospects={prospects}
+          threads={threads}
+          flexCareRequests={flexCareRequests}
+          dismissedNotices={dismissedNotices}
+          isEmpty={isEmpty}
+          onEnter={() => setShowBriefing(false)}
+        />
+      </LanguageContext.Provider>
+    );
+  }
+
   return (
     <LanguageContext.Provider value={{ lang: langCode, t }}>
     <div className="a11y-scale" style={{ display: "flex", minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", color: C.ink }}>
@@ -2420,6 +2660,16 @@ export default function AlagaMockup() {
       onDemo={() => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setEntry("workspace"); }}
       onSignUp={() => setEntry("wizard")}
       onAdmin={() => setEntry("admin")}
+      onSignIn={() => setEntry("auth")}
+    /></LanguageContext.Provider>;
+  }
+  if (entry === "auth") {
+    // Real Firebase-authenticated sign-in. Until the backend + Cloud SQL wiring exists,
+    // a successful login drops into the same populated demo workspace as "Explore the
+    // demo" — the account itself is real, the data behind it isn't wired up yet.
+    return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><LoginScreen
+      onAuthenticated={() => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setEntry("workspace"); }}
+      onBack={() => setEntry("landing")}
     /></LanguageContext.Provider>;
   }
   if (entry === "admin") {
