@@ -508,6 +508,7 @@ function isoToMDY(iso) {
   if (!y || !m || !d) return "";
   return `${String(m).padStart(2, "0")}/${String(d).padStart(2, "0")}/${y}`;
 }
+const todayMDY = () => isoToMDY(new Date().toISOString().slice(0, 10));
 const daysUntil = (mmddyyyy) => {
   if (!mmddyyyy || !mmddyyyy.includes("/")) return 9999;
   const [m, d, y] = mmddyyyy.split("/").map(Number);
@@ -1358,9 +1359,25 @@ const TUITION_RATES_DEFAULT = {
   toddlers: { fullTime: 1450, partTime: 1000, hourly: 20 },
   preschool: { fullTime: 1300, partTime: 900, hourly: 18 },
   prek: { fullTime: 1250, partTime: 850, hourly: 18 },
+  // Sibling discount: providers can choose either a percentage or a flat dollar
+  // amount off — applied to the 2nd child onward within the same household.
+  siblingDiscount: { enabled: false, type: "percent", value: 10 },
 };
+// Given a household's base monthly rate per child (in birth/enrollment order),
+// returns the same list with each child's discounted rate applied from the
+// 2nd child onward.
+function applySiblingDiscounts(baseAmounts, discountConfig) {
+  if (!discountConfig || !discountConfig.enabled) return baseAmounts.map((a) => ({ base: a, discounted: a, discountApplied: false }));
+  return baseAmounts.map((a, i) => {
+    if (i === 0) return { base: a, discounted: a, discountApplied: false };
+    const discounted = discountConfig.type === "percent"
+      ? Math.round(a * (1 - (discountConfig.value || 0) / 100))
+      : Math.max(0, a - (discountConfig.value || 0));
+    return { base: a, discounted, discountApplied: true };
+  });
+}
 
-const FLEX_CARE_TYPES = ["Early drop-off", "Extended pickup", "Extra day", "Weekend care"];
+const FLEX_CARE_TYPES = ["Early drop-off", "Extended pickup", "After-hours care", "Weekend care", "Extra day"];
 const DENY_REASONS = ["No capacity", "No staff available", "Outside operating hours", "Ratio requirements", "N/A", "Other"];
 const PAYMENT_METHODS = ["Cash", "Check", "Zelle", "Venmo", "Bank transfer", "Other"];
 const REFUND_REASONS = ["Overpayment", "Withdrawal / early departure", "Closure credit", "Service issue", "Other"];
@@ -1669,65 +1686,96 @@ function LoginScreen({ onAuthenticated, onBack }) {
 }
 
 function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn }) {
+  const FEATURES = [
+    { icon: CreditCard, label: "Subsidy administration", desc: "CalWORKs, CCAP & more" },
+    { icon: ShieldCheck, label: "CCLD compliance", desc: "Licensing docs & ratios" },
+    { icon: Percent, label: "Sibling discounts", desc: "Percent or flat, your call" },
+    { icon: Clock, label: "After-hours & weekend care", desc: "Logged as real revenue" },
+    { icon: CreditCard, label: "Easy payment logging", desc: "Amount, method, date" },
+    { icon: Languages, label: "6 languages, every tier", desc: "EN · ES · 中文 · VI · KO · TL" },
+  ];
   return (
     <div style={{
-      minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24,
+      minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px",
       backgroundImage: BANIG_PATTERN(C.line, 0.5), backgroundSize: "16px 16px",
     }}>
       <style>{FONTS}</style>
-      <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 8 }}>
-        <AlagaMark size={82} color={C.tealDark} />
-        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 68, fontWeight: 900, color: C.tealDark }}>alaga</div>
+      <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 10 }}>
+        <AlagaMark size={88} color={C.tealDark} />
+        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 72, fontWeight: 900, color: C.tealDark }}>alaga</div>
       </div>
-      <div style={{ color: C.inkSoft, fontSize: 12, fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 20, textAlign: "center", maxWidth: 420, lineHeight: 1.8 }}>
+      <div style={{ color: C.inkSoft, fontSize: 12.5, fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 22, textAlign: "center", maxWidth: 460, lineHeight: 1.8 }}>
         The foundation for<br />your childcare business.
       </div>
 
       <button onClick={onSignIn} style={{
-        marginBottom: 28, background: C.tealDark, color: "#fff", border: "none", borderRadius: 10,
-        padding: "10px 22px", fontWeight: 700, fontSize: 13.5,
+        marginBottom: 30, background: C.tealDark, color: "#fff", border: "none", borderRadius: 10,
+        padding: "11px 24px", fontWeight: 700, fontSize: 14,
       }}>
         Sign in to your account
       </button>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, maxWidth: 720, width: "100%" }}>
-        <button onClick={onDemo} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 10 }}>
-          <div style={{ width: 40, height: 40, borderRadius: 10, background: C.tealTint, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <PlayCircle size={20} color={C.tealDark} />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, maxWidth: 820, width: "100%" }}>
+        <button onClick={onDemo} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 28, display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ width: 46, height: 46, borderRadius: 12, background: C.tealTint, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <PlayCircle size={22} color={C.tealDark} />
           </div>
-          <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>Explore the populated demo</div>
-          <div style={{ fontSize: 12.5, color: C.inkSoft, lineHeight: 1.5 }}>
+          <div style={{ fontWeight: 700, fontSize: 17, color: C.ink }}>Explore the populated demo</div>
+          <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>
             A working provider account with sample families, subsidy records, a tours pipeline, and financials already filled in — built for showing to providers and auditors.
           </div>
-          <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.teal, fontWeight: 700, fontSize: 13 }}>
+          <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.teal, fontWeight: 700, fontSize: 13.5 }}>
             Enter demo <ArrowRight size={14} />
           </div>
         </button>
 
-        <button onClick={onSignUp} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 10 }}>
-          <div style={{ width: 40, height: 40, borderRadius: 10, background: C.amberTint, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Rocket size={20} color={C.amber} />
+        <button onClick={onSignUp} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 28, display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ width: 46, height: 46, borderRadius: 12, background: C.amberTint, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Rocket size={22} color={C.amber} />
           </div>
-          <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>I'm a new provider signing up</div>
-          <div style={{ fontSize: 12.5, color: C.inkSoft, lineHeight: 1.5 }}>
+          <div style={{ fontWeight: 700, fontSize: 17, color: C.ink }}>I'm a new provider signing up</div>
+          <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>
             Walk through the real sign-up flow, then land in your own empty workspace — exactly what a provider sees on day one, before any data exists.
           </div>
-          <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.amber, fontWeight: 700, fontSize: 13 }}>
+          <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.amber, fontWeight: 700, fontSize: 13.5 }}>
             Start sign-up <ArrowRight size={14} />
           </div>
         </button>
       </div>
 
-      <button onClick={onAdmin} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: "16px 20px", display: "flex", alignItems: "center", gap: 14, maxWidth: 720, width: "100%", marginTop: 18 }}>
-        <div style={{ width: 40, height: 40, borderRadius: 10, background: C.skyTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-          <Building2 size={20} color={C.sky} />
+      <button onClick={onAdmin} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: "18px 22px", display: "flex", alignItems: "center", gap: 14, maxWidth: 820, width: "100%", marginTop: 20 }}>
+        <div style={{ width: 46, height: 46, borderRadius: 12, background: C.skyTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <Building2 size={22} color={C.sky} />
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 700, fontSize: 14.5, color: C.ink }}>Platform admin — view all subscribed providers</div>
-          <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>A cross-account view of 10 sample providers on the platform, for the Alaga team only.</div>
+          <div style={{ fontWeight: 700, fontSize: 15, color: C.ink }}>Platform admin — view all subscribed providers</div>
+          <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>A cross-account view of 10 sample providers on the platform, for the Alaga team only.</div>
         </div>
         <ArrowRight size={16} color={C.sky} />
       </button>
+
+      <div style={{ maxWidth: 820, width: "100%", marginTop: 40 }}>
+        <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkSoft, marginBottom: 14, textAlign: "center" }}>
+          What's built in
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
+          {FEATURES.map((f, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 11, background: "rgba(255,255,255,0.6)", border: `1px solid ${C.line}`, borderRadius: 13, padding: "12px 14px" }}>
+              <div style={{ width: 34, height: 34, borderRadius: 9, background: C.tealTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <f.icon size={16} color={C.tealDark} />
+              </div>
+              <div>
+                <div style={{ fontSize: 12.5, fontWeight: 700, color: C.ink, lineHeight: 1.25 }}>{f.label}</div>
+                <div style={{ fontSize: 11, color: C.inkSoft, marginTop: 1 }}>{f.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ marginTop: 32, fontSize: 11.5, color: C.inkSoft, textAlign: "center" }}>
+        Built for licensed home-based Family Child Care providers in California.
+      </div>
     </div>
   );
 }
@@ -2592,13 +2640,13 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
             <div style={{ flex: 1, overflowY: "auto", padding: "28px 32px 60px" }}>
               {screen === "dashboard" && <Dashboard setScreen={setScreen} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
-              {screen === "families" && <Families families={families} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} />}
+              {screen === "families" && <Families families={families} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} />}
               {screen === "bookings" && <Bookings families={families} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
               {screen === "staff" && <StaffScreen staff={staff} families={families} updateStaffMember={updateStaffMember} addStaffMember={addStaffMember} removeStaffMember={removeStaffMember} />}
               {screen === "calendar" && <CalendarScreen schedule={weeklySchedule} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} />}
               {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} />}
               {screen === "subsidy" && <Subsidy families={families} openFamId={openFamId} setOpenFamId={setOpenFamId} loaded={loaded} />}
-              {screen === "payments" && <Finances families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} />}
+              {screen === "payments" && <Finances families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={setScreen} />}
               {screen === "compliance" && <Compliance docs={compDocs} onSave={saveCompDoc} families={families} provider={providerInfo} staff={staff} setScreen={setScreen} />}
               {screen === "security" && <SecurityScreen accessLog={accessLog} isEmpty={isEmpty} />}
               {screen === "messages" && <Messages threads={threads} saveThreads={saveThreads} families={families} staff={staff} />}
@@ -2907,6 +2955,8 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
   const resolveNotice = (famId) => saveDismissedNotices([...dismissedNotices, famId]);
   const toggleCollapse = (id) => setCollapsed((c) => ({ ...c, [id]: !c[id] }));
   const setRate = (cls, field, val) => setRates((r) => ({ ...r, [cls]: { ...r[cls], [field]: val } }));
+  const siblingDiscount = rates.siblingDiscount || TUITION_RATES_DEFAULT.siblingDiscount;
+  const setSiblingDiscount = (field, val) => setRates((r) => ({ ...r, siblingDiscount: { ...(r.siblingDiscount || TUITION_RATES_DEFAULT.siblingDiscount), [field]: val } }));
   const saveRates = () => { saveTuitionRates(rates); setEditingRates(false); };
   const openDays = weeklySchedule.filter((d) => d.open);
 
@@ -3143,6 +3193,30 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
                 )}
               </div>
             ))}
+            <div style={{ padding: "12px 18px", borderTop: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span style={{ fontSize: 12.5, fontWeight: 700 }}>{t("Sibling discount")}</span>
+                {editingRates ? (
+                  <ToggleSwitch on={siblingDiscount.enabled} onClick={() => setSiblingDiscount("enabled", !siblingDiscount.enabled)} />
+                ) : (
+                  <Pill label={siblingDiscount.enabled ? t("Enabled") : t("Off")} fg={siblingDiscount.enabled ? C.teal : C.inkSoft} bg={siblingDiscount.enabled ? C.tealTint : "#EFEBE1"} />
+                )}
+              </div>
+              {siblingDiscount.enabled && (
+                editingRates ? (
+                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    <Select value={siblingDiscount.type} onChange={(v) => setSiblingDiscount("type", v)} options={["percent", "flat"]} labels={[t("Percentage off"), t("Flat dollar off")]} />
+                    {siblingDiscount.type === "percent"
+                      ? <MoneyInput value={siblingDiscount.value} onChange={(v) => setSiblingDiscount("value", v)} suffix="%" icon={Percent} />
+                      : <MoneyInput value={siblingDiscount.value} onChange={(v) => setSiblingDiscount("value", v)} suffix="" icon={DollarSign} />}
+                  </div>
+                ) : (
+                  <div style={{ fontSize: 12.5, color: C.inkSoft }}>
+                    {siblingDiscount.type === "percent" ? `${siblingDiscount.value}% ${t("off")}` : `${money(siblingDiscount.value)} ${t("off")}`} · {t("applied to the 2nd child onward in a household")}
+                  </div>
+                )
+              )}
+            </div>
           </>
         )}
       </div>
@@ -3260,7 +3334,7 @@ function CheckIn({ families, status, log, setChildStatus }) {
 }
 
 /* --------------------------------- families ------------------------------------ */
-function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHousehold: openHouseholdProp, setOpenHousehold: setOpenHouseholdProp }) {
+function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHousehold: openHouseholdProp, setOpenHousehold: setOpenHouseholdProp, tuitionRates }) {
   const t = useT();
   const [openHouseholdLocal, setOpenHouseholdLocal] = useState(null);
   // Support both a parent-controlled open household (used when the search bar or
@@ -3323,12 +3397,12 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
           );
         })}
       </Card>
-      {open && <HouseholdDrawer household={open} onClose={() => setOpenHousehold(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} />}
+      {open && <HouseholdDrawer household={open} onClose={() => setOpenHousehold(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} tuitionRates={tuitionRates} />}
     </>
   );
 }
 
-function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess }) {
+function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, tuitionRates }) {
   const t = useT();
   const [openChildId, setOpenChildId] = useState(null);
   const [editing, setEditing] = useState(false);
@@ -3389,6 +3463,42 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess })
               </button>
             ))}
           </Section>
+
+          {tuitionRates && household.children.some((c) => !c.subsidized) && (() => {
+            const privatePayChildren = household.children.filter((c) => !c.subsidized);
+            const baseAmounts = privatePayChildren.map((c) => tuitionRates[c.classroom]?.fullTime || 0);
+            const discount = tuitionRates.siblingDiscount || TUITION_RATES_DEFAULT.siblingDiscount;
+            const computed = applySiblingDiscounts(baseAmounts, discount);
+            const total = computed.reduce((sum, x) => sum + x.discounted, 0);
+            return (
+              <Section title={t("Tuition")} icon={DollarSign}>
+                {privatePayChildren.map((c, i) => (
+                  <div key={c.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 0", borderBottom: `1px solid ${C.line}` }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600 }}>{c.child}</div>
+                      {computed[i].discountApplied && (
+                        <div style={{ fontSize: 11, color: C.teal, marginTop: 1 }}>
+                          {t("Sibling discount applied")} · <span style={{ textDecoration: "line-through", color: C.inkSoft }}>{money(computed[i].base)}</span>
+                        </div>
+                      )}
+                    </div>
+                    <span style={{ fontSize: 13.5, fontWeight: 700 }}>{money(computed[i].discounted)}<span style={{ fontWeight: 400, color: C.inkSoft, fontSize: 11.5 }}>{t("/mo")}</span></span>
+                  </div>
+                ))}
+                {privatePayChildren.length > 1 && (
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "9px 0 4px" }}>
+                    <span style={{ fontSize: 12.5, fontWeight: 700, color: C.inkSoft }}>{t("Household total")}</span>
+                    <span style={{ fontSize: 14, fontWeight: 700 }}>{money(total)}<span style={{ fontWeight: 400, color: C.inkSoft, fontSize: 11.5 }}>{t("/mo")}</span></span>
+                  </div>
+                )}
+                {!discount.enabled && privatePayChildren.length > 1 && (
+                  <div style={{ fontSize: 11.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 5, marginTop: 4 }}>
+                    <Info size={11} /> {t("No sibling discount configured — set one up in Dashboard → Tuition rates & hours.")}
+                  </div>
+                )}
+              </Section>
+            );
+          })()}
 
           <Section title={t("Contact information")} icon={Phone}
             right={!editing && <button onClick={() => setEditing(true)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 700 }}><Pencil size={12} /> {t("Edit")}</button>}>
@@ -3714,6 +3824,8 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
   const [selectedDate, setSelectedDate] = useState(TODAY);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [denyingId, setDenyingId] = useState(null);
+  const [loggingPaymentId, setLoggingPaymentId] = useState(null);
+  const [paymentForm, setPaymentForm] = useState({ method: PAYMENT_METHODS[0], amount: "", date: "", notes: "" });
   const [movingId, setMovingId] = useState(null);
   const [moveTarget, setMoveTarget] = useState("");
   const [moveReason, setMoveReason] = useState("");
@@ -3737,6 +3849,25 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
   };
   const setFlexStatus = (id, status, reason) => saveFlexCare(flexCareRequests.map((r) => (r.id === id ? { ...r, status, ...(reason ? { denyReason: reason } : {}) } : r)));
   const setFlexPaymentConfirmed = (id, confirmed) => saveFlexCare(flexCareRequests.map((r) => (r.id === id ? { ...r, paymentConfirmed: confirmed } : r)));
+  // Full payment logging — method, exact amount received (may differ from the
+  // estimated fee), and the date — not just a blind "confirmed" checkbox.
+  const openPaymentLog = (r) => {
+    setLoggingPaymentId(r.id);
+    setPaymentForm({
+      method: r.parentPaymentMethod || PAYMENT_METHODS[0],
+      amount: r.paymentAmount != null ? String(r.paymentAmount) : String(flexFee(r.classroom, r.hours)),
+      date: r.paymentDate || todayMDY(),
+      notes: r.paymentNotes || "",
+    });
+  };
+  const savePaymentLog = () => {
+    saveFlexCare(flexCareRequests.map((r) => (r.id === loggingPaymentId ? {
+      ...r, paymentConfirmed: true, parentPaymentMethod: paymentForm.method,
+      paymentAmount: Number(paymentForm.amount) || 0, paymentDate: paymentForm.date, paymentNotes: paymentForm.notes,
+    } : r)));
+    setLoggingPaymentId(null);
+  };
+  const undoPaymentLog = (id) => saveFlexCare(flexCareRequests.map((r) => (r.id === id ? { ...r, paymentConfirmed: false } : r)));
   const activeFlexByChild = (childName) => flexCareRequests.filter((r) => r.child === childName && r.status !== "denied");
 
   const totalEnrolled = families.length;
@@ -3947,12 +4078,39 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
                       <button onClick={() => setFlexStatus(r.id, "approved")} style={{ padding: "5px 10px", borderRadius: 7, border: "none", background: C.teal, color: "#fff", fontSize: 11, fontWeight: 700 }}>{t("Approve")}</button>
                     </div>
                   )}
-                  {needsPaymentAttention && (
-                    <button onClick={() => setFlexPaymentConfirmed(r.id, true)} style={{ padding: "5px 10px", borderRadius: 7, border: "none", background: C.teal, color: "#fff", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", gap: 5 }}>
-                      <CheckCircle2 size={11} /> {isCash ? t("Confirm cash received") : t("Confirm payment received")}
+                  {needsPaymentAttention && loggingPaymentId !== r.id && (
+                    <button onClick={() => openPaymentLog(r)} style={{ padding: "5px 10px", borderRadius: 7, border: "none", background: C.teal, color: "#fff", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", gap: 5 }}>
+                      <CheckCircle2 size={11} /> {t("Log payment")}
+                    </button>
+                  )}
+                  {r.status === "approved" && r.paymentConfirmed && loggingPaymentId !== r.id && (
+                    <button onClick={() => openPaymentLog(r)} style={{ padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11, fontWeight: 700, color: C.teal, display: "flex", alignItems: "center", gap: 5 }}>
+                      <Pencil size={11} /> {t("Edit payment")}
                     </button>
                   )}
                 </div>
+                {r.status === "approved" && r.paymentConfirmed && loggingPaymentId !== r.id && (
+                  <div style={{ marginTop: 6, fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "center", gap: 5 }}>
+                    <CheckCircle2 size={11} color={C.teal} /> {money(r.paymentAmount ?? fee)} {t("received")} {r.paymentDate ? `· ${r.paymentDate}` : ""} {r.parentPaymentMethod ? `· ${t(r.parentPaymentMethod)}` : ""}
+                  </div>
+                )}
+                {loggingPaymentId === r.id && (
+                  <div style={{ marginTop: 10, padding: "12px", borderRadius: 9, background: C.cream, display: "flex", flexDirection: "column", gap: 8 }}>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <Field label={t("Amount received")}><MoneyInput value={Number(paymentForm.amount) || 0} onChange={(v) => setPaymentForm({ ...paymentForm, amount: v })} suffix="" icon={DollarSign} /></Field>
+                      <Field label={t("Method")}><Select value={paymentForm.method} onChange={(v) => setPaymentForm({ ...paymentForm, method: v })} options={PAYMENT_METHODS} labels={PAYMENT_METHODS.map((m) => t(m))} /></Field>
+                    </div>
+                    <Field label={t("Date received")}><DateField value={paymentForm.date} onChange={(v) => setPaymentForm({ ...paymentForm, date: v })} /></Field>
+                    <Field label={t("Notes (optional)")}><input value={paymentForm.notes} onChange={(e) => setPaymentForm({ ...paymentForm, notes: e.target.value })} placeholder={t("e.g. paid via Venmo, split with another parent…")} style={inputStyle} /></Field>
+                    <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+                      <button onClick={() => setLoggingPaymentId(null)} style={{ padding: "7px 12px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 700, color: C.inkSoft }}>{t("Cancel")}</button>
+                      {r.paymentConfirmed && (
+                        <button onClick={() => { undoPaymentLog(r.id); setLoggingPaymentId(null); }} style={{ padding: "7px 12px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 700, color: C.danger }}>{t("Mark unpaid")}</button>
+                      )}
+                      <button onClick={savePaymentLog} style={{ padding: "7px 14px", borderRadius: 7, border: "none", background: C.teal, color: "#fff", fontSize: 11.5, fontWeight: 700 }}>{t("Save payment")}</button>
+                    </div>
+                  </div>
+                )}
                 {isDenying && (
                   <div style={{ marginTop: 10, padding: "10px 12px", borderRadius: 9, background: C.cream, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                     <span style={{ fontSize: 11.5, color: C.inkSoft, fontWeight: 600 }}>{t("Reason")}:</span>
@@ -4631,7 +4789,7 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
 }
 
 /* --------------------------------- payments ------------------------------------ */
-function Finances({ families, expenses, saveExpenses, reminderSettings, saveReminderSettings, staff, tier, payrollSettings, savePayrollSettings, onSave, refunds, saveRefunds }) {
+function Finances({ families, expenses, saveExpenses, reminderSettings, saveReminderSettings, staff, tier, payrollSettings, savePayrollSettings, onSave, refunds, saveRefunds, flexCareRequests, tuitionRates, setScreen }) {
   const t = useT();
   const [tab, setTab] = useState("tuition");
   const [expandedPayment, setExpandedPayment] = useState(null);
@@ -4642,10 +4800,15 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
   const subsidyTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + (f.coverageBasis === "monthly" ? f.coverageAmount : 0), 0);
   const copayTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + f.copay, 0);
   const privateTotal = families.filter((f) => !f.subsidized).reduce((s, f) => s + f.copay, 0);
+  // Flex/exception care — early drop-off, after-hours, weekend, extra days —
+  // is real revenue, not a footnote, so it counts toward income the same way
+  // subsidy and tuition do, and is broken out below so it's visible on its own.
+  const flexCareTotal = (flexCareRequests || []).filter((r) => r.status === "approved").reduce((s, r) => s + (r.paymentConfirmed && r.paymentAmount != null ? r.paymentAmount : Math.round((tuitionRates?.[r.classroom]?.hourly || 0) * (r.hours || 0))), 0);
+  const flexCareUnpaidTotal = (flexCareRequests || []).filter((r) => r.status === "approved" && !r.paymentConfirmed).reduce((s, r) => s + Math.round((tuitionRates?.[r.classroom]?.hourly || 0) * (r.hours || 0)), 0);
   const expenseTotal = expenses.reduce((s, e) => s + e.amount, 0);
   const payrollTotal = staff.filter((s) => s.status === "active").reduce((sum, s) => sum + monthlyPay(s), 0);
   const refundTotal = refunds.reduce((s, r) => s + r.amount, 0);
-  const incomeTotal = subsidyTotal + copayTotal + privateTotal;
+  const incomeTotal = subsidyTotal + copayTotal + privateTotal + flexCareTotal;
   const nextDueDate = "08/01/2026";
   const daysToDue = daysUntil(nextDueDate);
   const owingFamilies = families.filter((f) => f.copay > 0);
@@ -5622,6 +5785,7 @@ function Analytics({ families, expenses, prospects, staff, alumni, addDeparture,
     { name: t("Subsidy coverage"), value: subsidyTotal, color: C.teal },
     { name: t("Parent copay"), value: copayTotal, color: C.amber },
     { name: t("Private tuition"), value: privateTotal, color: C.sky },
+    { name: t("Flex & after-hours care"), value: flexCareTotal, color: C.coral },
   ].filter((d) => d.value > 0);
 
   const expenseByCategory = [
@@ -5633,14 +5797,15 @@ function Analytics({ families, expenses, prospects, staff, alumni, addDeparture,
     { month: "Feb", occupancy: 12 }, { month: "Mar", occupancy: 12 }, { month: "Apr", occupancy: 13 },
     { month: "May", occupancy: 13 }, { month: "Jun", occupancy: 14 }, { month: "Jul", occupancy: families.length },
   ];
-  const PIE_COLORS = [C.teal, C.amber, C.sky];
+  const PIE_COLORS = [C.teal, C.amber, C.sky, C.coral];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 14 }}>
         <Kpi label={t("Occupancy")} value={`${families.length} / ${families.length}`} sub={t("0 openings this month")} accent={C.teal} />
         <Kpi label={t("Subsidy share of revenue")} value={incomeTotal > 0 ? `${Math.round(((subsidyTotal + copayTotal) / incomeTotal) * 100)}%` : "0%"} sub={`${subsidizedCount} ${t("of")} ${families.length} ${t("families")}`} />
-        <Kpi label={t("Monthly income")} value={money(incomeTotal)} sub={t("tuition, subsidy & copay")} accent={C.teal} />
+        <Kpi label={t("Monthly income")} value={money(incomeTotal)} sub={t("tuition, subsidy, copay & flex care")} accent={C.teal} />
+        <Kpi label={t("Flex & after-hours care")} value={money(flexCareTotal)} sub={flexCareUnpaidTotal > 0 ? `${money(flexCareUnpaidTotal)} ${t("not yet collected")}` : t("early drop-off, weekend, extra days…")} accent={flexCareUnpaidTotal > 0 ? C.amber : C.teal} onClick={() => setScreen && setScreen("bookings")} />
         <Kpi label={t("Net income")} value={money(net)} sub={t("after payroll & expenses")} accent={net >= 0 ? C.teal : C.danger} />
         <Kpi label={t("Labor cost")} value={`${laborShare}%`} sub={t("of monthly income")} accent={laborShare > 50 ? C.amber : C.sky} />
       </div>
