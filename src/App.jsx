@@ -7,7 +7,7 @@ import {
   Printer, Send, Info, CalendarDays, DollarSign, Percent,
   Pencil, Plus, Trash2, Split, ArrowLeft, Shield, FileCheck, HeartPulse, Flame, Eye,
   Moon, Contrast, Type, ZapOff, Lock, ListChecks, UserPlus, Settings as Gear, LifeBuoy, Paperclip, Image as ImageIcon,
-  ArrowRight, Building2, Rocket, PlayCircle, UploadCloud, TrendingUp, Wand2, UserCog, Scale, ArrowLeftRight,
+  ArrowRight, Building2, Rocket, PlayCircle, UploadCloud, TrendingUp, Wand2, UserCog, Scale, ArrowLeftRight, Volume2, Square,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell,
@@ -1686,94 +1686,101 @@ function LoginScreen({ onAuthenticated, onBack }) {
 }
 
 function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn }) {
-  const FEATURES = [
-    { icon: CreditCard, label: "Subsidy administration", desc: "CalWORKs, CCAP & more" },
-    { icon: ShieldCheck, label: "CCLD compliance", desc: "Licensing docs & ratios" },
-    { icon: Percent, label: "Sibling discounts", desc: "Percent or flat, your call" },
-    { icon: Clock, label: "After-hours & weekend care", desc: "Logged as real revenue" },
-    { icon: CreditCard, label: "Easy payment logging", desc: "Amount, method, date" },
-    { icon: Languages, label: "6 languages, every tier", desc: "EN · ES · 中文 · VI · KO · TL" },
-  ];
   return (
     <div style={{
-      minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px",
+      minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "56px 32px",
       backgroundImage: BANIG_PATTERN(C.line, 0.5), backgroundSize: "16px 16px",
     }}>
       <style>{FONTS}</style>
-      <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 10 }}>
-        <AlagaMark size={88} color={C.tealDark} />
-        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 72, fontWeight: 900, color: C.tealDark }}>alaga</div>
+      <div style={{ display: "flex", alignItems: "center", gap: 24, marginBottom: 14 }}>
+        <AlagaMark size={104} color={C.tealDark} />
+        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 86, fontWeight: 900, color: C.tealDark }}>alaga</div>
       </div>
-      <div style={{ color: C.inkSoft, fontSize: 12.5, fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 22, textAlign: "center", maxWidth: 460, lineHeight: 1.8 }}>
+      <div style={{ color: C.inkSoft, fontSize: 14.5, fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 30, textAlign: "center", maxWidth: 520, lineHeight: 1.8 }}>
         The foundation for<br />your childcare business.
       </div>
 
       <button onClick={onSignIn} style={{
-        marginBottom: 30, background: C.tealDark, color: "#fff", border: "none", borderRadius: 10,
-        padding: "11px 24px", fontWeight: 700, fontSize: 14,
+        marginBottom: 36, background: C.tealDark, color: "#fff", border: "none", borderRadius: 12,
+        padding: "13px 28px", fontWeight: 700, fontSize: 15.5,
       }}>
         Sign in to your account
       </button>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, maxWidth: 820, width: "100%" }}>
-        <button onClick={onDemo} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 28, display: "flex", flexDirection: "column", gap: 12 }}>
-          <div style={{ width: 46, height: 46, borderRadius: 12, background: C.tealTint, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <PlayCircle size={22} color={C.tealDark} />
-          </div>
-          <div style={{ fontWeight: 700, fontSize: 17, color: C.ink }}>Explore the populated demo</div>
-          <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>
-            A working provider account with sample families, subsidy records, a tours pipeline, and financials already filled in — built for showing to providers and auditors.
-          </div>
-          <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.teal, fontWeight: 700, fontSize: 13.5 }}>
-            Enter demo <ArrowRight size={14} />
-          </div>
-        </button>
-
-        <button onClick={onSignUp} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 28, display: "flex", flexDirection: "column", gap: 12 }}>
-          <div style={{ width: 46, height: 46, borderRadius: 12, background: C.amberTint, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Rocket size={22} color={C.amber} />
-          </div>
-          <div style={{ fontWeight: 700, fontSize: 17, color: C.ink }}>I'm a new provider signing up</div>
-          <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>
-            Walk through the real sign-up flow, then land in your own empty workspace — exactly what a provider sees on day one, before any data exists.
-          </div>
-          <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.amber, fontWeight: 700, fontSize: 13.5 }}>
-            Start sign-up <ArrowRight size={14} />
-          </div>
-        </button>
-      </div>
-
-      <button onClick={onAdmin} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: "18px 22px", display: "flex", alignItems: "center", gap: 14, maxWidth: 820, width: "100%", marginTop: 20 }}>
-        <div style={{ width: 46, height: 46, borderRadius: 12, background: C.skyTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-          <Building2 size={22} color={C.sky} />
+      <div style={{ maxWidth: 980, width: "100%" }}>
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.inkSoft, marginBottom: 12 }}>
+          Populated demos
         </div>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 700, fontSize: 15, color: C.ink }}>Platform admin — view all subscribed providers</div>
-          <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>A cross-account view of 10 sample providers on the platform, for the Alaga team only.</div>
-        </div>
-        <ArrowRight size={16} color={C.sky} />
-      </button>
-
-      <div style={{ maxWidth: 820, width: "100%", marginTop: 40 }}>
-        <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: C.inkSoft, marginBottom: 14, textAlign: "center" }}>
-          What's built in
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
-          {FEATURES.map((f, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "center", gap: 11, background: "rgba(255,255,255,0.6)", border: `1px solid ${C.line}`, borderRadius: 13, padding: "12px 14px" }}>
-              <div style={{ width: 34, height: 34, borderRadius: 9, background: C.tealTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <f.icon size={16} color={C.tealDark} />
-              </div>
-              <div>
-                <div style={{ fontSize: 12.5, fontWeight: 700, color: C.ink, lineHeight: 1.25 }}>{f.label}</div>
-                <div style={{ fontSize: 11, color: C.inkSoft, marginTop: 1 }}>{f.desc}</div>
-              </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 18, marginBottom: 28 }}>
+          <button onClick={() => onDemo("simple")} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ width: 46, height: 46, borderRadius: 12, background: C.tealTint, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <PlayCircle size={22} color={C.tealDark} />
             </div>
-          ))}
+            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>Simple plan</div>
+            <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>
+              Core day-to-day operations — families, subsidy, check-in, and payments.
+            </div>
+            <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.teal, fontWeight: 700, fontSize: 13 }}>
+              Enter demo <ArrowRight size={13} />
+            </div>
+          </button>
+
+          <button onClick={() => onDemo("extended")} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ width: 46, height: 46, borderRadius: 12, background: C.amberTint, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <BarChart3 size={22} color={C.amber} />
+            </div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>Extended plan</div>
+            <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>
+              Everything in Simple, plus staff, growth planning, and analytics.
+            </div>
+            <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.amber, fontWeight: 700, fontSize: 13 }}>
+              Enter demo <ArrowRight size={13} />
+            </div>
+          </button>
+
+          <button onClick={() => onDemo("simple", true)} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ width: 46, height: 46, borderRadius: 12, background: "#F1EEE5", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Lock size={20} color={C.inkSoft} />
+            </div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>Meeting-safe</div>
+            <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>
+              For screen-sharing with providers or investors — proprietary rate math and payout figures are hidden.
+            </div>
+            <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.inkSoft, fontWeight: 700, fontSize: 13 }}>
+              Enter demo <ArrowRight size={13} />
+            </div>
+          </button>
+        </div>
+
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.inkSoft, marginBottom: 12 }}>
+          Other ways in
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+          <button onClick={onSignUp} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
+            <div style={{ width: 46, height: 46, borderRadius: 12, background: C.skyTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Rocket size={22} color={C.sky} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>I'm a new provider signing up</div>
+              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>Real sign-up flow into your own empty workspace.</div>
+            </div>
+            <ArrowRight size={16} color={C.sky} />
+          </button>
+
+          <button onClick={onAdmin} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
+            <div style={{ width: 46, height: 46, borderRadius: 12, background: "#F1EEE5", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Building2 size={22} color={C.inkSoft} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>Platform admin</div>
+              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>Cross-account view, for the Alaga team only.</div>
+            </div>
+            <ArrowRight size={16} color={C.inkSoft} />
+          </button>
         </div>
       </div>
 
-      <div style={{ marginTop: 32, fontSize: 11.5, color: C.inkSoft, textAlign: "center" }}>
+      <div style={{ marginTop: 36, fontSize: 12.5, color: C.inkSoft, textAlign: "center" }}>
         Built for licensed home-based Family Child Care providers in California.
       </div>
     </div>
@@ -2310,10 +2317,11 @@ function isoWeekNumber(date) {
   return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 }
 
-function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, flexCareRequests, dismissedNotices, isEmpty, onEnter }) {
+function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, flexCareRequests, dismissedNotices, isEmpty, onEnter, language }) {
   const now = new Date();
   const hour = now.getHours();
   const greetWord = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const greetWordEs = hour < 12 ? "Buenos días" : hour < 17 ? "Buenas tardes" : "Buenas noches";
   const firstName = (providerInfo.contactName || providerInfo.name || "there").split(" ")[0];
   const dateLabel = now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
   const theme = BRIEFING_THEMES[isoWeekNumber(now) % BRIEFING_THEMES.length];
@@ -2326,28 +2334,82 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   const toursScheduled = prospects.filter((p) => p.stage === "Tour Scheduled");
   const missingCerts = staff.filter((s) => Object.values(s.certs || {}).some((v) => v === "missing"));
 
+  // Each item carries a JSX version for display plus plain English/Spanish
+  // sentences for text-to-speech, since spoken items can't read the JSX.
   const items = [];
   if (families.length > 0) {
-    items.push({ tone: "ok", text: <>You have <strong>{families.length}</strong> {families.length === 1 ? "child" : "children"} in your care — <strong>{subsidizedFams.length}</strong> subsidized and <strong>{families.length - subsidizedFams.length}</strong> private-pay.</> });
+    items.push({
+      tone: "ok", text: <>You have <strong>{families.length}</strong> {families.length === 1 ? "child" : "children"} in your care — <strong>{subsidizedFams.length}</strong> subsidized and <strong>{families.length - subsidizedFams.length}</strong> private-pay.</>,
+      speechEn: `You have ${families.length} ${families.length === 1 ? "child" : "children"} in your care — ${subsidizedFams.length} subsidized and ${families.length - subsidizedFams.length} private-pay.`,
+      speechEs: `Tiene ${families.length} ${families.length === 1 ? "niño" : "niños"} bajo su cuidado — ${subsidizedFams.length} con subsidio y ${families.length - subsidizedFams.length} de pago privado.`,
+    });
   }
   if (expiring.length > 0) {
-    items.push({ tone: "warn", text: <><strong>{expiring.length}</strong> subsidy {expiring.length === 1 ? "authorization needs" : "authorizations need"} your attention.</> });
+    items.push({
+      tone: "warn", text: <><strong>{expiring.length}</strong> subsidy {expiring.length === 1 ? "authorization needs" : "authorizations need"} your attention.</>,
+      speechEn: `${expiring.length} subsidy ${expiring.length === 1 ? "authorization needs" : "authorizations need"} your attention.`,
+      speechEs: `${expiring.length} ${expiring.length === 1 ? "autorización de subsidio necesita" : "autorizaciones de subsidio necesitan"} su atención.`,
+    });
   }
   if (pendingFlex.length + unpaidFlex.length > 0) {
-    items.push({ tone: "warn", text: <><strong>{pendingFlex.length + unpaidFlex.length}</strong> flex care {pendingFlex.length + unpaidFlex.length === 1 ? "request needs" : "requests need"} approval or payment confirmation.</> });
+    items.push({
+      tone: "warn", text: <><strong>{pendingFlex.length + unpaidFlex.length}</strong> flex care {pendingFlex.length + unpaidFlex.length === 1 ? "request needs" : "requests need"} approval or payment confirmation.</>,
+      speechEn: `${pendingFlex.length + unpaidFlex.length} flex care ${pendingFlex.length + unpaidFlex.length === 1 ? "request needs" : "requests need"} approval or payment confirmation.`,
+      speechEs: `${pendingFlex.length + unpaidFlex.length} ${pendingFlex.length + unpaidFlex.length === 1 ? "solicitud de cuidado flexible necesita" : "solicitudes de cuidado flexible necesitan"} aprobación o confirmación de pago.`,
+    });
   }
   if (toursScheduled.length > 0) {
-    items.push({ tone: "ok", text: <>You have <strong>{toursScheduled.length}</strong> {toursScheduled.length === 1 ? "tour" : "tours"} on the calendar — {toursScheduled.map((p) => p.name).join(", ")}.</> });
+    items.push({
+      tone: "ok", text: <>You have <strong>{toursScheduled.length}</strong> {toursScheduled.length === 1 ? "tour" : "tours"} on the calendar — {toursScheduled.map((p) => p.name).join(", ")}.</>,
+      speechEn: `You have ${toursScheduled.length} ${toursScheduled.length === 1 ? "tour" : "tours"} on the calendar — ${toursScheduled.map((p) => p.name).join(", ")}.`,
+      speechEs: `Tiene ${toursScheduled.length} ${toursScheduled.length === 1 ? "recorrido" : "recorridos"} en el calendario — ${toursScheduled.map((p) => p.name).join(", ")}.`,
+    });
   }
   if (unreadThreads.length > 0) {
-    items.push({ tone: "msg", text: <><strong>{unreadThreads.length}</strong> unread {unreadThreads.length === 1 ? "message" : "messages"} from families.</> });
+    items.push({
+      tone: "msg", text: <><strong>{unreadThreads.length}</strong> unread {unreadThreads.length === 1 ? "message" : "messages"} from families.</>,
+      speechEn: `${unreadThreads.length} unread ${unreadThreads.length === 1 ? "message" : "messages"} from families.`,
+      speechEs: `${unreadThreads.length} ${unreadThreads.length === 1 ? "mensaje sin leer" : "mensajes sin leer"} de familias.`,
+    });
   }
   if (missingCerts.length > 0) {
-    items.push({ tone: "warn", text: <><strong>{missingCerts.map((s) => s.name).join(", ")}</strong> {missingCerts.length === 1 ? "has" : "have"} a certification on file that still needs to be completed.</> });
+    items.push({
+      tone: "warn", text: <><strong>{missingCerts.map((s) => s.name).join(", ")}</strong> {missingCerts.length === 1 ? "has" : "have"} a certification on file that still needs to be completed.</>,
+      speechEn: `${missingCerts.map((s) => s.name).join(", ")} ${missingCerts.length === 1 ? "has" : "have"} a certification on file that still needs to be completed.`,
+      speechEs: `${missingCerts.map((s) => s.name).join(", ")} ${missingCerts.length === 1 ? "tiene" : "tienen"} una certificación pendiente de completar.`,
+    });
   }
   if (items.length === 0) {
-    items.push({ tone: "ok", text: isEmpty ? "No families enrolled yet — once they join, your daily rundown will show up here." : "Nothing urgent today — a good day to get ahead on paperwork." });
+    const okEn = isEmpty ? "No families enrolled yet — once they join, your daily rundown will show up here." : "Nothing urgent today — a good day to get ahead on paperwork.";
+    const okEs = isEmpty ? "Aún no hay familias inscritas — cuando se unan, su resumen diario aparecerá aquí." : "Nada urgente hoy — un buen día para adelantar papeleo.";
+    items.push({ tone: "ok", text: okEn, speechEn: okEn, speechEs: okEs });
   }
+  // Urgency first: anything needing action (warn), then messages, then good-news items.
+  const urgencyRank = { warn: 0, msg: 1, ok: 2 };
+  items.sort((a, b) => urgencyRank[a.tone] - urgencyRank[b.tone]);
+
+  // Text-to-speech mockup — English and Spanish only, matching the provider's
+  // dashboard language when it's one of those two; real speech synthesis via
+  // the browser, no backend needed.
+  const speechLang = language === "Español" ? "es" : "en";
+  const [speaking, setSpeaking] = useState(false);
+  const speakBriefing = () => {
+    if (!window.speechSynthesis) return;
+    if (speaking) { window.speechSynthesis.cancel(); setSpeaking(false); return; }
+    const isEs = speechLang === "es";
+    const greeting = isEs ? `${greetWordEs}, ${firstName}.` : `${greetWord}, ${firstName}.`;
+    const body = items.map((it) => (isEs ? it.speechEs : it.speechEn)).join(" ");
+    const utterance = new SpeechSynthesisUtterance(`${greeting} ${body}`);
+    utterance.lang = isEs ? "es-ES" : "en-US";
+    utterance.rate = 0.98;
+    utterance.onend = () => setSpeaking(false);
+    utterance.onerror = () => setSpeaking(false);
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+    setSpeaking(true);
+  };
+  const ttsSupported = typeof window !== "undefined" && !!window.speechSynthesis;
+  const ttsLanguageOk = language === "English" || language === "Español" || !language;
 
   const toneColor = { ok: C.teal, warn: C.amber, msg: C.sky };
 
@@ -2358,56 +2420,73 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
       fontFamily: "'Work Sans', sans-serif",
     }}>
       <style>{FONTS}</style>
-      <div style={{ width: "100%", maxWidth: 540 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 22 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <AlagaMark size={28} color={C.tealDark} arch backdrop={false} />
-            <div style={{ fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: C.teal, fontWeight: 600 }}>alaga · provider workspace</div>
+      <div style={{ width: "100%", maxWidth: 760 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 32 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <AlagaMark size={44} color={C.tealDark} arch backdrop={false} />
+            <div style={{ fontSize: 13, letterSpacing: "0.08em", textTransform: "uppercase", color: C.teal, fontWeight: 700 }}>alaga · provider workspace</div>
           </div>
+          {ttsSupported && ttsLanguageOk && (
+            <button onClick={speakBriefing} title={speaking ? "Stop reading" : "Listen to today's briefing"} style={{
+              display: "flex", alignItems: "center", gap: 7, padding: "8px 14px", borderRadius: 999,
+              border: `1px solid ${speaking ? C.teal : C.line}`, background: speaking ? C.tealTint : "#fff",
+              color: speaking ? C.tealDark : C.inkSoft, fontSize: 12.5, fontWeight: 700, flexShrink: 0,
+            }}>
+              {speaking ? <><Square size={12} fill={C.tealDark} /> Stop</> : <><Volume2 size={14} /> {speechLang === "es" ? "Escuchar" : "Listen"}</>}
+            </button>
+          )}
+          {ttsSupported && !ttsLanguageOk && (
+            <div title="Text-to-speech is available in English and Spanish only" style={{
+              display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 999,
+              border: `1px solid ${C.line}`, color: C.inkSoft, fontSize: 11.5, fontWeight: 600, flexShrink: 0,
+            }}>
+              <Volume2 size={13} /> EN / ES only
+            </div>
+          )}
         </div>
 
-        <div style={{ fontFamily: "'Fraunces', serif", fontOpticalSizing: "auto", fontWeight: 500, fontSize: 34, lineHeight: 1.18, color: C.ink, marginBottom: 6 }}>
+        <div style={{ fontFamily: "'Fraunces', serif", fontOpticalSizing: "auto", fontWeight: 500, fontSize: 46, lineHeight: 1.15, color: C.ink, marginBottom: 8 }}>
           {greetWord}, {firstName}
         </div>
-        <div style={{ fontSize: 13.5, color: C.inkSoft, marginBottom: 26 }}>
+        <div style={{ fontSize: 15, color: C.inkSoft, marginBottom: 32 }}>
           {dateLabel} · {providerInfo.name}{providerInfo.city ? `, ${providerInfo.city}` : ""}
         </div>
 
-        <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 22, padding: "14px 16px", background: C.tealTint, borderRadius: 14 }}>
-          <Sparkles size={16} color={C.teal} style={{ flexShrink: 0, marginTop: 3 }} />
-          <div>
-            <div style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", color: C.teal, marginBottom: 3 }}>This week: {theme.word}</div>
-            <p style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 15, lineHeight: 1.45, color: C.tealDark }}>{theme.line}</p>
-          </div>
-        </div>
-
-        <div style={{ position: "relative", borderRadius: 14, overflow: "hidden", marginBottom: 16, border: `1px solid ${C.line}`, background: C.paper }}>
-          <div style={{ padding: "10px 16px", fontSize: 11, fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", color: C.inkSoft, borderBottom: `1px solid ${C.line}` }}>
-            Today, at a glance
+        <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", marginBottom: 22, border: `1px solid ${C.line}`, background: C.paper }}>
+          <div style={{ padding: "13px 20px", fontSize: 12, fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", color: C.inkSoft, borderBottom: `1px solid ${C.line}` }}>
+            Today, at a glance — most urgent first
           </div>
           <div>
             {items.map((it, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "12px 16px", borderBottom: i < items.length - 1 ? `1px solid ${C.line}` : "none" }}>
+              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "16px 20px", borderBottom: i < items.length - 1 ? `1px solid ${C.line}` : "none" }}>
                 <Dot c={toneColor[it.tone]} />
-                <div style={{ fontSize: 13.5, color: C.ink, lineHeight: 1.45 }}>{it.text}</div>
+                <div style={{ fontSize: 15, color: C.ink, lineHeight: 1.5 }}>{it.text}</div>
               </div>
             ))}
           </div>
         </div>
 
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 22, padding: "16px 20px", background: C.tealTint, borderRadius: 16 }}>
+          <Sparkles size={18} color={C.teal} style={{ flexShrink: 0, marginTop: 3 }} />
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", color: C.teal, marginBottom: 4 }}>This week: {theme.word}</div>
+            <p style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 16.5, lineHeight: 1.5, color: C.tealDark }}>{theme.line}</p>
+          </div>
+        </div>
+
         <button onClick={onEnter} style={{
           width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-          padding: "13px 20px", borderRadius: 11, border: "none", background: C.tealDark, color: "#fff",
-          fontWeight: 700, fontSize: 14.5, marginBottom: 10,
+          padding: "15px 20px", borderRadius: 12, border: "none", background: C.tealDark, color: "#fff",
+          fontWeight: 700, fontSize: 15.5, marginBottom: 10,
         }}>
-          Step into the day <ArrowRight size={15} />
+          Step into the day <ArrowRight size={16} />
         </button>
       </div>
     </div>
   );
 }
 
-function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData, onExitToLanding }) {
+function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData, onExitToLanding, forceTier, meetingMode = false }) {
   const sfx = isEmpty ? "-empty" : "";
   const [providerInfo, saveProviderInfo] = usePersistentState(`provider-profile${sfx}`, {
     name: initialProviderInfo.name, city: initialProviderInfo.city, lic: initialProviderInfo.lic,
@@ -2468,7 +2547,8 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const [overrides, setOverrides] = useState({});
   const [loaded, setLoaded] = useState(false);
   const [language, setLanguage] = useState(onboardingData?.language || "English");
-  const [tier, saveTier] = usePersistentState("platform-tier", "extended");
+  const [tier, saveTier] = usePersistentState(forceTier ? `platform-tier-demo-${forceTier}` : "platform-tier", forceTier || "simple");
+  const tierLocked = !!forceTier;
   const [billing, saveBilling] = usePersistentState("plan-billing", { cycle: "monthly", status: "active", canceledAt: null });
   const [payrollSettings, savePayrollSettings] = usePersistentState(`payroll-settings${sfx}`, { frequency: "Biweekly", nextPayDate: "08/07/2026", providerConnected: false, providerName: "" });
   const [flexCareRequests, saveFlexCare] = usePersistentState(`flex-care${sfx}`, isEmpty ? [] : FLEX_CARE_DEFAULT);
@@ -2616,6 +2696,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
           flexCareRequests={flexCareRequests}
           dismissedNotices={dismissedNotices}
           isEmpty={isEmpty}
+          language={language}
           onEnter={() => setShowBriefing(false)}
         />
       </LanguageContext.Provider>
@@ -2634,26 +2715,26 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
 
       {mode === "provider" ? (
         <>
-          <Sidebar screen={screen} setScreen={setScreen} mode={mode} setMode={setMode} provider={providerInfo} onExitToLanding={onExitToLanding} isEmpty={isEmpty} navItems={navItems} tier={tier} saveTier={saveTier} />
+          <Sidebar screen={screen} setScreen={setScreen} mode={mode} setMode={setMode} provider={providerInfo} onExitToLanding={onExitToLanding} isEmpty={isEmpty} navItems={navItems} tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} />
           <main style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
             <Topbar screen={screen} setScreen={setScreen} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} />
             <div style={{ flex: 1, overflowY: "auto", padding: "28px 32px 60px" }}>
-              {screen === "dashboard" && <Dashboard setScreen={setScreen} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} />}
+              {screen === "dashboard" && <Dashboard setScreen={setScreen} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
               {screen === "families" && <Families families={families} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} />}
               {screen === "bookings" && <Bookings families={families} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
               {screen === "staff" && <StaffScreen staff={staff} families={families} updateStaffMember={updateStaffMember} addStaffMember={addStaffMember} removeStaffMember={removeStaffMember} />}
               {screen === "calendar" && <CalendarScreen schedule={weeklySchedule} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} />}
               {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} />}
-              {screen === "subsidy" && <Subsidy families={families} openFamId={openFamId} setOpenFamId={setOpenFamId} loaded={loaded} />}
-              {screen === "payments" && <Finances families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={setScreen} />}
+              {screen === "subsidy" && <Subsidy families={families} openFamId={openFamId} setOpenFamId={setOpenFamId} loaded={loaded} meetingMode={meetingMode} />}
+              {screen === "payments" && <Finances families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} />}
               {screen === "compliance" && <Compliance docs={compDocs} onSave={saveCompDoc} families={families} provider={providerInfo} staff={staff} setScreen={setScreen} />}
               {screen === "security" && <SecurityScreen accessLog={accessLog} isEmpty={isEmpty} />}
               {screen === "messages" && <Messages threads={threads} saveThreads={saveThreads} families={families} staff={staff} />}
               {screen === "analytics" && <Analytics families={families} expenses={expenses} prospects={prospects} staff={staff} alumni={alumni} addDeparture={addDeparture} refunds={refunds} />}
               {screen === "growth" && <GrowthScreen families={families} prospects={prospects} weeklySchedule={weeklySchedule} growth={growth} saveGrowth={saveGrowth} provider={providerInfo} staff={staff} />}
               {screen === "support" && <SupportScreen />}
-              {screen === "settings" && <SettingsScreen language={language} setLanguage={setLanguage} a11y={a11y} saveA11y={saveA11y} tier={tier} saveTier={saveTier} billing={billing} saveBilling={saveBilling} families={families} staff={staff} expenses={expenses} compDocs={compDocs} provider={providerInfo} saveProviderInfo={saveProviderInfo} refunds={refunds} />}
+              {screen === "settings" && <SettingsScreen language={language} setLanguage={setLanguage} a11y={a11y} saveA11y={saveA11y} tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} billing={billing} saveBilling={saveBilling} families={families} staff={staff} expenses={expenses} compDocs={compDocs} provider={providerInfo} saveProviderInfo={saveProviderInfo} refunds={refunds} />}
             </div>
           </main>
           {screen === "subsidy" && openFam && (
@@ -2671,6 +2752,8 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
 export default function AlagaMockup() {
   const [entry, setEntry] = useState("landing"); // "landing" | "wizard" | "workspace" | "admin"
   const [isEmptyWorkspace, setIsEmptyWorkspace] = useState(false);
+  const [forcedTier, setForcedTier] = useState(null);
+  const [meetingMode, setMeetingMode] = useState(false);
   const [providerInfo, setProviderInfo] = useState(PROVIDER);
   const [onboardingData, setOnboardingData] = useState(null);
 
@@ -2705,7 +2788,7 @@ export default function AlagaMockup() {
 
   if (entry === "landing") {
     return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><LandingChooser
-      onDemo={() => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setEntry("workspace"); }}
+      onDemo={(demoTier, isMeeting) => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier(demoTier); setMeetingMode(!!isMeeting); setEntry("workspace"); }}
       onSignUp={() => setEntry("wizard")}
       onAdmin={() => setEntry("admin")}
       onSignIn={() => setEntry("auth")}
@@ -2716,7 +2799,7 @@ export default function AlagaMockup() {
     // a successful login drops into the same populated demo workspace as "Explore the
     // demo" — the account itself is real, the data behind it isn't wired up yet.
     return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><LoginScreen
-      onAuthenticated={() => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setEntry("workspace"); }}
+      onAuthenticated={() => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier(null); setMeetingMode(false); setEntry("workspace"); }}
       onBack={() => setEntry("landing")}
     /></LanguageContext.Provider>;
   }
@@ -2725,15 +2808,15 @@ export default function AlagaMockup() {
   }
   if (entry === "wizard") {
     return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><OnboardingWizard
-      onComplete={(info) => { setProviderInfo(info); setOnboardingData(info); registerWithAdmin(info); setIsEmptyWorkspace(true); setEntry("workspace"); }}
+      onComplete={(info) => { setProviderInfo(info); setOnboardingData(info); registerWithAdmin(info); setIsEmptyWorkspace(true); setForcedTier(null); setMeetingMode(false); setEntry("workspace"); }}
       onBack={() => setEntry("landing")}
     /></LanguageContext.Provider>;
   }
-  return <Workspace isEmpty={isEmptyWorkspace} providerInfo={providerInfo} onboardingData={onboardingData} onExitToLanding={() => setEntry("landing")} />;
+  return <Workspace isEmpty={isEmptyWorkspace} providerInfo={providerInfo} onboardingData={onboardingData} onExitToLanding={() => setEntry("landing")} forceTier={forcedTier} meetingMode={meetingMode} />;
 }
 
 /* --------------------------------- sidebar ------------------------------------ */
-function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, isEmpty, navItems, tier, saveTier }) {
+function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, isEmpty, navItems, tier, saveTier, tierLocked, meetingMode = false }) {
   const t = useT();
   return (
     <aside style={{
@@ -2758,14 +2841,23 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
         </div>
       </div>
 
-      <div style={{ display: "flex", background: "rgba(255,255,255,0.08)", borderRadius: 9, padding: 3, margin: "0 0 14px" }}>
-        {["simple", "extended"].map((tv) => (
-          <button key={tv} onClick={() => saveTier(tv)} style={{
-            flex: 1, padding: "7px 0", borderRadius: 7, border: "none", fontSize: 11.5, fontWeight: 700,
-            background: tier === tv ? "#fff" : "transparent", color: tier === tv ? C.tealDark : "#CBDAD2",
-          }}>{tv === "simple" ? t("Simple") : t("Extended")}</button>
-        ))}
-      </div>
+      {tierLocked ? (
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0",
+          borderRadius: 9, background: "rgba(255,255,255,0.08)", margin: "0 0 14px", fontSize: 11.5, fontWeight: 700, color: "#EFEAE0",
+        }}>
+          {meetingMode ? <><Lock size={11} /> {t("Meeting-safe demo")}</> : (tier === "extended" ? t("Extended plan demo") : t("Simple plan demo"))}
+        </div>
+      ) : (
+        <div style={{ display: "flex", background: "rgba(255,255,255,0.08)", borderRadius: 9, padding: 3, margin: "0 0 14px" }}>
+          {["simple", "extended"].map((tv) => (
+            <button key={tv} onClick={() => saveTier(tv)} style={{
+              flex: 1, padding: "7px 0", borderRadius: 7, border: "none", fontSize: 11.5, fontWeight: 700,
+              background: tier === tv ? "#fff" : "transparent", color: tier === tv ? C.tealDark : "#CBDAD2",
+            }}>{tv === "simple" ? t("Simple") : t("Extended")}</button>
+          ))}
+        </div>
+      )}
 
       {isEmpty && (
         <div style={{ margin: "0 10px 14px", padding: "8px 10px", borderRadius: 9, background: "rgba(224,169,80,0.18)", border: "1px solid rgba(224,169,80,0.35)" }}>
@@ -2793,13 +2885,6 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
       </nav>
 
       <div style={{ marginTop: "auto", paddingTop: 14, borderTop: "1px solid rgba(255,255,255,0.12)" }}>
-        <button onClick={() => setMode("parent")} style={{
-          width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
-          padding: "9px 0", borderRadius: 9, border: "1px solid rgba(255,255,255,0.18)", background: "transparent",
-          color: "#CBDAD2", fontSize: 12.5, fontWeight: 600, marginBottom: 10,
-        }}>
-          <Users size={13} /> {t("View as parent")}
-        </button>
         <div style={{ fontSize: 12 }}>
           <div style={{ fontWeight: 600, color: "#fff" }}>{provider.name}</div>
           <div style={{ color: "#9DB5AA", marginTop: 2 }}>{provider.city}</div>
@@ -2918,7 +3003,7 @@ function computeSetupItems({ providerInfo, weeklySchedule, staff, families, pros
   ];
 }
 
-function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNotices, saveDismissedNotices, tuitionRates, saveTuitionRates, weeklySchedule, staff, prospects, compDocs, providerInfo, flexCareRequests, saveFlexCare, goToSubsidyFamily, goToFlexRequest }) {
+function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNotices, saveDismissedNotices, tuitionRates, saveTuitionRates, weeklySchedule, staff, prospects, compDocs, providerInfo, flexCareRequests, saveFlexCare, goToSubsidyFamily, goToFlexRequest, meetingMode = false }) {
   const t = useT();
   const [newTask, setNewTask] = useState("");
   const [collapsed, setCollapsed] = useState({});
@@ -3186,9 +3271,9 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
                   </>
                 ) : (
                   <>
-                    <span style={{ fontSize: 13 }}>{money(rates[c.id].fullTime)}</span>
-                    <span style={{ fontSize: 13 }}>{money(rates[c.id].partTime)}</span>
-                    <span style={{ fontSize: 13 }}>{money(rates[c.id].hourly)}{t("/hr")}</span>
+                    <span style={{ fontSize: 13 }}>{meetingMode ? <Redacted /> : money(rates[c.id].fullTime)}</span>
+                    <span style={{ fontSize: 13 }}>{meetingMode ? <Redacted /> : money(rates[c.id].partTime)}</span>
+                    <span style={{ fontSize: 13 }}>{meetingMode ? <Redacted /> : <>{money(rates[c.id].hourly)}{t("/hr")}</>}</span>
                   </>
                 )}
               </div>
@@ -3212,7 +3297,7 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
                   </div>
                 ) : (
                   <div style={{ fontSize: 12.5, color: C.inkSoft }}>
-                    {siblingDiscount.type === "percent" ? `${siblingDiscount.value}% ${t("off")}` : `${money(siblingDiscount.value)} ${t("off")}`} · {t("applied to the 2nd child onward in a household")}
+                    {meetingMode ? <Redacted width={110} /> : <>{siblingDiscount.type === "percent" ? `${siblingDiscount.value}% ${t("off")}` : `${money(siblingDiscount.value)} ${t("off")}`} · {t("applied to the 2nd child onward in a household")}</>}
                   </div>
                 )
               )}
@@ -3702,7 +3787,30 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess }) {
             )}
           </Section>
 
-          <Section title={t("Enrollment documents")} icon={FileText}>
+          <Section title={t("Enrollment documents")} icon={FileText}
+            right={
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={() => downloadCSV(`alaga-enrollment-checklist-${child.child.replace(/\s+/g, "-").toLowerCase()}.csv`,
+                  ["Document", "Status", "File", "Date"],
+                  docs.map((d) => [CHILD_DOC_TEMPLATES.find((tpl) => tpl.id === d.id).name, trForm(t, d.status).label, d.fileName || "", d.date || ""]))}
+                  style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 11.5, fontWeight: 700 }}>
+                  <Download size={12} /> {t("Checklist")}
+                </button>
+                <button onClick={() => {
+                  const missing = docs.filter((d) => d.status !== "submitted").map((d) => CHILD_DOC_TEMPLATES.find((tpl) => tpl.id === d.id).name);
+                  const subject = encodeURIComponent(`Enrollment documents for ${child.child}`);
+                  const body = encodeURIComponent(
+                    `Hi,\n\nHere's where things stand on ${child.child}'s enrollment paperwork:\n\n` +
+                    docs.map((d) => `- ${CHILD_DOC_TEMPLATES.find((tpl) => tpl.id === d.id).name}: ${trForm(t, d.status).label}`).join("\n") +
+                    (missing.length ? `\n\nStill needed: ${missing.join(", ")}.` : "\n\nEverything is on file — thank you!") +
+                    `\n\nPlease reply to this email with any outstanding documents attached.\n\nThank you,\n${provider?.name || ""}`
+                  );
+                  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+                }} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 11.5, fontWeight: 700 }}>
+                  <Send size={12} /> {t("Email packet")}
+                </button>
+              </div>
+            }>
             <input ref={docFileInputRef} type="file" accept="image/*,.pdf,.doc,.docx" onChange={handleDocFilePicked} style={{ display: "none" }} />
             {docs.map((d) => {
               const meta = trForm(t, d.status);
@@ -3737,7 +3845,7 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess }) {
                         <div style={{ fontSize: 11.5, fontWeight: 600, textAlign: "center", maxWidth: 220 }}>{d.fileName || name}</div>
                       </div>
                       <div style={{ display: "flex", gap: 8 }}>
-                        {d.status === "submitted" && <IconBtn icon={Download} title={t("Download")} />}
+                        {d.status === "submitted" && <IconBtn icon={Download} title={t("Download")} onClick={() => downloadCSV(`${(d.fileName || name).replace(/\s+/g, "-").toLowerCase()}-record.csv`, ["Document", "Status", "File on record", "Date"], [[name, trForm(t, d.status).label, d.fileName || "", d.date || ""]])} />}
                         <IconBtn icon={Upload} title={t("Replace file")} onClick={() => triggerDocUpload(d.id)} />
                       </div>
                     </div>
@@ -4789,13 +4897,13 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
 }
 
 /* --------------------------------- payments ------------------------------------ */
-function Finances({ families, expenses, saveExpenses, reminderSettings, saveReminderSettings, staff, tier, payrollSettings, savePayrollSettings, onSave, refunds, saveRefunds, flexCareRequests, tuitionRates, setScreen }) {
+function Finances({ families, expenses, saveExpenses, reminderSettings, saveReminderSettings, staff, tier, payrollSettings, savePayrollSettings, onSave, refunds, saveRefunds, flexCareRequests, tuitionRates, setScreen, providerInfo, meetingMode = false }) {
   const t = useT();
   const [tab, setTab] = useState("tuition");
   const [expandedPayment, setExpandedPayment] = useState(null);
   const [remindersOpen, setRemindersOpen] = useState(false);
   const isSimple = tier === "simple";
-  const TABS = isSimple ? [["tuition", "Tuition & Subsidies"], ["refunds", "Refunds"]] : [["tuition", "Tuition & Subsidies"], ["refunds", "Refunds"], ["payroll", "Payroll"], ["business", "Business Expenses"]];
+  const TABS = isSimple ? [["tuition", "Tuition & Subsidies"], ["receipts", "Receipts"], ["refunds", "Refunds"]] : [["tuition", "Tuition & Subsidies"], ["receipts", "Receipts"], ["refunds", "Refunds"], ["payroll", "Payroll"], ["business", "Business Expenses"]];
   const splitFamilies = families.filter((f) => f.copaySplit);
   const subsidyTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + (f.coverageBasis === "monthly" ? f.coverageAmount : 0), 0);
   const copayTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + f.copay, 0);
@@ -4840,8 +4948,8 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
       {tab === "tuition" ? (
         <>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
-            <Kpi label={t("Subsidy reimbursement / mo")} value={money(subsidyTotal)} sub={t("from agencies")} accent={C.teal} />
-            <Kpi label={t("Private tuition / mo")} value={money(privateTotal)} sub={t("autopay")} />
+            <Kpi label={t("Subsidy reimbursement / mo")} value={meetingMode ? "••••" : money(subsidyTotal)} sub={t("from agencies")} accent={C.teal} />
+            <Kpi label={t("Private tuition / mo")} value={meetingMode ? "••••" : money(privateTotal)} sub={t("autopay")} />
             <Kpi label={t("Split-pay families")} value={String(splitFamilies.length)} sub={t("payment divided between guardians")} accent={C.sky} />
             <Kpi label={t("Unpaid this period")} value={String(unpaidCount)} sub={t("tap a family below to update")} accent={unpaidCount > 0 ? C.amber : C.teal} />
           </div>
@@ -4862,7 +4970,7 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                         {!f.subsidized && <Pill label={t("Private pay")} fg={C.sky} bg={C.skyTint} />}
                       </div>
                       <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                        <span style={{ fontSize: 12.5, color: C.inkSoft }}>{amountLabel}</span>
+                        <span style={{ fontSize: 12.5, color: C.inkSoft }}>{meetingMode ? "••••" : amountLabel}</span>
                         {f.copay > 0 && <Pill label={received ? t("Paid") : t("Unpaid")} fg={received ? C.teal : C.amber} bg={received ? C.tealTint : C.amberTint} />}
                         <ChevronRight size={14} color={C.inkSoft} style={{ transform: isOpen ? "rotate(90deg)" : "none", transition: "transform 0.15s" }} />
                       </div>
@@ -4871,7 +4979,7 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                   {isOpen && (
                     <div style={{ padding: "0 18px 14px 40px", borderBottom: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 10 }}>
                       <div style={{ fontSize: 12, color: C.inkSoft }}>
-                        {f.subsidized ? `${money(f.coverageAmount)} ${t("subsidy +")} ${money(f.copay)} ${t("copay")}` : `${money(f.copay)} ${t("private tuition")}`}
+                        {meetingMode ? "•••• — hidden in meeting-safe mode" : (f.subsidized ? `${money(f.coverageAmount)} ${t("subsidy +")} ${money(f.copay)} ${t("copay")}` : `${money(f.copay)} ${t("private tuition")}`)}
                       </div>
                       {f.copaySplit && (
                         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
@@ -4917,12 +5025,38 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
               </div>
             ) : (
               <>
+                {reminderSettings.enabled && (
+                  <Row left={<b style={{ fontSize: 13 }}>{t("Send reminder")}</b>}
+                    right={
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <input type="number" min={1} max={30} value={reminderSettings.daysBefore}
+                          onChange={(e) => saveReminderSettings({ ...reminderSettings, daysBefore: Math.max(1, Number(e.target.value) || 1) })}
+                          style={{ width: 48, textAlign: "center", border: `1px solid ${C.line}`, borderRadius: 7, padding: "6px 4px", fontSize: 12.5, fontFamily: "inherit" }} />
+                        <span style={{ fontSize: 12.5, color: C.inkSoft }}>{t("days before due date")}</span>
+                      </div>
+                    } />
+                )}
                 <Row left={<b style={{ fontSize: 13 }}>{t("Late fee on overdue balances")}</b>}
                   right={<ToggleSwitch on={reminderSettings.lateFeeEnabled} onClick={() => saveReminderSettings({ ...reminderSettings, lateFeeEnabled: !reminderSettings.lateFeeEnabled })} />} />
                 {reminderSettings.lateFeeEnabled && (
                   <div style={{ padding: "10px 18px", display: "flex", alignItems: "center", gap: 10 }}>
                     <span style={{ fontSize: 12.5, color: C.inkSoft }}>{t("Fee amount")}</span>
                     <MoneyInput value={reminderSettings.lateFeeAmount} onChange={(v) => saveReminderSettings({ ...reminderSettings, lateFeeAmount: v })} suffix={t("after due date")} icon={DollarSign} />
+                  </div>
+                )}
+                {reminderSettings.enabled && (
+                  <div style={{ padding: "12px 18px", borderTop: `1px solid ${C.line}` }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: C.inkSoft, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 8 }}>{t("What families receive")}</div>
+                    <div style={{ background: C.cream, border: `1px solid ${C.line}`, borderRadius: 10, padding: "12px 14px", fontSize: 12.5, lineHeight: 1.6 }}>
+                      <div style={{ fontWeight: 700, marginBottom: 4 }}>{t("Subject")}: {t("Tuition reminder")} — {providerInfo?.name || t("your provider")}</div>
+                      <div style={{ color: C.inkSoft }}>
+                        {t("Hi [family name], this is a reminder that")} [{t("amount due")}] {t("is due on")} [{t("due date")}]. {t("Thanks for your continued partnership!")}
+                      </div>
+                    </div>
+                    <div style={{ marginTop: 8, fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "flex-start", gap: 6 }}>
+                      <Info size={11} style={{ marginTop: 1, flexShrink: 0 }} />
+                      {t("This is a preview — automatic sending and a delivery log require email/SMS to be connected on the backend, which isn't wired up in this demo yet.")}
+                    </div>
                   </div>
                 )}
                 {reminderSettings.enabled && (
@@ -4942,6 +5076,41 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
             )}
           </Card>
         </>
+      ) : tab === "receipts" ? (
+        <Card title={t("Tuition receipts by child")} icon={FileText} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("For families' FSA / HSA reimbursement")}</span>}>
+          {families.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No families enrolled yet.")}</div>}
+          {families.map((f) => {
+            const months = ["May 2026", "June 2026", "July 2026"];
+            const amount = f.copay;
+            const dl = (month) => downloadCSV(`alaga-receipt-${f.child.replace(/\s+/g, "-").toLowerCase()}-${month.replace(" ", "-")}.csv`,
+              ["Provider", "Child", "Service period", "Amount paid", "Purpose"],
+              [[providerInfo?.name || "", f.child, month, amount.toFixed(2), "Childcare tuition / copay — for FSA or HSA reimbursement submission"]]);
+            const dlYear = () => downloadCSV(`alaga-annual-summary-${f.child.replace(/\s+/g, "-").toLowerCase()}.csv`,
+              ["Provider", "Child", "Month", "Amount paid"], months.map((m) => [providerInfo?.name || "", f.child, m, amount.toFixed(2)]));
+            return (
+              <div key={f.id} style={{ padding: "12px 18px", borderBottom: `1px solid ${C.line}` }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <Dot c={f.color} /><b style={{ fontSize: 13.5 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>· {f.householdName}</span>
+                  </div>
+                  <button onClick={dlYear} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>
+                    <Download size={12} /> {t("Annual summary")}
+                  </button>
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {months.map((m) => (
+                    <button key={m} onClick={() => dl(m)} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: C.tealDark, background: C.tealTint, border: "none", borderRadius: 8, padding: "7px 11px" }}>
+                      <Download size={12} /> {m}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+          <div style={{ padding: "10px 18px", fontSize: 10.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
+            <Info size={10} /> {t("These same receipts are also available to each family in their own parent view.")}
+          </div>
+        </Card>
       ) : tab === "refunds" ? (
         <RefundsCard families={families} refunds={refunds} saveRefunds={saveRefunds} onExport={exportRefunds} />
       ) : tab === "payroll" ? (
@@ -6367,7 +6536,7 @@ function TicketDrawer({ ticket, onClose, onToggleStatus, onReply }) {
   );
 }
 
-function PlanBilling({ tier, saveTier, billing, saveBilling, families, staff, expenses, compDocs, provider, refunds }) {
+function PlanBilling({ tier, saveTier, tierLocked, meetingMode, billing, saveBilling, families, staff, expenses, compDocs, provider, refunds }) {
   const t = useT();
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [exported, setExported] = useState(false);
@@ -6435,6 +6604,13 @@ function PlanBilling({ tier, saveTier, billing, saveBilling, families, staff, ex
           ))}
         </div>
 
+        {tierLocked && (
+          <div style={{ fontSize: 11.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6, background: C.cream, borderRadius: 9, padding: "9px 12px" }}>
+            <Info size={12} /> {meetingMode
+              ? t("This is a meeting-safe demo — proprietary rate and payout figures are hidden, and the plan is locked to Simple for this session.")
+              : <>{t("This is a dedicated")} {tier === "extended" ? t("Extended") : t("Simple")} {t("plan demo — go back to the welcome screen to explore the other plan.")}</>}
+          </div>
+        )}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
           {["simple", "extended"].map((planId) => {
             const isCurrent = tier === planId && !canceled;
@@ -6452,7 +6628,7 @@ function PlanBilling({ tier, saveTier, billing, saveBilling, families, staff, ex
                 <div style={{ fontSize: 11.5, color: C.inkSoft, lineHeight: 1.5 }}>
                   {planId === "simple" ? t("Core day-to-day operations, without the extras.") : t("Everything in Simple, plus staff, growth, and analytics.")}
                 </div>
-                {!isCurrent && (
+                {!isCurrent && !tierLocked && (
                   <button onClick={() => changeTier(planId)} style={{
                     marginTop: "auto", padding: "9px 0", borderRadius: 9, border: "none", fontWeight: 700, fontSize: 12.5,
                     background: isUpgrade ? C.teal : C.cream, color: isUpgrade ? "#fff" : C.ink,
@@ -6466,7 +6642,14 @@ function PlanBilling({ tier, saveTier, billing, saveBilling, families, staff, ex
         </div>
 
         <div>
-          <div style={{ fontSize: 11.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 8 }}>{t("Feature comparison")}</div>
+          <button onClick={() => setComparisonOpen(!comparisonOpen)} style={{
+            width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+            background: "none", border: "none", padding: 0, marginBottom: 8, cursor: "pointer",
+          }}>
+            <div style={{ fontSize: 11.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Feature comparison")}</div>
+            <ChevronDown size={15} color={C.inkSoft} style={{ transform: comparisonOpen ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />
+          </button>
+          {comparisonOpen && (
           <div style={{ border: `1px solid ${C.line}`, borderRadius: 10, overflow: "hidden" }}>
             <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", padding: "8px 12px", background: C.cream, fontSize: 10.5, fontWeight: 700, color: C.inkSoft, textTransform: "uppercase" }}>
               <span></span><span style={{ textAlign: "center" }}>{t("Simple")}</span><span style={{ textAlign: "center" }}>{t("Extended")}</span>
@@ -6479,6 +6662,7 @@ function PlanBilling({ tier, saveTier, billing, saveBilling, families, staff, ex
               </div>
             ))}
           </div>
+          )}
         </div>
 
         <div style={{ borderTop: `1px solid ${C.line}`, paddingTop: 14 }}>
@@ -6541,7 +6725,7 @@ function CCLDVerifyLink({ lic }) {
   );
 }
 
-function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier, billing, saveBilling, families, staff, expenses, compDocs, provider, saveProviderInfo, refunds }) {
+function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier, tierLocked, meetingMode, billing, saveBilling, families, staff, expenses, compDocs, provider, saveProviderInfo, refunds }) {
   const t = useT();
   const ALL_LANGS = ["English", "Español", "Tagalog", "中文", "Tiếng Việt", "한국어"];
   // Language is an accessibility need, not a premium feature — every language is
@@ -6553,6 +6737,7 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
   const toggle = (key) => saveA11y({ ...a11y, [key]: !a11y[key] });
   const [editingProfile, setEditingProfile] = useState(false);
   const [profile, setProfile] = useState(provider);
+  const [comparisonOpen, setComparisonOpen] = useState(false);
 
   const saveProfile = () => { saveProviderInfo(profile); setEditingProfile(false); };
 
@@ -6590,7 +6775,7 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
         )}
       </Card>
 
-      <PlanBilling tier={tier} saveTier={saveTier} billing={billing} saveBilling={saveBilling} families={families} staff={staff} expenses={expenses} compDocs={compDocs} provider={provider} refunds={refunds} />
+      <PlanBilling tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} billing={billing} saveBilling={saveBilling} families={families} staff={staff} expenses={expenses} compDocs={compDocs} provider={provider} refunds={refunds} />
 
       <Card title={t("Language")} icon={Languages} right={<span style={{ fontSize: 12, color: C.inkSoft }}>{t("Applies to your provider dashboard")}</span>}>
         {LANGS.map((l) => (
@@ -6639,7 +6824,7 @@ function ToggleSwitch({ on, onClick }) {
 /* ===================================================================
    SUBSIDY — main focus screen
    =================================================================== */
-function Subsidy({ families: allFamilies, openFamId, setOpenFamId, loaded }) {
+function Subsidy({ families: allFamilies, openFamId, setOpenFamId, loaded, meetingMode = false }) {
   const t = useT();
   const families = allFamilies.filter((f) => f.subsidized);
   const totalCoverage = families.reduce((s, f) => s + (f.coverageBasis === "monthly" ? f.coverageAmount : 0), 0);
@@ -6680,8 +6865,12 @@ function Subsidy({ families: allFamilies, openFamId, setOpenFamId, loaded }) {
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 18, flexShrink: 0 }}>
                 <div style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: 13, fontWeight: 600 }}>{money(f.coverageAmount)}<span style={{ fontWeight: 400, color: C.inkSoft }}>{t("/mo covered")}</span></div>
-                  <div style={{ fontSize: 11.5, color: C.inkSoft }}>{f.copay > 0 ? `${money(f.copay)} ${t("copay")}` : t("no copay")}</div>
+                  {meetingMode ? <Redacted width={90} /> : (
+                    <>
+                      <div style={{ fontSize: 13, fontWeight: 600 }}>{money(f.coverageAmount)}<span style={{ fontWeight: 400, color: C.inkSoft }}>{t("/mo covered")}</span></div>
+                      <div style={{ fontSize: 11.5, color: C.inkSoft }}>{f.copay > 0 ? `${money(f.copay)} ${t("copay")}` : t("no copay")}</div>
+                    </>
+                  )}
                 </div>
                 <div style={{ textAlign: "right", minWidth: 92 }}>
                   <Pill {...trStatus(t, f.status)} />
@@ -6991,6 +7180,18 @@ function RelationshipField({ value, onChange, style }) {
     </div>
   );
 }
+// Used in Meeting-safe demo mode to hide proprietary numbers (rate math, payout
+// calculations) while still showing the surrounding workflow and layout.
+function Redacted({ width = 64 }) {
+  return (
+    <span title="Hidden in meeting-safe mode" style={{
+      display: "inline-flex", alignItems: "center", gap: 4, background: "#EFEBE1", color: "#B7AF9C",
+      borderRadius: 6, padding: "2px 8px", fontSize: 11, fontWeight: 700, filter: "blur(0.3px)", width, justifyContent: "center",
+    }}>
+      <Lock size={10} /> ••••
+    </span>
+  );
+}
 function IconBtn({ icon: Icon, title, accent, onClick }) {
   return (
     <button title={title} onClick={onClick} style={{
@@ -7192,6 +7393,28 @@ function ParentApp({ families, onExit, status, setChildStatus, provider, onSave,
             </div>
           </div>
         )}
+
+        <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
+          <div style={{ padding: "13px 18px", borderBottom: `1px solid ${C.line}`, fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }}>
+            <FileText size={15} color={C.teal} /> {t("Enrollment documents")}
+          </div>
+          {defaultChildDocs(fam).map((d) => {
+            const meta = trForm(t, d.status);
+            const name = CHILD_DOC_TEMPLATES.find((tpl) => tpl.id === d.id).name;
+            return (
+              <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 18px", borderBottom: `1px solid ${C.line}` }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <meta.icon size={13} color={meta.color} />
+                  <span style={{ fontSize: 12.5 }}>{name}</span>
+                </div>
+                <span style={{ fontSize: 11, fontWeight: 700, color: meta.color }}>{meta.label}</span>
+              </div>
+            );
+          })}
+          <div style={{ padding: "10px 18px", fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
+            <Info size={11} /> {t("Missing something? Reply to your provider's enrollment email with the document attached.")}
+          </div>
+        </div>
 
         <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
           <div style={{ padding: "13px 18px", borderBottom: `1px solid ${C.line}`, fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }}>
