@@ -1335,14 +1335,71 @@ const T = {
   "Questions about eligibility or your benefit amount go to": { es: "Las preguntas sobre elegibilidad o el monto de su beneficio se dirigen a", tl: "Ang mga tanong tungkol sa eligibility o halaga ng benepisyo ay ipadala sa", zh: "关于资格或福利金额的问题请咨询", vi: "Thắc mắc về điều kiện hoặc số tiền trợ cấp xin liên hệ", ko: "자격 또는 지원 금액 관련 문의는" },
   "not your provider.": { es: ", no a su proveedor.", tl: ", hindi sa provider mo.", zh: ",而非您的托育服务商。", vi: ", không phải nhà cung cấp của bạn.", ko: "로 문의하세요 (제공자 문의 아님)." },
 };
-const EXPENSE_CATEGORIES = ["Materials & Supplies", "Play Equipment", "Toys & Learning", "Food & Snacks", "Maintenance & Repairs", "Other"];
+// Broad category -> precise subcategory, each subcategory carrying a typical reference
+// price so providers get a sanity-check while logging an expense. EXPENSE_CATEGORIES
+// stays a flat list of top-level labels for anything that only needs the broad view
+// (the Analytics category breakdown, for instance).
+const EXPENSE_TAXONOMY = [
+  { id: "cleaning", label: "Cleaning & Sanitizing", subcategories: [
+    { id: "clean-spray", label: "All-purpose spray / cleaner", refPrice: 4.5, unit: "bottle" },
+    { id: "clean-wipes", label: "Disinfecting wipes", refPrice: 5, unit: "container" },
+    { id: "clean-soap", label: "Hand soap & sanitizer", refPrice: 6, unit: "bottle" },
+    { id: "clean-bags", label: "Trash bags", refPrice: 9, unit: "box" },
+    { id: "clean-other", label: "Other cleaning supplies", refPrice: null, unit: null },
+  ]},
+  { id: "diapering", label: "Diapering & Hygiene", subcategories: [
+    { id: "diaper-diapers", label: "Diapers", refPrice: 28, unit: "box" },
+    { id: "diaper-wipes", label: "Baby wipes", refPrice: 4, unit: "pack" },
+    { id: "diaper-liners", label: "Changing table liners", refPrice: 12, unit: "roll" },
+    { id: "diaper-other", label: "Other hygiene supplies", refPrice: null, unit: null },
+  ]},
+  { id: "food", label: "Food & Snacks", subcategories: [
+    { id: "food-snacks", label: "Snacks", refPrice: 22, unit: "grocery run" },
+    { id: "food-drinks", label: "Drinks / juice", refPrice: 10, unit: "grocery run" },
+    { id: "food-meals", label: "Meal ingredients", refPrice: 45, unit: "grocery run" },
+    { id: "food-dishware", label: "Paper goods / disposable dishware", refPrice: 15, unit: "pack" },
+    { id: "food-other", label: "Other food supplies", refPrice: null, unit: null },
+  ]},
+  { id: "materials", label: "Materials & Art Supplies", subcategories: [
+    { id: "mat-art", label: "Paper & craft supplies", refPrice: 25, unit: "supply run" },
+    { id: "mat-office", label: "Printer / office supplies", refPrice: 18, unit: "supply run" },
+    { id: "mat-curriculum", label: "Curriculum materials", refPrice: 30, unit: "item" },
+    { id: "mat-other", label: "Other materials", refPrice: null, unit: null },
+  ]},
+  { id: "play", label: "Toys & Play Equipment", subcategories: [
+    { id: "play-indoor", label: "Indoor toys", refPrice: 20, unit: "item" },
+    { id: "play-outdoor", label: "Outdoor / playground equipment", refPrice: 85, unit: "item" },
+    { id: "play-books", label: "Books", refPrice: 12, unit: "item" },
+    { id: "play-other", label: "Other toys or equipment", refPrice: null, unit: null },
+  ]},
+  { id: "maintenance", label: "Maintenance & Repairs", subcategories: [
+    { id: "maint-plumbing", label: "Plumbing / electrical", refPrice: 120, unit: "repair" },
+    { id: "maint-appliance", label: "Appliance repair", refPrice: 90, unit: "repair" },
+    { id: "maint-furniture", label: "Furniture repair or replacement", refPrice: 60, unit: "item" },
+    { id: "maint-other", label: "Other maintenance", refPrice: null, unit: null },
+  ]},
+  { id: "overhead", label: "Business Overhead", subcategories: [
+    { id: "oh-insurance", label: "Insurance", refPrice: 95, unit: "month" },
+    { id: "oh-licensing", label: "Licensing / permit fees", refPrice: 40, unit: "year" },
+    { id: "oh-software", label: "Software / subscriptions", refPrice: 25, unit: "month" },
+    { id: "oh-other", label: "Other overhead", refPrice: null, unit: null },
+  ]},
+  { id: "other", label: "Other", subcategories: [
+    { id: "other-misc", label: "Miscellaneous", refPrice: null, unit: null },
+  ]},
+];
+const EXPENSE_CATEGORIES = EXPENSE_TAXONOMY.map((c) => c.label);
+function subcategoriesFor(categoryLabel) {
+  const cat = EXPENSE_TAXONOMY.find((c) => c.label === categoryLabel);
+  return cat ? cat.subcategories : [];
+}
 const EXPENSES_DEFAULT = [
-  { id: 1, date: "07/02/2026", category: "Food & Snacks", description: "Weekly grocery run — snacks & lunch ingredients", amount: 186.40 },
-  { id: 2, date: "07/08/2026", category: "Materials & Supplies", description: "Construction paper, glue sticks, paint", amount: 64.12 },
-  { id: 3, date: "07/12/2026", category: "Toys & Learning", description: "Wooden puzzle set, sensory bin fillers", amount: 92.30 },
-  { id: 4, date: "07/15/2026", category: "Play Equipment", description: "Replacement outdoor climbing mat", amount: 210.00 },
-  { id: 5, date: "07/19/2026", category: "Food & Snacks", description: "Weekly grocery run", amount: 174.85 },
-  { id: 6, date: "07/22/2026", category: "Maintenance & Repairs", description: "Fence gate latch repair", amount: 45.00 },
+  { id: 1, date: "07/02/2026", category: "Food & Snacks", subcategory: "Meal ingredients", description: "Weekly grocery run — snacks & lunch ingredients", amount: 186.40 },
+  { id: 2, date: "07/08/2026", category: "Materials & Art Supplies", subcategory: "Paper & craft supplies", description: "Construction paper, glue sticks, paint", amount: 64.12 },
+  { id: 3, date: "07/12/2026", category: "Toys & Play Equipment", subcategory: "Indoor toys", description: "Wooden puzzle set, sensory bin fillers", amount: 92.30 },
+  { id: 4, date: "07/15/2026", category: "Toys & Play Equipment", subcategory: "Outdoor / playground equipment", description: "Replacement outdoor climbing mat", amount: 210.00 },
+  { id: 5, date: "07/19/2026", category: "Food & Snacks", subcategory: "Snacks", description: "Weekly grocery run", amount: 174.85 },
+  { id: 6, date: "07/22/2026", category: "Maintenance & Repairs", subcategory: "Plumbing / electrical", description: "Fence gate latch repair", amount: 45.00 },
 ];
 
 /* ------------------------------ budget planner --------------------------------- */
@@ -5889,15 +5946,40 @@ const EXPENSE_MONTHS = ["January", "February", "March", "April", "May", "June", 
 
 function BusinessExpenses({ expenses, saveExpenses, incomeTotal, expenseTotal, onExport, payrollTotal, refundTotal }) {
   const t = useT();
-  const [form, setForm] = useState({ date: "", category: EXPENSE_CATEGORIES[0], description: "", amount: "" });
+  const [form, setForm] = useState({ date: "", category: EXPENSE_CATEGORIES[0], subcategory: subcategoriesFor(EXPENSE_CATEGORIES[0])[0]?.label || "", description: "", amount: "" });
   const [viewMonth, setViewMonth] = useState({ month: 6, year: 2026 }); // 0-indexed: 6 = July
+  const [scanState, setScanState] = useState("idle"); // idle | scanning | review
+  const receiptInputRef = React.useRef(null);
   const net = incomeTotal - expenseTotal - payrollTotal - refundTotal;
   const isCurrentMonth = viewMonth.month === 6 && viewMonth.year === 2026;
+  const currentSubcats = subcategoriesFor(form.category);
+  const selectedSubcat = currentSubcats.find((s) => s.label === form.subcategory);
+
+  // Demo-only preview of receipt scanning — no real OCR here, this is a prototype
+  // to validate whether providers actually want auto-categorization before building
+  // the real backend-dependent pipeline (image storage + OCR/AI + a review step).
+  const scanReceipt = () => {
+    setScanState("scanning");
+    setTimeout(() => {
+      setForm({
+        date: "2026-07-30", category: "Cleaning & Sanitizing", subcategory: "Disinfecting wipes",
+        description: "Target — disinfecting wipes, hand soap, trash bags", amount: "34.82",
+      });
+      setScanState("review");
+    }, 1200);
+  };
+  const handleReceiptFilePicked = (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = "";
+    if (!file) return;
+    scanReceipt();
+  };
 
   const addExpense = () => {
     if (!form.date || !form.description || !form.amount) return;
-    saveExpenses([{ id: Date.now(), date: form.date, category: form.category, description: form.description, amount: Number(form.amount) }, ...expenses]);
-    setForm({ date: "", category: EXPENSE_CATEGORIES[0], description: "", amount: "" });
+    saveExpenses([{ id: Date.now(), date: form.date, category: form.category, subcategory: form.subcategory, description: form.description, amount: Number(form.amount) }, ...expenses]);
+    setForm({ date: "", category: EXPENSE_CATEGORIES[0], subcategory: subcategoriesFor(EXPENSE_CATEGORIES[0])[0]?.label || "", description: "", amount: "" });
+    setScanState("idle");
   };
   const removeExpense = (id) => saveExpenses(expenses.filter((e) => e.id !== id));
 
@@ -5923,14 +6005,43 @@ function BusinessExpenses({ expenses, saveExpenses, incomeTotal, expenseTotal, o
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <Card title={t("Log an expense")} icon={Plus}>
+        <Card title={t("Log an expense")} icon={Plus}
+          right={<button onClick={() => receiptInputRef.current && receiptInputRef.current.click()} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, fontWeight: 700, color: C.sky, background: "none", border: "none" }}>
+            <UploadCloud size={13} /> {t("Scan a receipt (preview)")}
+          </button>}>
+          <input ref={receiptInputRef} type="file" accept="image/*" onChange={handleReceiptFilePicked} style={{ display: "none" }} />
           <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
+            {scanState === "scanning" && (
+              <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 14px", borderRadius: 10, background: C.skyTint }}>
+                <div style={{ width: 16, height: 16, border: `2px solid ${C.sky}`, borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+                <span style={{ fontSize: 12.5, color: "#2E5A78" }}>{t("Reading receipt…")}</span>
+                <style>{"@keyframes spin { to { transform: rotate(360deg); } }"}</style>
+              </div>
+            )}
+            {scanState === "review" && (
+              <div style={{ padding: "10px 12px", borderRadius: 10, background: C.skyTint, display: "flex", gap: 8, alignItems: "flex-start" }}>
+                <Info size={13} color={C.sky} style={{ marginTop: 2, flexShrink: 0 }} />
+                <div style={{ fontSize: 11.5, color: "#2E5A78", lineHeight: 1.5 }}>
+                  {t("Detected from your receipt — this is a preview of automatic categorization. Please review before saving; nothing is added yet.")}
+                </div>
+              </div>
+            )}
             <Field label={t("Date")}><input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} style={inputStyle} /></Field>
             <Field label={t("Category")}>
-              <Select value={form.category} onChange={(v) => setForm({ ...form, category: v })} options={EXPENSE_CATEGORIES} labels={EXPENSE_CATEGORIES.map((c) => t(c))} />
+              <Select value={form.category} onChange={(v) => setForm({ ...form, category: v, subcategory: subcategoriesFor(v)[0]?.label || "" })} options={EXPENSE_CATEGORIES} labels={EXPENSE_CATEGORIES.map((c) => t(c))} />
             </Field>
+            {currentSubcats.length > 0 && (
+              <Field label={t("Subcategory")}>
+                <Select value={form.subcategory} onChange={(v) => setForm({ ...form, subcategory: v })} options={currentSubcats.map((s) => s.label)} labels={currentSubcats.map((s) => t(s.label))} />
+              </Field>
+            )}
             <Field label={t("Description")}><input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} style={inputStyle} /></Field>
             <Field label={t("Amount")}><MoneyInput value={form.amount} onChange={(v) => setForm({ ...form, amount: v })} suffix="" icon={DollarSign} /></Field>
+            {selectedSubcat && selectedSubcat.refPrice != null && (
+              <div style={{ fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "center", gap: 5, marginTop: -4 }}>
+                <Info size={11} /> {t("Typical")}: ~{money(selectedSubcat.refPrice)} {t("per")} {t(selectedSubcat.unit)}
+              </div>
+            )}
             <button onClick={addExpense} style={{ padding: "10px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Add expense")}</button>
           </div>
         </Card>
@@ -5958,7 +6069,7 @@ function BusinessExpenses({ expenses, saveExpenses, incomeTotal, expenseTotal, o
         {monthExpenses.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No expenses logged for this month.")}</div>}
         {monthExpenses.map((e) => (
           <Row key={e.id}
-            left={<><span style={{ color: C.inkSoft, fontSize: 12, minWidth: 78, display: "inline-block" }}>{e.date}</span><b>{e.description}</b><span style={{ color: C.inkSoft }}>{t(e.category)}</span></>}
+            left={<><span style={{ color: C.inkSoft, fontSize: 12, minWidth: 78, display: "inline-block" }}>{e.date}</span><b>{e.description}</b><span style={{ color: C.inkSoft }}>{t(e.category)}{e.subcategory ? ` · ${t(e.subcategory)}` : ""}</span></>}
             right={<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontWeight: 600, fontSize: 13 }}>{money(e.amount)}</span>
               <button onClick={() => removeExpense(e.id)} style={{ background: "none", border: "none", color: C.danger }}><Trash2 size={13} /></button>
