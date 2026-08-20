@@ -6209,6 +6209,12 @@ function SecurityScreen({ accessLog, isEmpty }) {
     { role: "Bookkeeper", access: "Billing and reports only" },
     { role: "Licensing / Auditor", access: "Temporary read-only access" },
   ];
+  const [tab, setTab] = useState("access");
+  const TABS = [
+    ["access", t("Support Access")],
+    ["log", t("Access Log")],
+    ["about", t("How This Works")],
+  ];
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div style={{ background: C.tealTint, border: `1px solid ${C.line}`, borderRadius: 14, padding: 18 }}>
@@ -6218,7 +6224,16 @@ function SecurityScreen({ accessLog, isEmpty }) {
         </div>
       </div>
 
-      {!isEmpty && (
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {TABS.map(([id, label]) => (
+          <button key={id} onClick={() => setTab(id)} style={{
+            padding: "8px 16px", borderRadius: 9, fontSize: 13, fontWeight: 700,
+            border: `1px solid ${tab === id ? C.teal : C.line}`, background: tab === id ? C.tealTint : "#fff", color: tab === id ? C.tealDark : C.inkSoft,
+          }}>{label}</button>
+        ))}
+      </div>
+
+      {tab === "access" && !isEmpty && (
         <Card title={t("Alaga support access")} icon={Lock}
           right={isActive ? <Pill label={t("Granted")} fg={C.teal} bg={C.tealTint} /> : access.status === "requested" ? <Pill label={t("Requested")} fg={C.amber} bg={C.amberTint} /> : null}>
           <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
@@ -6267,14 +6282,7 @@ function SecurityScreen({ accessLog, isEmpty }) {
         </Card>
       )}
 
-      <Card title={t("Design principles")} icon={Lock}>
-        {PRINCIPLES.map((p, i) => <Row key={i} left={<span style={{ fontSize: 13 }}>{t(p)}</span>} right={null} />)}
-      </Card>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <Card title={t("Role-based access (example)")} icon={Users}>
-          {ROLES.map((r) => <Row key={r.role} left={<b>{r.role}</b>} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{t(r.access)}</span>} />)}
-        </Card>
+      {tab === "log" && (
         <Card title={t("Access log")} icon={Eye} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("This session only")}</span>}>
           {accessLog.length === 0 ? (
             <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No records have been opened yet this session.")}</div>
@@ -6284,7 +6292,18 @@ function SecurityScreen({ accessLog, isEmpty }) {
               right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{e.time}</span>} />
           ))}
         </Card>
-      </div>
+      )}
+
+      {tab === "about" && (
+        <>
+          <Card title={t("Design principles")} icon={Lock}>
+            {PRINCIPLES.map((p, i) => <Row key={i} left={<span style={{ fontSize: 13 }}>{t(p)}</span>} right={null} />)}
+          </Card>
+          <Card title={t("Role-based access (example)")} icon={Users}>
+            {ROLES.map((r) => <Row key={r.role} left={<b>{r.role}</b>} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{t(r.access)}</span>} />)}
+          </Card>
+        </>
+      )}
     </div>
   );
 }
@@ -6841,6 +6860,12 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
   const grouped = Object.keys(EXPANSION_CATEGORIES).map((cat) => ({
     cat, label: EXPANSION_CATEGORIES[cat], items: growth.checklist.filter((i) => i.category === cat),
   })).filter((g) => g.items.length > 0);
+  const [subTab, setSubTab] = useState("checklist");
+  const SUB_TABS = [
+    ["checklist", t("Checklist")],
+    ["families", t("Families to Notify")],
+    ["notes", t("Notes")],
+  ];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -6864,7 +6889,16 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
         </div>
       </Card>
 
-      {grouped.map((g) => (
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {SUB_TABS.map(([id, label]) => (
+          <button key={id} onClick={() => setSubTab(id)} style={{
+            padding: "8px 16px", borderRadius: 9, fontSize: 13, fontWeight: 700,
+            border: `1px solid ${subTab === id ? C.teal : C.line}`, background: subTab === id ? C.tealTint : "#fff", color: subTab === id ? C.tealDark : C.inkSoft,
+          }}>{label}</button>
+        ))}
+      </div>
+
+      {subTab === "checklist" && grouped.map((g) => (
         <Card key={g.cat} title={t(g.label)} icon={ClipboardCheck}>
           {g.items.map((item) => {
             const meta = EXPANSION_STATUS_META[item.status];
@@ -6887,6 +6921,7 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
         </Card>
       ))}
 
+      {subTab === "families" && (
       <Card title={t("Families to notify")} icon={Users} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Subsidy agencies generally require notice of capacity/address changes")}</span>}>
         {subsidizedFamilies.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No subsidized families on file yet.")}</div>}
         {subsidizedFamilies.map((f) => {
@@ -6894,7 +6929,9 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
           return <Row key={f.id} left={<><Dot c={f.color} /><b>{f.child}</b><span style={{ color: C.inkSoft }}>{prog?.label}</span></>} right={<span style={{ fontSize: 12, color: C.inkSoft }}>{prog?.agency}</span>} />;
         })}
       </Card>
+      )}
 
+      {subTab === "notes" && (
       <Card title={t("Notes")} icon={StickyNote}>
         <div style={{ padding: 18 }}>
           <textarea value={growth.notes} onChange={(e) => saveGrowth({ ...growth, notes: e.target.value })} rows={3}
@@ -6902,6 +6939,7 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
             style={{ width: "100%", border: `1px solid ${C.line}`, borderRadius: 10, padding: "10px 12px", fontSize: 12.8, fontFamily: "inherit", resize: "vertical", color: C.ink }} />
         </div>
       </Card>
+      )}
 
       <button onClick={() => setPacketOpen(true)} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "13px 0", borderRadius: 12, border: "none", background: C.amber, color: "#fff", fontWeight: 700, fontSize: 14 }}>
         <Printer size={16} /> {t("Generate LPA submission packet")}
@@ -7003,9 +7041,25 @@ function SupportScreen({ providerInfo }) {
     const now = new Date();
     setTickets(tickets.map((tk) => (tk.id === id ? { ...tk, replies: [...tk.replies, { from: "me", text, date: now.toLocaleDateString("en-US"), time: now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) }] } : tk)));
   };
+  const [tab, setTab] = useState("contact");
+  const openCount = tickets.filter((tk) => tk.status === "open").length;
+  const TABS = [
+    ["contact", t("Contact Us")],
+    ["requests", `${t("My Requests")}${openCount > 0 ? ` (${openCount})` : ""}`],
+  ];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {TABS.map(([id, label]) => (
+          <button key={id} onClick={() => setTab(id)} style={{
+            padding: "8px 16px", borderRadius: 9, fontSize: 13, fontWeight: 700,
+            border: `1px solid ${tab === id ? C.teal : C.line}`, background: tab === id ? C.tealTint : "#fff", color: tab === id ? C.tealDark : C.inkSoft,
+          }}>{label}</button>
+        ))}
+      </div>
+
+      {tab === "contact" && (
       <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 16 }}>
         <Card title={t("Contact support")} icon={LifeBuoy}>
           <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
@@ -7064,8 +7118,11 @@ function SupportScreen({ providerInfo }) {
           </div>
         </Card>
       </div>
+      )}
 
+      {tab === "requests" && (
       <Card title={t("Your requests")} icon={ListChecks}>
+        {tickets.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No requests yet.")}</div>}
         {tickets.map((tk) => (
           <button key={tk.id} onClick={() => setOpenId(tk.id)} style={{ width: "100%", textAlign: "left", background: "none", border: "none", borderRadius: 0, padding: 0 }}>
             <Row
@@ -7078,6 +7135,7 @@ function SupportScreen({ providerInfo }) {
           </button>
         ))}
       </Card>
+      )}
 
       {open && <TicketDrawer ticket={open} onClose={() => setOpenId(null)} onToggleStatus={() => toggleStatus(open.id)} onReply={(text) => addReply(open.id, text)} />}
     </div>
@@ -7357,9 +7415,25 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
   const [comparisonOpen, setComparisonOpen] = useState(false);
 
   const saveProfile = () => { saveProviderInfo(profile); setEditingProfile(false); };
+  const [tab, setTab] = useState("profile");
+  const TABS = [
+    ["profile", t("Business Profile")],
+    ["language", t("Language & Accessibility")],
+    ["billing", t("Plan & Billing")],
+  ];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {TABS.map(([id, label]) => (
+          <button key={id} onClick={() => setTab(id)} style={{
+            padding: "8px 16px", borderRadius: 9, fontSize: 13, fontWeight: 700,
+            border: `1px solid ${tab === id ? C.teal : C.line}`, background: tab === id ? C.tealTint : "#fff", color: tab === id ? C.tealDark : C.inkSoft,
+          }}>{label}</button>
+        ))}
+      </div>
+
+      {tab === "profile" && (
       <Card title={t("Business profile")} icon={Building2}
         right={editingProfile
           ? <button onClick={saveProfile} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("Save changes")}</button>
@@ -7391,9 +7465,14 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
           </div>
         )}
       </Card>
+      )}
 
-      <PlanBilling tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} billing={billing} saveBilling={saveBilling} families={families} staff={staff} expenses={expenses} compDocs={compDocs} provider={provider} refunds={refunds} />
+      {tab === "billing" && (
+        <PlanBilling tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} billing={billing} saveBilling={saveBilling} families={families} staff={staff} expenses={expenses} compDocs={compDocs} provider={provider} refunds={refunds} />
+      )}
 
+      {tab === "language" && (
+      <>
       <Card title={t("Language")} icon={Languages} right={<span style={{ fontSize: 12, color: C.inkSoft }}>{t("Applies to your provider dashboard")}</span>}>
         {LANGS.map((l) => (
           <button key={l} onClick={() => setLanguage(l)} style={{
@@ -7424,6 +7503,8 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
           </div>
         </div>
       </Card>
+      </>
+      )}
     </div>
   );
 }
