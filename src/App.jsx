@@ -513,6 +513,23 @@ const FAMILIES = [
     forms: [],
     notes: "Private-pay, autopay on file.",
   }),
+  fam({
+    child: "Owen Chen", enrollDate: "08/10/2026", age: "1y", parent: "Amy Chen", color: C.sky, classroom: "infants",
+    household: "chen", householdName: "Chen Family", subsidized: false,
+    parents: [
+      { name: "Amy Chen", relationship: "Mother", phone: "(310) 555-0902", email: "amy.chen@example.com" },
+      { name: "Wei Chen", relationship: "Father", phone: "(310) 555-0947", email: "wei.chen@example.com" },
+    ],
+    emergencyContact: { name: "Lily Chen", relationship: "Aunt", phone: "(310) 555-0981" },
+    providerType: PROVIDER_TYPES[0], programId: null,
+    coverageAmount: 0, coverageBasis: "private-pay", copay: 1400,
+    sessionsApproved: "5 / week", sessionLength: "Full-day (10+ hrs)",
+    authStart: "08/10/2026", authEnd: "Ongoing",
+    status: "active",
+    notices: [],
+    forms: [],
+    notes: "Ella's younger brother — both private-pay, so this is the demo's example of the default sibling-discount rule actually applying.",
+  }),
 ];
 
 /* --------------------------------- helpers ----------------------------------- */
@@ -1505,7 +1522,7 @@ const TUITION_RATES_DEFAULT = {
   prek: { fullTime: 1250, partTime: 850, hourly: 18 },
   // Sibling discount: providers can choose either a percentage or a flat dollar
   // amount off — applied to the 2nd child onward within the same household.
-  siblingDiscount: { enabled: false, type: "percent", value: 10 },
+  siblingDiscount: { enabled: true, type: "percent", value: 10 },
 };
 // Given a household's base monthly rate per child (in birth/enrollment order),
 // returns the same list with each child's discounted rate applied from the
@@ -1519,6 +1536,44 @@ function applySiblingDiscounts(baseAmounts, discountConfig) {
       : Math.max(0, a - (discountConfig.value || 0));
     return { base: a, discounted, discountApplied: true };
   });
+}
+function applyDiscountRate(base, discountConfig) {
+  if (!discountConfig) return base;
+  return discountConfig.type === "percent"
+    ? Math.round(base * (1 - (discountConfig.value || 0) / 100))
+    : Math.max(0, base - (discountConfig.value || 0));
+}
+// Single source of truth for what a family is actually billed, factoring in the
+// sibling discount. Every screen that shows or totals tuition dollars (child
+// profile, household view, per-child payment record, income totals) should call
+// this rather than reading family.copay directly, so the number is always
+// consistent with whatever discount rule — default or per-family override —
+// actually applies.
+//
+// family.siblingDiscountOverride: undefined/null = use the default rule (counts
+// among that family's private-pay siblings, 2nd child onward gets the discount);
+// true = force this family's bill to receive the discount regardless of the
+// default rule or any siblings' subsidy status; false = force-exclude, even if
+// the default rule would otherwise apply. This exists because sibling-discount
+// eligibility for mixed subsidized/private households genuinely varies by
+// program and by provider — home-based providers often make their own call
+// family by family, so a single hardcoded policy would be wrong for some.
+function effectiveTuition(family, householdFamilies, tuitionRates) {
+  const discountConfig = tuitionRates?.siblingDiscount;
+  const base = family.copay;
+  if (family.siblingDiscountOverride === false) return { base, discounted: base, discountApplied: false, source: "override-excluded" };
+  if (family.siblingDiscountOverride === true) {
+    const discounted = applyDiscountRate(base, discountConfig?.enabled ? discountConfig : TUITION_RATES_DEFAULT.siblingDiscount);
+    return { base, discounted, discountApplied: discounted !== base, source: "override-applied" };
+  }
+  // Default rule: among this family's private-pay siblings (enrollment order),
+  // the 1st is full price, 2nd+ get the discount.
+  const privatePaySiblings = (householdFamilies || []).filter((f) => f.household === family.household && !f.subsidized && f.siblingDiscountOverride !== false)
+    .sort((a, b) => (parseAnyDate(a.enrollDate)?.getTime() || 0) - (parseAnyDate(b.enrollDate)?.getTime() || 0));
+  const idx = privatePaySiblings.findIndex((f) => f.id === family.id);
+  if (family.subsidized || idx <= 0) return { base, discounted: base, discountApplied: false, source: "default-not-eligible" };
+  const discounted = applyDiscountRate(base, discountConfig);
+  return { base, discounted, discountApplied: discountConfig?.enabled && discounted !== base, source: "default-applied" };
 }
 
 const FLEX_CARE_TYPES = ["Early drop-off", "Extended pickup", "After-hours care", "Weekend care", "Extra day"];
@@ -3755,10 +3810,9 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
 
           {tuitionRates && household.children.some((c) => !c.subsidized) && (() => {
             const privatePayChildren = household.children.filter((c) => !c.subsidized);
-            const baseAmounts = privatePayChildren.map((c) => tuitionRates[c.classroom]?.fullTime || 0);
-            const discount = tuitionRates.siblingDiscount || TUITION_RATES_DEFAULT.siblingDiscount;
-            const computed = applySiblingDiscounts(baseAmounts, discount);
+            const computed = privatePayChildren.map((c) => effectiveTuition(c, household.children, tuitionRates));
             const total = computed.reduce((sum, x) => sum + x.discounted, 0);
+            const anyEligibleUndiscounted = computed.some((x, i) => !x.discountApplied && privatePayChildren[i].siblingDiscountOverride !== false);
             return (
               <Section title={t("Tuition")} icon={DollarSign}>
                 {privatePayChildren.map((c, i) => (
@@ -3780,9 +3834,9 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
                     <span style={{ fontSize: 14, fontWeight: 700 }}>{money(total)}<span style={{ fontWeight: 400, color: C.inkSoft, fontSize: 11.5 }}>{t("/mo")}</span></span>
                   </div>
                 )}
-                {!discount.enabled && privatePayChildren.length > 1 && (
+                {privatePayChildren.length > 1 && anyEligibleUndiscounted && (!tuitionRates.siblingDiscount || !tuitionRates.siblingDiscount.enabled) && (
                   <div style={{ fontSize: 11.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 5, marginTop: 4 }}>
-                    <Info size={11} /> {t("No sibling discount configured — set one up in Dashboard → Tuition rates & hours.")}
+                    <Info size={11} /> {t("No default sibling discount rate is configured — set one up in Finances → Tuition & Subsidies, or open a child's profile to force-apply one just for them.")}
                   </div>
                 )}
               </Section>
@@ -3883,16 +3937,11 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
   const photoInputRef = React.useRef(null);
   const prog = child.subsidized ? programOf(child.programId) : null;
 
-  const householdSiblings = (families || []).filter((f) => f.household === child.household && !f.subsidized).sort((a, b) => a.id - b.id);
-  const siblingIndex = householdSiblings.findIndex((f) => f.id === child.id);
+  const householdSize = (families || []).filter((f) => f.household === child.household).length;
   const siblingDiscount = tuitionRates?.siblingDiscount;
-  const hasSiblingContext = !child.subsidized && householdSiblings.length > 1;
-  let siblingComputed = null;
-  if (hasSiblingContext && tuitionRates) {
-    const baseAmounts = householdSiblings.map((f) => tuitionRates[f.classroom]?.fullTime || 0);
-    const computed = applySiblingDiscounts(baseAmounts, siblingDiscount || TUITION_RATES_DEFAULT.siblingDiscount);
-    siblingComputed = computed[siblingIndex];
-  }
+  const hasSiblingContext = householdSize > 1;
+  const siblingComputed = tuitionRates ? effectiveTuition(child, families || [], tuitionRates) : null;
+  const [overrideOpen, setOverrideOpen] = useState(false);
 
   useEffect(() => { logAccess && logAccess("family", child.child); }, [child.id]);
 
@@ -3978,7 +4027,12 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 600 }}>{prog?.label}</div>
-                    <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{money(child.coverageAmount)}{t("/mo covered")} · {child.copay > 0 ? `${money(child.copay)} ${t("copay")}` : t("no copay")}</div>
+                    <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{money(child.coverageAmount)}{t("/mo covered")} · {siblingComputed?.discounted > 0 ? `${money(siblingComputed.discounted)} ${t("copay")}` : t("no copay")}</div>
+                    {siblingComputed?.discountApplied && (
+                      <div style={{ fontSize: 11.5, color: C.teal, marginTop: 3, display: "flex", alignItems: "center", gap: 5 }}>
+                        <CheckCircle2 size={11} /> {t("Sibling discount applied to copay")} — <span style={{ textDecoration: "line-through", color: C.inkSoft }}>{money(siblingComputed.base)}</span>
+                      </div>
+                    )}
                   </div>
                   <Pill {...trStatus(t, child.status)} />
                 </div>
@@ -3995,15 +4049,10 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <div>
                       <div style={{ fontSize: 13, fontWeight: 600 }}>{t("Private pay")}</div>
-                      <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{money(tuition)} {t("private tuition")} / {t("month")}</div>
+                      <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{money(siblingComputed ? siblingComputed.discounted : tuition)} {t("private tuition")} / {t("month")}</div>
                       {siblingComputed?.discountApplied && (
                         <div style={{ fontSize: 11.5, color: C.teal, marginTop: 3, display: "flex", alignItems: "center", gap: 5 }}>
                           <CheckCircle2 size={11} /> {t("Sibling discount applied")} — <span style={{ textDecoration: "line-through", color: C.inkSoft }}>{money(siblingComputed.base)}</span> {t("before discount")}
-                        </div>
-                      )}
-                      {hasSiblingContext && !siblingComputed?.discountApplied && (!siblingDiscount || !siblingDiscount.enabled) && (
-                        <div style={{ fontSize: 11, color: C.inkSoft, marginTop: 3, display: "flex", alignItems: "center", gap: 5 }}>
-                          <Info size={10} /> {t("No sibling discount configured — set one up in Finances → Tuition & Subsidies.")}
                         </div>
                       )}
                     </div>
@@ -4029,6 +4078,40 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
               </>
             )}
           </Section>
+
+          {hasSiblingContext && (
+            <Section title={t("Sibling discount")} icon={Percent}
+              right={!overrideOpen && <button onClick={() => setOverrideOpen(true)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 700 }}><Pencil size={12} /> {t("Edit")}</button>}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div style={{ fontSize: 12.5, color: C.inkSoft }}>
+                  {child.siblingDiscountOverride === true && t("Manually applied for this child, regardless of the default rule.")}
+                  {child.siblingDiscountOverride === false && t("Manually excluded for this child, even if the default rule would apply.")}
+                  {(child.siblingDiscountOverride === undefined || child.siblingDiscountOverride === null) && (
+                    siblingComputed?.discountApplied
+                      ? t("Applied automatically under the default rule (2nd private-pay child onward).")
+                      : t("Not applied — using the default rule, which didn't qualify this child. You can override that below.")
+                  )}
+                </div>
+              </div>
+              {overrideOpen && (
+                <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 6 }}>
+                  {[[undefined, t("Use default rule")], [true, t("Force apply to this child")], [false, t("Force exclude this child")]].map(([val, label]) => (
+                    <button key={String(val)} onClick={() => { saveField("siblingOverride", { siblingDiscountOverride: val }); setOverrideOpen(false); }} style={{
+                      padding: "8px 10px", borderRadius: 8, textAlign: "left", fontSize: 12.5, fontWeight: 600,
+                      border: `1px solid ${(child.siblingDiscountOverride ?? undefined) === val ? C.teal : C.line}`,
+                      background: (child.siblingDiscountOverride ?? undefined) === val ? C.tealTint : "#fff",
+                      color: (child.siblingDiscountOverride ?? undefined) === val ? C.tealDark : C.ink,
+                    }}>{label}</button>
+                  ))}
+                </div>
+              )}
+              {(!siblingDiscount || !siblingDiscount.enabled) && child.siblingDiscountOverride !== true && (
+                <div style={{ fontSize: 11, color: C.inkSoft, marginTop: 8, display: "flex", alignItems: "center", gap: 5 }}>
+                  <Info size={10} /> {t("No default sibling discount rate is configured — set one up in Finances → Tuition & Subsidies, or force-apply one just for this child above.")}
+                </div>
+              )}
+            </Section>
+          )}
 
           <Section title={t("Enrollment documents")} icon={FileText}
             right={
@@ -5306,8 +5389,8 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
   const splitFamilies = families.filter((f) => f.copaySplit);
   const fsaFamilies = families.filter((f) => f.fsaHsa && f.fsaHsa.enrolled);
   const subsidyTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + (f.coverageBasis === "monthly" ? f.coverageAmount : 0), 0);
-  const copayTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + f.copay, 0);
-  const privateTotal = families.filter((f) => !f.subsidized).reduce((s, f) => s + f.copay, 0);
+  const copayTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + effectiveTuition(f, families, tuitionRates).discounted, 0);
+  const privateTotal = families.filter((f) => !f.subsidized).reduce((s, f) => s + effectiveTuition(f, families, tuitionRates).discounted, 0);
   // Flex/exception care — early drop-off, after-hours, weekend, extra days —
   // is real revenue, not a footnote, so it counts toward income the same way
   // subsidy and tuition do, and is broken out below so it's visible on its own.
@@ -5419,7 +5502,8 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
               const method = f.paymentMethod || "Not set";
               const received = f.paymentReceived !== false;
               const isOpen = expandedPayment === f.id;
-              const amountLabel = f.subsidized ? `${money(f.coverageAmount)} + ${money(f.copay)}` : money(f.copay);
+              const tuitionInfo = effectiveTuition(f, families, tuitionRates);
+              const amountLabel = f.subsidized ? `${money(f.coverageAmount)} + ${money(tuitionInfo.discounted)}` : money(tuitionInfo.discounted);
               return (
                 <div key={f.id}>
                   <button onClick={() => setExpandedPayment(isOpen ? null : f.id)} style={{ width: "100%", textAlign: "left", background: "none", border: "none", borderRadius: 0, padding: 0 }}>
@@ -5428,6 +5512,7 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                         <Dot c={f.color} /><b style={{ fontSize: 13.5 }}>{f.child}</b>
                         {f.copaySplit && <Pill label={t("Split")} fg={C.sky} bg={C.skyTint} />}
                         {!f.subsidized && <Pill label={t("Private pay")} fg={C.sky} bg={C.skyTint} />}
+                        {tuitionInfo.discountApplied && <Pill label={t("Sibling discount")} fg={C.teal} bg={C.tealTint} />}
                       </div>
                       <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
                         <span style={{ fontSize: 12.5, color: C.inkSoft }}>{meetingMode ? "••••" : amountLabel}</span>
@@ -5439,8 +5524,13 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                   {isOpen && (
                     <div style={{ padding: "0 18px 14px 40px", borderBottom: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 10 }}>
                       <div style={{ fontSize: 12, color: C.inkSoft }}>
-                        {meetingMode ? "•••• — hidden in meeting-safe mode" : (f.subsidized ? `${money(f.coverageAmount)} ${t("subsidy +")} ${money(f.copay)} ${t("copay")}` : `${money(f.copay)} ${t("private tuition")}`)}
+                        {meetingMode ? "•••• — hidden in meeting-safe mode" : (f.subsidized ? `${money(f.coverageAmount)} ${t("subsidy +")} ${money(tuitionInfo.discounted)} ${t("copay")}` : `${money(tuitionInfo.discounted)} ${t("private tuition")}`)}
                       </div>
+                      {tuitionInfo.discountApplied && (
+                        <div style={{ fontSize: 11.5, color: C.teal, display: "flex", alignItems: "center", gap: 5 }}>
+                          <CheckCircle2 size={11} /> {t("Sibling discount applied")} — <span style={{ textDecoration: "line-through", color: C.inkSoft }}>{money(tuitionInfo.base)}</span> {t("before discount")}
+                        </div>
+                      )}
                       {f.copaySplit && (
                         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                           {f.copaySplit.map((s, i) => (
@@ -6893,8 +6983,8 @@ function Analytics({ families, expenses, prospects, staff, alumni, addDeparture,
   const t = useT();
   const classroomData = groupByClassroom(families).map((g) => ({ name: g.classroom.label, children: g.families.length }));
   const subsidyTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + (f.coverageBasis === "monthly" ? f.coverageAmount : 0), 0);
-  const copayTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + f.copay, 0);
-  const privateTotal = families.filter((f) => !f.subsidized).reduce((s, f) => s + f.copay, 0);
+  const copayTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + effectiveTuition(f, families, tuitionRates).discounted, 0);
+  const privateTotal = families.filter((f) => !f.subsidized).reduce((s, f) => s + effectiveTuition(f, families, tuitionRates).discounted, 0);
   const flexCareTotal = (flexCareRequests || []).filter((r) => r.status === "approved").reduce((s, r) => s + (r.paymentConfirmed && r.paymentAmount != null ? r.paymentAmount : Math.round((tuitionRates?.[r.classroom]?.hourly || 0) * (r.hours || 0))), 0);
   const flexCareUnpaidTotal = (flexCareRequests || []).filter((r) => r.status === "approved" && !r.paymentConfirmed).reduce((s, r) => s + Math.round((tuitionRates?.[r.classroom]?.hourly || 0) * (r.hours || 0)), 0);
   const incomeTotal = subsidyTotal + copayTotal + privateTotal + flexCareTotal;
