@@ -8,6 +8,7 @@ import {
   Pencil, Plus, Trash2, Split, ArrowLeft, Shield, FileCheck, HeartPulse, Flame, Eye,
   Moon, Contrast, Type, ZapOff, Lock, ListChecks, UserPlus, Settings as Gear, LifeBuoy, Paperclip, Image as ImageIcon,
   ArrowRight, Building2, Rocket, PlayCircle, UploadCloud, TrendingUp, Wand2, UserCog, Scale, ArrowLeftRight, Volume2, Square,
+  Wallet, Baby, Cookie, Puzzle, SprayCan, Palette,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell,
@@ -1319,6 +1320,67 @@ const EXPENSES_DEFAULT = [
   { id: 6, date: "07/22/2026", category: "Maintenance & Repairs", description: "Fence gate latch repair", amount: 45.00 },
 ];
 
+/* ------------------------------ budget planner --------------------------------- */
+// Forward-looking spend allocation — distinct from Business Expenses above, which is a
+// retrospective ledger. This is "here's my budget, where does it need to go," broken
+// out by category, with categories flagged where they commonly qualify under the IRS
+// Time-Space Percentage for home-based providers. Available on both Simple and Extended
+// plans — budgeting isn't a premium feature, it's core to running the business.
+const BUDGET_CATEGORY_ICONS = {
+  "Diapers & Wipes": Baby,
+  "Snacks & Drinks": Cookie,
+  "Toys & Materials": Puzzle,
+  "Cleaning & Sanitizing": SprayCan,
+  "Curriculum & Art Supplies": Palette,
+  "Substitute / Backup Care": Users,
+  "Business Overhead": Building2,
+};
+const BUDGET_PLAN_DEFAULT = {
+  Day: [
+    { name: "Diapers & Wipes", allocated: 10, spent: 8, tsp: true },
+    { name: "Snacks & Drinks", allocated: 8, spent: 8.5, tsp: true },
+    { name: "Toys & Materials", allocated: 6, spent: 0, tsp: true },
+    { name: "Cleaning & Sanitizing", allocated: 5, spent: 3, tsp: true },
+    { name: "Curriculum & Art Supplies", allocated: 4, spent: 0, tsp: true },
+    { name: "Substitute / Backup Care", allocated: 7, spent: 0, tsp: false },
+    { name: "Business Overhead", allocated: 5, spent: 5, tsp: false },
+  ],
+  Week: [
+    { name: "Diapers & Wipes", allocated: 60, spent: 52, tsp: true },
+    { name: "Snacks & Drinks", allocated: 50, spent: 41, tsp: true },
+    { name: "Toys & Materials", allocated: 40, spent: 12, tsp: true },
+    { name: "Cleaning & Sanitizing", allocated: 30, spent: 30, tsp: true },
+    { name: "Curriculum & Art Supplies", allocated: 25, spent: 8, tsp: true },
+    { name: "Substitute / Backup Care", allocated: 45, spent: 0, tsp: false },
+    { name: "Business Overhead", allocated: 30, spent: 30, tsp: false },
+  ],
+  Month: [
+    { name: "Diapers & Wipes", allocated: 240, spent: 210, tsp: true },
+    { name: "Snacks & Drinks", allocated: 200, spent: 178, tsp: true },
+    { name: "Toys & Materials", allocated: 150, spent: 60, tsp: true },
+    { name: "Cleaning & Sanitizing", allocated: 120, spent: 115, tsp: true },
+    { name: "Curriculum & Art Supplies", allocated: 100, spent: 35, tsp: true },
+    { name: "Substitute / Backup Care", allocated: 180, spent: 0, tsp: false },
+    { name: "Business Overhead", allocated: 160, spent: 160, tsp: true },
+  ],
+};
+const BUDGET_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+function budgetSeededRand(seed) {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+function buildBudgetHistory() {
+  const baseMonth = BUDGET_PLAN_DEFAULT.Month;
+  return BUDGET_MONTHS.map((month, mi) => ({
+    month,
+    categories: baseMonth.map((c, ci) => {
+      const variance = 0.75 + budgetSeededRand(mi * 7 + ci) * 0.5;
+      return { name: c.name, allocated: c.allocated, spent: Math.round(c.allocated * variance * 100) / 100, tsp: c.tsp };
+    }),
+  }));
+}
+const BUDGET_HISTORY = buildBudgetHistory();
+
 function downloadCSV(filename, headers, rows) {
   const esc = (v) => `"${String(v).replace(/"/g, '""')}"`;
   const csv = [headers.map(esc).join(","), ...rows.map((r) => r.map(esc).join(","))].join("\r\n");
@@ -2576,6 +2638,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const [prospects, saveProspects] = usePersistentState(`tours-pipeline${sfx}`, baseProspects);
   const [compOverrides, saveCompOverrides] = usePersistentState(`compliance-docs${sfx}`, {});
   const [expenses, saveExpenses] = usePersistentState(`business-expenses${sfx}`, baseExpenses);
+  const [budgetPlan, saveBudgetPlan] = usePersistentState(`budget-plan${sfx}`, BUDGET_PLAN_DEFAULT);
   const [checklist, saveChecklist] = usePersistentState("daily-checklist", [
     { id: 1, text: "Confirm attendance sign-in sheet is out", done: false },
     { id: 2, text: "Check for expiring subsidy authorizations", done: false },
@@ -2727,7 +2790,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
               {screen === "calendar" && <CalendarScreen schedule={weeklySchedule} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} />}
               {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} />}
               {screen === "subsidy" && <Subsidy families={families} openFamId={openFamId} setOpenFamId={setOpenFamId} loaded={loaded} meetingMode={meetingMode} />}
-              {screen === "payments" && <Finances families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} />}
+              {screen === "payments" && <Finances families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} />}
               {screen === "compliance" && <Compliance docs={compDocs} onSave={saveCompDoc} families={families} provider={providerInfo} staff={staff} setScreen={setScreen} />}
               {screen === "security" && <SecurityScreen accessLog={accessLog} isEmpty={isEmpty} />}
               {screen === "messages" && <Messages threads={threads} saveThreads={saveThreads} families={families} staff={staff} />}
@@ -4897,13 +4960,15 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
 }
 
 /* --------------------------------- payments ------------------------------------ */
-function Finances({ families, expenses, saveExpenses, reminderSettings, saveReminderSettings, staff, tier, payrollSettings, savePayrollSettings, onSave, refunds, saveRefunds, flexCareRequests, tuitionRates, setScreen, providerInfo, meetingMode = false }) {
+function Finances({ families, expenses, saveExpenses, reminderSettings, saveReminderSettings, staff, tier, payrollSettings, savePayrollSettings, onSave, refunds, saveRefunds, flexCareRequests, tuitionRates, setScreen, providerInfo, meetingMode = false, budgetPlan, saveBudgetPlan }) {
   const t = useT();
   const [tab, setTab] = useState("tuition");
   const [expandedPayment, setExpandedPayment] = useState(null);
   const [remindersOpen, setRemindersOpen] = useState(false);
   const isSimple = tier === "simple";
-  const TABS = isSimple ? [["tuition", "Tuition & Subsidies"], ["receipts", "Receipts"], ["refunds", "Refunds"]] : [["tuition", "Tuition & Subsidies"], ["receipts", "Receipts"], ["refunds", "Refunds"], ["payroll", "Payroll"], ["business", "Business Expenses"]];
+  // Budget Planner is available on both plans — it's core business ops, not a
+  // premium feature, so it's listed identically for Simple and Extended.
+  const TABS = isSimple ? [["tuition", "Tuition & Subsidies"], ["receipts", "Receipts"], ["refunds", "Refunds"], ["budget", "Budget Planner"]] : [["tuition", "Tuition & Subsidies"], ["receipts", "Receipts"], ["refunds", "Refunds"], ["budget", "Budget Planner"], ["payroll", "Payroll"], ["business", "Business Expenses"]];
   const splitFamilies = families.filter((f) => f.copaySplit);
   const subsidyTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + (f.coverageBasis === "monthly" ? f.coverageAmount : 0), 0);
   const copayTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + f.copay, 0);
@@ -5113,11 +5178,181 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
         </Card>
       ) : tab === "refunds" ? (
         <RefundsCard families={families} refunds={refunds} saveRefunds={saveRefunds} onExport={exportRefunds} />
+      ) : tab === "budget" ? (
+        <BudgetPlanner budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} meetingMode={meetingMode} />
       ) : tab === "payroll" ? (
         <PayrollTab staff={staff} payrollTotal={payrollTotal} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} />
       ) : (
         <BusinessExpenses expenses={expenses} saveExpenses={saveExpenses} incomeTotal={incomeTotal} expenseTotal={expenseTotal} onExport={exportExpenses} payrollTotal={payrollTotal} refundTotal={refundTotal} />
       )}
+    </div>
+  );
+}
+
+function BudgetPlanner({ budgetPlan, saveBudgetPlan, meetingMode = false }) {
+  const t = useT();
+  const [period, setPeriod] = useState("Week");
+  const [editMode, setEditMode] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [addingCategory, setAddingCategory] = useState(false);
+  const [newCatName, setNewCatName] = useState("");
+  const categories = budgetPlan[period];
+
+  const updateCategory = (index, patch) => {
+    const next = { ...budgetPlan, [period]: budgetPlan[period].map((c, i) => (i === index ? { ...c, ...patch } : c)) };
+    saveBudgetPlan(next);
+  };
+  const deleteCategory = (index) => {
+    saveBudgetPlan({ ...budgetPlan, [period]: budgetPlan[period].filter((_, i) => i !== index) });
+  };
+  const addCategory = () => {
+    if (!newCatName.trim()) return;
+    saveBudgetPlan({ ...budgetPlan, [period]: [...budgetPlan[period], { name: newCatName.trim(), allocated: 0, spent: 0, tsp: false }] });
+    setNewCatName(""); setAddingCategory(false);
+  };
+
+  const totalAllocated = categories.reduce((s, c) => s + c.allocated, 0);
+  const totalSpent = categories.reduce((s, c) => s + c.spent, 0);
+  const totalRemaining = totalAllocated - totalSpent;
+  const overBudget = totalSpent > totalAllocated;
+  const overallPct = totalAllocated > 0 ? Math.min(100, (totalSpent / totalAllocated) * 100) : 0;
+
+  const downloadMonth = (m) => downloadCSV(`alaga-budget-${m.month.toLowerCase()}-2026.csv`,
+    ["Category", "Allocated", "Spent", "Remaining", "Time-Space % Eligible"],
+    [...m.categories.map((c) => [c.name, c.allocated.toFixed(2), c.spent.toFixed(2), (c.allocated - c.spent).toFixed(2), c.tsp ? "Yes" : "No"]),
+     [], ["Total", m.categories.reduce((s, c) => s + c.allocated, 0).toFixed(2), m.categories.reduce((s, c) => s + c.spent, 0).toFixed(2), (m.categories.reduce((s, c) => s + c.allocated, 0) - m.categories.reduce((s, c) => s + c.spent, 0)).toFixed(2), ""]]);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <Card title={t("Budget Planner")} icon={Wallet}
+        right={<div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <button onClick={() => setEditMode(!editMode)} style={{
+            display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 700,
+            border: `1px solid ${C.teal}`, background: editMode ? C.teal : "#fff", color: editMode ? "#fff" : C.tealDark,
+          }}><Pencil size={12} /> {editMode ? t("Done editing") : t("Edit budget")}</button>
+          <button onClick={() => setShowHistory(!showHistory)} style={{
+            display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 700,
+            border: "none", background: C.amberTint, color: "#7A5620",
+          }}><Download size={12} /> {showHistory ? t("Back to planner") : t("Expense history")}</button>
+        </div>}>
+        <div style={{ padding: "0 18px 4px", paddingTop: 14, fontSize: 11.5, color: C.teal, display: "flex", alignItems: "center", gap: 6 }}>
+          <CheckCircle2 size={12} /> {t("Included in both Simple and Extended plans")}
+        </div>
+
+        {!showHistory ? (
+          <>
+            <div style={{ padding: "10px 18px", display: "flex", gap: 8 }}>
+              {["Day", "Week", "Month"].map((p) => (
+                <button key={p} onClick={() => setPeriod(p)} style={{
+                  padding: "7px 14px", borderRadius: 8, fontSize: 12.5, fontWeight: 700,
+                  border: `1px solid ${period === p ? C.teal : C.line}`, background: period === p ? C.tealTint : "#fff", color: period === p ? C.tealDark : C.inkSoft,
+                }}>{t(p)}</button>
+              ))}
+            </div>
+
+            <div style={{ padding: "0 18px 14px" }}>
+              <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 10, flexWrap: "wrap", gap: 8 }}>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: C.amber, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t(period)}{t("ly budget")}</div>
+                  <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, fontWeight: 600, color: C.ink }}>{meetingMode ? "••••" : money(totalAllocated)}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: 12.5, color: C.inkSoft }}>{meetingMode ? "••••" : money(totalSpent)} {t("spent")}</div>
+                  <div style={{ fontSize: 12.5, fontWeight: 700, color: overBudget ? C.danger : C.teal, display: "flex", alignItems: "center", gap: 4, justifyContent: "flex-end" }}>
+                    {overBudget ? <AlertTriangle size={12} /> : <CheckCircle2 size={12} />}
+                    {meetingMode ? "••••" : (overBudget ? `${money(Math.abs(totalRemaining))} ${t("over budget")}` : `${money(totalRemaining)} ${t("remaining")}`)}
+                  </div>
+                </div>
+              </div>
+              <div style={{ width: "100%", height: 10, borderRadius: 999, background: "#EFEAE0", overflow: "hidden" }}>
+                <div style={{ width: `${overallPct}%`, height: "100%", background: overBudget ? C.danger : C.teal, borderRadius: 999 }} />
+              </div>
+            </div>
+
+            <div style={{ margin: "0 18px 14px", padding: "10px 12px", borderRadius: 10, background: C.amberTint, display: "flex", gap: 8, alignItems: "flex-start" }}>
+              <Info size={13} color={C.amber} style={{ marginTop: 1, flexShrink: 0 }} />
+              <div style={{ fontSize: 11, color: "#7A5620", lineHeight: 1.5 }}>
+                {t("Categories tagged")} <b>{t("Time-Space % eligible")}</b> {t("may qualify as deductible business expenses under the IRS Time-Space Percentage for home-based providers. Alaga tracks these separately to help at tax time — always confirm with your tax preparer.")}
+              </div>
+            </div>
+
+            <div style={{ padding: "0 18px 8px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: C.inkSoft, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Category breakdown")}</div>
+              {editMode && !addingCategory && (
+                <button onClick={() => setAddingCategory(true)} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11.5, fontWeight: 700, color: C.tealDark, background: "none", border: "none" }}>
+                  <Plus size={12} /> {t("Add category")}
+                </button>
+              )}
+            </div>
+            {addingCategory && (
+              <div style={{ margin: "0 18px 10px", display: "flex", gap: 8 }}>
+                <input autoFocus value={newCatName} onChange={(e) => setNewCatName(e.target.value)} placeholder={t("New category name")}
+                  onKeyDown={(e) => e.key === "Enter" && addCategory()} style={inputStyle} />
+                <button onClick={addCategory} style={{ padding: "0 14px", borderRadius: 7, border: "none", background: C.teal, color: "#fff", fontSize: 12, fontWeight: 700 }}>{t("Add")}</button>
+                <button onClick={() => setAddingCategory(false)} style={{ background: "none", border: "none", color: C.inkSoft }}><X size={15} /></button>
+              </div>
+            )}
+
+            {categories.map((c, i) => {
+              const Icon = BUDGET_CATEGORY_ICONS[c.name] || Puzzle;
+              const over = c.spent > c.allocated;
+              const pct = c.allocated > 0 ? Math.min(100, (c.spent / c.allocated) * 100) : 0;
+              return (
+                <div key={c.name + i} style={{ padding: "10px 18px", borderTop: `1px solid ${C.line}` }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, marginBottom: 8 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+                      <div style={{ width: 30, height: 30, borderRadius: 8, background: over ? C.dangerTint : C.tealTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <Icon size={15} color={over ? C.danger : C.teal} />
+                      </div>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: C.ink }}>{c.name}</div>
+                        {c.tsp && <Pill label={t("Time-Space % eligible")} fg={C.amber} bg={C.amberTint} />}
+                      </div>
+                    </div>
+                    {editMode ? (
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+                        <div style={{ width: 90 }}><MoneyInput value={c.allocated} onChange={(v) => updateCategory(i, { allocated: v })} suffix={t("budget")} icon={DollarSign} /></div>
+                        <div style={{ width: 90 }}><MoneyInput value={c.spent} onChange={(v) => updateCategory(i, { spent: v })} suffix={t("spent")} icon={DollarSign} /></div>
+                        <button onClick={() => deleteCategory(i)} style={{ background: "none", border: "none", color: C.danger }}><Trash2 size={14} /></button>
+                      </div>
+                    ) : (
+                      <div style={{ textAlign: "right", flexShrink: 0 }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: over ? C.danger : C.ink }}>
+                          {meetingMode ? "••••" : money(c.spent)} <span style={{ fontWeight: 400, fontSize: 11.5, color: C.inkSoft }}>/ {meetingMode ? "••••" : money(c.allocated)}</span>
+                        </div>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: over ? C.danger : C.teal }}>
+                          {meetingMode ? "" : (over ? `${money(c.spent - c.allocated)} ${t("over")}` : `${money(c.allocated - c.spent)} ${t("left")}`)}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ width: "100%", height: 6, borderRadius: 999, background: "#EFEAE0", overflow: "hidden" }}>
+                    <div style={{ width: `${pct}%`, height: "100%", background: over ? C.danger : C.teal, borderRadius: 999 }} />
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        ) : (
+          <>
+            <div style={{ padding: "0 18px 12px", fontSize: 11.5, color: C.inkSoft }}>
+              {t("Download any month as a CSV — full breakdown by category, allocated vs. spent.")}
+            </div>
+            {BUDGET_HISTORY.map((m, i) => {
+              const monthSpent = m.categories.reduce((s, c) => s + c.spent, 0);
+              const monthAllocated = m.categories.reduce((s, c) => s + c.allocated, 0);
+              const over = monthSpent > monthAllocated;
+              return (
+                <Row key={m.month}
+                  left={<><b style={{ fontSize: 13 }}>{m.month} 2026</b><span style={{ color: over ? C.danger : C.inkSoft, fontSize: 12 }}>{meetingMode ? "••••" : `${money(monthSpent)} ${t("of")} ${money(monthAllocated)} ${t("spent")}`}{over ? ` · ${t("over budget")}` : ""}</span></>}
+                  right={<button onClick={() => downloadMonth(m)} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, fontWeight: 700, color: C.tealDark, background: "none", border: "none" }}>
+                    <Download size={12} /> {t("Download CSV")}
+                  </button>} />
+              );
+            })}
+          </>
+        )}
+      </Card>
     </div>
   );
 }
