@@ -37,6 +37,19 @@ const C = {
 
 const FONTS = `
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+/* Number inputs across the app (budgets, rates, fees, etc.) rely on typing a value
+   directly rather than the tiny native up/down spinner — hide the spinner so the
+   text field itself reads as the primary way to edit, on every browser engine. */
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 `;
 
 /* ------------------------------ brand marks ---------------------------------- */
@@ -1452,6 +1465,7 @@ const FLEX_CARE_DEFAULT = [
 ];
 
 let refundSeq = 0;
+let incidentSeq = 0;
 function refundEntry(o) { refundSeq += 1; return { id: `rf${refundSeq}`, ...o }; }
 const REFUNDS_DEFAULT = [
   refundEntry({ child: "Kai Villanueva", amount: 85, reason: "Closure credit", date: "07/10/2026", method: "Zelle", notes: "Unplanned closure day — prorated credit issued" }),
@@ -2694,6 +2708,8 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const [closures, saveClosures] = usePersistentState(`calendar-closures${sfx}`, []);
   const [prospects, saveProspects] = usePersistentState(`tours-pipeline${sfx}`, baseProspects);
   const [compOverrides, saveCompOverrides] = usePersistentState(`compliance-docs${sfx}`, {});
+  const [incidents, saveIncidents] = usePersistentState(`incident-reports${sfx}`, []);
+  const [mandatedNotes, saveMandatedNotes] = usePersistentState(`mandated-reporting-notes${sfx}`, []);
   const [expenses, saveExpenses] = usePersistentState(`business-expenses${sfx}`, baseExpenses);
   const [budgetPlan, saveBudgetPlan] = usePersistentState(`budget-plan${sfx}`, BUDGET_PLAN_DEFAULT);
   const [checklist, saveChecklist] = usePersistentState("daily-checklist", [
@@ -2849,7 +2865,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
               {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} />}
               {screen === "subsidy" && <Subsidy families={families} openFamId={openFamId} setOpenFamId={setOpenFamId} loaded={loaded} meetingMode={meetingMode} />}
               {screen === "payments" && <Finances families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} />}
-              {screen === "compliance" && <Compliance docs={compDocs} onSave={saveCompDoc} families={families} provider={providerInfo} staff={staff} setScreen={setScreen} />}
+              {screen === "compliance" && <Compliance docs={compDocs} onSave={saveCompDoc} families={families} provider={providerInfo} staff={staff} setScreen={setScreen} incidents={incidents} saveIncidents={saveIncidents} mandatedNotes={mandatedNotes} saveMandatedNotes={saveMandatedNotes} />}
               {screen === "security" && <SecurityScreen accessLog={accessLog} isEmpty={isEmpty} />}
               {screen === "messages" && <Messages threads={threads} saveThreads={saveThreads} families={families} staff={staff} />}
               {screen === "analytics" && <Analytics families={families} expenses={expenses} prospects={prospects} staff={staff} alumni={alumni} addDeparture={addDeparture} refunds={refunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={setScreen} />}
@@ -5509,9 +5525,12 @@ function BudgetPlanner({ budgetPlan, saveBudgetPlan, meetingMode = false }) {
                       </div>
                     </div>
                     {editMode ? (
-                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-                        <div style={{ width: 90 }}><MoneyInput value={c.allocated} onChange={(v) => updateCategory(i, { allocated: v })} suffix={t("budget")} icon={DollarSign} /></div>
-                        <div style={{ width: 90 }}><MoneyInput value={c.spent} onChange={(v) => updateCategory(i, { spent: v })} suffix={t("spent")} icon={DollarSign} /></div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0, flexWrap: "wrap", justifyContent: "flex-end" }}>
+                        <div style={{ width: 128 }}><MoneyInput value={c.allocated} onChange={(v) => updateCategory(i, { allocated: v })} suffix={t("budget")} icon={DollarSign} /></div>
+                        <div style={{ width: 122 }}><MoneyInput value={c.spent} onChange={(v) => updateCategory(i, { spent: v })} suffix={t("spent")} icon={DollarSign} /></div>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: over ? C.danger : C.teal, minWidth: 74, textAlign: "right" }}>
+                          {over ? `${money(c.spent - c.allocated)} ${t("over")}` : `${money(c.allocated - c.spent)} ${t("left")}`}
+                        </span>
                         <button onClick={() => deleteCategory(i)} style={{ background: "none", border: "none", color: C.danger }}><Trash2 size={14} /></button>
                       </div>
                     ) : (
@@ -5768,15 +5787,52 @@ function BusinessExpenses({ expenses, saveExpenses, incomeTotal, expenseTotal, o
 }
 
 /* -------------------------------- compliance ------------------------------------ */
-function Compliance({ docs, onSave, families, provider, staff, setScreen }) {
+const INCIDENT_SEVERITIES = ["Minor", "Moderate", "Serious — required CCLD notice"];
+function Compliance({ docs, onSave, families, provider, staff, setScreen, incidents, saveIncidents, mandatedNotes, saveMandatedNotes }) {
   const t = useT();
+  const [tab, setTab] = useState("licensing");
   const [openDoc, setOpenDoc] = useState(null);
   const [auditMode, setAuditMode] = useState(false);
   const [expandedForms, setExpandedForms] = useState({});
+  const [openIncidentId, setOpenIncidentId] = useState(null);
+  const [incidentForm, setIncidentForm] = useState({ childId: families[0]?.id || "", others: "", description: "", severity: INCIDENT_SEVERITIES[0], actionTaken: "", parentNotified: false });
+  const [noteText, setNoteText] = useState("");
   const required = requiredQualifiedAdults(families.length);
   const qualified = qualifiedStaffCount(staff);
   const withinRatio = qualified >= required;
   const missingCertsTotal = staff.filter((s) => s.status === "active").reduce((sum, s) => sum + CERT_TEMPLATES.filter((c) => s.certs[c.id] !== "complete").length, 0);
+
+  const TABS = [
+    ["licensing", t("Licensing & Ratios")],
+    ["documents", t("Documents on File")],
+    ["forms", t("Blank Forms")],
+    ["incidents", t("Incident Reports")],
+    ["mandated", t("Mandated Reporting")],
+  ];
+
+  const logIncident = () => {
+    const child = families.find((f) => f.id === Number(incidentForm.childId));
+    if (!child || !incidentForm.description.trim()) return;
+    const now = new Date();
+    incidentSeq += 1;
+    saveIncidents([{
+      id: `inc${incidentSeq}`, child: child.child, others: incidentForm.others, description: incidentForm.description,
+      severity: incidentForm.severity, actionTaken: incidentForm.actionTaken, parentNotified: incidentForm.parentNotified,
+      date: now.toLocaleDateString("en-US"), time: now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+    }, ...incidents]);
+    setIncidentForm({ childId: families[0]?.id || "", others: "", description: "", severity: INCIDENT_SEVERITIES[0], actionTaken: "", parentNotified: false });
+  };
+  const exportIncident = (inc) => downloadCSV(`alaga-incident-${inc.child.replace(/\s+/g, "-").toLowerCase()}-${inc.date.replace(/\//g, "-")}.csv`,
+    ["Child", "Date", "Time", "Severity", "Description", "Action taken", "Others involved", "Parent notified"],
+    [[inc.child, inc.date, inc.time, inc.severity, inc.description, inc.actionTaken, inc.others, inc.parentNotified ? "Yes" : "No"]]);
+
+  const addNote = () => {
+    if (!noteText.trim()) return;
+    const now = new Date();
+    saveMandatedNotes([{ id: Date.now(), text: noteText, date: now.toLocaleDateString("en-US"), time: now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) }, ...mandatedNotes]);
+    setNoteText("");
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: C.tealDark, borderRadius: 14, padding: "16px 20px" }}>
@@ -5789,74 +5845,191 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen }) {
         </button>
       </div>
 
-      <Card title={t("CCLD licensing status")} icon={ClipboardCheck}>
-        <Row left={<b>{t("License renewal")}</b>} right={<Pill label={t("Current — renews 03/2027")} fg={C.teal} bg={C.tealTint} />} />
-        <Row left={<b>{t("Last inspection")}</b>} right={<span style={{ fontSize: 13, color: C.inkSoft }}>04/12/2026 — {t("no citations")}</span>} />
-        <Row left={<b>{t("Ratio compliance today")}</b>} right={<Pill label={withinRatio ? t("Within ratio") : t("Understaffed for current enrollment")} fg={withinRatio ? C.teal : C.danger} bg={withinRatio ? C.tealTint : C.dangerTint} />} />
-        <Row left={<b>{t("Staff certifications")}</b>}
-          right={<div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            {missingCertsTotal > 0
-              ? <Pill label={`${missingCertsTotal} ${t("missing")}`} fg={C.danger} bg={C.dangerTint} />
-              : <Pill label={t("All current")} fg={C.teal} bg={C.tealTint} />}
-            {setScreen && <button onClick={() => setScreen("staff")} style={{ fontSize: 11.5, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("View staff")}</button>}
-          </div>} />
-        {provider?.lic && provider.lic !== "License pending" && <div style={{ padding: "10px 18px 14px" }}><CCLDVerifyLink lic={provider.lic} /></div>}
-      </Card>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {TABS.map(([id, label]) => (
+          <button key={id} onClick={() => setTab(id)} style={{
+            padding: "8px 16px", borderRadius: 9, fontSize: 13, fontWeight: 700,
+            border: `1px solid ${tab === id ? C.teal : C.line}`, background: tab === id ? C.tealTint : "#fff", color: tab === id ? C.tealDark : C.inkSoft,
+          }}>{label}</button>
+        ))}
+      </div>
 
-      <Card title={t("Documents on file")} icon={FileText} right={<span style={{ fontSize: 12, color: C.inkSoft }}>{t("Copies stored for inspection & recert")}</span>}>
-        {docs.map((d) => {
-          const meta = trForm(t, d.status);
-          return (
-            <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 18px", borderBottom: `1px solid ${C.line}` }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <d.icon size={16} color={C.teal} />
-                <div>
-                  <div style={{ fontSize: 13.5, fontWeight: 500 }}>{d.name}</div>
-                  <div style={{ fontSize: 11.5, color: meta.color, fontWeight: 600 }}>{meta.label} · {d.date}</div>
-                </div>
-              </div>
-              <div style={{ display: "flex", gap: 6 }}>
-                <IconBtn icon={Eye} title={t("View")} onClick={() => setOpenDoc(d)} />
-                <IconBtn icon={Download} title={t("Download")} />
-              </div>
-            </div>
-          );
-        })}
-      </Card>
+      {tab === "licensing" && (
+        <Card title={t("CCLD licensing status")} icon={ClipboardCheck}>
+          <Row left={<b>{t("License renewal")}</b>} right={<Pill label={t("Current — renews 03/2027")} fg={C.teal} bg={C.tealTint} />} />
+          <Row left={<b>{t("Last inspection")}</b>} right={<span style={{ fontSize: 13, color: C.inkSoft }}>04/12/2026 — {t("no citations")}</span>} />
+          <Row left={<b>{t("Ratio compliance today")}</b>} right={<Pill label={withinRatio ? t("Within ratio") : t("Understaffed for current enrollment")} fg={withinRatio ? C.teal : C.danger} bg={withinRatio ? C.tealTint : C.dangerTint} />} />
+          <Row left={<b>{t("Staff certifications")}</b>}
+            right={<div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              {missingCertsTotal > 0
+                ? <Pill label={`${missingCertsTotal} ${t("missing")}`} fg={C.danger} bg={C.dangerTint} />
+                : <Pill label={t("All current")} fg={C.teal} bg={C.tealTint} />}
+              {setScreen && <button onClick={() => setScreen("staff")} style={{ fontSize: 11.5, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("View staff")}</button>}
+            </div>} />
+          {provider?.lic && provider.lic !== "License pending" && <div style={{ padding: "10px 18px 14px" }}><CCLDVerifyLink lic={provider.lic} /></div>}
+        </Card>
+      )}
 
-      <Card title={t("Blank forms & templates")} icon={FileCheck} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Get the current official version from CDSS/CCLD before filing")}</span>}>
-        {BLANK_FORMS.map((f) => {
-          const isOpen = expandedForms[f.id];
-          return (
-            <div key={f.id}>
-              <button onClick={() => setExpandedForms((e) => ({ ...e, [f.id]: !e[f.id] }))} style={{
-                width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left",
-                padding: "11px 18px", background: "none", border: "none", borderBottom: `1px solid ${C.line}`,
-              }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-                  <FileText size={14} color={C.inkSoft} /><span style={{ fontSize: 13 }}>{f.name}</span>
-                </div>
-                <ChevronDown size={14} color={C.inkSoft} style={{ transform: isOpen ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />
-              </button>
-              {isOpen && (
-                <div style={{ padding: "14px 18px", background: C.cream, borderBottom: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 10 }}>
-                  <div style={{
-                    minHeight: 160, background: "#fff", border: `1px dashed ${C.line}`, borderRadius: 10,
-                    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, color: C.inkSoft,
-                  }}>
-                    <FileText size={28} color={C.inkSoft} />
-                    <div style={{ fontSize: 12, fontWeight: 600, textAlign: "center", maxWidth: 240 }}>{f.name}</div>
-                  </div>
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <IconBtn icon={Download} title={t("Download")} />
-                    <span style={{ fontSize: 11, color: C.inkSoft, alignSelf: "center" }}>{t("Blank template — confirm against the current CDSS/CCLD version before use.")}</span>
+      {tab === "documents" && (
+        <Card title={t("Documents on file")} icon={FileText} right={<span style={{ fontSize: 12, color: C.inkSoft }}>{t("Copies stored for inspection & recert")}</span>}>
+          {docs.map((d) => {
+            const meta = trForm(t, d.status);
+            return (
+              <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 18px", borderBottom: `1px solid ${C.line}` }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <d.icon size={16} color={C.teal} />
+                  <div>
+                    <div style={{ fontSize: 13.5, fontWeight: 500 }}>{d.name}</div>
+                    <div style={{ fontSize: 11.5, color: meta.color, fontWeight: 600 }}>{meta.label} · {d.date}</div>
                   </div>
                 </div>
-              )}
+                <div style={{ display: "flex", gap: 6 }}>
+                  <IconBtn icon={Eye} title={t("View")} onClick={() => setOpenDoc(d)} />
+                  <IconBtn icon={Download} title={t("Download")} />
+                </div>
+              </div>
+            );
+          })}
+        </Card>
+      )}
+
+      {tab === "forms" && (
+        <Card title={t("Blank forms & templates")} icon={FileCheck} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Get the current official version from CDSS/CCLD before filing")}</span>}>
+          {BLANK_FORMS.map((f) => {
+            const isOpen = expandedForms[f.id];
+            return (
+              <div key={f.id}>
+                <button onClick={() => setExpandedForms((e) => ({ ...e, [f.id]: !e[f.id] }))} style={{
+                  width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left",
+                  padding: "11px 18px", background: "none", border: "none", borderBottom: `1px solid ${C.line}`,
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                    <FileText size={14} color={C.inkSoft} /><span style={{ fontSize: 13 }}>{f.name}</span>
+                  </div>
+                  <ChevronDown size={14} color={C.inkSoft} style={{ transform: isOpen ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />
+                </button>
+                {isOpen && (
+                  <div style={{ padding: "14px 18px", background: C.cream, borderBottom: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 10 }}>
+                    <div style={{
+                      minHeight: 160, background: "#fff", border: `1px dashed ${C.line}`, borderRadius: 10,
+                      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, color: C.inkSoft,
+                    }}>
+                      <FileText size={28} color={C.inkSoft} />
+                      <div style={{ fontSize: 12, fontWeight: 600, textAlign: "center", maxWidth: 240 }}>{f.name}</div>
+                    </div>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <IconBtn icon={Download} title={t("Download")} />
+                      <span style={{ fontSize: 11, color: C.inkSoft, alignSelf: "center" }}>{t("Blank template — confirm against the current CDSS/CCLD version before use.")}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </Card>
+      )}
+
+      {tab === "incidents" && (
+        <>
+          <Card title={t("Log an incident")} icon={AlertTriangle}>
+            <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <Field label={t("Child")}>
+                  <Select value={String(incidentForm.childId)} onChange={(v) => setIncidentForm({ ...incidentForm, childId: v })} options={families.map((f) => String(f.id))} labels={families.map((f) => f.child)} />
+                </Field>
+                <Field label={t("Severity")}>
+                  <Select value={incidentForm.severity} onChange={(v) => setIncidentForm({ ...incidentForm, severity: v })} options={INCIDENT_SEVERITIES} labels={INCIDENT_SEVERITIES.map((s) => t(s))} />
+                </Field>
+              </div>
+              <Field label={t("Others involved (optional)")}>
+                <input value={incidentForm.others} onChange={(e) => setIncidentForm({ ...incidentForm, others: e.target.value })} placeholder={t("Other children or staff present")} style={inputStyle} />
+              </Field>
+              <Field label={t("What happened")}>
+                <textarea value={incidentForm.description} onChange={(e) => setIncidentForm({ ...incidentForm, description: e.target.value })} rows={3}
+                  style={{ ...inputStyle, width: "100%", resize: "vertical" }} />
+              </Field>
+              <Field label={t("Action taken")}>
+                <textarea value={incidentForm.actionTaken} onChange={(e) => setIncidentForm({ ...incidentForm, actionTaken: e.target.value })} rows={2}
+                  placeholder={t("First aid given, who was called, etc.")} style={{ ...inputStyle, width: "100%", resize: "vertical" }} />
+              </Field>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: C.inkSoft }}>
+                <input type="checkbox" checked={incidentForm.parentNotified} onChange={(e) => setIncidentForm({ ...incidentForm, parentNotified: e.target.checked })} /> {t("Parent/guardian has been notified")}
+              </label>
+              <button onClick={logIncident} style={{ padding: "10px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Log incident")}</button>
+              <div style={{ fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "flex-start", gap: 6 }}>
+                <Info size={11} style={{ marginTop: 1, flexShrink: 0 }} />
+                {t("This keeps your own record. For incidents that meet CCLD's reporting threshold, you're still responsible for filing the official Unusual Incident/Injury Report (LIC 624) within the required timeframe — a blank copy is available under Blank Forms.")}
+              </div>
             </div>
-          );
-        })}
-      </Card>
+          </Card>
+
+          <Card title={t("Incident history")} icon={ListChecks} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{incidents.length} {t("logged")}</span>}>
+            {incidents.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No incidents logged.")}</div>}
+            {incidents.map((inc) => {
+              const isOpen = openIncidentId === inc.id;
+              const severityColor = inc.severity.startsWith("Serious") ? C.danger : inc.severity === "Moderate" ? C.amber : C.inkSoft;
+              return (
+                <div key={inc.id}>
+                  <button onClick={() => setOpenIncidentId(isOpen ? null : inc.id)} style={{ width: "100%", textAlign: "left", background: "none", border: "none", borderRadius: 0, padding: 0 }}>
+                    <Row
+                      left={<><Dot c={severityColor} /><b>{inc.child}</b><span style={{ color: C.inkSoft }}>{inc.severity}</span></>}
+                      right={<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ fontSize: 11.5, color: C.inkSoft }}>{inc.date} · {inc.time}</span>
+                        <ChevronRight size={14} color={C.inkSoft} style={{ transform: isOpen ? "rotate(90deg)" : "none", transition: "transform 0.15s" }} />
+                      </div>} />
+                  </button>
+                  {isOpen && (
+                    <div style={{ padding: "0 18px 14px 40px", borderBottom: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5 }}>
+                      <div><b>{t("What happened")}:</b> {inc.description}</div>
+                      {inc.actionTaken && <div><b>{t("Action taken")}:</b> {inc.actionTaken}</div>}
+                      {inc.others && <div><b>{t("Others involved")}:</b> {inc.others}</div>}
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <Pill label={inc.parentNotified ? t("Parent notified") : t("Parent not yet notified")} fg={inc.parentNotified ? C.teal : C.amber} bg={inc.parentNotified ? C.tealTint : C.amberTint} />
+                        <button onClick={() => exportIncident(inc)} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>
+                          <Download size={12} /> {t("Export")}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </Card>
+        </>
+      )}
+
+      {tab === "mandated" && (
+        <>
+          <div style={{ background: C.dangerTint, border: `1px solid #E0B3AA`, borderRadius: 14, padding: "16px 20px", display: "flex", gap: 12, alignItems: "flex-start" }}>
+            <AlertTriangle size={18} color={C.danger} style={{ flexShrink: 0, marginTop: 1 }} />
+            <div style={{ fontSize: 12.5, color: "#7A2E24", lineHeight: 1.55 }}>
+              <b>{t("This is a recordkeeping tool only.")}</b> {t("Alaga does not determine whether something is reportable, and this page does not file a report on your behalf. If you suspect abuse or neglect, follow your mandated reporter training and contact your county's Child Protective Services or law enforcement directly. In an emergency, call 911.")}
+            </div>
+          </div>
+
+          <Card title={t("Mandated reporter training")} icon={FileCheck}>
+            <Row left={<b>{t("Suspected Child Abuse Reporting Acknowledgment (LIC 9108)")}</b>}
+              right={setScreen && <button onClick={() => setTab("forms")} style={{ fontSize: 11.5, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("View in Blank Forms")}</button>} />
+            {staff.map((s) => (
+              <Row key={s.id} left={<span style={{ fontSize: 13 }}>{s.name}</span>}
+                right={<Pill label={s.certs?.mandated === "complete" ? t("Acknowledged") : t("Not on file")} fg={s.certs?.mandated === "complete" ? C.teal : C.danger} bg={s.certs?.mandated === "complete" ? C.tealTint : C.dangerTint} />} />
+            ))}
+          </Card>
+
+          <Card title={t("Private notes")} icon={StickyNote} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Visible only to you — not shared with parents or staff")}</span>}>
+            <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
+              <textarea value={noteText} onChange={(e) => setNoteText(e.target.value)} rows={3}
+                placeholder={t("Dated observations for your own records. Do not use this in place of your professional judgment or your county's reporting process.")}
+                style={{ ...inputStyle, width: "100%", resize: "vertical" }} />
+              <button onClick={addNote} style={{ padding: "9px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Save note")}</button>
+            </div>
+            {mandatedNotes.length === 0 && <div style={{ padding: "0 18px 18px", fontSize: 12.5, color: C.inkSoft }}>{t("No private notes yet.")}</div>}
+            {mandatedNotes.map((n) => (
+              <Row key={n.id} left={<span style={{ fontSize: 12.5 }}>{n.text}</span>} right={<span style={{ fontSize: 11, color: C.inkSoft, whiteSpace: "nowrap" }}>{n.date} · {n.time}</span>} />
+            ))}
+          </Card>
+        </>
+      )}
 
       {openDoc && <DocPreview doc={docs.find((d) => d.id === openDoc.id) || openDoc} onClose={() => setOpenDoc(null)} onSave={onSave} t={t} />}
       {auditMode && <AuditMode docs={docs} families={families} onClose={() => setAuditMode(false)} provider={provider} staff={staff} />}
@@ -6036,6 +6209,12 @@ function SecurityScreen({ accessLog, isEmpty }) {
     { role: "Bookkeeper", access: "Billing and reports only" },
     { role: "Licensing / Auditor", access: "Temporary read-only access" },
   ];
+  const [tab, setTab] = useState("access");
+  const TABS = [
+    ["access", t("Support Access")],
+    ["log", t("Access Log")],
+    ["about", t("How This Works")],
+  ];
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div style={{ background: C.tealTint, border: `1px solid ${C.line}`, borderRadius: 14, padding: 18 }}>
@@ -6045,7 +6224,16 @@ function SecurityScreen({ accessLog, isEmpty }) {
         </div>
       </div>
 
-      {!isEmpty && (
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {TABS.map(([id, label]) => (
+          <button key={id} onClick={() => setTab(id)} style={{
+            padding: "8px 16px", borderRadius: 9, fontSize: 13, fontWeight: 700,
+            border: `1px solid ${tab === id ? C.teal : C.line}`, background: tab === id ? C.tealTint : "#fff", color: tab === id ? C.tealDark : C.inkSoft,
+          }}>{label}</button>
+        ))}
+      </div>
+
+      {tab === "access" && !isEmpty && (
         <Card title={t("Alaga support access")} icon={Lock}
           right={isActive ? <Pill label={t("Granted")} fg={C.teal} bg={C.tealTint} /> : access.status === "requested" ? <Pill label={t("Requested")} fg={C.amber} bg={C.amberTint} /> : null}>
           <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
@@ -6094,14 +6282,7 @@ function SecurityScreen({ accessLog, isEmpty }) {
         </Card>
       )}
 
-      <Card title={t("Design principles")} icon={Lock}>
-        {PRINCIPLES.map((p, i) => <Row key={i} left={<span style={{ fontSize: 13 }}>{t(p)}</span>} right={null} />)}
-      </Card>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <Card title={t("Role-based access (example)")} icon={Users}>
-          {ROLES.map((r) => <Row key={r.role} left={<b>{r.role}</b>} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{t(r.access)}</span>} />)}
-        </Card>
+      {tab === "log" && (
         <Card title={t("Access log")} icon={Eye} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("This session only")}</span>}>
           {accessLog.length === 0 ? (
             <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No records have been opened yet this session.")}</div>
@@ -6111,7 +6292,18 @@ function SecurityScreen({ accessLog, isEmpty }) {
               right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{e.time}</span>} />
           ))}
         </Card>
-      </div>
+      )}
+
+      {tab === "about" && (
+        <>
+          <Card title={t("Design principles")} icon={Lock}>
+            {PRINCIPLES.map((p, i) => <Row key={i} left={<span style={{ fontSize: 13 }}>{t(p)}</span>} right={null} />)}
+          </Card>
+          <Card title={t("Role-based access (example)")} icon={Users}>
+            {ROLES.map((r) => <Row key={r.role} left={<b>{r.role}</b>} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{t(r.access)}</span>} />)}
+          </Card>
+        </>
+      )}
     </div>
   );
 }
@@ -6668,6 +6860,12 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
   const grouped = Object.keys(EXPANSION_CATEGORIES).map((cat) => ({
     cat, label: EXPANSION_CATEGORIES[cat], items: growth.checklist.filter((i) => i.category === cat),
   })).filter((g) => g.items.length > 0);
+  const [subTab, setSubTab] = useState("checklist");
+  const SUB_TABS = [
+    ["checklist", t("Checklist")],
+    ["families", t("Families to Notify")],
+    ["notes", t("Notes")],
+  ];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -6691,7 +6889,16 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
         </div>
       </Card>
 
-      {grouped.map((g) => (
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {SUB_TABS.map(([id, label]) => (
+          <button key={id} onClick={() => setSubTab(id)} style={{
+            padding: "8px 16px", borderRadius: 9, fontSize: 13, fontWeight: 700,
+            border: `1px solid ${subTab === id ? C.teal : C.line}`, background: subTab === id ? C.tealTint : "#fff", color: subTab === id ? C.tealDark : C.inkSoft,
+          }}>{label}</button>
+        ))}
+      </div>
+
+      {subTab === "checklist" && grouped.map((g) => (
         <Card key={g.cat} title={t(g.label)} icon={ClipboardCheck}>
           {g.items.map((item) => {
             const meta = EXPANSION_STATUS_META[item.status];
@@ -6714,6 +6921,7 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
         </Card>
       ))}
 
+      {subTab === "families" && (
       <Card title={t("Families to notify")} icon={Users} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Subsidy agencies generally require notice of capacity/address changes")}</span>}>
         {subsidizedFamilies.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No subsidized families on file yet.")}</div>}
         {subsidizedFamilies.map((f) => {
@@ -6721,7 +6929,9 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
           return <Row key={f.id} left={<><Dot c={f.color} /><b>{f.child}</b><span style={{ color: C.inkSoft }}>{prog?.label}</span></>} right={<span style={{ fontSize: 12, color: C.inkSoft }}>{prog?.agency}</span>} />;
         })}
       </Card>
+      )}
 
+      {subTab === "notes" && (
       <Card title={t("Notes")} icon={StickyNote}>
         <div style={{ padding: 18 }}>
           <textarea value={growth.notes} onChange={(e) => saveGrowth({ ...growth, notes: e.target.value })} rows={3}
@@ -6729,6 +6939,7 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
             style={{ width: "100%", border: `1px solid ${C.line}`, borderRadius: 10, padding: "10px 12px", fontSize: 12.8, fontFamily: "inherit", resize: "vertical", color: C.ink }} />
         </div>
       </Card>
+      )}
 
       <button onClick={() => setPacketOpen(true)} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "13px 0", borderRadius: 12, border: "none", background: C.amber, color: "#fff", fontWeight: 700, fontSize: 14 }}>
         <Printer size={16} /> {t("Generate LPA submission packet")}
@@ -6830,9 +7041,25 @@ function SupportScreen({ providerInfo }) {
     const now = new Date();
     setTickets(tickets.map((tk) => (tk.id === id ? { ...tk, replies: [...tk.replies, { from: "me", text, date: now.toLocaleDateString("en-US"), time: now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) }] } : tk)));
   };
+  const [tab, setTab] = useState("contact");
+  const openCount = tickets.filter((tk) => tk.status === "open").length;
+  const TABS = [
+    ["contact", t("Contact Us")],
+    ["requests", `${t("My Requests")}${openCount > 0 ? ` (${openCount})` : ""}`],
+  ];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {TABS.map(([id, label]) => (
+          <button key={id} onClick={() => setTab(id)} style={{
+            padding: "8px 16px", borderRadius: 9, fontSize: 13, fontWeight: 700,
+            border: `1px solid ${tab === id ? C.teal : C.line}`, background: tab === id ? C.tealTint : "#fff", color: tab === id ? C.tealDark : C.inkSoft,
+          }}>{label}</button>
+        ))}
+      </div>
+
+      {tab === "contact" && (
       <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 16 }}>
         <Card title={t("Contact support")} icon={LifeBuoy}>
           <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
@@ -6891,8 +7118,11 @@ function SupportScreen({ providerInfo }) {
           </div>
         </Card>
       </div>
+      )}
 
+      {tab === "requests" && (
       <Card title={t("Your requests")} icon={ListChecks}>
+        {tickets.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No requests yet.")}</div>}
         {tickets.map((tk) => (
           <button key={tk.id} onClick={() => setOpenId(tk.id)} style={{ width: "100%", textAlign: "left", background: "none", border: "none", borderRadius: 0, padding: 0 }}>
             <Row
@@ -6905,6 +7135,7 @@ function SupportScreen({ providerInfo }) {
           </button>
         ))}
       </Card>
+      )}
 
       {open && <TicketDrawer ticket={open} onClose={() => setOpenId(null)} onToggleStatus={() => toggleStatus(open.id)} onReply={(text) => addReply(open.id, text)} />}
     </div>
@@ -7184,9 +7415,25 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
   const [comparisonOpen, setComparisonOpen] = useState(false);
 
   const saveProfile = () => { saveProviderInfo(profile); setEditingProfile(false); };
+  const [tab, setTab] = useState("profile");
+  const TABS = [
+    ["profile", t("Business Profile")],
+    ["language", t("Language & Accessibility")],
+    ["billing", t("Plan & Billing")],
+  ];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {TABS.map(([id, label]) => (
+          <button key={id} onClick={() => setTab(id)} style={{
+            padding: "8px 16px", borderRadius: 9, fontSize: 13, fontWeight: 700,
+            border: `1px solid ${tab === id ? C.teal : C.line}`, background: tab === id ? C.tealTint : "#fff", color: tab === id ? C.tealDark : C.inkSoft,
+          }}>{label}</button>
+        ))}
+      </div>
+
+      {tab === "profile" && (
       <Card title={t("Business profile")} icon={Building2}
         right={editingProfile
           ? <button onClick={saveProfile} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("Save changes")}</button>
@@ -7218,9 +7465,14 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
           </div>
         )}
       </Card>
+      )}
 
-      <PlanBilling tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} billing={billing} saveBilling={saveBilling} families={families} staff={staff} expenses={expenses} compDocs={compDocs} provider={provider} refunds={refunds} />
+      {tab === "billing" && (
+        <PlanBilling tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} billing={billing} saveBilling={saveBilling} families={families} staff={staff} expenses={expenses} compDocs={compDocs} provider={provider} refunds={refunds} />
+      )}
 
+      {tab === "language" && (
+      <>
       <Card title={t("Language")} icon={Languages} right={<span style={{ fontSize: 12, color: C.inkSoft }}>{t("Applies to your provider dashboard")}</span>}>
         {LANGS.map((l) => (
           <button key={l} onClick={() => setLanguage(l)} style={{
@@ -7251,6 +7503,8 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
           </div>
         </div>
       </Card>
+      </>
+      )}
     </div>
   );
 }
