@@ -2362,14 +2362,14 @@ function AdminProviderDrawer({ provider, mrrValue, onClose, statusMeta }) {
 // a time-of-day greeting, a weekly encouragement, and a plain-language rundown of
 // what actually needs their attention today, all pulled from real workspace data.
 const BRIEFING_THEMES = [
-  { word: "Steadiness", line: "Some days move slow. That's not falling behind — that's showing up fully, for every child who needs you to." },
-  { word: "Patience", line: "The tantrum, the tears, the tenth question — none of it is too much. You have room for all of it." },
-  { word: "Trust", line: "Every family who walks in the door is trusting you with what matters most to them. That trust is earned one ordinary day at a time." },
-  { word: "Rest", line: "Taking care of yourself isn't separate from taking care of them — it's part of the same job." },
-  { word: "Growth", line: "The quiet, unglamorous work you do today is exactly what these kids will carry with them." },
-  { word: "Community", line: "You're not just running a daycare — you're holding a small piece of your neighborhood together." },
-  { word: "Presence", line: "You don't have to get today perfect. You just have to be there for it." },
-  { word: "Warmth", line: "A steady, familiar face at the door is worth more to a small child than almost anything else." },
+  { word: "Steadiness", wordEs: "Estabilidad", line: "Some days move slow. That's not falling behind — that's showing up fully, for every child who needs you to.", lineEs: "Algunos días avanzan despacio. Eso no es quedarse atrás — es estar presente por completo, para cada niño que lo necesita." },
+  { word: "Patience", wordEs: "Paciencia", line: "The tantrum, the tears, the tenth question — none of it is too much. You have room for all of it.", lineEs: "La rabieta, las lágrimas, la décima pregunta — nada de eso es demasiado. Tiene espacio para todo eso." },
+  { word: "Trust", wordEs: "Confianza", line: "Every family who walks in the door is trusting you with what matters most to them. That trust is earned one ordinary day at a time.", lineEs: "Cada familia que entra por la puerta le confía lo que más les importa. Esa confianza se gana un día ordinario a la vez." },
+  { word: "Rest", wordEs: "Descanso", line: "Taking care of yourself isn't separate from taking care of them — it's part of the same job.", lineEs: "Cuidarse a sí misma no está separado de cuidarlos a ellos — es parte del mismo trabajo." },
+  { word: "Growth", wordEs: "Crecimiento", line: "The quiet, unglamorous work you do today is exactly what these kids will carry with them.", lineEs: "El trabajo silencioso y poco glamoroso que hace hoy es exactamente lo que estos niños llevarán consigo." },
+  { word: "Community", wordEs: "Comunidad", line: "You're not just running a daycare — you're holding a small piece of your neighborhood together.", lineEs: "No solo dirige una guardería — mantiene unida una pequeña parte de su vecindario." },
+  { word: "Presence", wordEs: "Presencia", line: "You don't have to get today perfect. You just have to be there for it.", lineEs: "No tiene que hacer que hoy sea perfecto. Solo tiene que estar presente." },
+  { word: "Warmth", wordEs: "Calidez", line: "A steady, familiar face at the door is worth more to a small child than almost anything else.", lineEs: "Una cara conocida y constante en la puerta vale más para un niño pequeño que casi cualquier otra cosa." },
 ];
 function isoWeekNumber(date) {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -2402,6 +2402,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   if (families.length > 0) {
     items.push({
       tone: "ok", text: <>You have <strong>{families.length}</strong> {families.length === 1 ? "child" : "children"} in your care — <strong>{subsidizedFams.length}</strong> subsidized and <strong>{families.length - subsidizedFams.length}</strong> private-pay.</>,
+      textEs: <>Tiene <strong>{families.length}</strong> {families.length === 1 ? "niño" : "niños"} bajo su cuidado — <strong>{subsidizedFams.length}</strong> con subsidio y <strong>{families.length - subsidizedFams.length}</strong> de pago privado.</>,
       speechEn: `You have ${families.length} ${families.length === 1 ? "child" : "children"} in your care — ${subsidizedFams.length} subsidized and ${families.length - subsidizedFams.length} private-pay.`,
       speechEs: `Tiene ${families.length} ${families.length === 1 ? "niño" : "niños"} bajo su cuidado — ${subsidizedFams.length} con subsidio y ${families.length - subsidizedFams.length} de pago privado.`,
     });
@@ -2409,6 +2410,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   if (expiring.length > 0) {
     items.push({
       tone: "warn", text: <><strong>{expiring.length}</strong> subsidy {expiring.length === 1 ? "authorization needs" : "authorizations need"} your attention.</>,
+      textEs: <><strong>{expiring.length}</strong> {expiring.length === 1 ? "autorización de subsidio necesita" : "autorizaciones de subsidio necesitan"} su atención.</>,
       speechEn: `${expiring.length} subsidy ${expiring.length === 1 ? "authorization needs" : "authorizations need"} your attention.`,
       speechEs: `${expiring.length} ${expiring.length === 1 ? "autorización de subsidio necesita" : "autorizaciones de subsidio necesitan"} su atención.`,
     });
@@ -2416,6 +2418,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   if (pendingFlex.length + unpaidFlex.length > 0) {
     items.push({
       tone: "warn", text: <><strong>{pendingFlex.length + unpaidFlex.length}</strong> flex care {pendingFlex.length + unpaidFlex.length === 1 ? "request needs" : "requests need"} approval or payment confirmation.</>,
+      textEs: <><strong>{pendingFlex.length + unpaidFlex.length}</strong> {pendingFlex.length + unpaidFlex.length === 1 ? "solicitud de cuidado flexible necesita" : "solicitudes de cuidado flexible necesitan"} aprobación o confirmación de pago.</>,
       speechEn: `${pendingFlex.length + unpaidFlex.length} flex care ${pendingFlex.length + unpaidFlex.length === 1 ? "request needs" : "requests need"} approval or payment confirmation.`,
       speechEs: `${pendingFlex.length + unpaidFlex.length} ${pendingFlex.length + unpaidFlex.length === 1 ? "solicitud de cuidado flexible necesita" : "solicitudes de cuidado flexible necesitan"} aprobación o confirmación de pago.`,
     });
@@ -2423,6 +2426,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   if (toursScheduled.length > 0) {
     items.push({
       tone: "ok", text: <>You have <strong>{toursScheduled.length}</strong> {toursScheduled.length === 1 ? "tour" : "tours"} on the calendar — {toursScheduled.map((p) => p.name).join(", ")}.</>,
+      textEs: <>Tiene <strong>{toursScheduled.length}</strong> {toursScheduled.length === 1 ? "recorrido" : "recorridos"} en el calendario — {toursScheduled.map((p) => p.name).join(", ")}.</>,
       speechEn: `You have ${toursScheduled.length} ${toursScheduled.length === 1 ? "tour" : "tours"} on the calendar — ${toursScheduled.map((p) => p.name).join(", ")}.`,
       speechEs: `Tiene ${toursScheduled.length} ${toursScheduled.length === 1 ? "recorrido" : "recorridos"} en el calendario — ${toursScheduled.map((p) => p.name).join(", ")}.`,
     });
@@ -2430,6 +2434,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   if (unreadThreads.length > 0) {
     items.push({
       tone: "msg", text: <><strong>{unreadThreads.length}</strong> unread {unreadThreads.length === 1 ? "message" : "messages"} from families.</>,
+      textEs: <><strong>{unreadThreads.length}</strong> {unreadThreads.length === 1 ? "mensaje sin leer" : "mensajes sin leer"} de familias.</>,
       speechEn: `${unreadThreads.length} unread ${unreadThreads.length === 1 ? "message" : "messages"} from families.`,
       speechEs: `${unreadThreads.length} ${unreadThreads.length === 1 ? "mensaje sin leer" : "mensajes sin leer"} de familias.`,
     });
@@ -2437,6 +2442,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   if (missingCerts.length > 0) {
     items.push({
       tone: "warn", text: <><strong>{missingCerts.map((s) => s.name).join(", ")}</strong> {missingCerts.length === 1 ? "has" : "have"} a certification on file that still needs to be completed.</>,
+      textEs: <><strong>{missingCerts.map((s) => s.name).join(", ")}</strong> {missingCerts.length === 1 ? "tiene" : "tienen"} una certificación pendiente de completar.</>,
       speechEn: `${missingCerts.map((s) => s.name).join(", ")} ${missingCerts.length === 1 ? "has" : "have"} a certification on file that still needs to be completed.`,
       speechEs: `${missingCerts.map((s) => s.name).join(", ")} ${missingCerts.length === 1 ? "tiene" : "tienen"} una certificación pendiente de completar.`,
     });
@@ -2444,7 +2450,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   if (items.length === 0) {
     const okEn = isEmpty ? "No families enrolled yet — once they join, your daily rundown will show up here." : "Nothing urgent today — a good day to get ahead on paperwork.";
     const okEs = isEmpty ? "Aún no hay familias inscritas — cuando se unan, su resumen diario aparecerá aquí." : "Nada urgente hoy — un buen día para adelantar papeleo.";
-    items.push({ tone: "ok", text: okEn, speechEn: okEn, speechEs: okEs });
+    items.push({ tone: "ok", text: okEn, textEs: okEs, speechEn: okEn, speechEs: okEs });
   }
   // Urgency first: anything needing action (warn), then messages, then good-news items.
   const urgencyRank = { warn: 0, msg: 1, ok: 2 };
@@ -2453,7 +2459,8 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   // Text-to-speech mockup — English and Spanish only, matching the provider's
   // dashboard language when it's one of those two; real speech synthesis via
   // the browser, no backend needed.
-  const speechLang = language === "Español" ? "es" : "en";
+  const [briefLang, setBriefLang] = useState(language === "Español" ? "es" : "en");
+  const speechLang = briefLang;
   const [speaking, setSpeaking] = useState(false);
   const speakBriefing = () => {
     if (!window.speechSynthesis) return;
@@ -2471,7 +2478,10 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
     setSpeaking(true);
   };
   const ttsSupported = typeof window !== "undefined" && !!window.speechSynthesis;
-  const ttsLanguageOk = language === "English" || language === "Español" || !language;
+  const isEs = briefLang === "es";
+  const dateLabelLocalized = isEs
+    ? now.toLocaleDateString("es-ES", { weekday: "long", month: "long", day: "numeric" })
+    : dateLabel;
 
   const toneColor = { ok: C.teal, warn: C.amber, msg: C.sky };
 
@@ -2488,41 +2498,43 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
             <AlagaMark size={44} color={C.tealDark} arch backdrop={false} />
             <div style={{ fontSize: 13, letterSpacing: "0.08em", textTransform: "uppercase", color: C.teal, fontWeight: 700 }}>alaga · provider workspace</div>
           </div>
-          {ttsSupported && ttsLanguageOk && (
-            <button onClick={speakBriefing} title={speaking ? "Stop reading" : "Listen to today's briefing"} style={{
-              display: "flex", alignItems: "center", gap: 7, padding: "8px 14px", borderRadius: 999,
-              border: `1px solid ${speaking ? C.teal : C.line}`, background: speaking ? C.tealTint : "#fff",
-              color: speaking ? C.tealDark : C.inkSoft, fontSize: 12.5, fontWeight: 700, flexShrink: 0,
-            }}>
-              {speaking ? <><Square size={12} fill={C.tealDark} /> Stop</> : <><Volume2 size={14} /> {speechLang === "es" ? "Escuchar" : "Listen"}</>}
-            </button>
-          )}
-          {ttsSupported && !ttsLanguageOk && (
-            <div title="Text-to-speech is available in English and Spanish only" style={{
-              display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 999,
-              border: `1px solid ${C.line}`, color: C.inkSoft, fontSize: 11.5, fontWeight: 600, flexShrink: 0,
-            }}>
-              <Volume2 size={13} /> EN / ES only
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+            <div style={{ display: "flex", gap: 2, padding: 3, borderRadius: 999, border: `1px solid ${C.line}`, background: "#fff" }}>
+              {[["en", "English"], ["es", "Español"]].map(([code, label]) => (
+                <button key={code} onClick={() => setBriefLang(code)} style={{
+                  padding: "6px 13px", borderRadius: 999, border: "none", fontSize: 12, fontWeight: 700,
+                  background: briefLang === code ? C.tealDark : "transparent", color: briefLang === code ? "#fff" : C.inkSoft,
+                }}>{label}</button>
+              ))}
             </div>
-          )}
+            {ttsSupported && (
+              <button onClick={speakBriefing} title={speaking ? "Stop reading" : "Listen to today's briefing"} style={{
+                display: "flex", alignItems: "center", gap: 7, padding: "8px 14px", borderRadius: 999,
+                border: `1px solid ${speaking ? C.teal : C.line}`, background: speaking ? C.tealTint : "#fff",
+                color: speaking ? C.tealDark : C.inkSoft, fontSize: 12.5, fontWeight: 700, flexShrink: 0,
+              }}>
+                {speaking ? <><Square size={12} fill={C.tealDark} /> {isEs ? "Detener" : "Stop"}</> : <><Volume2 size={14} /> {isEs ? "Escuchar" : "Listen"}</>}
+              </button>
+            )}
+          </div>
         </div>
 
         <div style={{ fontFamily: "'Fraunces', serif", fontOpticalSizing: "auto", fontWeight: 500, fontSize: 46, lineHeight: 1.15, color: C.ink, marginBottom: 8 }}>
-          {greetWord}, {firstName}
+          {isEs ? greetWordEs : greetWord}, {firstName}
         </div>
         <div style={{ fontSize: 15, color: C.inkSoft, marginBottom: 32 }}>
-          {dateLabel} · {providerInfo.name}{providerInfo.city ? `, ${providerInfo.city}` : ""}
+          {dateLabelLocalized} · {providerInfo.name}{providerInfo.city ? `, ${providerInfo.city}` : ""}
         </div>
 
         <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", marginBottom: 22, border: `1px solid ${C.line}`, background: C.paper }}>
           <div style={{ padding: "13px 20px", fontSize: 12, fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase", color: C.inkSoft, borderBottom: `1px solid ${C.line}` }}>
-            Today, at a glance — most urgent first
+            {isEs ? "Hoy, de un vistazo — lo más urgente primero" : "Today, at a glance — most urgent first"}
           </div>
           <div>
             {items.map((it, i) => (
               <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "16px 20px", borderBottom: i < items.length - 1 ? `1px solid ${C.line}` : "none" }}>
                 <Dot c={toneColor[it.tone]} />
-                <div style={{ fontSize: 15, color: C.ink, lineHeight: 1.5 }}>{it.text}</div>
+                <div style={{ fontSize: 15, color: C.ink, lineHeight: 1.5 }}>{isEs ? it.textEs : it.text}</div>
               </div>
             ))}
           </div>
@@ -2531,8 +2543,8 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
         <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 22, padding: "16px 20px", background: C.tealTint, borderRadius: 16 }}>
           <Sparkles size={18} color={C.teal} style={{ flexShrink: 0, marginTop: 3 }} />
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", color: C.teal, marginBottom: 4 }}>This week: {theme.word}</div>
-            <p style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 16.5, lineHeight: 1.5, color: C.tealDark }}>{theme.line}</p>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", color: C.teal, marginBottom: 4 }}>{isEs ? "Esta semana" : "This week"}: {isEs ? theme.wordEs : theme.word}</div>
+            <p style={{ fontFamily: "'Fraunces', serif", fontStyle: "italic", fontSize: 16.5, lineHeight: 1.5, color: C.tealDark }}>{isEs ? theme.lineEs : theme.line}</p>
           </div>
         </div>
 
@@ -2541,7 +2553,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
           padding: "15px 20px", borderRadius: 12, border: "none", background: C.tealDark, color: "#fff",
           fontWeight: 700, fontSize: 15.5, marginBottom: 10,
         }}>
-          Step into the day <ArrowRight size={16} />
+          {isEs ? "Comenzar el día" : "Step into the day"} <ArrowRight size={16} />
         </button>
       </div>
     </div>
