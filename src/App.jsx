@@ -2958,7 +2958,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
               {screen === "calendar" && <CalendarScreen schedule={weeklySchedule} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} />}
               {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} />}
               {screen === "subsidy" && <Subsidy families={families} openFamId={openFamId} setOpenFamId={setOpenFamId} loaded={loaded} meetingMode={meetingMode} />}
-              {screen === "payments" && <Finances families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} />}
+              {screen === "payments" && <Finances families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} />}
               {screen === "compliance" && <Compliance docs={compDocs} onSave={saveCompDoc} families={families} provider={providerInfo} staff={staff} setScreen={setScreen} incidents={incidents} saveIncidents={saveIncidents} mandatedNotes={mandatedNotes} saveMandatedNotes={saveMandatedNotes} />}
               {screen === "security" && <SecurityScreen accessLog={accessLog} isEmpty={isEmpty} />}
               {screen === "messages" && <Messages threads={threads} saveThreads={saveThreads} families={families} staff={staff} />}
@@ -3254,8 +3254,6 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [showAttention, setShowAttention] = useState(true);
   const [ratesOpen, setRatesOpen] = useState(false);
-  const [editingRates, setEditingRates] = useState(false);
-  const [rates, setRates] = useState(tuitionRates);
   const subsidizedFams = families.filter((f) => f.subsidized);
   const privateFams = families.filter((f) => !f.subsidized);
   const monthlySubsidy = subsidizedFams.reduce((s, f) => s + (f.coverageBasis === "monthly" ? f.coverageAmount : 0), 0);
@@ -3283,10 +3281,6 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
   const removeTask = (id) => saveChecklist(checklist.filter((c) => c.id !== id));
   const resolveNotice = (famId) => saveDismissedNotices([...dismissedNotices, famId]);
   const toggleCollapse = (id) => setCollapsed((c) => ({ ...c, [id]: !c[id] }));
-  const setRate = (cls, field, val) => setRates((r) => ({ ...r, [cls]: { ...r[cls], [field]: val } }));
-  const siblingDiscount = rates.siblingDiscount || TUITION_RATES_DEFAULT.siblingDiscount;
-  const setSiblingDiscount = (field, val) => setRates((r) => ({ ...r, siblingDiscount: { ...(r.siblingDiscount || TUITION_RATES_DEFAULT.siblingDiscount), [field]: val } }));
-  const saveRates = () => { saveTuitionRates(rates); setEditingRates(false); };
   const openDays = weeklySchedule.filter((d) => d.open);
 
   return (
@@ -3443,69 +3437,26 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
           padding: "13px 18px", background: "none", border: "none", borderBottom: ratesOpen ? `1px solid ${C.line}` : "none",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 600, fontSize: 14 }}>
-            <DollarSign size={15} color={C.teal} /> {t("Tuition rates & hours")}
+            <Clock size={15} color={C.teal} /> {t("Weekly hours")}
           </div>
           <ChevronDown size={16} color={C.inkSoft} style={{ transform: ratesOpen ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />
         </button>
         {ratesOpen && (
-          <>
-            <div style={{ padding: "10px 18px", fontSize: 11.5, color: C.inkSoft, borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "center", gap: 6 }}>
-              <Clock size={12} /> {openDays.length > 0 ? `${openDays.map((d) => t(d.day).slice(0, 3)).join(", ")} · ${openDays[0].hours}` : t("No open days set — configure in Calendar.")}
-              <button onClick={() => setScreen("calendar")} style={{ marginLeft: "auto", fontSize: 11, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("Edit in Calendar")}</button>
-            </div>
-            <div style={{ display: "flex", justifyContent: "flex-end", padding: "8px 18px 0" }}>
-              {editingRates
-                ? <button onClick={saveRates} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("Save changes")}</button>
-                : <button onClick={() => setEditingRates(true)} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}><Pencil size={12} /> {t("Edit")}</button>}
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 0, padding: "8px 18px 4px", fontSize: 10.5, fontWeight: 700, color: C.inkSoft, textTransform: "uppercase", letterSpacing: "0.03em" }}>
-              <span>{t("Classroom")}</span><span>{t("Full-time /mo")}</span><span>{t("Part-time /mo")}</span><span>{t("Hourly")}</span>
-            </div>
-            {CLASSROOMS.map((c) => (
-              <div key={c.id} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8, alignItems: "center", padding: "9px 18px", borderBottom: `1px solid ${C.line}` }}>
-                <span style={{ fontSize: 13, fontWeight: 600 }}>{c.label}</span>
-                {editingRates ? (
-                  <>
-                    <MoneyInput value={rates[c.id].fullTime} onChange={(v) => setRate(c.id, "fullTime", v)} suffix="" icon={DollarSign} />
-                    <MoneyInput value={rates[c.id].partTime} onChange={(v) => setRate(c.id, "partTime", v)} suffix="" icon={DollarSign} />
-                    <MoneyInput value={rates[c.id].hourly} onChange={(v) => setRate(c.id, "hourly", v)} suffix={t("/hr")} icon={DollarSign} />
-                  </>
-                ) : (
-                  <>
-                    <span style={{ fontSize: 13 }}>{meetingMode ? <Redacted /> : money(rates[c.id].fullTime)}</span>
-                    <span style={{ fontSize: 13 }}>{meetingMode ? <Redacted /> : money(rates[c.id].partTime)}</span>
-                    <span style={{ fontSize: 13 }}>{meetingMode ? <Redacted /> : <>{money(rates[c.id].hourly)}{t("/hr")}</>}</span>
-                  </>
-                )}
-              </div>
-            ))}
-            <div style={{ padding: "12px 18px", borderTop: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 8 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <span style={{ fontSize: 12.5, fontWeight: 700 }}>{t("Sibling discount")}</span>
-                {editingRates ? (
-                  <ToggleSwitch on={siblingDiscount.enabled} onClick={() => setSiblingDiscount("enabled", !siblingDiscount.enabled)} />
-                ) : (
-                  <Pill label={siblingDiscount.enabled ? t("Enabled") : t("Off")} fg={siblingDiscount.enabled ? C.teal : C.inkSoft} bg={siblingDiscount.enabled ? C.tealTint : "#EFEBE1"} />
-                )}
-              </div>
-              {siblingDiscount.enabled && (
-                editingRates ? (
-                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                    <Select value={siblingDiscount.type} onChange={(v) => setSiblingDiscount("type", v)} options={["percent", "flat"]} labels={[t("Percentage off"), t("Flat dollar off")]} />
-                    {siblingDiscount.type === "percent"
-                      ? <MoneyInput value={siblingDiscount.value} onChange={(v) => setSiblingDiscount("value", v)} suffix="%" icon={Percent} />
-                      : <MoneyInput value={siblingDiscount.value} onChange={(v) => setSiblingDiscount("value", v)} suffix="" icon={DollarSign} />}
-                  </div>
-                ) : (
-                  <div style={{ fontSize: 12.5, color: C.inkSoft }}>
-                    {meetingMode ? <Redacted width={110} /> : <>{siblingDiscount.type === "percent" ? `${siblingDiscount.value}% ${t("off")}` : `${money(siblingDiscount.value)} ${t("off")}`} · {t("applied to the 2nd child onward in a household")}</>}
-                  </div>
-                )
-              )}
-            </div>
-          </>
+          <div style={{ padding: "10px 18px", fontSize: 11.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
+            <Clock size={12} /> {openDays.length > 0 ? `${openDays.map((d) => t(d.day).slice(0, 3)).join(", ")} · ${openDays[0].hours}` : t("No open days set — configure in Calendar.")}
+            <button onClick={() => setScreen("calendar")} style={{ marginLeft: "auto", fontSize: 11, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("Edit in Calendar")}</button>
+          </div>
         )}
       </div>
+
+      <button onClick={() => setScreen("payments")} style={{
+        display: "flex", alignItems: "center", gap: 8, padding: "12px 18px", borderRadius: 14, border: `1px solid ${C.line}`,
+        background: "#fff", color: C.tealDark, fontSize: 12.5, fontWeight: 600, textAlign: "left",
+      }}>
+        <DollarSign size={15} color={C.teal} />
+        {t("Tuition rates and sibling discount now live in Finances → Tuition & Subsidies.")}
+        <ArrowRight size={13} style={{ marginLeft: "auto" }} />
+      </button>
     </div>
   );
 }
@@ -3909,12 +3860,12 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
           )}
         </div>
       </div>
-      {openChild && <ChildDrawer child={openChild} onClose={() => setOpenChildId(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} />}
+      {openChild && <ChildDrawer child={openChild} onClose={() => setOpenChildId(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} tuitionRates={tuitionRates} families={household.children} />}
     </div>
   );
 }
 
-function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess }) {
+function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRates, families }) {
   const t = useT();
   const [editingSession, setEditingSession] = useState(false);
   const [sessionsApproved, setSessionsApproved] = useState(child.sessionsApproved);
@@ -3929,7 +3880,19 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess }) {
   const [accommodations, setAccommodations] = useState(child.accommodations || "");
   const docFileInputRef = React.useRef(null);
   const [uploadingDocId, setUploadingDocId] = useState(null);
+  const photoInputRef = React.useRef(null);
   const prog = child.subsidized ? programOf(child.programId) : null;
+
+  const householdSiblings = (families || []).filter((f) => f.household === child.household && !f.subsidized).sort((a, b) => a.id - b.id);
+  const siblingIndex = householdSiblings.findIndex((f) => f.id === child.id);
+  const siblingDiscount = tuitionRates?.siblingDiscount;
+  const hasSiblingContext = !child.subsidized && householdSiblings.length > 1;
+  let siblingComputed = null;
+  if (hasSiblingContext && tuitionRates) {
+    const baseAmounts = householdSiblings.map((f) => tuitionRates[f.classroom]?.fullTime || 0);
+    const computed = applySiblingDiscounts(baseAmounts, siblingDiscount || TUITION_RATES_DEFAULT.siblingDiscount);
+    siblingComputed = computed[siblingIndex];
+  }
 
   useEffect(() => { logAccess && logAccess("family", child.child); }, [child.id]);
 
@@ -3946,6 +3909,13 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess }) {
     onSave(child.id, { documents: next });
     setUploadingDocId(null);
   };
+  const handlePhotoPicked = (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = "";
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    onSave(child.id, { photoUrl: url, photoFileName: file.name });
+  };
 
   const saveField = async (key, fields) => {
     setSaveState((s) => ({ ...s, [key]: "saving" }));
@@ -3960,12 +3930,22 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess }) {
       <div style={{ position: "relative", width: 440, maxWidth: "94vw", height: "100%", background: C.paper, boxShadow: "-8px 0 30px rgba(0,0,0,0.12)", display: "flex", flexDirection: "column" }}>
         <div style={{ padding: "20px 22px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <div style={{ display: "flex", gap: 12 }}>
-            <div style={{ width: 44, height: 44, borderRadius: "50%", background: child.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 16, flexShrink: 0 }}>{child.child[0]}</div>
+            <input ref={photoInputRef} type="file" accept="image/*" onChange={handlePhotoPicked} style={{ display: "none" }} />
+            <button onClick={() => photoInputRef.current && photoInputRef.current.click()} title={t("Upload an ID photo — for staff identification only, not shared as a photo feed")} style={{
+              width: 44, height: 44, borderRadius: "50%", background: child.photoUrl ? `center/cover no-repeat url(${child.photoUrl})` : child.color,
+              color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 16, flexShrink: 0, border: "none", position: "relative", overflow: "hidden",
+            }}>
+              {!child.photoUrl && child.child[0]}
+              <span style={{ position: "absolute", bottom: -1, right: -1, width: 16, height: 16, borderRadius: "50%", background: C.teal, border: "2px solid #fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Pencil size={8} color="#fff" />
+              </span>
+            </button>
             <div>
               <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>{child.child}</div>
               <div style={{ fontSize: 12.5, color: C.inkSoft }}>{child.age} · {classroomLabelWithRange(child.classroom)}</div>
-              <div style={{ marginTop: 6 }}>
+              <div style={{ marginTop: 6, display: "flex", gap: 6, flexWrap: "wrap" }}>
                 <Pill label={child.subsidized ? t(STATUS_META[child.status].label) : t("Private pay")} fg={child.subsidized ? STATUS_META[child.status].fg : C.sky} bg={child.subsidized ? STATUS_META[child.status].bg : C.skyTint} />
+                {siblingComputed?.discountApplied && <Pill label={t("Sibling discount")} fg={C.teal} bg={C.tealTint} />}
               </div>
             </div>
           </div>
@@ -4016,6 +3996,16 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess }) {
                     <div>
                       <div style={{ fontSize: 13, fontWeight: 600 }}>{t("Private pay")}</div>
                       <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{money(tuition)} {t("private tuition")} / {t("month")}</div>
+                      {siblingComputed?.discountApplied && (
+                        <div style={{ fontSize: 11.5, color: C.teal, marginTop: 3, display: "flex", alignItems: "center", gap: 5 }}>
+                          <CheckCircle2 size={11} /> {t("Sibling discount applied")} — <span style={{ textDecoration: "line-through", color: C.inkSoft }}>{money(siblingComputed.base)}</span> {t("before discount")}
+                        </div>
+                      )}
+                      {hasSiblingContext && !siblingComputed?.discountApplied && (!siblingDiscount || !siblingDiscount.enabled) && (
+                        <div style={{ fontSize: 11, color: C.inkSoft, marginTop: 3, display: "flex", alignItems: "center", gap: 5 }}>
+                          <Info size={10} /> {t("No sibling discount configured — set one up in Finances → Tuition & Subsidies.")}
+                        </div>
+                      )}
                     </div>
                     <button onClick={() => setEditingTuition(true)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 700 }}><Pencil size={12} /> {t("Edit")}</button>
                   </div>
@@ -5297,10 +5287,17 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
 }
 
 /* --------------------------------- payments ------------------------------------ */
-function Finances({ families, expenses, saveExpenses, reminderSettings, saveReminderSettings, staff, tier, payrollSettings, savePayrollSettings, onSave, refunds, saveRefunds, flexCareRequests, tuitionRates, setScreen, providerInfo, meetingMode = false, budgetPlan, saveBudgetPlan }) {
+function Finances({ families, expenses, saveExpenses, reminderSettings, saveReminderSettings, staff, tier, payrollSettings, savePayrollSettings, onSave, refunds, saveRefunds, flexCareRequests, tuitionRates, saveTuitionRates, setScreen, providerInfo, meetingMode = false, budgetPlan, saveBudgetPlan }) {
   const t = useT();
   const [tab, setTab] = useState("tuition");
   const [expandedPayment, setExpandedPayment] = useState(null);
+  const [ratesOpen, setRatesOpen] = useState(false);
+  const [editingRates, setEditingRates] = useState(false);
+  const [rates, setRates] = useState(tuitionRates || TUITION_RATES_DEFAULT);
+  const siblingDiscountFin = rates.siblingDiscount || TUITION_RATES_DEFAULT.siblingDiscount;
+  const setRate = (classroomId, field, val) => setRates((r) => ({ ...r, [classroomId]: { ...r[classroomId], [field]: val } }));
+  const setSiblingDiscountFin = (field, val) => setRates((r) => ({ ...r, siblingDiscount: { ...(r.siblingDiscount || TUITION_RATES_DEFAULT.siblingDiscount), [field]: val } }));
+  const saveRatesNow = async () => { await saveTuitionRates(rates); setEditingRates(false); };
   const [remindersOpen, setRemindersOpen] = useState(false);
   const isSimple = tier === "simple";
   // Budget Planner is available on both plans — it's core business ops, not a
@@ -5356,6 +5353,66 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
             <Kpi label={t("Split-pay families")} value={String(splitFamilies.length)} sub={t("payment divided between guardians")} accent={C.sky} />
             <Kpi label={t("Unpaid this period")} value={String(unpaidCount)} sub={t("tap a family below to update")} accent={unpaidCount > 0 ? C.amber : C.teal} />
           </div>
+          <Card title={t("Tuition rates & sibling discount")} icon={DollarSign}
+            right={<button onClick={() => setRatesOpen(!ratesOpen)} style={{ background: "none", border: "none", color: C.inkSoft }}>
+              <ChevronDown size={16} style={{ transform: ratesOpen ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />
+            </button>}>
+            {ratesOpen && (
+              <>
+                <div style={{ display: "flex", justifyContent: "flex-end", padding: "10px 18px 0" }}>
+                  {editingRates
+                    ? <button onClick={saveRatesNow} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("Save changes")}</button>
+                    : <button onClick={() => setEditingRates(true)} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}><Pencil size={12} /> {t("Edit")}</button>}
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 0, padding: "8px 18px 4px", fontSize: 10.5, fontWeight: 700, color: C.inkSoft, textTransform: "uppercase", letterSpacing: "0.03em" }}>
+                  <span>{t("Classroom")}</span><span>{t("Full-time /mo")}</span><span>{t("Part-time /mo")}</span><span>{t("Hourly")}</span>
+                </div>
+                {CLASSROOMS.map((c) => (
+                  <div key={c.id} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8, alignItems: "center", padding: "9px 18px", borderBottom: `1px solid ${C.line}` }}>
+                    <span style={{ fontSize: 13, fontWeight: 600 }}>{c.label}</span>
+                    {editingRates ? (
+                      <>
+                        <MoneyInput value={rates[c.id].fullTime} onChange={(v) => setRate(c.id, "fullTime", v)} suffix="" icon={DollarSign} />
+                        <MoneyInput value={rates[c.id].partTime} onChange={(v) => setRate(c.id, "partTime", v)} suffix="" icon={DollarSign} />
+                        <MoneyInput value={rates[c.id].hourly} onChange={(v) => setRate(c.id, "hourly", v)} suffix={t("/hr")} icon={DollarSign} />
+                      </>
+                    ) : (
+                      <>
+                        <span style={{ fontSize: 13 }}>{meetingMode ? <Redacted /> : money(rates[c.id].fullTime)}</span>
+                        <span style={{ fontSize: 13 }}>{meetingMode ? <Redacted /> : money(rates[c.id].partTime)}</span>
+                        <span style={{ fontSize: 13 }}>{meetingMode ? <Redacted /> : <>{money(rates[c.id].hourly)}{t("/hr")}</>}</span>
+                      </>
+                    )}
+                  </div>
+                ))}
+                <div style={{ padding: "12px 18px", borderTop: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 8 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: 12.5, fontWeight: 700 }}>{t("Sibling discount")}</span>
+                    {editingRates ? (
+                      <ToggleSwitch on={siblingDiscountFin.enabled} onClick={() => setSiblingDiscountFin("enabled", !siblingDiscountFin.enabled)} />
+                    ) : (
+                      <Pill label={siblingDiscountFin.enabled ? t("Enabled") : t("Off")} fg={siblingDiscountFin.enabled ? C.teal : C.inkSoft} bg={siblingDiscountFin.enabled ? C.tealTint : "#EFEBE1"} />
+                    )}
+                  </div>
+                  {siblingDiscountFin.enabled && (
+                    editingRates ? (
+                      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                        <Select value={siblingDiscountFin.type} onChange={(v) => setSiblingDiscountFin("type", v)} options={["percent", "flat"]} labels={[t("Percentage off"), t("Flat dollar off")]} />
+                        {siblingDiscountFin.type === "percent"
+                          ? <MoneyInput value={siblingDiscountFin.value} onChange={(v) => setSiblingDiscountFin("value", v)} suffix="%" icon={Percent} />
+                          : <MoneyInput value={siblingDiscountFin.value} onChange={(v) => setSiblingDiscountFin("value", v)} suffix="" icon={DollarSign} />}
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: 12.5, color: C.inkSoft }}>
+                        {meetingMode ? <Redacted width={110} /> : <>{siblingDiscountFin.type === "percent" ? `${siblingDiscountFin.value}% ${t("off")}` : `${money(siblingDiscountFin.value)} ${t("off")}`} · {t("applied to the 2nd child onward in a household")}</>}
+                      </div>
+                    )
+                  )}
+                </div>
+              </>
+            )}
+          </Card>
+
           <Card title={t("Per-child payment record")} icon={CreditCard}
             right={<button onClick={exportTuition} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 700, color: C.tealDark, background: "none", border: "none" }}><Download size={13} /> {t("Export CSV")}</button>}>
             {families.map((f) => {
