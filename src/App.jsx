@@ -3725,6 +3725,7 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
         {households.map((h) => {
           const anyAttention = h.children.some((c) => c.subsidized && c.status !== "active");
           const anySplit = h.children.some((c) => c.copaySplit);
+          const anySiblingDiscount = h.children.some((c) => effectiveTuition(c, h.children, tuitionRates).discountApplied);
           return (
             <button key={h.household} onClick={() => setOpenHousehold(h.household)} style={{
               width: "100%", textAlign: "left", background: openHousehold === h.household ? C.tealTint : "transparent",
@@ -3733,6 +3734,7 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
               <Row
                 left={<><Dot c={h.children[0].color} /><b>{h.householdName}</b><span style={{ color: C.inkSoft }}>{h.children.length} {t(h.children.length === 1 ? "child" : "children")} · {h.parents[0].name}</span></>}
                 right={<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  {anySiblingDiscount && <Pill label={t("Sibling discount")} fg={C.teal} bg={C.tealTint} />}
                   {anySplit && <Pill label={t("Split tuition")} fg={C.sky} bg={C.skyTint} />}
                   {anyAttention && <Pill label={t("Needs attention")} fg={C.amber} bg={C.amberTint} />}
                   <ChevronRight size={15} color={C.inkSoft} />
