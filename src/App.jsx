@@ -1293,6 +1293,7 @@ const T = {
   "paid": { es: "pagado", tl: "bayad", zh: "已支付", vi: "đã thanh toán", ko: "지불함" },
   "Submit these to your FSA/HSA administrator — Alaga doesn't file claims on your behalf.": { es: "Envíe estos a su administrador de FSA/HSA — Alaga no presenta reclamos en su nombre.", tl: "Isumite ang mga ito sa iyong FSA/HSA administrator — hindi nagfa-file ng claims si Alaga para sa iyo.", zh: "请将这些提交给您的FSA/HSA管理机构——Alaga不会代您提交报销申请。", vi: "Hãy nộp các mục này cho đơn vị quản lý FSA/HSA của bạn — Alaga không nộp yêu cầu bồi hoàn thay bạn.", ko: "이 자료를 본인의 FSA/HSA 관리자에게 제출하세요 — Alaga는 대신 청구를 접수하지 않습니다." },
   "Exit parent view": { es: "Salir de vista de padres", tl: "Umalis sa parent view", zh: "退出家长视图", vi: "Thoát chế độ phụ huynh", ko: "학부모 화면 나가기" },
+  "Exit demo": { es: "Salir de la demostración", tl: "Umalis sa demo", zh: "退出演示", vi: "Thoát bản demo", ko: "데모 종료" },
   "Viewing as": { es: "Viendo como", tl: "Nakatingin bilang", zh: "当前查看身份", vi: "Đang xem với vai trò", ko: "보기 모드" },
   "parent of": { es: "padre/madre de", tl: "magulang ni", zh: "的家长", vi: "phụ huynh của", ko: "의 학부모" },
   "check-in": { es: "registro", tl: "check-in", zh: "签到", vi: "điểm danh", ko: "체크인" },
@@ -1761,7 +1762,7 @@ function LoginScreen({ onAuthenticated, onBack }) {
   );
 }
 
-function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn }) {
+function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
   return (
     <div style={{
       minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "56px 32px",
@@ -1831,7 +1832,7 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn }) {
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.inkSoft, marginBottom: 12 }}>
           Other ways in
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 18 }}>
           <button onClick={onSignUp} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
             <div style={{ width: 46, height: 46, borderRadius: 12, background: C.skyTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <Rocket size={22} color={C.sky} />
@@ -1841,6 +1842,17 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn }) {
               <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>Real sign-up flow into your own empty workspace.</div>
             </div>
             <ArrowRight size={16} color={C.sky} />
+          </button>
+
+          <button onClick={onParentDemo} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
+            <div style={{ width: 46, height: 46, borderRadius: 12, background: C.coralTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Users size={22} color={C.coral} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>I'm a parent</div>
+              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>See what families see — check-in, receipts, FSA/HSA, messages.</div>
+            </div>
+            <ArrowRight size={16} color={C.coral} />
           </button>
 
           <button onClick={onAdmin} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
@@ -2619,7 +2631,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   );
 }
 
-function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData, onExitToLanding, forceTier, meetingMode = false }) {
+function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData, onExitToLanding, forceTier, meetingMode = false, startInParentMode = false }) {
   const sfx = isEmpty ? "-empty" : "";
   const [providerInfo, saveProviderInfo] = usePersistentState(`provider-profile${sfx}`, {
     name: initialProviderInfo.name, city: initialProviderInfo.city, lic: initialProviderInfo.lic,
@@ -2633,10 +2645,10 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const baseCompDocsRaw = isEmpty ? COMPLIANCE_DOCS.map((d) => ({ ...d, status: "missing", date: undefined })) : COMPLIANCE_DOCS;
   const baseThreads = isEmpty ? [] : MESSAGE_THREADS;
 
-  const [mode, setMode] = useState("provider"); // "provider" | "parent"
+  const [mode, setMode] = useState(startInParentMode ? "parent" : "provider"); // "provider" | "parent"
   // Providers land on the welcome briefing every time they open the workspace —
   // it's a front porch, not a one-time onboarding step.
-  const [showBriefing, setShowBriefing] = useState(true);
+  const [showBriefing, setShowBriefing] = useState(!startInParentMode);
   const [screen, setScreenRaw] = useState("dashboard");
   const [screenHistory, setScreenHistory] = useState([]);
   // navigateToScreen replaces plain setScreen everywhere a nav happens, so the
@@ -2879,7 +2891,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
           )}
         </>
       ) : (
-        <ParentApp families={families} onExit={() => setMode("provider")} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} />
+        <ParentApp families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} />
       )}
     </div>
     </LanguageContext.Provider>
@@ -2891,6 +2903,7 @@ export default function AlagaMockup() {
   const [isEmptyWorkspace, setIsEmptyWorkspace] = useState(false);
   const [forcedTier, setForcedTier] = useState(null);
   const [meetingMode, setMeetingMode] = useState(false);
+  const [startInParent, setStartInParent] = useState(false);
   const [providerInfo, setProviderInfo] = useState(PROVIDER);
   const [onboardingData, setOnboardingData] = useState(null);
 
@@ -2925,10 +2938,11 @@ export default function AlagaMockup() {
 
   if (entry === "landing") {
     return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><LandingChooser
-      onDemo={(demoTier, isMeeting) => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier(demoTier); setMeetingMode(!!isMeeting); setEntry("workspace"); }}
+      onDemo={(demoTier, isMeeting) => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier(demoTier); setMeetingMode(!!isMeeting); setStartInParent(false); setEntry("workspace"); }}
       onSignUp={() => setEntry("wizard")}
       onAdmin={() => setEntry("admin")}
       onSignIn={() => setEntry("auth")}
+      onParentDemo={() => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier("extended"); setMeetingMode(false); setStartInParent(true); setEntry("workspace"); }}
     /></LanguageContext.Provider>;
   }
   if (entry === "auth") {
@@ -2949,7 +2963,7 @@ export default function AlagaMockup() {
       onBack={() => setEntry("landing")}
     /></LanguageContext.Provider>;
   }
-  return <Workspace isEmpty={isEmptyWorkspace} providerInfo={providerInfo} onboardingData={onboardingData} onExitToLanding={() => setEntry("landing")} forceTier={forcedTier} meetingMode={meetingMode} />;
+  return <Workspace isEmpty={isEmptyWorkspace} providerInfo={providerInfo} onboardingData={onboardingData} onExitToLanding={() => setEntry("landing")} forceTier={forcedTier} meetingMode={meetingMode} startInParentMode={startInParent} />;
 }
 
 /* --------------------------------- sidebar ------------------------------------ */
@@ -3020,6 +3034,17 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
           );
         })}
       </nav>
+
+      {setMode && (
+        <button onClick={() => setMode("parent")} style={{
+          display: "flex", alignItems: "center", gap: 10, padding: "9px 10px", borderRadius: 9, marginTop: 10,
+          border: "1px solid rgba(255,255,255,0.18)", background: "transparent", color: "#CBDAD2", fontSize: 13, fontWeight: 600, textAlign: "left",
+        }}>
+          <Users size={15} strokeWidth={2} />
+          <span style={{ flex: 1 }}>{t("View as parent")}</span>
+          <ArrowRight size={13} />
+        </button>
+      )}
 
       <div style={{ marginTop: "auto", paddingTop: 14, borderTop: "1px solid rgba(255,255,255,0.12)" }}>
         <div style={{ fontSize: 12 }}>
@@ -7924,10 +7949,11 @@ function SmallBtn({ icon: Icon, label }) {
 /* ===================================================================
    PARENT APP — read-only subsidy view for the family
    =================================================================== */
-function ParentApp({ families, onExit, status, setChildStatus, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds }) {
+function ParentApp({ families, onExit, showBackToProvider = true, status, setChildStatus, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage }) {
   const t = useT();
   const [famId, setFamId] = useState(families[0]?.id);
   const fam = families.find((f) => f.id === famId) || families[0];
+  const PARENT_LANGS = ["English", "Español", "Tagalog", "中文", "Tiếng Việt", "한국어"];
   const prog = fam.subsidized ? programOf(fam.programId) : null;
   const dLeft = fam.subsidized ? daysUntil(fam.authEnd) : null;
   const parentDocs = fam.forms.filter((f) => ["notice", "attend", "recert"].includes(f.id));
@@ -7993,17 +8019,30 @@ function ParentApp({ families, onExit, status, setChildStatus, provider, onSave,
             </div>
           </div>
           <button onClick={onExit} style={{ fontSize: 12, color: "#CBDAD2", background: "none", border: "1px solid rgba(255,255,255,0.25)", borderRadius: 8, padding: "7px 12px", fontWeight: 600 }}>
-            {t("Exit parent view")}
+            {showBackToProvider ? t("Exit parent view") : t("Exit demo")}
           </button>
         </div>
-        <div style={{ marginTop: 16 }}>
-          <div style={{ fontSize: 11.5, color: "#9DB5AA", fontWeight: 600, marginBottom: 5 }}>{t("Viewing as")}</div>
-          <select value={famId} onChange={(e) => setFamId(Number(e.target.value))} style={{
-            background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.25)",
-            borderRadius: 9, padding: "8px 12px", fontSize: 13.5, fontFamily: "inherit",
-          }}>
-            {families.map((f) => <option key={f.id} value={f.id} style={{ color: C.ink }}>{f.parent} — {t("parent of")} {f.child}</option>)}
-          </select>
+        <div style={{ marginTop: 16, display: "flex", gap: 14, flexWrap: "wrap" }}>
+          <div>
+            <div style={{ fontSize: 11.5, color: "#9DB5AA", fontWeight: 600, marginBottom: 5 }}>{t("Viewing as")}</div>
+            <select value={famId} onChange={(e) => setFamId(Number(e.target.value))} style={{
+              background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.25)",
+              borderRadius: 9, padding: "8px 12px", fontSize: 13.5, fontFamily: "inherit",
+            }}>
+              {families.map((f) => <option key={f.id} value={f.id} style={{ color: C.ink }}>{f.parent} — {t("parent of")} {f.child}</option>)}
+            </select>
+          </div>
+          {setLanguage && (
+            <div>
+              <div style={{ fontSize: 11.5, color: "#9DB5AA", fontWeight: 600, marginBottom: 5 }}>{t("Language")}</div>
+              <select value={language} onChange={(e) => setLanguage(e.target.value)} style={{
+                background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.25)",
+                borderRadius: 9, padding: "8px 12px", fontSize: 13.5, fontFamily: "inherit",
+              }}>
+                {PARENT_LANGS.map((l) => <option key={l} value={l} style={{ color: C.ink }}>{l}</option>)}
+              </select>
+            </div>
+          )}
         </div>
       </div>
 
