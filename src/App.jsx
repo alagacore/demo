@@ -273,6 +273,17 @@ const PACKET_CLOSURES = [
   { name: "Provider Professional Development Day", dates: "10/16/2026" },
 ];
 
+// Special events and meetings — days the daycare is still OPEN, unlike closures,
+// but something noteworthy is happening (a conference week, a staff meeting, a
+// photo day). Kept as a distinct category from closures for that reason.
+const EVENT_TYPES = ["Parent-Teacher Conferences", "Staff Meeting", "Photo Day", "Field Trip", "Family Event", "Other"];
+let eventSeq = 0;
+const CALENDAR_EVENTS_DEFAULT = [
+  { id: "ev1", name: "Parent-Teacher Conference Week", type: "Parent-Teacher Conferences", dates: "09/14/2026 – 09/18/2026", notify: true, notes: "Sign-up sheet posted at drop-off; 15-minute slots per family." },
+  { id: "ev2", name: "Fall Photo Day", type: "Photo Day", dates: "10/09/2026", notify: true, notes: "" },
+  { id: "ev3", name: "Staff In-Service Meeting", type: "Staff Meeting", dates: "08/28/2026", notify: false, notes: "After close, 6:00 PM — no impact to families." },
+];
+
 const TOUR_STAGES = ["Inquiry", "Tour Scheduled", "Toured", "Follow-up", "Waitlist", "Enrolled", "Declined"];
 let tourSeq = 0;
 function tourFam(o) { tourSeq += 1; return { id: `t${tourSeq}`, ...o }; }
@@ -1520,6 +1531,19 @@ function monthlyPay(s) {
   if (s.payType === "per-diem") return s.payRate * (s.daysPerMonth || 0);
   return s.payRate * s.hoursPerWeek * MONTHLY_WEEKS;
 }
+// Pay adjustments (temporary pay-code changes for one or several days — substitute
+// coverage, overtime, a one-time correction) that fall within the given month, on top
+// of the standing monthlyPay rate above. Defaults to the current real month.
+function monthAdjustmentsTotal(s, refDate = new Date()) {
+  const adjustments = s.payAdjustments || [];
+  const y = refDate.getFullYear(), m = refDate.getMonth();
+  const inMonth = (dateStr) => {
+    const d = parseAnyDate(dateStr);
+    return d && d.getFullYear() === y && d.getMonth() === m;
+  };
+  return adjustments.reduce((sum, a) => (inMonth(a.dateStart) || inMonth(a.dateEnd || a.dateStart) ? sum + a.amount : sum), 0);
+}
+function totalMonthlyCost(s) { return monthlyPay(s) + monthAdjustmentsTotal(s); }
 const STAFF_DOC_TEMPLATES = [
   { id: "offer", name: "Signed offer letter / employment agreement" },
   { id: "i9", name: "I-9 / work authorization" },
@@ -2718,6 +2742,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
     : WEEKLY_SCHEDULE_DEFAULT;
   const [weeklySchedule, saveWeeklySchedule] = usePersistentState(`calendar-weekly${sfx}`, initialSchedule);
   const [closures, saveClosures] = usePersistentState(`calendar-closures${sfx}`, []);
+  const [events, saveEvents] = usePersistentState(`calendar-events${sfx}`, isEmpty ? [] : CALENDAR_EVENTS_DEFAULT);
   const [prospects, saveProspects] = usePersistentState(`tours-pipeline${sfx}`, baseProspects);
   const [compOverrides, saveCompOverrides] = usePersistentState(`compliance-docs${sfx}`, {});
   const [incidents, saveIncidents] = usePersistentState(`incident-reports${sfx}`, []);
@@ -2873,7 +2898,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
               {screen === "families" && <Families families={families} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} />}
               {screen === "bookings" && <Bookings families={families} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
               {screen === "staff" && <StaffScreen staff={staff} families={families} updateStaffMember={updateStaffMember} addStaffMember={addStaffMember} removeStaffMember={removeStaffMember} />}
-              {screen === "calendar" && <CalendarScreen schedule={weeklySchedule} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} />}
+              {screen === "calendar" && <CalendarScreen schedule={weeklySchedule} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} />}
               {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} />}
               {screen === "subsidy" && <Subsidy families={families} openFamId={openFamId} setOpenFamId={setOpenFamId} loaded={loaded} meetingMode={meetingMode} />}
               {screen === "payments" && <Finances families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} />}
@@ -3170,7 +3195,7 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
   const [newTask, setNewTask] = useState("");
   const [collapsed, setCollapsed] = useState({});
   const [scheduleOpen, setScheduleOpen] = useState(false);
-  const [showAttention, setShowAttention] = useState(false);
+  const [showAttention, setShowAttention] = useState(true);
   const [ratesOpen, setRatesOpen] = useState(false);
   const [editingRates, setEditingRates] = useState(false);
   const [rates, setRates] = useState(tuitionRates);
@@ -3180,8 +3205,8 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
   const monthlyCopay = subsidizedFams.reduce((s, f) => s + f.copay, 0);
   const expiring = subsidizedFams.filter((f) => f.status !== "active" && !dismissedNotices.includes(f.id));
 
-  const pendingFlex = flexCareRequests.filter((r) => r.status === "pending");
-  const unpaidFlex = flexCareRequests.filter((r) => r.status === "approved" && !r.paymentConfirmed);
+  const pendingFlex = flexCareRequests.filter((r) => r.status === "pending" && !isPastDate(r.date));
+  const unpaidFlex = flexCareRequests.filter((r) => r.status === "approved" && !r.paymentConfirmed && !isPastDate(r.date));
   const flexNeedingAttention = [...pendingFlex, ...unpaidFlex];
   const totalAttention = expiring.length + flexNeedingAttention.length;
   const approveFlexInline = (id) => saveFlexCare(flexCareRequests.map((r) => (r.id === id ? { ...r, status: "approved" } : r)));
@@ -3323,49 +3348,6 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
           <button onClick={addTask} style={{ padding: "9px 14px", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 12.5 }}>{t("Add")}</button>
         </div>
       </Card>
-
-      <Card title={t("Needs attention")} icon={AlertTriangle} accent={C.amber}>
-        {expiring.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("Nothing needs attention right now.")}</div>}
-        {expiring.map((f) => (
-          <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 18px", borderBottom: `1px solid ${C.line}` }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }} onClick={() => goToSubsidyFamily(f.id)}>
-              <Dot c={f.color} /><b style={{ fontSize: 13.5 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 13 }}>— {programOf(f.programId)?.label}</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <Pill label={t(STATUS_META[f.status].label)} fg={STATUS_META[f.status].fg} bg={STATUS_META[f.status].bg} />
-              <button onClick={() => resolveNotice(f.id)} title={t("Mark resolved")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 9px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 600, color: C.teal }}>
-                <CheckCircle2 size={12} /> {t("Resolve")}
-              </button>
-            </div>
-          </div>
-        ))}
-      </Card>
-
-      {flexNeedingAttention.length > 0 && (
-        <Card title={t("Flex care to address")} icon={Clock} accent={C.amber}
-          right={<span style={{ fontSize: 12, color: C.inkSoft }}>{pendingFlex.length} {t("pending")} · {unpaidFlex.length} {t("unpaid")}</span>}>
-          {flexNeedingAttention.map((r) => (
-            <div key={r.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 18px", borderBottom: `1px solid ${C.line}` }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }} onClick={() => goToFlexRequest(r.id)}>
-                <Dot c={r.status === "pending" ? C.amber : C.sky} /><b style={{ fontSize: 13.5 }}>{r.child}</b>
-                <span style={{ color: C.inkSoft, fontSize: 13 }}>— {t(r.type)}, {r.date}</span>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <Pill label={r.status === "pending" ? t("Pending") : t("Unpaid")} fg={r.status === "pending" ? C.amber : C.sky} bg={r.status === "pending" ? C.amberTint : C.skyTint} />
-                {r.status === "pending" ? (
-                  <button onClick={() => approveFlexInline(r.id)} title={t("Approve")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 9px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 600, color: C.teal }}>
-                    <CheckCircle2 size={12} /> {t("Approve")}
-                  </button>
-                ) : (
-                  <button onClick={() => goToFlexRequest(r.id)} title={t("Review")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 9px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 600, color: C.teal }}>
-                    {t("Review")}
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-        </Card>
-      )}
 
       <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, overflow: "hidden" }}>
         <button onClick={() => setScheduleOpen(!scheduleOpen)} style={{
@@ -4480,7 +4462,7 @@ function StaffScreen({ staff, families, updateStaffMember, addStaffMember, remov
   const required = requiredQualifiedAdults(enrolledCount);
   const qualified = qualifiedStaffCount(staff);
   const withinRatio = qualified >= required;
-  const totalPayroll = staff.filter((s) => s.status === "active").reduce((sum, s) => sum + monthlyPay(s), 0);
+  const totalPayroll = staff.filter((s) => s.status === "active").reduce((sum, s) => sum + totalMonthlyCost(s), 0);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -4530,7 +4512,8 @@ function StaffScreen({ staff, families, updateStaffMember, addStaffMember, remov
                     left={<><Dot c={s.status === "active" ? C.teal : C.inkSoft} /><b>{s.name}</b><span style={{ color: C.inkSoft }}>{t(s.role)}</span></>}
                     right={<div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       {missingCerts > 0 && <Pill label={`${missingCerts} ${t("cert(s) needed")}`} fg={C.danger} bg={C.dangerTint} />}
-                      <span style={{ fontSize: 12.5, color: C.inkSoft }}>{money(monthlyPay(s))}{t("/mo")}</span>
+                      {monthAdjustmentsTotal(s) !== 0 && <Pill label={t("Adjusted this month")} fg={C.amber} bg={C.amberTint} />}
+                      <span style={{ fontSize: 12.5, color: C.inkSoft }}>{money(totalMonthlyCost(s))}{t("/mo")}</span>
                       <ChevronRight size={15} color={C.inkSoft} />
                     </div>} />
                 </button>
@@ -4542,6 +4525,78 @@ function StaffScreen({ staff, families, updateStaffMember, addStaffMember, remov
 
       {open && <StaffDrawer member={open} onClose={() => setOpenId(null)} update={updateStaffMember} remove={removeStaffMember} />}
     </div>
+  );
+}
+
+const PAY_ADJUSTMENT_REASONS = ["Substitute coverage", "Overtime", "Holiday / bonus pay", "Rate correction", "Other"];
+let payAdjSeq = 0;
+function PayAdjustmentsSection({ member, update }) {
+  const t = useT();
+  const [adding, setAdding] = useState(false);
+  const [form, setForm] = useState({ dateStart: "", dateEnd: "", reason: PAY_ADJUSTMENT_REASONS[0], payType: member.payType, amount: "", note: "" });
+  const adjustments = member.payAdjustments || [];
+
+  const addAdjustment = () => {
+    if (!form.dateStart || !form.amount) return;
+    payAdjSeq += 1;
+    const next = [{
+      id: `padj${payAdjSeq}`, dateStart: form.dateStart, dateEnd: form.dateEnd || form.dateStart,
+      reason: form.reason, payType: form.payType, amount: Number(form.amount), note: form.note,
+    }, ...adjustments];
+    update(member.id, { payAdjustments: next });
+    setForm({ dateStart: "", dateEnd: "", reason: PAY_ADJUSTMENT_REASONS[0], payType: member.payType, amount: "", note: "" });
+    setAdding(false);
+  };
+  const removeAdjustment = (id) => update(member.id, { payAdjustments: adjustments.filter((a) => a.id !== id) });
+
+  return (
+    <Section title={t("Pay adjustments")} icon={DollarSign}
+      right={!adding && <button onClick={() => setAdding(true)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 700 }}><Plus size={12} /> {t("Add")}</button>}>
+      <div style={{ fontSize: 11.5, color: C.inkSoft, padding: "0 0 10px", lineHeight: 1.5 }}>
+        {t("Log a temporary pay change for one or several days — a different pay code, overtime, or a one-time adjustment — without changing their standing rate above.")}
+      </div>
+
+      {adding && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "12px 0", borderTop: `1px solid ${C.line}` }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            <Field label={t("From")}><DateField value={form.dateStart} onChange={(v) => setForm({ ...form, dateStart: v })} placeholder="MM/DD/YYYY" /></Field>
+            <Field label={t("Through (optional)")}><DateField value={form.dateEnd} onChange={(v) => setForm({ ...form, dateEnd: v })} placeholder={t("Same day if blank")} /></Field>
+          </div>
+          <Field label={t("Reason")}>
+            <Select value={form.reason} onChange={(v) => setForm({ ...form, reason: v })} options={PAY_ADJUSTMENT_REASONS} labels={PAY_ADJUSTMENT_REASONS.map((r) => t(r))} />
+          </Field>
+          <Field label={t("Pay code for this period")}>
+            <Select value={form.payType} onChange={(v) => setForm({ ...form, payType: v })} options={["hourly", "salary", "contract", "per-diem"]} labels={[t("Hourly"), t("Salary"), t("Contract"), t("Per diem")]} />
+          </Field>
+          <Field label={t("Total amount for this period")}>
+            <MoneyInput value={form.amount} onChange={(v) => setForm({ ...form, amount: v })} suffix={t("total")} icon={DollarSign} />
+          </Field>
+          <Field label={t("Note (optional)")}><input value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} style={inputStyle} /></Field>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={() => setAdding(false)} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Cancel")}</button>
+            <button onClick={addAdjustment} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12.5, fontWeight: 700 }}>{t("Save")}</button>
+          </div>
+        </div>
+      )}
+
+      {adjustments.length === 0 && !adding && (
+        <div style={{ fontSize: 12, color: C.inkSoft, padding: "6px 0" }}>{t("No adjustments logged.")}</div>
+      )}
+      {adjustments.map((a) => (
+        <div key={a.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "9px 0", borderTop: `1px solid ${C.line}` }}>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: 13, fontWeight: 600 }}>{t(a.reason)} {a.note ? `— ${a.note}` : ""}</div>
+            <div style={{ fontSize: 11.5, color: C.inkSoft }}>
+              {a.dateStart}{a.dateEnd !== a.dateStart ? ` – ${a.dateEnd}` : ""} · {t(a.payType === "hourly" ? "Hourly" : a.payType === "per-diem" ? "Per diem" : a.payType === "contract" ? "Contract" : "Salary")}
+            </div>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+            <b style={{ fontSize: 13 }}>{money(a.amount)}</b>
+            <button onClick={() => removeAdjustment(a.id)} style={{ background: "none", border: "none", color: C.danger }}><Trash2 size={13} /></button>
+          </div>
+        </div>
+      ))}
+    </Section>
   );
 }
 
@@ -4624,12 +4679,15 @@ function StaffDrawer({ member, onClose, update, remove }) {
                 <Row left={<span style={{ color: C.inkSoft }}>{t("Hours / week")}</span>} right={<b>{form.hoursPerWeek}</b>} />
                 <Row left={<span style={{ color: C.inkSoft }}>{form.payType === "hourly" ? t("Hourly rate") : form.payType === "per-diem" ? t("Rate per day") : form.payType === "contract" ? t("Monthly contract amount") : t("Monthly salary")}</span>}
                   right={<b>{form.payType === "hourly" ? `${money(form.payRate)}${t("/hr")}` : form.payType === "per-diem" ? `${money(form.payRate)}${t("/day")} × ${form.daysPerMonth || 0}${t("/mo")}` : `${money(form.payRate)}${t("/mo")}`}</b>} />
-                <Row left={<span style={{ color: C.inkSoft }}>{t("Estimated monthly cost")}</span>} right={<b>{money(monthlyPay(form))}</b>} />
+                <Row left={<span style={{ color: C.inkSoft }}>{t("Estimated monthly cost")}</span>} right={<b>{money(totalMonthlyCost(form))}</b>} />
+                {monthAdjustmentsTotal(form) !== 0 && <Row left={<span style={{ color: C.inkSoft }}>{t("Includes adjustments this month")}</span>} right={<b style={{ color: C.amber }}>{money(monthAdjustmentsTotal(form))}</b>} />}
                 <Row left={<span style={{ color: C.inkSoft }}>{t("Hired")}</span>} right={<b>{form.hireDate}</b>} />
                 {form.endDate && <Row left={<span style={{ color: C.inkSoft }}>{t("End date")}</span>} right={<b style={{ color: C.danger }}>{form.endDate}</b>} />}
               </div>
             )}
           </Section>
+
+          <PayAdjustmentsSection member={member} update={update} />
 
           <Section title={t("Employment documents")} icon={FileText}>
             <input ref={docFileInputRef} type="file" accept="image/*,.pdf,.doc,.docx" onChange={handleDocFilePicked} style={{ display: "none" }} />
@@ -4726,11 +4784,13 @@ function StaffDrawer({ member, onClose, update, remove }) {
 }
 
 /* --------------------------------- calendar ------------------------------------ */
-function CalendarScreen({ schedule, saveSchedule, closures, saveClosures }) {
+function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events, saveEvents }) {
   const t = useT();
   const [editing, setEditing] = useState(false);
   const [local, setLocal] = useState(schedule);
   const [form, setForm] = useState({ start: "", end: "", name: "Additional provider closure", notify: false });
+  const [tab, setTab] = useState("hours");
+  const [eventForm, setEventForm] = useState({ start: "", end: "", name: "", type: EVENT_TYPES[0], notify: false, notes: "" });
 
   const updateDay = (i, field, val) => setLocal((s) => s.map((d, idx) => (idx === i ? { ...d, [field]: val } : d)));
   const slotsFor = (d) => d.timeSlots && d.timeSlots.length ? d.timeSlots : [d.hours || ""];
@@ -4762,9 +4822,33 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures }) {
   };
   const removeClosure = (id) => saveClosures(closures.filter((c) => c.id !== id));
 
+  const addEvent = () => {
+    if (!eventForm.start || !eventForm.name.trim()) return;
+    eventSeq += 1;
+    const dates = eventForm.end && eventForm.end !== eventForm.start ? `${eventForm.start} – ${eventForm.end}` : eventForm.start;
+    saveEvents([{ id: `ev-new-${eventSeq}`, name: eventForm.name, type: eventForm.type, dates, notify: eventForm.notify, notes: eventForm.notes }, ...events]);
+    setEventForm({ start: "", end: "", name: "", type: EVENT_TYPES[0], notify: false, notes: "" });
+  };
+  const removeEvent = (id) => saveEvents(events.filter((e) => e.id !== id));
+
+  const TABS = [
+    ["hours", t("Weekly Hours")],
+    ["closures", t("Closures")],
+    ["events", t("Events & Meetings")],
+  ];
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {TABS.map(([id, label]) => (
+          <button key={id} onClick={() => setTab(id)} style={{
+            padding: "8px 16px", borderRadius: 9, fontSize: 13, fontWeight: 700,
+            border: `1px solid ${tab === id ? C.teal : C.line}`, background: tab === id ? C.tealTint : "#fff", color: tab === id ? C.tealDark : C.inkSoft,
+          }}>{label}</button>
+        ))}
+      </div>
+
+      {tab === "hours" && (
         <Card title={t("Weekly availability")} icon={CalendarDays}
           right={<button onClick={() => (editing ? saveSchedNow() : setEditing(true))} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{editing ? t("Save changes") : t("Edit")}</button>}>
           {(editing ? local : schedule).map((d, i) => (
@@ -4834,41 +4918,86 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures }) {
             </div>
           ))}
         </Card>
+      )}
 
-        <Card title={t("Closures from enrollment packet")} icon={CalendarDays} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Already disclosed to families")}</span>}>
-          {PACKET_CLOSURES.map((c) => (
-            <Row key={c.name} left={<b>{c.name}</b>} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{c.dates}</span>} />
-          ))}
-        </Card>
-      </div>
+      {tab === "closures" && (
+        <>
+          <Card title={t("Closures from enrollment packet")} icon={CalendarDays} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Already disclosed to families")}</span>}>
+            {PACKET_CLOSURES.map((c) => (
+              <Row key={c.name} left={<b>{c.name}</b>} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{c.dates}</span>} />
+            ))}
+          </Card>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <Card title={t("Add an additional closure")} icon={Plus}>
-          <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <Field label={t("Start date")}><input type="date" value={form.start} onChange={(e) => setForm({ ...form, start: e.target.value })} style={inputStyle} /></Field>
-              <Field label={t("End date")}><input type="date" value={form.end} onChange={(e) => setForm({ ...form, end: e.target.value })} style={inputStyle} /></Field>
-            </div>
-            <Field label={t("Description")}><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={inputStyle} /></Field>
-            <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: C.inkSoft }}>
-              <input type="checkbox" checked={form.notify} onChange={(e) => setForm({ ...form, notify: e.target.checked })} /> {t("Notify parents immediately")}
-            </label>
-            <button onClick={addClosure} style={{ padding: "10px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Add closure")}</button>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <Card title={t("Add an additional closure")} icon={Plus}>
+              <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                  <Field label={t("Start date")}><input type="date" value={form.start} onChange={(e) => setForm({ ...form, start: e.target.value })} style={inputStyle} /></Field>
+                  <Field label={t("End date")}><input type="date" value={form.end} onChange={(e) => setForm({ ...form, end: e.target.value })} style={inputStyle} /></Field>
+                </div>
+                <Field label={t("Description")}><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={inputStyle} /></Field>
+                <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: C.inkSoft }}>
+                  <input type="checkbox" checked={form.notify} onChange={(e) => setForm({ ...form, notify: e.target.checked })} /> {t("Notify parents immediately")}
+                </label>
+                <button onClick={addClosure} style={{ padding: "10px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Add closure")}</button>
+              </div>
+            </Card>
+
+            <Card title={t("Additional closures and exceptions")} icon={CalendarDays}>
+              {closures.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("None added yet.")}</div>}
+              {closures.map((c) => (
+                <Row key={c.id} left={<><b>{c.name}</b><span style={{ color: C.inkSoft }}>{c.dates}</span></>}
+                  right={<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    {c.notified && <Pill label={t("Parents notified")} fg={C.teal} bg={C.tealTint} />}
+                    <button onClick={() => removeClosure(c.id)} style={{ background: "none", border: "none", color: C.danger }}><Trash2 size={14} /></button>
+                  </div>} />
+              ))}
+            </Card>
           </div>
-        </Card>
+        </>
+      )}
 
-        <Card title={t("Additional closures and exceptions")} icon={CalendarDays}>
-          {closures.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("None added yet.")}</div>}
-          {closures.map((c) => (
-            <Row key={c.id} left={<><b>{c.name}</b><span style={{ color: C.inkSoft }}>{c.dates}</span></>}
-              right={<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                {c.notified && <Pill label={t("Parents notified")} fg={C.teal} bg={C.tealTint} />}
-                <button onClick={() => removeClosure(c.id)} style={{ background: "none", border: "none", color: C.danger }}><Trash2 size={14} /></button>
-              </div>} />
-          ))}
-        </Card>
-      </div>
+      {tab === "events" && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <Card title={t("Add an event or meeting")} icon={Plus} right={<span style={{ fontSize: 11, color: C.inkSoft }}>{t("The daycare stays open — this just flags something happening")}</span>}>
+            <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
+              <Field label={t("Name")}><input value={eventForm.name} onChange={(e) => setEventForm({ ...eventForm, name: e.target.value })} placeholder={t("e.g. Parent-Teacher Conference Week")} style={inputStyle} /></Field>
+              <Field label={t("Type")}>
+                <Select value={eventForm.type} onChange={(v) => setEventForm({ ...eventForm, type: v })} options={EVENT_TYPES} labels={EVENT_TYPES.map((ty) => t(ty))} />
+              </Field>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <Field label={t("Start date")}><input type="date" value={eventForm.start} onChange={(e) => setEventForm({ ...eventForm, start: e.target.value })} style={inputStyle} /></Field>
+                <Field label={t("End date (optional)")}><input type="date" value={eventForm.end} onChange={(e) => setEventForm({ ...eventForm, end: e.target.value })} style={inputStyle} /></Field>
+              </div>
+              <Field label={t("Notes (optional)")}><input value={eventForm.notes} onChange={(e) => setEventForm({ ...eventForm, notes: e.target.value })} style={inputStyle} /></Field>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: C.inkSoft }}>
+                <input type="checkbox" checked={eventForm.notify} onChange={(e) => setEventForm({ ...eventForm, notify: e.target.checked })} /> {t("Notify parents")}
+              </label>
+              <button onClick={addEvent} style={{ padding: "10px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Add event")}</button>
+            </div>
+          </Card>
 
+          <Card title={t("Upcoming events & meetings")} icon={CalendarDays} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{events.length} {t("scheduled")}</span>}>
+            {events.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("None added yet.")}</div>}
+            {events.map((e) => (
+              <div key={e.id} style={{ padding: "11px 18px", borderBottom: `1px solid ${C.line}` }}>
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10 }}>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                      <b style={{ fontSize: 13.5 }}>{e.name}</b>
+                      <Pill label={t(e.type)} fg={C.sky} bg={C.skyTint} />
+                      {e.notify && <Pill label={t("Parents notified")} fg={C.teal} bg={C.tealTint} />}
+                    </div>
+                    <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 3 }}>{e.dates}</div>
+                    {e.notes && <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 3 }}>{e.notes}</div>}
+                  </div>
+                  <button onClick={() => removeEvent(e.id)} style={{ background: "none", border: "none", color: C.danger, flexShrink: 0 }}><Trash2 size={14} /></button>
+                </div>
+              </div>
+            ))}
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
@@ -5131,7 +5260,7 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
   const flexCareTotal = (flexCareRequests || []).filter((r) => r.status === "approved").reduce((s, r) => s + (r.paymentConfirmed && r.paymentAmount != null ? r.paymentAmount : Math.round((tuitionRates?.[r.classroom]?.hourly || 0) * (r.hours || 0))), 0);
   const flexCareUnpaidTotal = (flexCareRequests || []).filter((r) => r.status === "approved" && !r.paymentConfirmed).reduce((s, r) => s + Math.round((tuitionRates?.[r.classroom]?.hourly || 0) * (r.hours || 0)), 0);
   const expenseTotal = expenses.reduce((s, e) => s + e.amount, 0);
-  const payrollTotal = staff.filter((s) => s.status === "active").reduce((sum, s) => sum + monthlyPay(s), 0);
+  const payrollTotal = staff.filter((s) => s.status === "active").reduce((sum, s) => sum + totalMonthlyCost(s), 0);
   const refundTotal = refunds.reduce((s, r) => s + r.amount, 0);
   const incomeTotal = subsidyTotal + copayTotal + privateTotal + flexCareTotal;
   const nextDueDate = "08/01/2026";
@@ -5664,10 +5793,15 @@ function PayrollTab({ staff, payrollTotal, payrollSettings, savePayrollSettings 
 
       <Card title={t("Payroll")} icon={UserCog} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Estimated — manage staff pay in Staff & Ratios")}</span>}>
         {activeStaff.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No active staff on file.")}</div>}
-        {activeStaff.map((s) => (
-          <Row key={s.id} left={<b style={{ fontSize: 13 }}>{s.name}</b>}
-            right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{payLabel(s)} · {money(monthlyPay(s))}{t("/mo")}</span>} />
-        ))}
+        {activeStaff.map((s) => {
+          const adj = monthAdjustmentsTotal(s);
+          return (
+            <Row key={s.id} left={<b style={{ fontSize: 13 }}>{s.name}</b>}
+              right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>
+                {payLabel(s)}{adj !== 0 ? ` + ${money(adj)} ${t("adjustments")}` : ""} · <b style={{ color: C.ink }}>{money(totalMonthlyCost(s))}{t("/mo")}</b>
+              </span>} />
+          );
+        })}
       </Card>
     </div>
   );
@@ -5739,6 +5873,17 @@ function parseAnyDate(str) {
   if (!str) return null;
   if (str.includes("/")) { const [m, d, y] = str.split("/"); return new Date(Number(y), Number(m) - 1, Number(d)); }
   return new Date(str);
+}
+// A date with no year in it (e.g. a flex-care request stored as "MM/DD") is
+// effectively an unresolvable date — never treat it as past just because parsing
+// failed. Only compares by calendar day, so "today" is never considered past.
+function isPastDate(str) {
+  const d = parseAnyDate(str);
+  if (!d || isNaN(d.getTime())) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  d.setHours(0, 0, 0, 0);
+  return d < today;
 }
 const EXPENSE_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -6586,7 +6731,7 @@ function Analytics({ families, expenses, prospects, staff, alumni, addDeparture,
   const flexCareUnpaidTotal = (flexCareRequests || []).filter((r) => r.status === "approved" && !r.paymentConfirmed).reduce((s, r) => s + Math.round((tuitionRates?.[r.classroom]?.hourly || 0) * (r.hours || 0)), 0);
   const incomeTotal = subsidyTotal + copayTotal + privateTotal + flexCareTotal;
   const expenseTotal = expenses.reduce((s, e) => s + e.amount, 0);
-  const payrollTotal = staff.filter((s) => s.status === "active").reduce((sum, s) => sum + monthlyPay(s), 0);
+  const payrollTotal = staff.filter((s) => s.status === "active").reduce((sum, s) => sum + totalMonthlyCost(s), 0);
   const refundTotal = refunds.reduce((s, r) => s + r.amount, 0);
   const net = incomeTotal - expenseTotal - payrollTotal - refundTotal;
   const subsidizedCount = families.filter((f) => f.subsidized).length;
