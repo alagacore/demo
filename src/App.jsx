@@ -1335,14 +1335,71 @@ const T = {
   "Questions about eligibility or your benefit amount go to": { es: "Las preguntas sobre elegibilidad o el monto de su beneficio se dirigen a", tl: "Ang mga tanong tungkol sa eligibility o halaga ng benepisyo ay ipadala sa", zh: "关于资格或福利金额的问题请咨询", vi: "Thắc mắc về điều kiện hoặc số tiền trợ cấp xin liên hệ", ko: "자격 또는 지원 금액 관련 문의는" },
   "not your provider.": { es: ", no a su proveedor.", tl: ", hindi sa provider mo.", zh: ",而非您的托育服务商。", vi: ", không phải nhà cung cấp của bạn.", ko: "로 문의하세요 (제공자 문의 아님)." },
 };
-const EXPENSE_CATEGORIES = ["Materials & Supplies", "Play Equipment", "Toys & Learning", "Food & Snacks", "Maintenance & Repairs", "Other"];
+// Broad category -> precise subcategory, each subcategory carrying a typical reference
+// price so providers get a sanity-check while logging an expense. EXPENSE_CATEGORIES
+// stays a flat list of top-level labels for anything that only needs the broad view
+// (the Analytics category breakdown, for instance).
+const EXPENSE_TAXONOMY = [
+  { id: "cleaning", label: "Cleaning & Sanitizing", subcategories: [
+    { id: "clean-spray", label: "All-purpose spray / cleaner", refPrice: 4.5, unit: "bottle" },
+    { id: "clean-wipes", label: "Disinfecting wipes", refPrice: 5, unit: "container" },
+    { id: "clean-soap", label: "Hand soap & sanitizer", refPrice: 6, unit: "bottle" },
+    { id: "clean-bags", label: "Trash bags", refPrice: 9, unit: "box" },
+    { id: "clean-other", label: "Other cleaning supplies", refPrice: null, unit: null },
+  ]},
+  { id: "diapering", label: "Diapering & Hygiene", subcategories: [
+    { id: "diaper-diapers", label: "Diapers", refPrice: 28, unit: "box" },
+    { id: "diaper-wipes", label: "Baby wipes", refPrice: 4, unit: "pack" },
+    { id: "diaper-liners", label: "Changing table liners", refPrice: 12, unit: "roll" },
+    { id: "diaper-other", label: "Other hygiene supplies", refPrice: null, unit: null },
+  ]},
+  { id: "food", label: "Food & Snacks", subcategories: [
+    { id: "food-snacks", label: "Snacks", refPrice: 22, unit: "grocery run" },
+    { id: "food-drinks", label: "Drinks / juice", refPrice: 10, unit: "grocery run" },
+    { id: "food-meals", label: "Meal ingredients", refPrice: 45, unit: "grocery run" },
+    { id: "food-dishware", label: "Paper goods / disposable dishware", refPrice: 15, unit: "pack" },
+    { id: "food-other", label: "Other food supplies", refPrice: null, unit: null },
+  ]},
+  { id: "materials", label: "Materials & Art Supplies", subcategories: [
+    { id: "mat-art", label: "Paper & craft supplies", refPrice: 25, unit: "supply run" },
+    { id: "mat-office", label: "Printer / office supplies", refPrice: 18, unit: "supply run" },
+    { id: "mat-curriculum", label: "Curriculum materials", refPrice: 30, unit: "item" },
+    { id: "mat-other", label: "Other materials", refPrice: null, unit: null },
+  ]},
+  { id: "play", label: "Toys & Play Equipment", subcategories: [
+    { id: "play-indoor", label: "Indoor toys", refPrice: 20, unit: "item" },
+    { id: "play-outdoor", label: "Outdoor / playground equipment", refPrice: 85, unit: "item" },
+    { id: "play-books", label: "Books", refPrice: 12, unit: "item" },
+    { id: "play-other", label: "Other toys or equipment", refPrice: null, unit: null },
+  ]},
+  { id: "maintenance", label: "Maintenance & Repairs", subcategories: [
+    { id: "maint-plumbing", label: "Plumbing / electrical", refPrice: 120, unit: "repair" },
+    { id: "maint-appliance", label: "Appliance repair", refPrice: 90, unit: "repair" },
+    { id: "maint-furniture", label: "Furniture repair or replacement", refPrice: 60, unit: "item" },
+    { id: "maint-other", label: "Other maintenance", refPrice: null, unit: null },
+  ]},
+  { id: "overhead", label: "Business Overhead", subcategories: [
+    { id: "oh-insurance", label: "Insurance", refPrice: 95, unit: "month" },
+    { id: "oh-licensing", label: "Licensing / permit fees", refPrice: 40, unit: "year" },
+    { id: "oh-software", label: "Software / subscriptions", refPrice: 25, unit: "month" },
+    { id: "oh-other", label: "Other overhead", refPrice: null, unit: null },
+  ]},
+  { id: "other", label: "Other", subcategories: [
+    { id: "other-misc", label: "Miscellaneous", refPrice: null, unit: null },
+  ]},
+];
+const EXPENSE_CATEGORIES = EXPENSE_TAXONOMY.map((c) => c.label);
+function subcategoriesFor(categoryLabel) {
+  const cat = EXPENSE_TAXONOMY.find((c) => c.label === categoryLabel);
+  return cat ? cat.subcategories : [];
+}
 const EXPENSES_DEFAULT = [
-  { id: 1, date: "07/02/2026", category: "Food & Snacks", description: "Weekly grocery run — snacks & lunch ingredients", amount: 186.40 },
-  { id: 2, date: "07/08/2026", category: "Materials & Supplies", description: "Construction paper, glue sticks, paint", amount: 64.12 },
-  { id: 3, date: "07/12/2026", category: "Toys & Learning", description: "Wooden puzzle set, sensory bin fillers", amount: 92.30 },
-  { id: 4, date: "07/15/2026", category: "Play Equipment", description: "Replacement outdoor climbing mat", amount: 210.00 },
-  { id: 5, date: "07/19/2026", category: "Food & Snacks", description: "Weekly grocery run", amount: 174.85 },
-  { id: 6, date: "07/22/2026", category: "Maintenance & Repairs", description: "Fence gate latch repair", amount: 45.00 },
+  { id: 1, date: "07/02/2026", category: "Food & Snacks", subcategory: "Meal ingredients", description: "Weekly grocery run — snacks & lunch ingredients", amount: 186.40 },
+  { id: 2, date: "07/08/2026", category: "Materials & Art Supplies", subcategory: "Paper & craft supplies", description: "Construction paper, glue sticks, paint", amount: 64.12 },
+  { id: 3, date: "07/12/2026", category: "Toys & Play Equipment", subcategory: "Indoor toys", description: "Wooden puzzle set, sensory bin fillers", amount: 92.30 },
+  { id: 4, date: "07/15/2026", category: "Toys & Play Equipment", subcategory: "Outdoor / playground equipment", description: "Replacement outdoor climbing mat", amount: 210.00 },
+  { id: 5, date: "07/19/2026", category: "Food & Snacks", subcategory: "Snacks", description: "Weekly grocery run", amount: 174.85 },
+  { id: 6, date: "07/22/2026", category: "Maintenance & Repairs", subcategory: "Plumbing / electrical", description: "Fence gate latch repair", amount: 45.00 },
 ];
 
 /* ------------------------------ budget planner --------------------------------- */
@@ -2901,7 +2958,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
               {screen === "calendar" && <CalendarScreen schedule={weeklySchedule} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} />}
               {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} />}
               {screen === "subsidy" && <Subsidy families={families} openFamId={openFamId} setOpenFamId={setOpenFamId} loaded={loaded} meetingMode={meetingMode} />}
-              {screen === "payments" && <Finances families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} />}
+              {screen === "payments" && <Finances families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} />}
               {screen === "compliance" && <Compliance docs={compDocs} onSave={saveCompDoc} families={families} provider={providerInfo} staff={staff} setScreen={setScreen} incidents={incidents} saveIncidents={saveIncidents} mandatedNotes={mandatedNotes} saveMandatedNotes={saveMandatedNotes} />}
               {screen === "security" && <SecurityScreen accessLog={accessLog} isEmpty={isEmpty} />}
               {screen === "messages" && <Messages threads={threads} saveThreads={saveThreads} families={families} staff={staff} />}
@@ -3197,8 +3254,6 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [showAttention, setShowAttention] = useState(true);
   const [ratesOpen, setRatesOpen] = useState(false);
-  const [editingRates, setEditingRates] = useState(false);
-  const [rates, setRates] = useState(tuitionRates);
   const subsidizedFams = families.filter((f) => f.subsidized);
   const privateFams = families.filter((f) => !f.subsidized);
   const monthlySubsidy = subsidizedFams.reduce((s, f) => s + (f.coverageBasis === "monthly" ? f.coverageAmount : 0), 0);
@@ -3226,10 +3281,6 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
   const removeTask = (id) => saveChecklist(checklist.filter((c) => c.id !== id));
   const resolveNotice = (famId) => saveDismissedNotices([...dismissedNotices, famId]);
   const toggleCollapse = (id) => setCollapsed((c) => ({ ...c, [id]: !c[id] }));
-  const setRate = (cls, field, val) => setRates((r) => ({ ...r, [cls]: { ...r[cls], [field]: val } }));
-  const siblingDiscount = rates.siblingDiscount || TUITION_RATES_DEFAULT.siblingDiscount;
-  const setSiblingDiscount = (field, val) => setRates((r) => ({ ...r, siblingDiscount: { ...(r.siblingDiscount || TUITION_RATES_DEFAULT.siblingDiscount), [field]: val } }));
-  const saveRates = () => { saveTuitionRates(rates); setEditingRates(false); };
   const openDays = weeklySchedule.filter((d) => d.open);
 
   return (
@@ -3386,69 +3437,26 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
           padding: "13px 18px", background: "none", border: "none", borderBottom: ratesOpen ? `1px solid ${C.line}` : "none",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 600, fontSize: 14 }}>
-            <DollarSign size={15} color={C.teal} /> {t("Tuition rates & hours")}
+            <Clock size={15} color={C.teal} /> {t("Weekly hours")}
           </div>
           <ChevronDown size={16} color={C.inkSoft} style={{ transform: ratesOpen ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />
         </button>
         {ratesOpen && (
-          <>
-            <div style={{ padding: "10px 18px", fontSize: 11.5, color: C.inkSoft, borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "center", gap: 6 }}>
-              <Clock size={12} /> {openDays.length > 0 ? `${openDays.map((d) => t(d.day).slice(0, 3)).join(", ")} · ${openDays[0].hours}` : t("No open days set — configure in Calendar.")}
-              <button onClick={() => setScreen("calendar")} style={{ marginLeft: "auto", fontSize: 11, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("Edit in Calendar")}</button>
-            </div>
-            <div style={{ display: "flex", justifyContent: "flex-end", padding: "8px 18px 0" }}>
-              {editingRates
-                ? <button onClick={saveRates} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("Save changes")}</button>
-                : <button onClick={() => setEditingRates(true)} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}><Pencil size={12} /> {t("Edit")}</button>}
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 0, padding: "8px 18px 4px", fontSize: 10.5, fontWeight: 700, color: C.inkSoft, textTransform: "uppercase", letterSpacing: "0.03em" }}>
-              <span>{t("Classroom")}</span><span>{t("Full-time /mo")}</span><span>{t("Part-time /mo")}</span><span>{t("Hourly")}</span>
-            </div>
-            {CLASSROOMS.map((c) => (
-              <div key={c.id} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8, alignItems: "center", padding: "9px 18px", borderBottom: `1px solid ${C.line}` }}>
-                <span style={{ fontSize: 13, fontWeight: 600 }}>{c.label}</span>
-                {editingRates ? (
-                  <>
-                    <MoneyInput value={rates[c.id].fullTime} onChange={(v) => setRate(c.id, "fullTime", v)} suffix="" icon={DollarSign} />
-                    <MoneyInput value={rates[c.id].partTime} onChange={(v) => setRate(c.id, "partTime", v)} suffix="" icon={DollarSign} />
-                    <MoneyInput value={rates[c.id].hourly} onChange={(v) => setRate(c.id, "hourly", v)} suffix={t("/hr")} icon={DollarSign} />
-                  </>
-                ) : (
-                  <>
-                    <span style={{ fontSize: 13 }}>{meetingMode ? <Redacted /> : money(rates[c.id].fullTime)}</span>
-                    <span style={{ fontSize: 13 }}>{meetingMode ? <Redacted /> : money(rates[c.id].partTime)}</span>
-                    <span style={{ fontSize: 13 }}>{meetingMode ? <Redacted /> : <>{money(rates[c.id].hourly)}{t("/hr")}</>}</span>
-                  </>
-                )}
-              </div>
-            ))}
-            <div style={{ padding: "12px 18px", borderTop: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 8 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <span style={{ fontSize: 12.5, fontWeight: 700 }}>{t("Sibling discount")}</span>
-                {editingRates ? (
-                  <ToggleSwitch on={siblingDiscount.enabled} onClick={() => setSiblingDiscount("enabled", !siblingDiscount.enabled)} />
-                ) : (
-                  <Pill label={siblingDiscount.enabled ? t("Enabled") : t("Off")} fg={siblingDiscount.enabled ? C.teal : C.inkSoft} bg={siblingDiscount.enabled ? C.tealTint : "#EFEBE1"} />
-                )}
-              </div>
-              {siblingDiscount.enabled && (
-                editingRates ? (
-                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                    <Select value={siblingDiscount.type} onChange={(v) => setSiblingDiscount("type", v)} options={["percent", "flat"]} labels={[t("Percentage off"), t("Flat dollar off")]} />
-                    {siblingDiscount.type === "percent"
-                      ? <MoneyInput value={siblingDiscount.value} onChange={(v) => setSiblingDiscount("value", v)} suffix="%" icon={Percent} />
-                      : <MoneyInput value={siblingDiscount.value} onChange={(v) => setSiblingDiscount("value", v)} suffix="" icon={DollarSign} />}
-                  </div>
-                ) : (
-                  <div style={{ fontSize: 12.5, color: C.inkSoft }}>
-                    {meetingMode ? <Redacted width={110} /> : <>{siblingDiscount.type === "percent" ? `${siblingDiscount.value}% ${t("off")}` : `${money(siblingDiscount.value)} ${t("off")}`} · {t("applied to the 2nd child onward in a household")}</>}
-                  </div>
-                )
-              )}
-            </div>
-          </>
+          <div style={{ padding: "10px 18px", fontSize: 11.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
+            <Clock size={12} /> {openDays.length > 0 ? `${openDays.map((d) => t(d.day).slice(0, 3)).join(", ")} · ${openDays[0].hours}` : t("No open days set — configure in Calendar.")}
+            <button onClick={() => setScreen("calendar")} style={{ marginLeft: "auto", fontSize: 11, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("Edit in Calendar")}</button>
+          </div>
         )}
       </div>
+
+      <button onClick={() => setScreen("payments")} style={{
+        display: "flex", alignItems: "center", gap: 8, padding: "12px 18px", borderRadius: 14, border: `1px solid ${C.line}`,
+        background: "#fff", color: C.tealDark, fontSize: 12.5, fontWeight: 600, textAlign: "left",
+      }}>
+        <DollarSign size={15} color={C.teal} />
+        {t("Tuition rates and sibling discount now live in Finances → Tuition & Subsidies.")}
+        <ArrowRight size={13} style={{ marginLeft: "auto" }} />
+      </button>
     </div>
   );
 }
@@ -3852,12 +3860,12 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
           )}
         </div>
       </div>
-      {openChild && <ChildDrawer child={openChild} onClose={() => setOpenChildId(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} />}
+      {openChild && <ChildDrawer child={openChild} onClose={() => setOpenChildId(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} tuitionRates={tuitionRates} families={household.children} />}
     </div>
   );
 }
 
-function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess }) {
+function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRates, families }) {
   const t = useT();
   const [editingSession, setEditingSession] = useState(false);
   const [sessionsApproved, setSessionsApproved] = useState(child.sessionsApproved);
@@ -3872,7 +3880,19 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess }) {
   const [accommodations, setAccommodations] = useState(child.accommodations || "");
   const docFileInputRef = React.useRef(null);
   const [uploadingDocId, setUploadingDocId] = useState(null);
+  const photoInputRef = React.useRef(null);
   const prog = child.subsidized ? programOf(child.programId) : null;
+
+  const householdSiblings = (families || []).filter((f) => f.household === child.household && !f.subsidized).sort((a, b) => a.id - b.id);
+  const siblingIndex = householdSiblings.findIndex((f) => f.id === child.id);
+  const siblingDiscount = tuitionRates?.siblingDiscount;
+  const hasSiblingContext = !child.subsidized && householdSiblings.length > 1;
+  let siblingComputed = null;
+  if (hasSiblingContext && tuitionRates) {
+    const baseAmounts = householdSiblings.map((f) => tuitionRates[f.classroom]?.fullTime || 0);
+    const computed = applySiblingDiscounts(baseAmounts, siblingDiscount || TUITION_RATES_DEFAULT.siblingDiscount);
+    siblingComputed = computed[siblingIndex];
+  }
 
   useEffect(() => { logAccess && logAccess("family", child.child); }, [child.id]);
 
@@ -3889,6 +3909,13 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess }) {
     onSave(child.id, { documents: next });
     setUploadingDocId(null);
   };
+  const handlePhotoPicked = (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = "";
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    onSave(child.id, { photoUrl: url, photoFileName: file.name });
+  };
 
   const saveField = async (key, fields) => {
     setSaveState((s) => ({ ...s, [key]: "saving" }));
@@ -3903,12 +3930,22 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess }) {
       <div style={{ position: "relative", width: 440, maxWidth: "94vw", height: "100%", background: C.paper, boxShadow: "-8px 0 30px rgba(0,0,0,0.12)", display: "flex", flexDirection: "column" }}>
         <div style={{ padding: "20px 22px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <div style={{ display: "flex", gap: 12 }}>
-            <div style={{ width: 44, height: 44, borderRadius: "50%", background: child.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 16, flexShrink: 0 }}>{child.child[0]}</div>
+            <input ref={photoInputRef} type="file" accept="image/*" onChange={handlePhotoPicked} style={{ display: "none" }} />
+            <button onClick={() => photoInputRef.current && photoInputRef.current.click()} title={t("Upload an ID photo — for staff identification only, not shared as a photo feed")} style={{
+              width: 44, height: 44, borderRadius: "50%", background: child.photoUrl ? `center/cover no-repeat url(${child.photoUrl})` : child.color,
+              color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 16, flexShrink: 0, border: "none", position: "relative", overflow: "hidden",
+            }}>
+              {!child.photoUrl && child.child[0]}
+              <span style={{ position: "absolute", bottom: -1, right: -1, width: 16, height: 16, borderRadius: "50%", background: C.teal, border: "2px solid #fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Pencil size={8} color="#fff" />
+              </span>
+            </button>
             <div>
               <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>{child.child}</div>
               <div style={{ fontSize: 12.5, color: C.inkSoft }}>{child.age} · {classroomLabelWithRange(child.classroom)}</div>
-              <div style={{ marginTop: 6 }}>
+              <div style={{ marginTop: 6, display: "flex", gap: 6, flexWrap: "wrap" }}>
                 <Pill label={child.subsidized ? t(STATUS_META[child.status].label) : t("Private pay")} fg={child.subsidized ? STATUS_META[child.status].fg : C.sky} bg={child.subsidized ? STATUS_META[child.status].bg : C.skyTint} />
+                {siblingComputed?.discountApplied && <Pill label={t("Sibling discount")} fg={C.teal} bg={C.tealTint} />}
               </div>
             </div>
           </div>
@@ -3959,6 +3996,16 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess }) {
                     <div>
                       <div style={{ fontSize: 13, fontWeight: 600 }}>{t("Private pay")}</div>
                       <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{money(tuition)} {t("private tuition")} / {t("month")}</div>
+                      {siblingComputed?.discountApplied && (
+                        <div style={{ fontSize: 11.5, color: C.teal, marginTop: 3, display: "flex", alignItems: "center", gap: 5 }}>
+                          <CheckCircle2 size={11} /> {t("Sibling discount applied")} — <span style={{ textDecoration: "line-through", color: C.inkSoft }}>{money(siblingComputed.base)}</span> {t("before discount")}
+                        </div>
+                      )}
+                      {hasSiblingContext && !siblingComputed?.discountApplied && (!siblingDiscount || !siblingDiscount.enabled) && (
+                        <div style={{ fontSize: 11, color: C.inkSoft, marginTop: 3, display: "flex", alignItems: "center", gap: 5 }}>
+                          <Info size={10} /> {t("No sibling discount configured — set one up in Finances → Tuition & Subsidies.")}
+                        </div>
+                      )}
                     </div>
                     <button onClick={() => setEditingTuition(true)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 700 }}><Pencil size={12} /> {t("Edit")}</button>
                   </div>
@@ -5240,10 +5287,17 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
 }
 
 /* --------------------------------- payments ------------------------------------ */
-function Finances({ families, expenses, saveExpenses, reminderSettings, saveReminderSettings, staff, tier, payrollSettings, savePayrollSettings, onSave, refunds, saveRefunds, flexCareRequests, tuitionRates, setScreen, providerInfo, meetingMode = false, budgetPlan, saveBudgetPlan }) {
+function Finances({ families, expenses, saveExpenses, reminderSettings, saveReminderSettings, staff, tier, payrollSettings, savePayrollSettings, onSave, refunds, saveRefunds, flexCareRequests, tuitionRates, saveTuitionRates, setScreen, providerInfo, meetingMode = false, budgetPlan, saveBudgetPlan }) {
   const t = useT();
   const [tab, setTab] = useState("tuition");
   const [expandedPayment, setExpandedPayment] = useState(null);
+  const [ratesOpen, setRatesOpen] = useState(false);
+  const [editingRates, setEditingRates] = useState(false);
+  const [rates, setRates] = useState(tuitionRates || TUITION_RATES_DEFAULT);
+  const siblingDiscountFin = rates.siblingDiscount || TUITION_RATES_DEFAULT.siblingDiscount;
+  const setRate = (classroomId, field, val) => setRates((r) => ({ ...r, [classroomId]: { ...r[classroomId], [field]: val } }));
+  const setSiblingDiscountFin = (field, val) => setRates((r) => ({ ...r, siblingDiscount: { ...(r.siblingDiscount || TUITION_RATES_DEFAULT.siblingDiscount), [field]: val } }));
+  const saveRatesNow = async () => { await saveTuitionRates(rates); setEditingRates(false); };
   const [remindersOpen, setRemindersOpen] = useState(false);
   const isSimple = tier === "simple";
   // Budget Planner is available on both plans — it's core business ops, not a
@@ -5299,6 +5353,66 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
             <Kpi label={t("Split-pay families")} value={String(splitFamilies.length)} sub={t("payment divided between guardians")} accent={C.sky} />
             <Kpi label={t("Unpaid this period")} value={String(unpaidCount)} sub={t("tap a family below to update")} accent={unpaidCount > 0 ? C.amber : C.teal} />
           </div>
+          <Card title={t("Tuition rates & sibling discount")} icon={DollarSign}
+            right={<button onClick={() => setRatesOpen(!ratesOpen)} style={{ background: "none", border: "none", color: C.inkSoft }}>
+              <ChevronDown size={16} style={{ transform: ratesOpen ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />
+            </button>}>
+            {ratesOpen && (
+              <>
+                <div style={{ display: "flex", justifyContent: "flex-end", padding: "10px 18px 0" }}>
+                  {editingRates
+                    ? <button onClick={saveRatesNow} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("Save changes")}</button>
+                    : <button onClick={() => setEditingRates(true)} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}><Pencil size={12} /> {t("Edit")}</button>}
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 0, padding: "8px 18px 4px", fontSize: 10.5, fontWeight: 700, color: C.inkSoft, textTransform: "uppercase", letterSpacing: "0.03em" }}>
+                  <span>{t("Classroom")}</span><span>{t("Full-time /mo")}</span><span>{t("Part-time /mo")}</span><span>{t("Hourly")}</span>
+                </div>
+                {CLASSROOMS.map((c) => (
+                  <div key={c.id} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8, alignItems: "center", padding: "9px 18px", borderBottom: `1px solid ${C.line}` }}>
+                    <span style={{ fontSize: 13, fontWeight: 600 }}>{c.label}</span>
+                    {editingRates ? (
+                      <>
+                        <MoneyInput value={rates[c.id].fullTime} onChange={(v) => setRate(c.id, "fullTime", v)} suffix="" icon={DollarSign} />
+                        <MoneyInput value={rates[c.id].partTime} onChange={(v) => setRate(c.id, "partTime", v)} suffix="" icon={DollarSign} />
+                        <MoneyInput value={rates[c.id].hourly} onChange={(v) => setRate(c.id, "hourly", v)} suffix={t("/hr")} icon={DollarSign} />
+                      </>
+                    ) : (
+                      <>
+                        <span style={{ fontSize: 13 }}>{meetingMode ? <Redacted /> : money(rates[c.id].fullTime)}</span>
+                        <span style={{ fontSize: 13 }}>{meetingMode ? <Redacted /> : money(rates[c.id].partTime)}</span>
+                        <span style={{ fontSize: 13 }}>{meetingMode ? <Redacted /> : <>{money(rates[c.id].hourly)}{t("/hr")}</>}</span>
+                      </>
+                    )}
+                  </div>
+                ))}
+                <div style={{ padding: "12px 18px", borderTop: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 8 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: 12.5, fontWeight: 700 }}>{t("Sibling discount")}</span>
+                    {editingRates ? (
+                      <ToggleSwitch on={siblingDiscountFin.enabled} onClick={() => setSiblingDiscountFin("enabled", !siblingDiscountFin.enabled)} />
+                    ) : (
+                      <Pill label={siblingDiscountFin.enabled ? t("Enabled") : t("Off")} fg={siblingDiscountFin.enabled ? C.teal : C.inkSoft} bg={siblingDiscountFin.enabled ? C.tealTint : "#EFEBE1"} />
+                    )}
+                  </div>
+                  {siblingDiscountFin.enabled && (
+                    editingRates ? (
+                      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                        <Select value={siblingDiscountFin.type} onChange={(v) => setSiblingDiscountFin("type", v)} options={["percent", "flat"]} labels={[t("Percentage off"), t("Flat dollar off")]} />
+                        {siblingDiscountFin.type === "percent"
+                          ? <MoneyInput value={siblingDiscountFin.value} onChange={(v) => setSiblingDiscountFin("value", v)} suffix="%" icon={Percent} />
+                          : <MoneyInput value={siblingDiscountFin.value} onChange={(v) => setSiblingDiscountFin("value", v)} suffix="" icon={DollarSign} />}
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: 12.5, color: C.inkSoft }}>
+                        {meetingMode ? <Redacted width={110} /> : <>{siblingDiscountFin.type === "percent" ? `${siblingDiscountFin.value}% ${t("off")}` : `${money(siblingDiscountFin.value)} ${t("off")}`} · {t("applied to the 2nd child onward in a household")}</>}
+                      </div>
+                    )
+                  )}
+                </div>
+              </>
+            )}
+          </Card>
+
           <Card title={t("Per-child payment record")} icon={CreditCard}
             right={<button onClick={exportTuition} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 700, color: C.tealDark, background: "none", border: "none" }}><Download size={13} /> {t("Export CSV")}</button>}>
             {families.map((f) => {
@@ -5889,15 +6003,40 @@ const EXPENSE_MONTHS = ["January", "February", "March", "April", "May", "June", 
 
 function BusinessExpenses({ expenses, saveExpenses, incomeTotal, expenseTotal, onExport, payrollTotal, refundTotal }) {
   const t = useT();
-  const [form, setForm] = useState({ date: "", category: EXPENSE_CATEGORIES[0], description: "", amount: "" });
+  const [form, setForm] = useState({ date: "", category: EXPENSE_CATEGORIES[0], subcategory: subcategoriesFor(EXPENSE_CATEGORIES[0])[0]?.label || "", description: "", amount: "" });
   const [viewMonth, setViewMonth] = useState({ month: 6, year: 2026 }); // 0-indexed: 6 = July
+  const [scanState, setScanState] = useState("idle"); // idle | scanning | review
+  const receiptInputRef = React.useRef(null);
   const net = incomeTotal - expenseTotal - payrollTotal - refundTotal;
   const isCurrentMonth = viewMonth.month === 6 && viewMonth.year === 2026;
+  const currentSubcats = subcategoriesFor(form.category);
+  const selectedSubcat = currentSubcats.find((s) => s.label === form.subcategory);
+
+  // Demo-only preview of receipt scanning — no real OCR here, this is a prototype
+  // to validate whether providers actually want auto-categorization before building
+  // the real backend-dependent pipeline (image storage + OCR/AI + a review step).
+  const scanReceipt = () => {
+    setScanState("scanning");
+    setTimeout(() => {
+      setForm({
+        date: "2026-07-30", category: "Cleaning & Sanitizing", subcategory: "Disinfecting wipes",
+        description: "Target — disinfecting wipes, hand soap, trash bags", amount: "34.82",
+      });
+      setScanState("review");
+    }, 1200);
+  };
+  const handleReceiptFilePicked = (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = "";
+    if (!file) return;
+    scanReceipt();
+  };
 
   const addExpense = () => {
     if (!form.date || !form.description || !form.amount) return;
-    saveExpenses([{ id: Date.now(), date: form.date, category: form.category, description: form.description, amount: Number(form.amount) }, ...expenses]);
-    setForm({ date: "", category: EXPENSE_CATEGORIES[0], description: "", amount: "" });
+    saveExpenses([{ id: Date.now(), date: form.date, category: form.category, subcategory: form.subcategory, description: form.description, amount: Number(form.amount) }, ...expenses]);
+    setForm({ date: "", category: EXPENSE_CATEGORIES[0], subcategory: subcategoriesFor(EXPENSE_CATEGORIES[0])[0]?.label || "", description: "", amount: "" });
+    setScanState("idle");
   };
   const removeExpense = (id) => saveExpenses(expenses.filter((e) => e.id !== id));
 
@@ -5923,14 +6062,43 @@ function BusinessExpenses({ expenses, saveExpenses, incomeTotal, expenseTotal, o
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <Card title={t("Log an expense")} icon={Plus}>
+        <Card title={t("Log an expense")} icon={Plus}
+          right={<button onClick={() => receiptInputRef.current && receiptInputRef.current.click()} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, fontWeight: 700, color: C.sky, background: "none", border: "none" }}>
+            <UploadCloud size={13} /> {t("Scan a receipt (preview)")}
+          </button>}>
+          <input ref={receiptInputRef} type="file" accept="image/*" onChange={handleReceiptFilePicked} style={{ display: "none" }} />
           <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
+            {scanState === "scanning" && (
+              <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 14px", borderRadius: 10, background: C.skyTint }}>
+                <div style={{ width: 16, height: 16, border: `2px solid ${C.sky}`, borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+                <span style={{ fontSize: 12.5, color: "#2E5A78" }}>{t("Reading receipt…")}</span>
+                <style>{"@keyframes spin { to { transform: rotate(360deg); } }"}</style>
+              </div>
+            )}
+            {scanState === "review" && (
+              <div style={{ padding: "10px 12px", borderRadius: 10, background: C.skyTint, display: "flex", gap: 8, alignItems: "flex-start" }}>
+                <Info size={13} color={C.sky} style={{ marginTop: 2, flexShrink: 0 }} />
+                <div style={{ fontSize: 11.5, color: "#2E5A78", lineHeight: 1.5 }}>
+                  {t("Detected from your receipt — this is a preview of automatic categorization. Please review before saving; nothing is added yet.")}
+                </div>
+              </div>
+            )}
             <Field label={t("Date")}><input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} style={inputStyle} /></Field>
             <Field label={t("Category")}>
-              <Select value={form.category} onChange={(v) => setForm({ ...form, category: v })} options={EXPENSE_CATEGORIES} labels={EXPENSE_CATEGORIES.map((c) => t(c))} />
+              <Select value={form.category} onChange={(v) => setForm({ ...form, category: v, subcategory: subcategoriesFor(v)[0]?.label || "" })} options={EXPENSE_CATEGORIES} labels={EXPENSE_CATEGORIES.map((c) => t(c))} />
             </Field>
+            {currentSubcats.length > 0 && (
+              <Field label={t("Subcategory")}>
+                <Select value={form.subcategory} onChange={(v) => setForm({ ...form, subcategory: v })} options={currentSubcats.map((s) => s.label)} labels={currentSubcats.map((s) => t(s.label))} />
+              </Field>
+            )}
             <Field label={t("Description")}><input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} style={inputStyle} /></Field>
             <Field label={t("Amount")}><MoneyInput value={form.amount} onChange={(v) => setForm({ ...form, amount: v })} suffix="" icon={DollarSign} /></Field>
+            {selectedSubcat && selectedSubcat.refPrice != null && (
+              <div style={{ fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "center", gap: 5, marginTop: -4 }}>
+                <Info size={11} /> {t("Typical")}: ~{money(selectedSubcat.refPrice)} {t("per")} {t(selectedSubcat.unit)}
+              </div>
+            )}
             <button onClick={addExpense} style={{ padding: "10px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Add expense")}</button>
           </div>
         </Card>
@@ -5958,7 +6126,7 @@ function BusinessExpenses({ expenses, saveExpenses, incomeTotal, expenseTotal, o
         {monthExpenses.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No expenses logged for this month.")}</div>}
         {monthExpenses.map((e) => (
           <Row key={e.id}
-            left={<><span style={{ color: C.inkSoft, fontSize: 12, minWidth: 78, display: "inline-block" }}>{e.date}</span><b>{e.description}</b><span style={{ color: C.inkSoft }}>{t(e.category)}</span></>}
+            left={<><span style={{ color: C.inkSoft, fontSize: 12, minWidth: 78, display: "inline-block" }}>{e.date}</span><b>{e.description}</b><span style={{ color: C.inkSoft }}>{t(e.category)}{e.subcategory ? ` · ${t(e.subcategory)}` : ""}</span></>}
             right={<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontWeight: 600, fontSize: 13 }}>{money(e.amount)}</span>
               <button onClick={() => removeExpense(e.id)} style={{ background: "none", border: "none", color: C.danger }}><Trash2 size={13} /></button>
