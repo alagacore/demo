@@ -5096,6 +5096,7 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
   // premium feature, so it's listed identically for Simple and Extended.
   const TABS = isSimple ? [["tuition", "Tuition & Subsidies"], ["budget", "Budget Planner"], ["receipts", "Receipts"], ["refunds", "Refunds"]] : [["tuition", "Tuition & Subsidies"], ["budget", "Budget Planner"], ["receipts", "Receipts"], ["refunds", "Refunds"], ["payroll", "Payroll"], ["business", "Business Expenses"]];
   const splitFamilies = families.filter((f) => f.copaySplit);
+  const fsaFamilies = families.filter((f) => f.fsaHsa && f.fsaHsa.enrolled);
   const subsidyTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + (f.coverageBasis === "monthly" ? f.coverageAmount : 0), 0);
   const copayTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + f.copay, 0);
   const privateTotal = families.filter((f) => !f.subsidized).reduce((s, f) => s + f.copay, 0);
@@ -5302,11 +5303,21 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
           </Card>
         </>
       ) : tab === "receipts" ? (
+        <>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 14 }}>
+          <Kpi label={t("Families using FSA/HSA")} value={`${fsaFamilies.length} / ${families.length}`} sub={t("employer benefit, per family's own settings")} accent={fsaFamilies.length > 0 ? C.teal : C.inkSoft} />
+          <Kpi label={t("Most common account type")} value={fsaFamilies.length === 0 ? "—" : (() => {
+            const counts = {};
+            fsaFamilies.forEach((f) => { counts[f.fsaHsa.accountType] = (counts[f.fsaHsa.accountType] || 0) + 1; });
+            return Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
+          })()} sub={t("across enrolled families")} accent={C.sky} />
+        </div>
         <Card title={t("Tuition receipts by child")} icon={FileText} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("For families' FSA / HSA reimbursement")}</span>}>
           {families.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No families enrolled yet.")}</div>}
           {families.map((f) => {
             const months = ["May 2026", "June 2026", "July 2026"];
             const amount = f.copay;
+            const fsa = f.fsaHsa && f.fsaHsa.enrolled ? f.fsaHsa : null;
             const dl = (month) => downloadCSV(`alaga-receipt-${f.child.replace(/\s+/g, "-").toLowerCase()}-${month.replace(" ", "-")}.csv`,
               ["Provider", "Child", "Service period", "Amount paid", "Purpose"],
               [[providerInfo?.name || "", f.child, month, amount.toFixed(2), "Childcare tuition / copay — for FSA or HSA reimbursement submission"]]);
@@ -5314,9 +5325,10 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
               ["Provider", "Child", "Month", "Amount paid"], months.map((m) => [providerInfo?.name || "", f.child, m, amount.toFixed(2)]));
             return (
               <div key={f.id} style={{ padding: "12px 18px", borderBottom: `1px solid ${C.line}` }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8, flexWrap: "wrap", gap: 6 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <Dot c={f.color} /><b style={{ fontSize: 13.5 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>· {f.householdName}</span>
+                    {fsa && <Pill label={`${t(fsa.accountType)}${fsa.employerName ? ` · ${fsa.employerName}` : ""}`} fg={C.teal} bg={C.tealTint} />}
                   </div>
                   <button onClick={dlYear} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>
                     <Download size={12} /> {t("Annual summary")}
@@ -5336,6 +5348,7 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
             <Info size={10} /> {t("These same receipts are also available to each family in their own parent view.")}
           </div>
         </Card>
+        </>
       ) : tab === "refunds" ? (
         <RefundsCard families={families} refunds={refunds} saveRefunds={saveRefunds} onExport={exportRefunds} />
       ) : tab === "budget" ? (
