@@ -2705,7 +2705,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   ]);
   const [dismissedNotices, saveDismissedNotices] = usePersistentState(`dismissed-notices${sfx}`, []);
   const [a11y, saveA11y] = usePersistentState("accessibility-settings", { dark: false, highContrast: false, textSize: 16, reducedMotion: false });
-  const [reminderSettings, saveReminderSettings] = usePersistentState("invoice-reminders", { enabled: true, daysBefore: 7, lateFeeEnabled: false, lateFeeAmount: 25 });
+  const [reminderSettings, saveReminderSettings] = usePersistentState("invoice-reminders", { enabled: true, daysBefore: 7, lateFeeEnabled: false, lateFeeType: "flat", lateFeeAmount: 25, lateFeePercent: 5 });
   const [growth, saveGrowth] = usePersistentState(`growth-assessment${sfx}`, { started: false, targetCapacity: 12, targetStaff: 1, timeline: "6–12 months", checklist: [], notes: "" });
   const [staff, saveStaff] = usePersistentState(`staff${sfx}`, isEmpty ? [] : STAFF_DEFAULT);
   const [alumni, saveAlumni] = usePersistentState(`alumni${sfx}`, isEmpty ? [] : ALUMNI_DEFAULT);
@@ -5214,9 +5214,43 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                 <Row left={<b style={{ fontSize: 13 }}>{t("Late fee on overdue balances")}</b>}
                   right={<ToggleSwitch on={reminderSettings.lateFeeEnabled} onClick={() => saveReminderSettings({ ...reminderSettings, lateFeeEnabled: !reminderSettings.lateFeeEnabled })} />} />
                 {reminderSettings.lateFeeEnabled && (
-                  <div style={{ padding: "10px 18px", display: "flex", alignItems: "center", gap: 10 }}>
-                    <span style={{ fontSize: 12.5, color: C.inkSoft }}>{t("Fee amount")}</span>
-                    <MoneyInput value={reminderSettings.lateFeeAmount} onChange={(v) => saveReminderSettings({ ...reminderSettings, lateFeeAmount: v })} suffix={t("after due date")} icon={DollarSign} />
+                  <div style={{ padding: "10px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                      <span style={{ fontSize: 12.5, color: C.inkSoft }}>{t("Fee type")}</span>
+                      <div style={{ display: "flex", gap: 6 }}>
+                        {[["flat", t("Flat $")], ["percent", t("% of balance")]].map(([id, label]) => (
+                          <button key={id} onClick={() => saveReminderSettings({ ...reminderSettings, lateFeeType: id })} style={{
+                            padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 700,
+                            border: `1px solid ${reminderSettings.lateFeeType === id ? C.teal : C.line}`,
+                            background: reminderSettings.lateFeeType === id ? C.tealTint : "#fff",
+                            color: reminderSettings.lateFeeType === id ? C.tealDark : C.inkSoft,
+                          }}>{label}</button>
+                        ))}
+                      </div>
+                    </div>
+                    {reminderSettings.lateFeeType === "percent" ? (
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ fontSize: 12.5, color: C.inkSoft }}>{t("Fee percentage")}</span>
+                        <div style={{ display: "flex", alignItems: "center", border: `1px solid ${C.line}`, borderRadius: 9, padding: "0 11px" }}>
+                          <Percent size={13} color={C.inkSoft} />
+                          <input type="number" min={0} max={100} step={0.5} value={reminderSettings.lateFeePercent}
+                            onChange={(e) => saveReminderSettings({ ...reminderSettings, lateFeePercent: Math.max(0, Number(e.target.value) || 0) })}
+                            style={{ border: "none", outline: "none", padding: "9px 4px", fontSize: 13, width: 60, fontFamily: "inherit" }} />
+                          <span style={{ fontSize: 11, color: C.inkSoft, whiteSpace: "nowrap" }}>{t("of unpaid balance")}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ fontSize: 12.5, color: C.inkSoft }}>{t("Fee amount")}</span>
+                        <MoneyInput value={reminderSettings.lateFeeAmount} onChange={(v) => saveReminderSettings({ ...reminderSettings, lateFeeAmount: v })} suffix={t("after due date")} icon={DollarSign} />
+                      </div>
+                    )}
+                    {reminderSettings.lateFeeType === "percent" && owingFamilies.length > 0 && (
+                      <div style={{ fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
+                        <Info size={11} />
+                        {t("Example")}: {money(owingFamilies[0].copay)} {t("balance")} → {money(Math.round(owingFamilies[0].copay * (reminderSettings.lateFeePercent / 100) * 100) / 100)} {t("late fee")}
+                      </div>
+                    )}
                   </div>
                 )}
                 {reminderSettings.enabled && (
