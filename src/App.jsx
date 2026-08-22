@@ -3897,9 +3897,9 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
   };
 
   return (
-    <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 232, zIndex: 40, display: "flex", justifyContent: "flex-end" }}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 40, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.35)" }} />
-      <div style={{ position: "relative", width: 460, maxWidth: "94vw", height: "100%", background: C.paper, boxShadow: "-8px 0 30px rgba(0,0,0,0.12)", display: "flex", flexDirection: "column" }}>
+      <div style={{ position: "relative", width: 560, maxWidth: "94vw", maxHeight: "88vh", background: C.paper, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column" }}>
 
         <div style={{ padding: "20px 22px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <div style={{ display: "flex", gap: 12 }}>
