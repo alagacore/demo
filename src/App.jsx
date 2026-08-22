@@ -4100,9 +4100,9 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
   };
 
   return (
-    <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 232, zIndex: 45, display: "flex", justifyContent: "flex-end" }}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 45, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.45)" }} />
-      <div style={{ position: "relative", width: 440, maxWidth: "94vw", height: "100%", background: C.paper, boxShadow: "-8px 0 30px rgba(0,0,0,0.12)", display: "flex", flexDirection: "column" }}>
+      <div style={{ position: "relative", width: 560, maxWidth: "94vw", maxHeight: "88vh", background: C.paper, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column" }}>
         <div style={{ padding: "20px 22px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <div style={{ display: "flex", gap: 12 }}>
             <input ref={photoInputRef} type="file" accept="image/*" onChange={handlePhotoPicked} style={{ display: "none" }} />
@@ -4383,6 +4383,8 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
 
   const [selectedDate, setSelectedDate] = useState(TODAY);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [bookingsTab, setBookingsTab] = useState(highlightId ? "flex" : "roster");
+  useEffect(() => { if (highlightId) setBookingsTab("flex"); }, [highlightId]);
   const [denyingId, setDenyingId] = useState(null);
   const [loggingPaymentId, setLoggingPaymentId] = useState(null);
   const [paymentForm, setPaymentForm] = useState({ method: PAYMENT_METHODS[0], amount: "", date: "", notes: "" });
@@ -4458,6 +4460,25 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", gap: 6 }}>
+        {[["roster", "Roster & Attendance"], ["flex", "Flex Care"]].map(([id, label]) => (
+          <button key={id} onClick={() => setBookingsTab(id)} style={{
+            padding: "8px 16px", borderRadius: 999, fontSize: 12.5, fontWeight: 700, border: `1px solid ${bookingsTab === id ? C.teal : C.line}`,
+            background: bookingsTab === id ? C.tealTint : "#fff", color: bookingsTab === id ? C.tealDark : C.inkSoft,
+            display: "flex", alignItems: "center", gap: 7,
+          }}>
+            {id === "roster" ? <CalendarClock size={13} /> : <Clock size={13} />} {t(label)}
+            {id === "flex" && (flexCareRequests.filter((r) => r.status === "pending").length > 0) && (
+              <span style={{ background: C.coral, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "1px 6px" }}>
+                {flexCareRequests.filter((r) => r.status === "pending").length}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {bookingsTab === "roster" && (
+      <>
       <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, padding: "14px 16px" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -4578,7 +4599,10 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
           <Info size={10} /> {t("Days shown are based on each child's approved schedule — adjust in their profile if it changes.")}
         </div>
       </Card>
+      </>
+      )}
 
+      {bookingsTab === "flex" && (
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <Card title={t("Request flex care")} icon={Plus} right={<span style={{ fontSize: 11, color: C.inkSoft }}>{t("Early drop-off, late pickup, extra days, weekends")}</span>}>
           <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
@@ -4704,6 +4728,7 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
           </div>
         </Card>
       </div>
+      )}
     </div>
   );
 }
