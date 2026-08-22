@@ -5611,6 +5611,8 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
   const tab = activeTab !== undefined ? activeTab : tabLocal;
   const setTab = setActiveTab || setTabLocal;
   const [expandedPayment, setExpandedPayment] = useState(null);
+  const [editingSplitId, setEditingSplitId] = useState(null);
+  const [splitDraft, setSplitDraft] = useState([]);
   const [ratesOpen, setRatesOpen] = useState(false);
   const [editingRates, setEditingRates] = useState(false);
   const [rates, setRates] = useState(tuitionRates || TUITION_RATES_DEFAULT);
@@ -5645,6 +5647,32 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
   const exportTuition = () => downloadCSV("alaga-tuition-subsidies.csv",
     ["Child", "Household", "Type", "Program", "Monthly coverage", "Parent amount"],
     families.map((f) => [f.child, f.householdName, f.subsidized ? "Subsidized" : "Private-pay", f.subsidized ? (programOf(f.programId)?.label || "") : "—", f.subsidized ? f.coverageAmount : 0, f.copay]));
+
+  // A household's payment arrangement isn't fixed — a single-payer family can
+  // become split-pay (a second guardian starts contributing) and a split-pay
+  // family can consolidate back to one payer. Both directions need to be
+  // editable, not just the initial split itself.
+  const startEditSplit = (f) => {
+    setEditingSplitId(f.id);
+    setSplitDraft(f.copaySplit ? f.copaySplit.map((s) => ({ ...s })) : [
+      { parent: f.parents?.[0]?.name || "Parent 1", amount: f.copay },
+      { parent: f.parents?.[1]?.name || "Parent 2", amount: 0 },
+    ]);
+  };
+  const updateSplitDraftRow = (i, fields) => setSplitDraft((rows) => rows.map((r, ri) => (ri === i ? { ...r, ...fields } : r)));
+  const addSplitDraftRow = () => setSplitDraft((rows) => [...rows, { parent: "", amount: 0 }]);
+  const removeSplitDraftRow = (i) => setSplitDraft((rows) => rows.filter((_, ri) => ri !== i));
+  const splitDraftTotal = splitDraft.reduce((s, r) => s + (Number(r.amount) || 0), 0);
+  const saveSplitDraft = (f) => {
+    const entry = { date: todayMDY(), change: `Switched to split pay — ${splitDraft.map((r) => `${r.parent} ${money(Number(r.amount) || 0)}/mo`).join(", ")}` };
+    onSave(f.id, { copaySplit: splitDraft.map((r) => ({ parent: r.parent, amount: Number(r.amount) || 0 })), paymentArrangementHistory: [entry, ...(f.paymentArrangementHistory || [])] });
+    setEditingSplitId(null);
+  };
+  const consolidateToSinglePayer = (f) => {
+    const entry = { date: todayMDY(), change: `Consolidated to single payer` };
+    onSave(f.id, { copaySplit: null, paymentArrangementHistory: [entry, ...(f.paymentArrangementHistory || [])] });
+    setEditingSplitId(null);
+  };
 
   const exportExpenses = () => downloadCSV("alaga-business-expenses.csv",
     ["Date", "Category", "Description", "Amount"],
@@ -5753,7 +5781,13 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                       </div>
                       <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
                         <span style={{ fontSize: 12.5, color: C.inkSoft }}>{meetingMode ? "••••" : amountLabel}</span>
-                        {f.copay > 0 && <Pill label={received ? t("Paid") : t("Unpaid")} fg={received ? C.teal : C.amber} bg={received ? C.tealTint : C.amberTint} />}
+                        {f.copay > 0 && (() => {
+                          if (!f.copaySplit) return <Pill label={received ? t("Paid") : t("Unpaid")} fg={received ? C.teal : C.amber} bg={received ? C.tealTint : C.amberTint} />;
+                          const receivedCount = f.copaySplit.filter((s) => s.received === true).length;
+                          if (receivedCount === f.copaySplit.length) return <Pill label={t("Paid")} fg={C.teal} bg={C.tealTint} />;
+                          if (receivedCount === 0) return <Pill label={t("Unpaid")} fg={C.amber} bg={C.amberTint} />;
+                          return <Pill label={t("Partial")} fg={C.amber} bg={C.amberTint} />;
+                        })()}
                         <ChevronRight size={14} color={C.inkSoft} style={{ transform: isOpen ? "rotate(90deg)" : "none", transition: "transform 0.15s" }} />
                       </div>
                     </div>
@@ -5768,7 +5802,35 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                           <CheckCircle2 size={11} /> {t("Sibling discount applied")} — <span style={{ textDecoration: "line-through", color: C.inkSoft }}>{money(tuitionInfo.base)}</span> {t("before discount")}
                         </div>
                       )}
-                      {f.copaySplit && (
+                      {editingSplitId === f.id ? (
+                        <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: "10px", borderRadius: 9, background: C.cream }}>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: C.inkSoft, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Edit payment arrangement")}</div>
+                          {splitDraft.map((row, i) => (
+                            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                              <input value={row.parent} onChange={(e) => updateSplitDraftRow(i, { parent: e.target.value })} placeholder={t("Parent name")} style={{ ...inputStyle, flex: 1 }} />
+                              <MoneyInput value={row.amount} onChange={(v) => updateSplitDraftRow(i, { amount: v })} suffix="/mo" icon={DollarSign} />
+                              {splitDraft.length > 2 && (
+                                <button onClick={() => removeSplitDraftRow(i)} style={{ background: "none", border: "none", color: C.danger, display: "flex" }}><Trash2 size={13} /></button>
+                              )}
+                            </div>
+                          ))}
+                          <button onClick={addSplitDraftRow} style={{ display: "flex", alignItems: "center", gap: 5, alignSelf: "flex-start", background: "none", border: "none", color: C.teal, fontSize: 11.5, fontWeight: 700 }}>
+                            <Plus size={11} /> {t("Add another guardian")}
+                          </button>
+                          {splitDraftTotal !== f.copay && (
+                            <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: "#7A5620" }}>
+                              <AlertTriangle size={11} /> {t("Split totals")} {money(splitDraftTotal)}, {t("but copay is")} {money(f.copay)}.
+                            </div>
+                          )}
+                          <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+                            <button onClick={() => setEditingSplitId(null)} style={{ padding: "6px 12px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 700, color: C.inkSoft }}>{t("Cancel")}</button>
+                            {f.copaySplit && (
+                              <button onClick={() => consolidateToSinglePayer(f)} style={{ padding: "6px 12px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 700, color: C.danger }}>{t("Back to single payer")}</button>
+                            )}
+                            <button onClick={() => saveSplitDraft(f)} style={{ padding: "6px 14px", borderRadius: 7, border: "none", background: C.teal, color: "#fff", fontSize: 11.5, fontWeight: 700 }}>{t("Save split")}</button>
+                          </div>
+                        </div>
+                      ) : f.copaySplit ? (
                         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
                           {f.copaySplit.map((s, i) => (
                             <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 12, color: C.inkSoft }}>
@@ -5776,9 +5838,30 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                               <span>{money(s.amount)}/mo</span>
                             </div>
                           ))}
+                          <button onClick={() => startEditSplit(f)} style={{ display: "flex", alignItems: "center", gap: 5, alignSelf: "flex-start", background: "none", border: "none", color: C.teal, fontSize: 11, fontWeight: 700 }}>
+                            <Pencil size={10} /> {t("Edit payment arrangement")}
+                          </button>
                         </div>
+                      ) : (
+                        f.copay > 0 && (
+                          <button onClick={() => startEditSplit(f)} style={{ display: "flex", alignItems: "center", gap: 5, alignSelf: "flex-start", background: "none", border: "none", color: C.teal, fontSize: 11.5, fontWeight: 700 }}>
+                            <Pencil size={11} /> {t("Edit payment arrangement")}
+                          </button>
+                        )
                       )}
-                      {f.copay > 0 && (
+                      {f.paymentArrangementHistory && f.paymentArrangementHistory.length > 0 && editingSplitId !== f.id && (
+                        // Provider-facing only — this history never appears in the
+                        // parent portal, it's for the provider's own record-keeping.
+                        <details style={{ fontSize: 11, color: C.inkSoft }}>
+                          <summary style={{ cursor: "pointer", fontWeight: 600 }}>{t("Payment arrangement history")} ({f.paymentArrangementHistory.length})</summary>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 4, marginTop: 6, paddingLeft: 4 }}>
+                            {f.paymentArrangementHistory.map((h, i) => (
+                              <div key={i}>{h.date} — {h.change}</div>
+                            ))}
+                          </div>
+                        </details>
+                      )}
+                      {f.copay > 0 && !f.copaySplit && (
                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                           <Select value={method === "Not set" ? PAYMENT_METHODS[0] : method} onChange={(v) => onSave(f.id, { paymentMethod: v })} options={PAYMENT_METHODS} labels={PAYMENT_METHODS.map((m) => t(m))} />
                           <button onClick={() => onSave(f.id, { paymentReceived: !received })} style={{
@@ -5787,6 +5870,33 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                           }}>
                             {received ? <CheckCircle2 size={12} /> : <Clock size={12} />} {received ? t("Received this period") : t("Not yet received")}
                           </button>
+                        </div>
+                      )}
+                      {f.copay > 0 && f.copaySplit && (
+                        // Each guardian may pay a different way and on a different
+                        // day, so split-pay families track method + received status
+                        // per parent instead of one flat toggle for the whole copay.
+                        <div style={{ display: "flex", flexDirection: "column", gap: 8, paddingTop: 4, borderTop: `1px solid ${C.line}` }}>
+                          {f.copaySplit.map((s, i) => {
+                            const splitMethod = s.method || PAYMENT_METHODS[0];
+                            const splitReceived = s.received === true;
+                            const updateSplit = (fields) => {
+                              const next = f.copaySplit.map((x, xi) => (xi === i ? { ...x, ...fields } : x));
+                              onSave(f.id, { copaySplit: next });
+                            };
+                            return (
+                              <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                                <span style={{ fontSize: 11.5, fontWeight: 700, color: C.ink, minWidth: 90 }}>{s.parent}</span>
+                                <Select value={splitMethod} onChange={(v) => updateSplit({ method: v })} options={PAYMENT_METHODS} labels={PAYMENT_METHODS.map((m) => t(m))} />
+                                <button onClick={() => updateSplit({ received: !splitReceived })} style={{
+                                  display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "none",
+                                  background: splitReceived ? C.tealTint : C.amberTint, color: splitReceived ? C.tealDark : "#7A5620", fontSize: 11, fontWeight: 700,
+                                }}>
+                                  {splitReceived ? <CheckCircle2 size={12} /> : <Clock size={12} />} {splitReceived ? t("Received") : t("Not yet received")}
+                                </button>
+                              </div>
+                            );
+                          })}
                         </div>
                       )}
                     </div>
