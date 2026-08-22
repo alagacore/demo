@@ -7,7 +7,7 @@ import {
   Printer, Send, Info, CalendarDays, DollarSign, Percent,
   Pencil, Plus, Trash2, Split, ArrowLeft, Shield, FileCheck, HeartPulse, Flame, Eye,
   Moon, Contrast, Type, ZapOff, Lock, ListChecks, UserPlus, Settings as Gear, LifeBuoy, Paperclip, Image as ImageIcon,
-  ArrowRight, Building2, Rocket, PlayCircle, UploadCloud, TrendingUp, Wand2, UserCog, Scale, ArrowLeftRight, Volume2, Square,
+  ArrowRight, Building2, Rocket, PlayCircle, UploadCloud, TrendingUp, Wand2, UserCog, Scale, ArrowLeftRight, Volume2, Square, Hourglass,
   Wallet, Baby, Cookie, Puzzle, SprayCan, Palette,
 } from "lucide-react";
 import {
@@ -162,6 +162,7 @@ const NAV = [
   { id: "staff", label: "Staff & Ratios", icon: UserCog, extended: true },
   { id: "calendar", label: "Calendar", icon: CalendarDays },
   { id: "tours", label: "Tours", icon: ListChecks },
+  { id: "waitlist", label: "Waitlist", icon: Hourglass },
   { id: "subsidy", label: "Subsidy", icon: ShieldCheck },
   { id: "payments", label: "Finances", icon: CreditCard },
   { id: "compliance", label: "Compliance", icon: ClipboardCheck },
@@ -172,6 +173,34 @@ const NAV = [
   { id: "support", label: "Support", icon: LifeBuoy },
   { id: "settings", label: "Settings", icon: Gear },
 ].filter((n) => FEATURES.checkin || n.id !== "checkin");
+
+// Groups items in the sidebar under an expandable parent so a provider can see
+// where things live without having to already be on that screen. Each entry
+// references a real NAV id (and, for Finances, a specific in-page tab) — the
+// underlying screen routing is unchanged, this only changes how it's browsed.
+const NAV_GROUPS = [
+  {
+    id: "grp-enrollment", label: "Enrollment", icon: Users,
+    children: [
+      { id: "families", label: "Families" },
+      { id: "tours", label: "Tours" },
+      { id: "waitlist", label: "Waitlist" },
+    ],
+  },
+  {
+    id: "grp-finances", label: "Finances", icon: CreditCard,
+    children: [
+      { id: "payments", tab: "tuition", label: "Tuition & Billing" },
+      { id: "subsidy", label: "Subsidy Programs" },
+      { id: "payments", tab: "budget", label: "Budget Planner" },
+      { id: "payments", tab: "receipts", label: "Receipts" },
+      { id: "payments", tab: "refunds", label: "Refunds" },
+      { id: "payments", tab: "payroll", label: "Payroll", extended: true },
+      { id: "payments", tab: "business", label: "Business Expenses", extended: true },
+    ],
+  },
+];
+const GROUPED_IDS = new Set(NAV_GROUPS.flatMap((g) => g.children.map((c) => c.id)));
 
 const CLASSROOMS = [
   { id: "infants", label: "Infants", range: "0–17 months" },
@@ -2808,6 +2837,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const [openFamId, setOpenFamId] = useState(null);
   const [openHousehold, setOpenHousehold] = useState(null);
   const [flexHighlightId, setFlexHighlightId] = useState(null);
+  const [financesTab, setFinancesTab] = useState("tuition");
   // From the dashboard's Today's briefing, jump straight into the specific
   // family's subsidy record or flex care request instead of the general screen.
   const goToSubsidyFamily = useCallback((famId) => {
@@ -2956,6 +2986,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
     if (n.id === "subsidy") return { ...n, badge: expiringCount > 0 ? expiringCount : undefined };
     if (n.id === "messages") return { ...n, badge: unreadMessagesCount > 0 ? unreadMessagesCount : undefined };
     if (n.id === "bookings") return { ...n, badge: flexAttentionCount > 0 ? flexAttentionCount : undefined };
+    if (n.id === "waitlist") { const wc = prospects.filter((p) => p.stage === "Waitlist").length; return { ...n, badge: wc > 0 ? wc : undefined }; }
     return n;
   });
   const compDocs = baseCompDocsRaw.map((d) => ({ ...d, ...(compOverrides[d.id] || {}) }));
@@ -3001,19 +3032,20 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
 
       {mode === "provider" ? (
         <>
-          <Sidebar screen={screen} setScreen={setScreen} mode={mode} setMode={setMode} provider={providerInfo} onExitToLanding={onExitToLanding} isEmpty={isEmpty} navItems={navItems} tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} />
+          <Sidebar screen={screen} setScreen={setScreen} mode={mode} setMode={setMode} provider={providerInfo} onExitToLanding={onExitToLanding} isEmpty={isEmpty} navItems={navItems} tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} financesTab={financesTab} setFinancesTab={setFinancesTab} />
           <main style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
             <Topbar screen={screen} setScreen={setScreen} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} />
             <div style={{ flex: 1, overflowY: "auto", padding: "28px 32px 60px" }}>
               {screen === "dashboard" && <Dashboard setScreen={setScreen} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
-              {screen === "families" && <Families families={families} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} />}
+              {screen === "families" && <Families families={families} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
               {screen === "bookings" && <Bookings families={families} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
               {screen === "staff" && <StaffScreen staff={staff} families={families} updateStaffMember={updateStaffMember} addStaffMember={addStaffMember} removeStaffMember={removeStaffMember} />}
               {screen === "calendar" && <CalendarScreen schedule={weeklySchedule} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} />}
               {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} />}
+              {screen === "waitlist" && <WaitlistScreen prospects={prospects} updateProspect={updateProspect} removeProspect={removeProspect} logAccess={logAccess} families={families} providerInfo={providerInfo} />}
               {screen === "subsidy" && <Subsidy families={families} openFamId={openFamId} setOpenFamId={setOpenFamId} loaded={loaded} meetingMode={meetingMode} />}
-              {screen === "payments" && <Finances families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} />}
+              {screen === "payments" && <Finances families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} activeTab={financesTab} setActiveTab={setFinancesTab} />}
               {screen === "compliance" && <Compliance docs={compDocs} onSave={saveCompDoc} families={families} provider={providerInfo} staff={staff} setScreen={setScreen} incidents={incidents} saveIncidents={saveIncidents} mandatedNotes={mandatedNotes} saveMandatedNotes={saveMandatedNotes} />}
               {screen === "security" && <SecurityScreen accessLog={accessLog} isEmpty={isEmpty} />}
               {screen === "messages" && <Messages threads={threads} saveThreads={saveThreads} families={families} staff={staff} />}
@@ -3104,8 +3136,9 @@ export default function AlagaMockup() {
 }
 
 /* --------------------------------- sidebar ------------------------------------ */
-function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, isEmpty, navItems, tier, saveTier, tierLocked, meetingMode = false }) {
+function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, isEmpty, navItems, tier, saveTier, tierLocked, meetingMode = false, financesTab, setFinancesTab }) {
   const t = useT();
+  const [expandedGroups, setExpandedGroups] = useState({});
   return (
     <aside style={{
       width: 232, flexShrink: 0, background: C.tealDark, color: "#EFEAE0", display: "flex", flexDirection: "column", padding: "22px 14px",
@@ -3156,20 +3189,67 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
 
       <div style={{ fontSize: 10.5, letterSpacing: "0.08em", textTransform: "uppercase", color: "#7FA096", padding: "0 10px 6px" }}>{t("Workspace")}</div>
       <nav style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        {navItems.map((n) => {
-          const on = screen === n.id;
-          return (
-            <button key={n.id} onClick={() => setScreen(n.id)} style={{
-              display: "flex", alignItems: "center", gap: 10, padding: "9px 10px", borderRadius: 9,
-              border: "none", background: on ? "rgba(255,255,255,0.12)" : "transparent",
-              color: on ? "#fff" : "#CBDAD2", fontSize: 13.5, fontWeight: on ? 600 : 500, textAlign: "left",
-            }}>
-              <n.icon size={16} strokeWidth={2} />
-              <span style={{ flex: 1 }}>{t(n.label)}</span>
-              {n.badge && <span style={{ background: C.coral, color: "#fff", fontSize: 10.5, fontWeight: 700, borderRadius: 999, padding: "1px 6px" }}>{n.badge}</span>}
-            </button>
-          );
-        })}
+        {(() => {
+          const renderedGroups = new Set();
+          return navItems.map((n) => {
+            const owningGroup = NAV_GROUPS.find((g) => g.children.some((c) => c.id === n.id));
+            if (owningGroup) {
+              if (renderedGroups.has(owningGroup.id)) return null;
+              renderedGroups.add(owningGroup.id);
+              const visibleChildren = owningGroup.children.filter((c) => tier === "extended" || !c.extended);
+              const groupActive = visibleChildren.some((c) => c.id === screen);
+              const isExpanded = expandedGroups[owningGroup.id] !== undefined ? expandedGroups[owningGroup.id] : groupActive;
+              const groupBadge = visibleChildren.reduce((sum, c) => {
+                const src = navItems.find((x) => x.id === c.id);
+                return sum + (typeof src?.badge === "number" ? src.badge : 0);
+              }, 0);
+              return (
+                <div key={owningGroup.id}>
+                  <button onClick={() => setExpandedGroups((g) => ({ ...g, [owningGroup.id]: !isExpanded }))} style={{
+                    width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "9px 10px", borderRadius: 9,
+                    border: "none", background: groupActive && !isExpanded ? "rgba(255,255,255,0.12)" : "transparent",
+                    color: groupActive ? "#fff" : "#CBDAD2", fontSize: 13.5, fontWeight: groupActive ? 600 : 500, textAlign: "left",
+                  }}>
+                    <owningGroup.icon size={16} strokeWidth={2} />
+                    <span style={{ flex: 1 }}>{t(owningGroup.label)}</span>
+                    {groupBadge > 0 && !isExpanded && <span style={{ background: C.coral, color: "#fff", fontSize: 10.5, fontWeight: 700, borderRadius: 999, padding: "1px 6px" }}>{groupBadge}</span>}
+                    <ChevronDown size={13} style={{ transform: isExpanded ? "none" : "rotate(-90deg)", transition: "transform 0.12s", flexShrink: 0, opacity: 0.7 }} />
+                  </button>
+                  {isExpanded && (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 1, margin: "2px 0 4px", marginLeft: 15, paddingLeft: 11, borderLeft: "1px solid rgba(255,255,255,0.14)" }}>
+                      {visibleChildren.map((c) => {
+                        const childOn = screen === c.id && (!c.tab || financesTab === c.tab);
+                        const src = navItems.find((x) => x.id === c.id);
+                        return (
+                          <button key={c.id + (c.tab || "")} onClick={() => { setScreen(c.id); if (c.tab && setFinancesTab) setFinancesTab(c.tab); }} style={{
+                            display: "flex", alignItems: "center", gap: 8, padding: "7px 9px", borderRadius: 8,
+                            border: "none", background: childOn ? "rgba(255,255,255,0.12)" : "transparent",
+                            color: childOn ? "#fff" : "#B9CFC6", fontSize: 12.5, fontWeight: childOn ? 600 : 500, textAlign: "left",
+                          }}>
+                            <span style={{ flex: 1 }}>{t(c.label)}</span>
+                            {src?.badge && (!c.tab) && <span style={{ background: C.coral, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "1px 5px" }}>{src.badge}</span>}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            const on = screen === n.id;
+            return (
+              <button key={n.id} onClick={() => setScreen(n.id)} style={{
+                display: "flex", alignItems: "center", gap: 10, padding: "9px 10px", borderRadius: 9,
+                border: "none", background: on ? "rgba(255,255,255,0.12)" : "transparent",
+                color: on ? "#fff" : "#CBDAD2", fontSize: 13.5, fontWeight: on ? 600 : 500, textAlign: "left",
+              }}>
+                <n.icon size={16} strokeWidth={2} />
+                <span style={{ flex: 1 }}>{t(n.label)}</span>
+                {n.badge && <span style={{ background: C.coral, color: "#fff", fontSize: 10.5, fontWeight: 700, borderRadius: 999, padding: "1px 6px" }}>{n.badge}</span>}
+              </button>
+            );
+          });
+        })()}
       </nav>
 
       {setMode && (
@@ -3648,7 +3728,7 @@ function CheckIn({ families, status, log, setChildStatus }) {
 }
 
 /* --------------------------------- families ------------------------------------ */
-function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHousehold: openHouseholdProp, setOpenHousehold: setOpenHouseholdProp, tuitionRates }) {
+function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHousehold: openHouseholdProp, setOpenHousehold: setOpenHouseholdProp, tuitionRates, alumni = [] }) {
   const t = useT();
   const [openHouseholdLocal, setOpenHouseholdLocal] = useState(null);
   // Support both a parent-controlled open household (used when the search bar or
@@ -3657,6 +3737,11 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
   const setOpenHousehold = setOpenHouseholdProp || setOpenHouseholdLocal;
   const [query, setQuery] = useState("");
   const [sortByLastName, setSortByLastName] = useState(false);
+  // "Active" vs "Deenrolled" reflects what's actually real in the data — every
+  // record in `families` is currently enrolled, and departed families move to
+  // `alumni`. There's no separate "temporarily inactive" status to filter by,
+  // so this doesn't fabricate one.
+  const [statusFilter, setStatusFilter] = useState("active");
   const householdsRaw = groupByHousehold(families);
   const q = query.trim().toLowerCase();
   let households = q
@@ -3702,6 +3787,32 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
           </button>
         </div>
       </div>
+
+      <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+        {[["active", "Active"], ["deenrolled", "Deenrolled"]].map(([id, label]) => (
+          <button key={id} onClick={() => setStatusFilter(id)} style={{
+            padding: "7px 14px", borderRadius: 999, fontSize: 12.5, fontWeight: 700, border: `1px solid ${statusFilter === id ? C.teal : C.line}`,
+            background: statusFilter === id ? C.tealTint : "#fff", color: statusFilter === id ? C.tealDark : C.inkSoft,
+          }}>
+            {t(label)} {id === "active" ? `(${families.length})` : `(${alumni.length})`}
+          </button>
+        ))}
+      </div>
+
+      {statusFilter === "deenrolled" ? (
+        <Card title={t("Deenrolled families")} icon={Users} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{alumni.length} {t("on record")}</span>}>
+          {alumni.length === 0 && <div style={{ padding: "36px 24px", textAlign: "center", fontSize: 12.5, color: C.inkSoft }}>{t("No departures logged yet.")}</div>}
+          {alumni.map((a) => (
+            <div key={a.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 18px", borderBottom: `1px solid ${C.line}` }}>
+              <div>
+                <div style={{ fontSize: 13.5, fontWeight: 600 }}>{a.name}</div>
+                <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{classroomLabelWithRange(a.classroom)} · {t("enrolled")} {a.enrollDate} – {a.leftDate}</div>
+              </div>
+              <Pill label={t(DEPARTURE_REASONS.find((r) => r.id === a.reason)?.label || a.reason)} fg={C.inkSoft} bg="#EFEBE1" />
+            </div>
+          ))}
+        </Card>
+      ) : (
       <Card title={t("All families")} icon={Users} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{households.length} {t("households")} · {families.length} {t(families.length === 1 ? "child" : "children")} {t("enrolled")}</span>}>
         {households.length === 0 && householdsRaw.length > 0 && (
           <div style={{ padding: "36px 24px", textAlign: "center", fontSize: 12.5, color: C.inkSoft }}>
@@ -3743,6 +3854,7 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
           );
         })}
       </Card>
+      )}
       {open && <HouseholdDrawer household={open} onClose={() => setOpenHousehold(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} tuitionRates={tuitionRates} />}
     </>
   );
@@ -5281,6 +5393,88 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
   );
 }
 
+// Dedicated Waitlist view — families whose Tours stage is "Waitlist", shown as
+// an ordered queue with a reason and quick actions, rather than buried inside
+// the general Tours pipeline. Reuses the same prospect data and drawer.
+function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, families, providerInfo }) {
+  const t = useT();
+  const [openId, setOpenId] = useState(null);
+  const waitlisted = prospects.filter((p) => p.stage === "Waitlist");
+  const open = prospects.find((p) => p.id === openId) || null;
+
+  const capacityByClassroom = CLASSROOMS.map((c) => ({
+    ...c,
+    enrolled: families.filter((f) => f.classroom === c.id).length,
+  }));
+  const totalCapacity = providerInfo?.capacity || 0;
+  const totalEnrolled = families.length;
+  const atCapacity = totalCapacity > 0 && totalEnrolled >= totalCapacity;
+
+  const moveToTour = (p) => updateProspect(p.id, { stage: "Tour Scheduled" });
+  const moveToEnrolled = (p) => updateProspect(p.id, { stage: "Enrolled" });
+  const [notifiedIds, setNotifiedIds] = useState([]);
+  const notify = (p) => setNotifiedIds((ids) => [...ids, p.id]);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div>
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 600 }}>{t("Waitlist")}</div>
+          <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>{t("Families waiting for an opening, in the order they were added.")}</div>
+        </div>
+        <Pill label={`${waitlisted.length} ${t("waiting")}`} fg={waitlisted.length > 0 ? C.sky : C.inkSoft} bg={waitlisted.length > 0 ? C.skyTint : "#EFEBE1"} />
+      </div>
+
+      {totalCapacity > 0 && (
+        <Card title={t("Capacity by classroom")} icon={Users}
+          right={<Pill label={atCapacity ? t("At capacity") : t("Openings available")} fg={atCapacity ? C.amber : C.teal} bg={atCapacity ? C.amberTint : C.tealTint} />}>
+          {capacityByClassroom.map((c) => (
+            <div key={c.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 18px", borderBottom: `1px solid ${C.line}` }}>
+              <span style={{ fontSize: 13 }}>{classroomLabelWithRange(c.id)}</span>
+              <span style={{ fontSize: 12.5, color: C.inkSoft }}>{c.enrolled} {t("enrolled")}</span>
+            </div>
+          ))}
+        </Card>
+      )}
+
+      <Card title={t("Waitlist queue")} icon={ListChecks}>
+        {waitlisted.length === 0 && (
+          <div style={{ padding: 24, fontSize: 12.5, color: C.inkSoft, textAlign: "center" }}>{t("No one is currently on the waitlist.")}</div>
+        )}
+        {waitlisted.map((p, i) => (
+          <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 18px", borderBottom: `1px solid ${C.line}` }}>
+            <div style={{
+              width: 26, height: 26, borderRadius: "50%", background: C.skyTint, color: C.sky, flexShrink: 0,
+              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700,
+            }}>{i + 1}</div>
+            <button onClick={() => setOpenId(p.id)} style={{ flex: 1, textAlign: "left", background: "none", border: "none", display: "flex", flexDirection: "column", gap: 2 }}>
+              <span style={{ fontSize: 13.5, fontWeight: 600 }}>{p.name}</span>
+              <span style={{ fontSize: 12, color: C.inkSoft }}>{p.children} · {t("desired start")}: {p.start}</span>
+              {p.notes && <span style={{ fontSize: 11.5, color: C.inkSoft, fontStyle: "italic" }}>{p.notes}</span>}
+            </button>
+            <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+              {notifiedIds.includes(p.id) ? (
+                <Pill label={t("Notified")} fg={C.teal} bg={C.tealTint} />
+              ) : (
+                <button onClick={() => notify(p)} title={t("Notify family that a spot may be opening")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 600, color: C.inkSoft }}>
+                  <Send size={11} /> {t("Notify")}
+                </button>
+              )}
+              <button onClick={() => moveToTour(p)} style={{ padding: "6px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 600, color: C.inkSoft }}>{t("Move to Tour")}</button>
+              <button onClick={() => moveToEnrolled(p)} style={{ padding: "6px 10px", borderRadius: 7, border: "none", background: C.teal, color: "#fff", fontSize: 11.5, fontWeight: 700 }}>{t("Enroll")}</button>
+            </div>
+          </div>
+        ))}
+        <div style={{ padding: "10px 18px", fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
+          <Info size={10} /> {t("To add a family to the waitlist, open them from Tours and set their stage to Waitlist.")}
+        </div>
+      </Card>
+
+      {open && <ProspectDrawer prospect={open} onClose={() => setOpenId(null)} update={updateProspect} remove={removeProspect} logAccess={logAccess} />}
+    </div>
+  );
+}
+
 function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialEditing = false }) {
   const t = useT();
   const [editing, setEditing] = useState(initialEditing);
@@ -5372,9 +5566,13 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
 }
 
 /* --------------------------------- payments ------------------------------------ */
-function Finances({ families, expenses, saveExpenses, reminderSettings, saveReminderSettings, staff, tier, payrollSettings, savePayrollSettings, onSave, refunds, saveRefunds, flexCareRequests, tuitionRates, saveTuitionRates, setScreen, providerInfo, meetingMode = false, budgetPlan, saveBudgetPlan }) {
+function Finances({ families, expenses, saveExpenses, reminderSettings, saveReminderSettings, staff, tier, payrollSettings, savePayrollSettings, onSave, refunds, saveRefunds, flexCareRequests, tuitionRates, saveTuitionRates, setScreen, providerInfo, meetingMode = false, budgetPlan, saveBudgetPlan, activeTab, setActiveTab }) {
   const t = useT();
-  const [tab, setTab] = useState("tuition");
+  const [tabLocal, setTabLocal] = useState("tuition");
+  // Sidebar sub-nav can control which Finances tab is active directly; falls
+  // back to plain internal state when nothing external is driving it.
+  const tab = activeTab !== undefined ? activeTab : tabLocal;
+  const setTab = setActiveTab || setTabLocal;
   const [expandedPayment, setExpandedPayment] = useState(null);
   const [ratesOpen, setRatesOpen] = useState(false);
   const [editingRates, setEditingRates] = useState(false);
