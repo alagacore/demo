@@ -3737,10 +3737,10 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
   const setOpenHousehold = setOpenHouseholdProp || setOpenHouseholdLocal;
   const [query, setQuery] = useState("");
   const [sortByLastName, setSortByLastName] = useState(false);
-  // "Active" vs "Deenrolled" reflects what's actually real in the data — every
-  // record in `families` is currently enrolled, and departed families move to
-  // `alumni`. There's no separate "temporarily inactive" status to filter by,
-  // so this doesn't fabricate one.
+  // "Active" / "Pending" / "Deenrolled" reflects what's actually real in the
+  // data: every record in `families` is either already started (enrollDate in
+  // the past) or committed with a future start date (Pending); departed
+  // families live in `alumni`. Nothing here is a fabricated status.
   const [statusFilter, setStatusFilter] = useState("active");
   const householdsRaw = groupByHousehold(families);
   const q = query.trim().toLowerCase();
@@ -3751,6 +3751,13 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
         h.parents.some((p) => p.name.toLowerCase().includes(q)) ||
         h.children.some((c) => c.child.toLowerCase().includes(q)))
     : householdsRaw;
+  if (statusFilter === "active" || statusFilter === "pending") {
+    households = households
+      .map((h) => ({ ...h, children: h.children.filter((c) => (daysUntil(c.enrollDate) > 0) === (statusFilter === "pending")) }))
+      .filter((h) => h.children.length > 0);
+  }
+  const pendingCount = families.filter((f) => daysUntil(f.enrollDate) > 0).length;
+  const activeCount = families.length - pendingCount;
   if (sortByLastName) households = [...households].sort((a, b) => a.household.localeCompare(b.household));
   const open = householdsRaw.find((h) => h.household === openHousehold) || null;
 
@@ -3789,15 +3796,20 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
       </div>
 
       <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
-        {[["active", "Active"], ["deenrolled", "Deenrolled"]].map(([id, label]) => (
+        {[["active", "Active"], ["pending", "Pending"], ["deenrolled", "Deenrolled"]].map(([id, label]) => (
           <button key={id} onClick={() => setStatusFilter(id)} style={{
             padding: "7px 14px", borderRadius: 999, fontSize: 12.5, fontWeight: 700, border: `1px solid ${statusFilter === id ? C.teal : C.line}`,
             background: statusFilter === id ? C.tealTint : "#fff", color: statusFilter === id ? C.tealDark : C.inkSoft,
           }}>
-            {t(label)} {id === "active" ? `(${families.length})` : `(${alumni.length})`}
+            {t(label)} {id === "active" ? `(${activeCount})` : id === "pending" ? `(${pendingCount})` : `(${alumni.length})`}
           </button>
         ))}
       </div>
+      {statusFilter === "pending" && pendingCount > 0 && (
+        <div style={{ fontSize: 11.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
+          <Info size={11} /> {t("Committed families with a start date that hasn't arrived yet.")}
+        </div>
+      )}
 
       {statusFilter === "deenrolled" ? (
         <Card title={t("Deenrolled families")} icon={Users} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{alumni.length} {t("on record")}</span>}>
@@ -3813,7 +3825,7 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
           ))}
         </Card>
       ) : (
-      <Card title={t("All families")} icon={Users} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{households.length} {t("households")} · {families.length} {t(families.length === 1 ? "child" : "children")} {t("enrolled")}</span>}>
+      <Card title={t(statusFilter === "pending" ? "Pending enrollment" : "All families")} icon={Users} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{households.length} {t("households")} · {households.reduce((s, h) => s + h.children.length, 0)} {t("children")}</span>}>
         {households.length === 0 && householdsRaw.length > 0 && (
           <div style={{ padding: "36px 24px", textAlign: "center", fontSize: 12.5, color: C.inkSoft }}>
             {t("No families match")} "{query}".
