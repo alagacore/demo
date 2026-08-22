@@ -3737,10 +3737,10 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
   const setOpenHousehold = setOpenHouseholdProp || setOpenHouseholdLocal;
   const [query, setQuery] = useState("");
   const [sortByLastName, setSortByLastName] = useState(false);
-  // "Active" vs "Deenrolled" reflects what's actually real in the data — every
-  // record in `families` is currently enrolled, and departed families move to
-  // `alumni`. There's no separate "temporarily inactive" status to filter by,
-  // so this doesn't fabricate one.
+  // "Active" / "Pending" / "Deenrolled" reflects what's actually real in the
+  // data: every record in `families` is either already started (enrollDate in
+  // the past) or committed with a future start date (Pending); departed
+  // families live in `alumni`. Nothing here is a fabricated status.
   const [statusFilter, setStatusFilter] = useState("active");
   const householdsRaw = groupByHousehold(families);
   const q = query.trim().toLowerCase();
@@ -3751,6 +3751,13 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
         h.parents.some((p) => p.name.toLowerCase().includes(q)) ||
         h.children.some((c) => c.child.toLowerCase().includes(q)))
     : householdsRaw;
+  if (statusFilter === "active" || statusFilter === "pending") {
+    households = households
+      .map((h) => ({ ...h, children: h.children.filter((c) => (daysUntil(c.enrollDate) > 0) === (statusFilter === "pending")) }))
+      .filter((h) => h.children.length > 0);
+  }
+  const pendingCount = families.filter((f) => daysUntil(f.enrollDate) > 0).length;
+  const activeCount = families.length - pendingCount;
   if (sortByLastName) households = [...households].sort((a, b) => a.household.localeCompare(b.household));
   const open = householdsRaw.find((h) => h.household === openHousehold) || null;
 
@@ -3789,15 +3796,20 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
       </div>
 
       <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
-        {[["active", "Active"], ["deenrolled", "Deenrolled"]].map(([id, label]) => (
+        {[["active", "Active"], ["pending", "Pending"], ["deenrolled", "Deenrolled"]].map(([id, label]) => (
           <button key={id} onClick={() => setStatusFilter(id)} style={{
             padding: "7px 14px", borderRadius: 999, fontSize: 12.5, fontWeight: 700, border: `1px solid ${statusFilter === id ? C.teal : C.line}`,
             background: statusFilter === id ? C.tealTint : "#fff", color: statusFilter === id ? C.tealDark : C.inkSoft,
           }}>
-            {t(label)} {id === "active" ? `(${families.length})` : `(${alumni.length})`}
+            {t(label)} {id === "active" ? `(${activeCount})` : id === "pending" ? `(${pendingCount})` : `(${alumni.length})`}
           </button>
         ))}
       </div>
+      {statusFilter === "pending" && pendingCount > 0 && (
+        <div style={{ fontSize: 11.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
+          <Info size={11} /> {t("Committed families with a start date that hasn't arrived yet.")}
+        </div>
+      )}
 
       {statusFilter === "deenrolled" ? (
         <Card title={t("Deenrolled families")} icon={Users} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{alumni.length} {t("on record")}</span>}>
@@ -3813,7 +3825,7 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
           ))}
         </Card>
       ) : (
-      <Card title={t("All families")} icon={Users} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{households.length} {t("households")} · {families.length} {t(families.length === 1 ? "child" : "children")} {t("enrolled")}</span>}>
+      <Card title={t(statusFilter === "pending" ? "Pending enrollment" : "All families")} icon={Users} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{households.length} {t("households")} · {households.reduce((s, h) => s + h.children.length, 0)} {t("children")}</span>}>
         {households.length === 0 && householdsRaw.length > 0 && (
           <div style={{ padding: "36px 24px", textAlign: "center", fontSize: 12.5, color: C.inkSoft }}>
             {t("No families match")} "{query}".
@@ -4088,9 +4100,9 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
   };
 
   return (
-    <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 232, zIndex: 45, display: "flex", justifyContent: "flex-end" }}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 45, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.45)" }} />
-      <div style={{ position: "relative", width: 440, maxWidth: "94vw", height: "100%", background: C.paper, boxShadow: "-8px 0 30px rgba(0,0,0,0.12)", display: "flex", flexDirection: "column" }}>
+      <div style={{ position: "relative", width: 560, maxWidth: "94vw", maxHeight: "88vh", background: C.paper, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column" }}>
         <div style={{ padding: "20px 22px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <div style={{ display: "flex", gap: 12 }}>
             <input ref={photoInputRef} type="file" accept="image/*" onChange={handlePhotoPicked} style={{ display: "none" }} />
@@ -4371,6 +4383,8 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
 
   const [selectedDate, setSelectedDate] = useState(TODAY);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [bookingsTab, setBookingsTab] = useState(highlightId ? "flex" : "roster");
+  useEffect(() => { if (highlightId) setBookingsTab("flex"); }, [highlightId]);
   const [denyingId, setDenyingId] = useState(null);
   const [loggingPaymentId, setLoggingPaymentId] = useState(null);
   const [paymentForm, setPaymentForm] = useState({ method: PAYMENT_METHODS[0], amount: "", date: "", notes: "" });
@@ -4446,6 +4460,25 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", gap: 6 }}>
+        {[["roster", "Roster & Attendance"], ["flex", "Flex Care"]].map(([id, label]) => (
+          <button key={id} onClick={() => setBookingsTab(id)} style={{
+            padding: "8px 16px", borderRadius: 999, fontSize: 12.5, fontWeight: 700, border: `1px solid ${bookingsTab === id ? C.teal : C.line}`,
+            background: bookingsTab === id ? C.tealTint : "#fff", color: bookingsTab === id ? C.tealDark : C.inkSoft,
+            display: "flex", alignItems: "center", gap: 7,
+          }}>
+            {id === "roster" ? <CalendarClock size={13} /> : <Clock size={13} />} {t(label)}
+            {id === "flex" && (flexCareRequests.filter((r) => r.status === "pending").length > 0) && (
+              <span style={{ background: C.coral, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "1px 6px" }}>
+                {flexCareRequests.filter((r) => r.status === "pending").length}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {bookingsTab === "roster" && (
+      <>
       <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, padding: "14px 16px" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -4566,7 +4599,10 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
           <Info size={10} /> {t("Days shown are based on each child's approved schedule — adjust in their profile if it changes.")}
         </div>
       </Card>
+      </>
+      )}
 
+      {bookingsTab === "flex" && (
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <Card title={t("Request flex care")} icon={Plus} right={<span style={{ fontSize: 11, color: C.inkSoft }}>{t("Early drop-off, late pickup, extra days, weekends")}</span>}>
           <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
@@ -4692,6 +4728,7 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
           </div>
         </Card>
       </div>
+      )}
     </div>
   );
 }
