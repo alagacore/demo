@@ -586,6 +586,17 @@ const daysUntil = (mmddyyyy) => {
   const diff = Math.round((new Date(y, m - 1, d) - new Date(2026, 6, 26)) / 86400000);
   return diff;
 };
+// One universal billing due date applies to every family — either a
+// recurring day of the month (most common, e.g. "due on the 1st") or a
+// specific one-time date. Defaults to the 1st of the month if unset.
+function nextDueDateFrom(billing) {
+  if (billing && billing.mode === "date" && billing.date) return billing.date;
+  const day = Math.min(28, Math.max(1, (billing && billing.mode === "recurring" && billing.day) || 1));
+  const anchor = { y: 2026, m: 6, d: 26 }; // same fixed "today" as daysUntil, above
+  let y = anchor.y, m = anchor.m;
+  if (day <= anchor.d) { m += 1; if (m > 11) { m = 0; y += 1; } }
+  return `${String(m + 1).padStart(2, "0")}/${String(day).padStart(2, "0")}/${y}`;
+}
 function groupByHousehold(families) {
   const map = new Map();
   families.forEach((f) => {
@@ -5639,8 +5650,6 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
   const payrollTotal = staff.filter((s) => s.status === "active").reduce((sum, s) => sum + totalMonthlyCost(s), 0);
   const refundTotal = refunds.reduce((s, r) => s + r.amount, 0);
   const incomeTotal = subsidyTotal + copayTotal + privateTotal + flexCareTotal;
-  const nextDueDate = "08/01/2026";
-  const daysToDue = daysUntil(nextDueDate);
   const owingFamilies = families.filter((f) => f.copay > 0);
   const unpaidCount = families.filter((f) => f.copay > 0 && f.paymentReceived === false).length;
 
@@ -5916,12 +5925,26 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
             </div>}>
             {!remindersOpen ? (
               <div style={{ padding: "12px 18px", fontSize: 12.5, color: C.inkSoft }}>
+                {t("Payments due")} {nextDueDateFrom(reminderSettings)}{"."}{" "}
                 {reminderSettings.enabled
-                  ? `${t("Reminders send automatically")} ${reminderSettings.daysBefore} ${t("days before each due date.")}`
+                  ? `${t("Reminders send automatically")} ${reminderSettings.daysBefore} ${t("days before.")}`
                   : t("Automated reminders are turned off.")}
               </div>
             ) : (
               <>
+                <Row left={<b style={{ fontSize: 13 }}>{t("Billing due date")}</b>}
+                  right={
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <Select value={reminderSettings.dueDateMode || "recurring"} onChange={(v) => saveReminderSettings({ ...reminderSettings, dueDateMode: v })} options={["recurring", "date"]} labels={[t("Recurring monthly"), t("Specific date")]} />
+                      {(reminderSettings.dueDateMode || "recurring") === "recurring" ? (
+                        <input type="number" min={1} max={28} value={reminderSettings.dueDay || 1}
+                          onChange={(e) => saveReminderSettings({ ...reminderSettings, dueDay: Math.min(28, Math.max(1, Number(e.target.value) || 1)) })}
+                          style={{ width: 56, textAlign: "center", border: `1px solid ${C.line}`, borderRadius: 7, padding: "6px 4px", fontSize: 12.5, fontFamily: "inherit" }} />
+                      ) : (
+                        <DateField value={reminderSettings.dueDate || ""} onChange={(v) => saveReminderSettings({ ...reminderSettings, dueDate: v })} />
+                      )}
+                    </div>
+                  } />
                 {reminderSettings.enabled && (
                   <Row left={<b style={{ fontSize: 13 }}>{t("Send reminder")}</b>}
                     right={
@@ -5993,16 +6016,20 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                 {reminderSettings.enabled && (
                   <div style={{ padding: "12px 18px 4px" }}>
                     <div style={{ fontSize: 11.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6 }}>
-                      {t("Upcoming this week")} — {t("due")} {nextDueDate}
+                      {t("Upcoming")} — {t("due")} {nextDueDateFrom(reminderSettings)}
                     </div>
                   </div>
                 )}
-                {reminderSettings.enabled && owingFamilies.map((f) => (
-                  <Row key={f.id} left={<><Dot c={f.color} /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>{money(f.copay)} {t("due")} {nextDueDate}</span></>}
-                    right={daysToDue <= reminderSettings.daysBefore
-                      ? <Pill label={`${t("Reminder in")} ${Math.max(daysToDue, 0)}${t("d")}`} fg={C.amber} bg={C.amberTint} />
-                      : <Pill label={t("Scheduled")} fg={C.inkSoft} bg="#F1EEE5" />} />
-                ))}
+                {reminderSettings.enabled && owingFamilies.map((f) => {
+                  const universalDueDate = nextDueDateFrom(reminderSettings);
+                  const daysToDue = daysUntil(universalDueDate);
+                  return (
+                    <Row key={f.id} left={<><Dot c={f.color} /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>{money(f.copay)} {t("due")} {universalDueDate}</span></>}
+                      right={daysToDue <= reminderSettings.daysBefore
+                        ? <Pill label={`${t("Reminder in")} ${Math.max(daysToDue, 0)}${t("d")}`} fg={C.amber} bg={C.amberTint} />
+                        : <Pill label={t("Scheduled")} fg={C.inkSoft} bg="#F1EEE5" />} />
+                  );
+                })}
               </>
             )}
           </Card>
