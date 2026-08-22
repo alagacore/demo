@@ -597,6 +597,19 @@ function nextDueDateFrom(billing) {
   if (day <= anchor.d) { m += 1; if (m > 11) { m = 0; y += 1; } }
   return `${String(m + 1).padStart(2, "0")}/${String(day).padStart(2, "0")}/${y}`;
 }
+// A configured late fee doesn't mean anything until it's actually enforced.
+// "Force" makes it real: once a family is past the universal due date and
+// still hasn't paid, this computes what's actually owed, including the fee.
+function computeLateFee(f, reminderSettings, isPaidFn) {
+  if (!reminderSettings.lateFeeEnabled || !reminderSettings.forceLateFee) return 0;
+  if (!f.copay || f.copay <= 0) return 0;
+  const dueDate = nextDueDateFrom(reminderSettings);
+  const overdue = daysUntil(dueDate) < 0;
+  if (!overdue || isPaidFn(f)) return 0;
+  return reminderSettings.lateFeeType === "percent"
+    ? Math.round(f.copay * (reminderSettings.lateFeePercent / 100) * 100) / 100
+    : reminderSettings.lateFeeAmount;
+}
 function groupByHousehold(families) {
   const map = new Map();
   families.forEach((f) => {
@@ -2911,7 +2924,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   ]);
   const [dismissedNotices, saveDismissedNotices] = usePersistentState(`dismissed-notices${sfx}`, []);
   const [a11y, saveA11y] = usePersistentState("accessibility-settings", { dark: false, highContrast: false, textSize: 16, reducedMotion: false });
-  const [reminderSettings, saveReminderSettings] = usePersistentState("invoice-reminders", { enabled: true, daysBefore: 7, lateFeeEnabled: false, lateFeeType: "flat", lateFeeAmount: 25, lateFeePercent: 5 });
+  const [reminderSettings, saveReminderSettings] = usePersistentState("invoice-reminders", { enabled: true, daysBefore: 7, lateFeeEnabled: false, lateFeeType: "flat", lateFeeAmount: 25, lateFeePercent: 5, forceLateFee: false });
   const [growth, saveGrowth] = usePersistentState(`growth-assessment${sfx}`, { started: false, targetCapacity: 12, targetStaff: 1, timeline: "6–12 months", checklist: [], notes: "" });
   const [staff, saveStaff] = usePersistentState(`staff${sfx}`, isEmpty ? [] : STAFF_DEFAULT);
   const [alumni, saveAlumni] = usePersistentState(`alumni${sfx}`, isEmpty ? [] : ALUMNI_DEFAULT);
@@ -5778,6 +5791,8 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
               const isOpen = expandedPayment === f.id;
               const tuitionInfo = effectiveTuition(f, families, tuitionRates);
               const amountLabel = f.subsidized ? `${money(f.coverageAmount)} + ${money(tuitionInfo.discounted)}` : money(tuitionInfo.discounted);
+              const isFamilyPaid = f.copaySplit ? f.copaySplit.every((s) => s.received === true) : received;
+              const appliedLateFee = computeLateFee(f, reminderSettings, () => isFamilyPaid);
               return (
                 <div key={f.id}>
                   <button onClick={() => setExpandedPayment(isOpen ? null : f.id)} style={{ width: "100%", textAlign: "left", background: "none", border: "none", borderRadius: 0, padding: 0 }}>
@@ -5787,9 +5802,10 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                         {f.copaySplit && <Pill label={t("Split")} fg={C.sky} bg={C.skyTint} />}
                         {!f.subsidized && <Pill label={t("Private pay")} fg={C.sky} bg={C.skyTint} />}
                         {tuitionInfo.discountApplied && <Pill label={t("Sibling discount")} fg={C.teal} bg={C.tealTint} />}
+                        {appliedLateFee > 0 && <Pill label={`+${money(appliedLateFee)} ${t("late fee")}`} fg={C.danger} bg={C.dangerTint} />}
                       </div>
                       <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                        <span style={{ fontSize: 12.5, color: C.inkSoft }}>{meetingMode ? "••••" : amountLabel}</span>
+                        <span style={{ fontSize: 12.5, color: C.inkSoft }}>{meetingMode ? "••••" : (appliedLateFee > 0 ? money((f.subsidized ? tuitionInfo.discounted : tuitionInfo.discounted) + appliedLateFee) : amountLabel)}</span>
                         {f.copay > 0 && (() => {
                           if (!f.copaySplit) return <Pill label={received ? t("Paid") : t("Unpaid")} fg={received ? C.teal : C.amber} bg={received ? C.tealTint : C.amberTint} />;
                           const receivedCount = f.copaySplit.filter((s) => s.received === true).length;
@@ -5806,6 +5822,11 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                       <div style={{ fontSize: 12, color: C.inkSoft }}>
                         {meetingMode ? "•••• — hidden in meeting-safe mode" : (f.subsidized ? `${money(f.coverageAmount)} ${t("subsidy +")} ${money(tuitionInfo.discounted)} ${t("copay")}` : `${money(tuitionInfo.discounted)} ${t("private tuition")}`)}
                       </div>
+                      {appliedLateFee > 0 && (
+                        <div style={{ fontSize: 12, color: C.danger, display: "flex", alignItems: "center", gap: 6 }}>
+                          <AlertTriangle size={12} /> {t("Past due —")} {money(appliedLateFee)} {t("late fee applied automatically")} ({reminderSettings.lateFeeType === "percent" ? `${reminderSettings.lateFeePercent}%` : t("flat fee")})
+                        </div>
+                      )}
                       {tuitionInfo.discountApplied && (
                         <div style={{ fontSize: 11.5, color: C.teal, display: "flex", alignItems: "center", gap: 5 }}>
                           <CheckCircle2 size={11} /> {t("Sibling discount applied")} — <span style={{ textDecoration: "line-through", color: C.inkSoft }}>{money(tuitionInfo.base)}</span> {t("before discount")}
@@ -5994,6 +6015,18 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                       <div style={{ fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
                         <Info size={11} />
                         {t("Example")}: {money(owingFamilies[0].copay)} {t("balance")} → {money(Math.round(owingFamilies[0].copay * (reminderSettings.lateFeePercent / 100) * 100) / 100)} {t("late fee")}
+                      </div>
+                    )}
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 8, borderTop: `1px solid ${C.line}` }}>
+                      <div>
+                        <div style={{ fontSize: 12.5, fontWeight: 700 }}>{t("Automatically apply to overdue balances")}</div>
+                        <div style={{ fontSize: 11, color: C.inkSoft, marginTop: 1 }}>{t("Adds the fee to a family's balance once they're past the due date and still unpaid — applies to every family the same way.")}</div>
+                      </div>
+                      <ToggleSwitch on={reminderSettings.forceLateFee} onClick={() => saveReminderSettings({ ...reminderSettings, forceLateFee: !reminderSettings.forceLateFee })} />
+                    </div>
+                    {reminderSettings.forceLateFee && (
+                      <div style={{ fontSize: 11, color: "#7A5620", display: "flex", alignItems: "center", gap: 6 }}>
+                        <AlertTriangle size={11} /> {t("Currently forced on — check the Per-child payment record below for who it applies to right now.")}
                       </div>
                     )}
                   </div>
