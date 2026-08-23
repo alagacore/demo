@@ -2521,9 +2521,9 @@ function AdminProviderDrawer({ provider, mrrValue, onClose, statusMeta }) {
   };
 
   return (
-    <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 0, zIndex: 60, display: "flex", justifyContent: "flex-end" }}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.4)" }} />
-      <div style={{ position: "relative", width: 440, maxWidth: "94vw", height: "100%", background: C.paper, boxShadow: "-8px 0 30px rgba(0,0,0,0.14)", display: "flex", flexDirection: "column" }}>
+      <div style={{ position: "relative", width: 560, maxWidth: "94vw", maxHeight: "88vh", background: C.paper, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column" }}>
         <div style={{ padding: "22px 24px 18px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <div>
             <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>{provider.name}</div>
@@ -4935,9 +4935,9 @@ function StaffDrawer({ member, onClose, update, remove }) {
   };
 
   return (
-    <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 232, zIndex: 40, display: "flex", justifyContent: "flex-end" }}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 40, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.35)" }} />
-      <div style={{ position: "relative", width: 460, maxWidth: "94vw", height: "100%", background: C.paper, boxShadow: "-8px 0 30px rgba(0,0,0,0.12)", display: "flex", flexDirection: "column" }}>
+      <div style={{ position: "relative", width: 560, maxWidth: "94vw", maxHeight: "88vh", background: C.paper, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column" }}>
         <div style={{ padding: "20px 22px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <div>
             <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>{form.name}</div>
@@ -5595,9 +5595,9 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
   const doRemove = () => { remove(prospect.id); onClose(); };
 
   return (
-    <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 232, zIndex: 40, display: "flex", justifyContent: "flex-end" }}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 40, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.35)" }} />
-      <div style={{ position: "relative", width: 460, maxWidth: "94vw", height: "100%", background: C.paper, boxShadow: "-8px 0 30px rgba(0,0,0,0.12)", display: "flex", flexDirection: "column" }}>
+      <div style={{ position: "relative", width: 560, maxWidth: "94vw", maxHeight: "88vh", background: C.paper, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column" }}>
         <div style={{ padding: "20px 22px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <div>
             <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>{form.name}</div>
@@ -7060,9 +7060,9 @@ function DocPreview({ doc, onClose, onSave, t }) {
   };
 
   return (
-    <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 232, zIndex: 40, display: "flex", justifyContent: "flex-end" }}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 40, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.35)" }} />
-      <div style={{ position: "relative", width: 460, maxWidth: "94vw", height: "100%", background: C.paper, boxShadow: "-8px 0 30px rgba(0,0,0,0.12)", display: "flex", flexDirection: "column" }}>
+      <div style={{ position: "relative", width: 560, maxWidth: "94vw", maxHeight: "88vh", background: C.paper, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column" }}>
         <div style={{ padding: "20px 22px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
             <div style={{ width: 40, height: 40, borderRadius: 10, background: C.tealTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -8096,9 +8096,9 @@ function TicketDrawer({ ticket, onClose, onToggleStatus, onReply }) {
     setReplyText("");
   };
   return (
-    <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 232, zIndex: 40, display: "flex", justifyContent: "flex-end" }}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 40, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.35)" }} />
-      <div style={{ position: "relative", width: 440, maxWidth: "94vw", height: "100%", background: C.paper, boxShadow: "-8px 0 30px rgba(0,0,0,0.12)", display: "flex", flexDirection: "column" }}>
+      <div style={{ position: "relative", width: 560, maxWidth: "94vw", maxHeight: "88vh", background: C.paper, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column" }}>
         <div style={{ padding: "20px 22px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <div>
             <div style={{ fontFamily: "'Fraunces', serif", fontSize: 18, fontWeight: 600, lineHeight: 1.3 }}>{ticket.subject}</div>
@@ -8564,9 +8564,9 @@ function SubsidyDrawer({ fam, onClose, onSave, logAccess }) {
   };
 
   return (
-    <div style={{ position: "fixed", top: 0, right: 0, bottom: 0, left: 232, zIndex: 40, display: "flex", justifyContent: "flex-end" }}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 40, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.35)" }} />
-      <div style={{ position: "relative", width: 480, maxWidth: "94vw", height: "100%", background: C.paper, boxShadow: "-8px 0 30px rgba(0,0,0,0.12)", display: "flex", flexDirection: "column" }}>
+      <div style={{ position: "relative", width: 580, maxWidth: "94vw", maxHeight: "88vh", background: C.paper, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column" }}>
 
         {/* header */}
         <div style={{ padding: "20px 22px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
