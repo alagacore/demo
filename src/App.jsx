@@ -5473,8 +5473,34 @@ function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, 
 
   const moveToTour = (p) => updateProspect(p.id, { stage: "Tour Scheduled" });
   const moveToEnrolled = (p) => updateProspect(p.id, { stage: "Enrolled" });
-  const [notifiedIds, setNotifiedIds] = useState([]);
-  const notify = (p) => setNotifiedIds((ids) => [...ids, p.id]);
+
+  // Two real, tracked steps once a spot opens: first let the family know a
+  // spot is available, then — once they've been notified — invite them to
+  // actually begin enrollment. Both open a pre-filled email (no backend to
+  // send through yet) and log when the provider sent each one.
+  const sendAvailabilityEmail = (p) => {
+    const subject = encodeURIComponent(`A spot has opened up for ${p.children || p.name}!`);
+    const body = encodeURIComponent(
+      `Hi ${p.name},\n\nGood news — a spot has opened up at ${providerInfo?.name || "our program"} for ${p.children || "your child"}, ` +
+      `with a desired start around ${p.start || "your requested date"}.\n\n` +
+      `Please reply within a few days to let us know if you'd still like to move forward — spots are offered in waitlist order, ` +
+      `so we'll need to hear back before we can hold it for you.\n\nLooking forward to hearing from you,\n${providerInfo?.name || ""}`
+    );
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    const entry = { date: todayMDY(), type: "availability" };
+    updateProspect(p.id, { waitlistNotifications: [entry, ...(p.waitlistNotifications || [])] });
+  };
+  const sendEnrollmentInviteEmail = (p) => {
+    const subject = encodeURIComponent(`Let's get ${p.children || p.name} enrolled!`);
+    const body = encodeURIComponent(
+      `Hi ${p.name},\n\nThanks for confirming — let's get ${p.children || "your child"} enrolled.\n\n` +
+      `Next steps:\n- We'll send over the enrollment packet and any required forms\n- Once those are complete, we'll confirm the official start date\n` +
+      `- Reach out anytime with questions before then\n\nWelcome to the family,\n${providerInfo?.name || ""}`
+    );
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    const entry = { date: todayMDY(), type: "enrollment_invite" };
+    updateProspect(p.id, { waitlistNotifications: [entry, ...(p.waitlistNotifications || [])] });
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -5502,30 +5528,48 @@ function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, 
         {waitlisted.length === 0 && (
           <div style={{ padding: 24, fontSize: 12.5, color: C.inkSoft, textAlign: "center" }}>{t("No one is currently on the waitlist.")}</div>
         )}
-        {waitlisted.map((p, i) => (
-          <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "13px 18px", borderBottom: `1px solid ${C.line}` }}>
-            <div style={{
-              width: 26, height: 26, borderRadius: "50%", background: C.skyTint, color: C.sky, flexShrink: 0,
-              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700,
-            }}>{i + 1}</div>
-            <button onClick={() => setOpenId(p.id)} style={{ flex: 1, textAlign: "left", background: "none", border: "none", display: "flex", flexDirection: "column", gap: 2 }}>
-              <span style={{ fontSize: 13.5, fontWeight: 600 }}>{p.name}</span>
-              <span style={{ fontSize: 12, color: C.inkSoft }}>{p.children} · {t("desired start")}: {p.start}</span>
-              {p.notes && <span style={{ fontSize: 11.5, color: C.inkSoft, fontStyle: "italic" }}>{p.notes}</span>}
-            </button>
-            <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-              {notifiedIds.includes(p.id) ? (
-                <Pill label={t("Notified")} fg={C.teal} bg={C.tealTint} />
+        {waitlisted.map((p, i) => {
+          const notifications = p.waitlistNotifications || [];
+          const notifiedAt = notifications.find((n) => n.type === "availability");
+          const invitedAt = notifications.find((n) => n.type === "enrollment_invite");
+          return (
+          <div key={p.id} style={{ display: "flex", flexDirection: "column", gap: 8, padding: "13px 18px", borderBottom: `1px solid ${C.line}` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{
+                width: 26, height: 26, borderRadius: "50%", background: C.skyTint, color: C.sky, flexShrink: 0,
+                display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700,
+              }}>{i + 1}</div>
+              <button onClick={() => setOpenId(p.id)} style={{ flex: 1, textAlign: "left", background: "none", border: "none", display: "flex", flexDirection: "column", gap: 2 }}>
+                <span style={{ fontSize: 13.5, fontWeight: 600 }}>{p.name}</span>
+                <span style={{ fontSize: 12, color: C.inkSoft }}>{p.children} · {t("desired start")}: {p.start}</span>
+                {p.notes && <span style={{ fontSize: 11.5, color: C.inkSoft, fontStyle: "italic" }}>{p.notes}</span>}
+              </button>
+              <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                <button onClick={() => moveToTour(p)} style={{ padding: "6px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 600, color: C.inkSoft }}>{t("Move to Tour")}</button>
+                <button onClick={() => moveToEnrolled(p)} style={{ padding: "6px 10px", borderRadius: 7, border: "none", background: C.teal, color: "#fff", fontSize: 11.5, fontWeight: 700 }}>{t("Enroll")}</button>
+              </div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginLeft: 38, flexWrap: "wrap" }}>
+              {notifiedAt ? (
+                <Pill label={`${t("Notified")} ${notifiedAt.date}`} fg={C.teal} bg={C.tealTint} />
               ) : (
-                <button onClick={() => notify(p)} title={t("Notify family that a spot may be opening")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 600, color: C.inkSoft }}>
-                  <Send size={11} /> {t("Notify")}
+                <button onClick={() => sendAvailabilityEmail(p)} title={t("Email the family that a spot is available")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 600, color: C.inkSoft }}>
+                  <Send size={11} /> {t("Notify: Spot available")}
                 </button>
               )}
-              <button onClick={() => moveToTour(p)} style={{ padding: "6px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 600, color: C.inkSoft }}>{t("Move to Tour")}</button>
-              <button onClick={() => moveToEnrolled(p)} style={{ padding: "6px 10px", borderRadius: 7, border: "none", background: C.teal, color: "#fff", fontSize: 11.5, fontWeight: 700 }}>{t("Enroll")}</button>
+              {notifiedAt && (
+                invitedAt ? (
+                  <Pill label={`${t("Enrollment invited")} ${invitedAt.date}`} fg={C.teal} bg={C.tealTint} />
+                ) : (
+                  <button onClick={() => sendEnrollmentInviteEmail(p)} title={t("Email the family to begin enrollment")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 10px", borderRadius: 7, border: `1px solid ${C.teal}`, background: C.tealTint, fontSize: 11.5, fontWeight: 700, color: C.tealDark }}>
+                    <Send size={11} /> {t("Invite to enroll")}
+                  </button>
+                )
+              )}
             </div>
           </div>
-        ))}
+          );
+        })}
         <div style={{ padding: "10px 18px", fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
           <Info size={10} /> {t("To add a family to the waitlist, open them from Tours and set their stage to Waitlist.")}
         </div>
@@ -5635,6 +5679,12 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
   const tab = activeTab !== undefined ? activeTab : tabLocal;
   const setTab = setActiveTab || setTabLocal;
   const [expandedPayment, setExpandedPayment] = useState(null);
+  const [paySortKey, setPaySortKey] = useState("child");
+  const [paySortDir, setPaySortDir] = useState("asc");
+  const togglePaySort = (key) => {
+    if (paySortKey === key) setPaySortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else { setPaySortKey(key); setPaySortDir("asc"); }
+  };
   const [editingSplitId, setEditingSplitId] = useState(null);
   const [splitDraft, setSplitDraft] = useState([]);
   const [ratesOpen, setRatesOpen] = useState(false);
@@ -5783,42 +5833,87 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
             )}
           </Card>
 
-          <Card title={t("Per-child payment record")} icon={CreditCard}
-            right={<button onClick={exportTuition} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 700, color: C.tealDark, background: "none", border: "none" }}><Download size={13} /> {t("Export CSV")}</button>}>
-            {families.map((f) => {
+          {(() => {
+            const rows = families.map((f) => {
               const method = f.paymentMethod || "Not set";
               const received = f.paymentReceived !== false;
-              const isOpen = expandedPayment === f.id;
               const tuitionInfo = effectiveTuition(f, families, tuitionRates);
-              const amountLabel = f.subsidized ? `${money(f.coverageAmount)} + ${money(tuitionInfo.discounted)}` : money(tuitionInfo.discounted);
               const isFamilyPaid = f.copaySplit ? f.copaySplit.every((s) => s.received === true) : received;
               const appliedLateFee = computeLateFee(f, reminderSettings, () => isFamilyPaid);
-              return (
-                <div key={f.id}>
-                  <button onClick={() => setExpandedPayment(isOpen ? null : f.id)} style={{ width: "100%", textAlign: "left", background: "none", border: "none", borderRadius: 0, padding: 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 18px", borderBottom: isOpen ? "none" : `1px solid ${C.line}` }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
-                        <Dot c={f.color} /><b style={{ fontSize: 13.5 }}>{f.child}</b>
-                        {f.copaySplit && <Pill label={t("Split")} fg={C.sky} bg={C.skyTint} />}
-                        {!f.subsidized && <Pill label={t("Private pay")} fg={C.sky} bg={C.skyTint} />}
-                        {tuitionInfo.discountApplied && <Pill label={t("Sibling discount")} fg={C.teal} bg={C.tealTint} />}
-                        {appliedLateFee > 0 && <Pill label={`+${money(appliedLateFee)} ${t("late fee")}`} fg={C.danger} bg={C.dangerTint} />}
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                        <span style={{ fontSize: 12.5, color: C.inkSoft }}>{meetingMode ? "••••" : (appliedLateFee > 0 ? money((f.subsidized ? tuitionInfo.discounted : tuitionInfo.discounted) + appliedLateFee) : amountLabel)}</span>
-                        {f.copay > 0 && (() => {
-                          if (!f.copaySplit) return <Pill label={received ? t("Paid") : t("Unpaid")} fg={received ? C.teal : C.amber} bg={received ? C.tealTint : C.amberTint} />;
-                          const receivedCount = f.copaySplit.filter((s) => s.received === true).length;
-                          if (receivedCount === f.copaySplit.length) return <Pill label={t("Paid")} fg={C.teal} bg={C.tealTint} />;
-                          if (receivedCount === 0) return <Pill label={t("Unpaid")} fg={C.amber} bg={C.amberTint} />;
-                          return <Pill label={t("Partial")} fg={C.amber} bg={C.amberTint} />;
-                        })()}
-                        <ChevronRight size={14} color={C.inkSoft} style={{ transform: isOpen ? "rotate(90deg)" : "none", transition: "transform 0.15s" }} />
-                      </div>
-                    </div>
-                  </button>
-                  {isOpen && (
-                    <div style={{ padding: "0 18px 14px 40px", borderBottom: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 10 }}>
+              const totalAmount = tuitionInfo.discounted + appliedLateFee;
+              const type = f.copaySplit ? t("Split") : f.subsidized ? t("Subsidized") : t("Private");
+              const statusRank = f.copay <= 0 ? 2 : isFamilyPaid ? 2 : (f.copaySplit && f.copaySplit.some((s) => s.received)) ? 1 : 0;
+              const statusLabel = f.copay <= 0 ? "—" : isFamilyPaid ? t("Paid") : (f.copaySplit && f.copaySplit.some((s) => s.received)) ? t("Partial") : t("Unpaid");
+              const paymentLabel = f.copaySplit ? f.copaySplit.map((s) => t(s.method || PAYMENT_METHODS[0])).join(", ") : t(method === "Not set" ? PAYMENT_METHODS[0] : method);
+              const dueDate = f.copay > 0 ? nextDueDateFrom(reminderSettings) : "—";
+              return { f, method, received, tuitionInfo, appliedLateFee, totalAmount, type, statusRank, statusLabel, paymentLabel, dueDate, isFamilyPaid };
+            });
+            const sorters = {
+              child: (r) => r.f.child.toLowerCase(),
+              type: (r) => r.type,
+              amount: (r) => r.totalAmount,
+              lateFee: (r) => r.appliedLateFee,
+              due: (r) => daysUntil(r.dueDate) ?? 0,
+              payment: (r) => r.paymentLabel.toLowerCase(),
+              status: (r) => r.statusRank,
+            };
+            const sorted = [...rows].sort((a, b) => {
+              const av = sorters[paySortKey](a), bv = sorters[paySortKey](b);
+              const cmp = av < bv ? -1 : av > bv ? 1 : 0;
+              return paySortDir === "asc" ? cmp : -cmp;
+            });
+            const Th = ({ label, sortKey, align = "left" }) => (
+              <th onClick={() => togglePaySort(sortKey)} style={{ textAlign: align, padding: "8px 10px", fontSize: 11, fontWeight: 700, color: C.inkSoft, textTransform: "uppercase", letterSpacing: "0.03em", cursor: "pointer", userSelect: "none", whiteSpace: "nowrap" }}>
+                {label} {paySortKey === sortKey && (paySortDir === "asc" ? "↑" : "↓")}
+              </th>
+            );
+            return (
+              <Card title={t("Per-child payment record")} icon={CreditCard}
+                right={<button onClick={exportTuition} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 700, color: C.tealDark, background: "none", border: "none" }}><Download size={13} /> {t("Export CSV")}</button>}>
+                <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                  <thead>
+                    <tr style={{ borderBottom: `1px solid ${C.line}` }}>
+                      <Th label={t("Child")} sortKey="child" />
+                      <Th label={t("Type")} sortKey="type" />
+                      <Th label={t("Amount")} sortKey="amount" align="right" />
+                      <Th label={t("Late fee")} sortKey="lateFee" align="right" />
+                      <Th label={t("Due")} sortKey="due" />
+                      <Th label={t("Payment")} sortKey="payment" />
+                      <Th label={t("Status")} sortKey="status" align="right" />
+                      <th style={{ width: 30 }}></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sorted.map(({ f, tuitionInfo, appliedLateFee, totalAmount, type, statusLabel, statusRank, paymentLabel, dueDate }) => {
+                      const isOpen = expandedPayment === f.id;
+                      const statusColor = statusRank === 2 ? C.teal : statusRank === 1 ? C.amber : f.copay > 0 ? C.amber : C.inkSoft;
+                      const statusBg = statusRank === 2 ? C.tealTint : statusRank === 1 ? C.amberTint : f.copay > 0 ? C.amberTint : "#EFEBE1";
+                      return (
+                        <React.Fragment key={f.id}>
+                          <tr onClick={() => setExpandedPayment(isOpen ? null : f.id)} style={{ borderBottom: isOpen ? "none" : `1px solid ${C.line}`, cursor: "pointer" }}>
+                            <td style={{ padding: "10px", whiteSpace: "nowrap" }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                                <Dot c={f.color} /><b>{f.child}</b>
+                                {tuitionInfo.discountApplied && <span title={t("Sibling discount applied")} style={{ display: "flex" }}><Percent size={11} color={C.teal} /></span>}
+                              </div>
+                            </td>
+                            <td style={{ padding: "10px", color: C.inkSoft, whiteSpace: "nowrap" }}>{type}</td>
+                            <td style={{ padding: "10px", textAlign: "right", whiteSpace: "nowrap" }}>{meetingMode ? "••••" : money(totalAmount)}</td>
+                            <td style={{ padding: "10px", textAlign: "right", whiteSpace: "nowrap", color: appliedLateFee > 0 ? C.danger : C.inkSoft }}>{appliedLateFee > 0 ? money(appliedLateFee) : "—"}</td>
+                            <td style={{ padding: "10px", color: C.inkSoft, whiteSpace: "nowrap" }}>{dueDate}</td>
+                            <td style={{ padding: "10px", color: C.inkSoft, whiteSpace: "nowrap", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis" }}>{f.copay > 0 ? paymentLabel : "—"}</td>
+                            <td style={{ padding: "10px", textAlign: "right", whiteSpace: "nowrap" }}>
+                              {statusLabel !== "—" && <Pill label={statusLabel} fg={statusColor} bg={statusBg} />}
+                            </td>
+                            <td style={{ padding: "10px" }}>
+                              <ChevronRight size={14} color={C.inkSoft} style={{ transform: isOpen ? "rotate(90deg)" : "none", transition: "transform 0.15s" }} />
+                            </td>
+                          </tr>
+                          {isOpen && (
+                            <tr style={{ borderBottom: `1px solid ${C.line}` }}>
+                              <td colSpan={8} style={{ padding: "0 18px 14px 40px" }}>
+                                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                       <div style={{ fontSize: 12, color: C.inkSoft }}>
                         {meetingMode ? "•••• — hidden in meeting-safe mode" : (f.subsidized ? `${money(f.coverageAmount)} ${t("subsidy +")} ${money(tuitionInfo.discounted)} ${t("copay")}` : `${money(tuitionInfo.discounted)} ${t("private tuition")}`)}
                       </div>
@@ -5880,8 +5975,6 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                         )
                       )}
                       {f.paymentArrangementHistory && f.paymentArrangementHistory.length > 0 && editingSplitId !== f.id && (
-                        // Provider-facing only — this history never appears in the
-                        // parent portal, it's for the provider's own record-keeping.
                         <details style={{ fontSize: 11, color: C.inkSoft }}>
                           <summary style={{ cursor: "pointer", fontWeight: 600 }}>{t("Payment arrangement history")} ({f.paymentArrangementHistory.length})</summary>
                           <div style={{ display: "flex", flexDirection: "column", gap: 4, marginTop: 6, paddingLeft: 4 }}>
@@ -5893,19 +5986,16 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                       )}
                       {f.copay > 0 && !f.copaySplit && (
                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                          <Select value={method === "Not set" ? PAYMENT_METHODS[0] : method} onChange={(v) => onSave(f.id, { paymentMethod: v })} options={PAYMENT_METHODS} labels={PAYMENT_METHODS.map((m) => t(m))} />
-                          <button onClick={() => onSave(f.id, { paymentReceived: !received })} style={{
+                          <Select value={f.paymentMethod === "Not set" || !f.paymentMethod ? PAYMENT_METHODS[0] : f.paymentMethod} onChange={(v) => onSave(f.id, { paymentMethod: v })} options={PAYMENT_METHODS} labels={PAYMENT_METHODS.map((m) => t(m))} />
+                          <button onClick={() => onSave(f.id, { paymentReceived: !(f.paymentReceived !== false) })} style={{
                             display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "none",
-                            background: received ? C.tealTint : C.amberTint, color: received ? C.tealDark : "#7A5620", fontSize: 11, fontWeight: 700,
+                            background: f.paymentReceived !== false ? C.tealTint : C.amberTint, color: f.paymentReceived !== false ? C.tealDark : "#7A5620", fontSize: 11, fontWeight: 700,
                           }}>
-                            {received ? <CheckCircle2 size={12} /> : <Clock size={12} />} {received ? t("Received this period") : t("Not yet received")}
+                            {f.paymentReceived !== false ? <CheckCircle2 size={12} /> : <Clock size={12} />} {f.paymentReceived !== false ? t("Received this period") : t("Not yet received")}
                           </button>
                         </div>
                       )}
                       {f.copay > 0 && f.copaySplit && (
-                        // Each guardian may pay a different way and on a different
-                        // day, so split-pay families track method + received status
-                        // per parent instead of one flat toggle for the whole copay.
                         <div style={{ display: "flex", flexDirection: "column", gap: 8, paddingTop: 4, borderTop: `1px solid ${C.line}` }}>
                           {f.copaySplit.map((s, i) => {
                             const splitMethod = s.method || PAYMENT_METHODS[0];
@@ -5929,12 +6019,19 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                           })}
                         </div>
                       )}
-                    </div>
-                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
+                  </tbody>
+                </table>
                 </div>
-              );
-            })}
-          </Card>
+              </Card>
+            );
+          })()}
 
           <Card title={t("Automated invoice reminders")} icon={Send}
             right={<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
