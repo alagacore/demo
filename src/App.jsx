@@ -2729,8 +2729,17 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
     const greeting = isEs ? `${greetWordEs}, ${firstName}.` : `${greetWord}, ${firstName}.`;
     const body = items.map((it) => (isEs ? it.speechEs : it.speechEn)).join(" ");
     const utterance = new SpeechSynthesisUtterance(`${greeting} ${body}`);
-    utterance.lang = isEs ? "es-ES" : "en-US";
-    utterance.rate = 0.98;
+    // es-US (neutral, broadly-understood Latin American Spanish) fits this
+    // audience better than es-ES, and needs a slower rate than English to
+    // sound natural rather than rushed.
+    utterance.lang = isEs ? "es-US" : "en-US";
+    utterance.rate = isEs ? 0.85 : 0.98;
+    if (isEs && window.speechSynthesis.getVoices) {
+      const voices = window.speechSynthesis.getVoices();
+      const preferred = voices.find((v) => /es-US|es-MX|es-419/i.test(v.lang))
+        || voices.find((v) => v.lang.toLowerCase().startsWith("es"));
+      if (preferred) utterance.voice = preferred;
+    }
     utterance.onend = () => setSpeaking(false);
     utterance.onerror = () => setSpeaking(false);
     window.speechSynthesis.cancel();
