@@ -3093,7 +3093,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
           )}
         </>
       ) : (
-        <ParentApp families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} />
+        <ParentApp families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} events={events} />
       )}
     </div>
     </LanguageContext.Provider>
@@ -8932,7 +8932,7 @@ function SmallBtn({ icon: Icon, label }) {
 /* ===================================================================
    PARENT APP — read-only subsidy view for the family
    =================================================================== */
-function ParentApp({ families, onExit, showBackToProvider = true, status, setChildStatus, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage }) {
+function ParentApp({ families, onExit, showBackToProvider = true, status, setChildStatus, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage, events = [] }) {
   const t = useT();
   const [famId, setFamId] = useState(families[0]?.id);
   const fam = families.find((f) => f.id === famId) || families[0];
@@ -8979,6 +8979,21 @@ function ParentApp({ families, onExit, showBackToProvider = true, status, setChi
     setFlexForm({ type: FLEX_CARE_TYPES[0], date: "", hours: 1, notes: "", paymentMethod: PAYMENT_METHODS[0] });
   };
   const setMyFlexPaymentMethod = (id, method) => saveFlexCare(flexCareRequests.map((r) => (r.id === id ? { ...r, parentPaymentMethod: method } : r)));
+
+  // The parent's own conversation with the provider — a single thread, not a
+  // full inbox, since a family only talks to one provider.
+  const myThreadName = fam.householdName || fam.child;
+  const myThread = threads.find((th) => th.name === myThreadName);
+  const [myDraft, setMyDraft] = useState("");
+  const sendToProvider = () => {
+    if (!myDraft.trim()) return;
+    if (myThread) {
+      saveThreads(threads.map((th) => (th.id === myThread.id ? { ...th, unread: true, messages: [...th.messages, { from: "them", text: myDraft, time: "Just now" }] } : th)));
+    } else {
+      saveThreads([{ id: `th-parent-${Date.now()}`, name: myThreadName, unread: true, messages: [{ from: "them", text: myDraft, time: "Just now" }] }, ...threads]);
+    }
+    setMyDraft("");
+  };
 
   const monthlyAmount = fam.copay;
   const receiptMonths = ["May 2026", "June 2026", "July 2026"];
@@ -9030,6 +9045,54 @@ function ParentApp({ families, onExit, showBackToProvider = true, status, setChi
       </div>
 
       <div style={{ maxWidth: 560, margin: "0 auto", width: "100%", padding: "24px 20px 60px", display: "flex", flexDirection: "column", gap: 16 }}>
+
+        {events.filter((e) => e.notify).length > 0 && (
+          <div style={{ background: C.tealTint, border: `1px solid ${C.teal}`, borderRadius: 16, overflow: "hidden" }}>
+            <div style={{ padding: "13px 18px", borderBottom: `1px solid rgba(31,94,90,0.15)`, fontWeight: 700, fontSize: 13.5, color: C.tealDark, display: "flex", alignItems: "center", gap: 7 }}>
+              <Sparkles size={15} /> {t("Announcements")}
+            </div>
+            {events.filter((e) => e.notify).slice(0, 4).map((e) => {
+              const { emoji, lead } = eventAnnouncementOpener(e.type, e.name);
+              return (
+                <div key={e.id} style={{ padding: "12px 18px", borderBottom: `1px solid rgba(31,94,90,0.1)` }}>
+                  <div style={{ fontSize: 13.5, fontWeight: 600, color: C.tealDark }}>{emoji} {lead ? `${lead} ` : ""}{e.name}</div>
+                  <div style={{ fontSize: 12, color: C.tealDark, opacity: 0.8, marginTop: 2 }}>{e.dates}</div>
+                  {e.bringItems && <div style={{ fontSize: 12, color: C.tealDark, marginTop: 4, display: "flex", alignItems: "center", gap: 5 }}><Paperclip size={11} /> {t("Bring")}: {e.bringItems}</div>}
+                  {e.notes && <div style={{ fontSize: 11.5, color: C.tealDark, opacity: 0.8, marginTop: 3 }}>{e.notes}</div>}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
+          <div style={{ padding: "13px 18px", borderBottom: `1px solid ${C.line}`, fontWeight: 700, fontSize: 13.5, display: "flex", alignItems: "center", gap: 7 }}>
+            <MessageSquare size={15} color={C.teal} /> {t("Messages with your provider")}
+          </div>
+          <div style={{ maxHeight: 260, overflowY: "auto", padding: "12px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
+            {(!myThread || myThread.messages.length === 0) && (
+              <div style={{ fontSize: 12.5, color: C.inkSoft, textAlign: "center", padding: "8px 0" }}>{t("No messages yet — say hello!")}</div>
+            )}
+            {myThread && myThread.messages.map((m, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: m.from === "them" ? "flex-end" : "flex-start" }}>
+                <div style={{
+                  maxWidth: "80%", padding: "8px 12px", borderRadius: 12, fontSize: 13,
+                  background: m.from === "them" ? C.teal : C.cream, color: m.from === "them" ? "#fff" : C.ink,
+                }}>
+                  {m.text}
+                  <div style={{ fontSize: 10, opacity: 0.7, marginTop: 3 }}>{m.time}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: "flex", gap: 8, padding: "10px 18px 14px", borderTop: `1px solid ${C.line}` }}>
+            <input value={myDraft} onChange={(e) => setMyDraft(e.target.value)} onKeyDown={(e) => e.key === "Enter" && sendToProvider()}
+              placeholder={t("Type a message…")} style={{ ...inputStyle, borderRadius: 999 }} />
+            <button onClick={sendToProvider} style={{ width: 38, height: 38, borderRadius: "50%", border: "none", background: C.teal, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Send size={15} />
+            </button>
+          </div>
+        </div>
 
         {(() => {
           const s = status[fam.id];
