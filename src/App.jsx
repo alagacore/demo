@@ -7325,6 +7325,15 @@ function tryBrowserNotify(title, body) {
 // Matches tone and emoji to the occasion instead of one flat template for
 // everything — a field trip or show-and-tell should read as exciting, while
 // a conference-week reminder should read as friendly and practical.
+// Whether an event's date (or the last day of a date range) has already
+// passed — used so announcements in the parent portal automatically drop off
+// instead of piling up with stale events forever.
+function eventHasPassed(e) {
+  if (!e.dates) return false;
+  const parts = e.dates.split("–").map((s) => s.trim());
+  const lastDate = parts[parts.length - 1];
+  return daysUntil(lastDate) < 0;
+}
 function eventAnnouncementOpener(type, name) {
   const n = name.toLowerCase();
   if (n.includes("show and tell") || n.includes("show & tell")) return { emoji: "🧸🗣️", lead: "Show & Tell is coming up!" };
@@ -7350,6 +7359,25 @@ function Messages({ threads, saveThreads, families, staff }) {
   const [composing, setComposing] = useState(false);
   const fileInputRef = React.useRef(null);
   const open = threads.find((t) => t.id === openId);
+  const [editingMsgIdx, setEditingMsgIdx] = useState(null);
+  const [editDraft, setEditDraft] = useState("");
+
+  const startEditMessage = (i, currentText) => { setEditingMsgIdx(i); setEditDraft(currentText); };
+  const saveEditedMessage = (i) => {
+    if (!editDraft.trim()) return;
+    saveThreads(threads.map((th) => (th.id === openId
+      ? { ...th, messages: th.messages.map((m, mi) => (mi === i ? { ...m, text: editDraft, edited: true } : m)) }
+      : th)));
+    setEditingMsgIdx(null);
+  };
+  // Deleting replaces the text with a visible placeholder rather than erasing
+  // it outright — a provider's message history with a family is worth keeping
+  // an honest trace of, even after something is retracted.
+  const deleteMessage = (i) => {
+    saveThreads(threads.map((th) => (th.id === openId
+      ? { ...th, messages: th.messages.map((m, mi) => (mi === i ? { ...m, text: "", deleted: true, attachment: null } : m)) }
+      : th)));
+  };
 
   const pickFile = (e) => {
     const file = e.target.files && e.target.files[0];
@@ -7413,7 +7441,7 @@ function Messages({ threads, saveThreads, families, staff }) {
             <div style={{ flex: 1, overflowY: "auto", padding: "16px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
               {open.messages.map((m, i) => (
                 <div key={i} style={{ alignSelf: m.from === "me" ? "flex-end" : "flex-start", maxWidth: "72%" }}>
-                  {m.attachment && (
+                  {m.attachment && !m.deleted && (
                     <div style={{
                       display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", borderRadius: 12,
                       background: m.from === "me" ? C.tealDark : "#fff", border: `1px solid ${m.from === "me" ? C.tealDark : C.line}`,
@@ -7423,13 +7451,37 @@ function Messages({ threads, saveThreads, families, staff }) {
                       <span style={{ fontSize: 12.5, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{m.attachment.name}</span>
                     </div>
                   )}
-                  {m.text && (
-                    <div style={{
-                      padding: "9px 13px", borderRadius: 14,
-                      background: m.from === "me" ? C.teal : C.cream, color: m.from === "me" ? "#fff" : C.ink, fontSize: 13.5, lineHeight: 1.4,
-                    }}>{m.text}</div>
+                  {m.deleted ? (
+                    <div style={{ padding: "9px 13px", borderRadius: 14, background: "transparent", border: `1px dashed ${C.line}`, color: C.inkSoft, fontSize: 12.5, fontStyle: "italic" }}>
+                      {t("Message deleted")}
+                    </div>
+                  ) : editingMsgIdx === i ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                      <input value={editDraft} onChange={(e) => setEditDraft(e.target.value)} onKeyDown={(e) => e.key === "Enter" && saveEditedMessage(i)} style={{ ...inputStyle, borderRadius: 12 }} autoFocus />
+                      <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+                        <button onClick={() => setEditingMsgIdx(null)} style={{ fontSize: 11, padding: "4px 9px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", color: C.inkSoft, fontWeight: 600 }}>{t("Cancel")}</button>
+                        <button onClick={() => saveEditedMessage(i)} style={{ fontSize: 11, padding: "4px 9px", borderRadius: 7, border: "none", background: C.teal, color: "#fff", fontWeight: 700 }}>{t("Save")}</button>
+                      </div>
+                    </div>
+                  ) : (
+                    m.text && (
+                      <div style={{ display: "flex", alignItems: "flex-end", gap: 5, flexDirection: m.from === "me" ? "row-reverse" : "row" }}>
+                        <div style={{
+                          padding: "9px 13px", borderRadius: 14,
+                          background: m.from === "me" ? C.teal : C.cream, color: m.from === "me" ? "#fff" : C.ink, fontSize: 13.5, lineHeight: 1.4,
+                        }}>{m.text}</div>
+                        {m.from === "me" && (
+                          <div style={{ display: "flex", gap: 3, flexShrink: 0 }}>
+                            <button onClick={() => startEditMessage(i, m.text)} title={t("Edit")} style={{ background: "none", border: "none", color: C.inkSoft, display: "flex", padding: 2 }}><Pencil size={11} /></button>
+                            <button onClick={() => deleteMessage(i)} title={t("Delete")} style={{ background: "none", border: "none", color: C.inkSoft, display: "flex", padding: 2 }}><Trash2 size={11} /></button>
+                          </div>
+                        )}
+                      </div>
+                    )
                   )}
-                  <div style={{ fontSize: 10.5, color: C.inkSoft, marginTop: 3, textAlign: m.from === "me" ? "right" : "left" }}>{m.time}</div>
+                  <div style={{ fontSize: 10.5, color: C.inkSoft, marginTop: 3, textAlign: m.from === "me" ? "right" : "left" }}>
+                    {m.time}{m.edited && !m.deleted ? ` · ${t("edited")}` : ""}
+                  </div>
                 </div>
               ))}
             </div>
@@ -8985,6 +9037,7 @@ function ParentApp({ families, onExit, showBackToProvider = true, status, setChi
   const myThreadName = fam.householdName || fam.child;
   const myThread = threads.find((th) => th.name === myThreadName);
   const [myDraft, setMyDraft] = useState("");
+  const [expandedEventId, setExpandedEventId] = useState(null);
   const sendToProvider = () => {
     if (!myDraft.trim()) return;
     if (myThread) {
@@ -9046,19 +9099,35 @@ function ParentApp({ families, onExit, showBackToProvider = true, status, setChi
 
       <div style={{ maxWidth: 560, margin: "0 auto", width: "100%", padding: "24px 20px 60px", display: "flex", flexDirection: "column", gap: 16 }}>
 
-        {events.filter((e) => e.notify).length > 0 && (
+        {events.filter((e) => e.notify && !eventHasPassed(e)).length > 0 && (
           <div style={{ background: C.tealTint, border: `1px solid ${C.teal}`, borderRadius: 16, overflow: "hidden" }}>
             <div style={{ padding: "13px 18px", borderBottom: `1px solid rgba(31,94,90,0.15)`, fontWeight: 700, fontSize: 13.5, color: C.tealDark, display: "flex", alignItems: "center", gap: 7 }}>
               <Sparkles size={15} /> {t("Announcements")}
             </div>
-            {events.filter((e) => e.notify).slice(0, 4).map((e) => {
+            {events.filter((e) => e.notify && !eventHasPassed(e)).slice(0, 6).map((e) => {
               const { emoji, lead } = eventAnnouncementOpener(e.type, e.name);
+              const isExpanded = expandedEventId === e.id;
+              const hasDetails = e.bringItems || e.notes;
               return (
-                <div key={e.id} style={{ padding: "12px 18px", borderBottom: `1px solid rgba(31,94,90,0.1)` }}>
-                  <div style={{ fontSize: 13.5, fontWeight: 600, color: C.tealDark }}>{emoji} {lead ? `${lead} ` : ""}{e.name}</div>
-                  <div style={{ fontSize: 12, color: C.tealDark, opacity: 0.8, marginTop: 2 }}>{e.dates}</div>
-                  {e.bringItems && <div style={{ fontSize: 12, color: C.tealDark, marginTop: 4, display: "flex", alignItems: "center", gap: 5 }}><Paperclip size={11} /> {t("Bring")}: {e.bringItems}</div>}
-                  {e.notes && <div style={{ fontSize: 11.5, color: C.tealDark, opacity: 0.8, marginTop: 3 }}>{e.notes}</div>}
+                <div key={e.id} style={{ borderBottom: `1px solid rgba(31,94,90,0.1)` }}>
+                  <button onClick={() => hasDetails && setExpandedEventId(isExpanded ? null : e.id)} style={{
+                    width: "100%", textAlign: "left", background: "none", border: "none", padding: "12px 18px",
+                    display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, cursor: hasDetails ? "pointer" : "default",
+                  }}>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontSize: 13.5, fontWeight: 600, color: C.tealDark }}>{emoji} {lead ? `${lead} ` : ""}{e.name}</div>
+                      <div style={{ fontSize: 12, color: C.tealDark, opacity: 0.8, marginTop: 2 }}>{e.dates}</div>
+                    </div>
+                    {hasDetails && (
+                      <ChevronDown size={15} color={C.tealDark} style={{ flexShrink: 0, marginTop: 2, transform: isExpanded ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />
+                    )}
+                  </button>
+                  {isExpanded && hasDetails && (
+                    <div style={{ padding: "0 18px 14px" }}>
+                      {e.bringItems && <div style={{ fontSize: 12.5, color: C.tealDark, marginTop: 2, display: "flex", alignItems: "center", gap: 5 }}><Paperclip size={11} /> {t("Bring")}: {e.bringItems}</div>}
+                      {e.notes && <div style={{ fontSize: 12.5, color: C.tealDark, opacity: 0.85, marginTop: 6 }}>{e.notes}</div>}
+                    </div>
+                  )}
                 </div>
               );
             })}
