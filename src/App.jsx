@@ -7359,6 +7359,25 @@ function Messages({ threads, saveThreads, families, staff }) {
   const [composing, setComposing] = useState(false);
   const fileInputRef = React.useRef(null);
   const open = threads.find((t) => t.id === openId);
+  const [editingMsgIdx, setEditingMsgIdx] = useState(null);
+  const [editDraft, setEditDraft] = useState("");
+
+  const startEditMessage = (i, currentText) => { setEditingMsgIdx(i); setEditDraft(currentText); };
+  const saveEditedMessage = (i) => {
+    if (!editDraft.trim()) return;
+    saveThreads(threads.map((th) => (th.id === openId
+      ? { ...th, messages: th.messages.map((m, mi) => (mi === i ? { ...m, text: editDraft, edited: true } : m)) }
+      : th)));
+    setEditingMsgIdx(null);
+  };
+  // Deleting replaces the text with a visible placeholder rather than erasing
+  // it outright — a provider's message history with a family is worth keeping
+  // an honest trace of, even after something is retracted.
+  const deleteMessage = (i) => {
+    saveThreads(threads.map((th) => (th.id === openId
+      ? { ...th, messages: th.messages.map((m, mi) => (mi === i ? { ...m, text: "", deleted: true, attachment: null } : m)) }
+      : th)));
+  };
 
   const pickFile = (e) => {
     const file = e.target.files && e.target.files[0];
@@ -7422,7 +7441,7 @@ function Messages({ threads, saveThreads, families, staff }) {
             <div style={{ flex: 1, overflowY: "auto", padding: "16px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
               {open.messages.map((m, i) => (
                 <div key={i} style={{ alignSelf: m.from === "me" ? "flex-end" : "flex-start", maxWidth: "72%" }}>
-                  {m.attachment && (
+                  {m.attachment && !m.deleted && (
                     <div style={{
                       display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", borderRadius: 12,
                       background: m.from === "me" ? C.tealDark : "#fff", border: `1px solid ${m.from === "me" ? C.tealDark : C.line}`,
@@ -7432,13 +7451,37 @@ function Messages({ threads, saveThreads, families, staff }) {
                       <span style={{ fontSize: 12.5, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{m.attachment.name}</span>
                     </div>
                   )}
-                  {m.text && (
-                    <div style={{
-                      padding: "9px 13px", borderRadius: 14,
-                      background: m.from === "me" ? C.teal : C.cream, color: m.from === "me" ? "#fff" : C.ink, fontSize: 13.5, lineHeight: 1.4,
-                    }}>{m.text}</div>
+                  {m.deleted ? (
+                    <div style={{ padding: "9px 13px", borderRadius: 14, background: "transparent", border: `1px dashed ${C.line}`, color: C.inkSoft, fontSize: 12.5, fontStyle: "italic" }}>
+                      {t("Message deleted")}
+                    </div>
+                  ) : editingMsgIdx === i ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                      <input value={editDraft} onChange={(e) => setEditDraft(e.target.value)} onKeyDown={(e) => e.key === "Enter" && saveEditedMessage(i)} style={{ ...inputStyle, borderRadius: 12 }} autoFocus />
+                      <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+                        <button onClick={() => setEditingMsgIdx(null)} style={{ fontSize: 11, padding: "4px 9px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", color: C.inkSoft, fontWeight: 600 }}>{t("Cancel")}</button>
+                        <button onClick={() => saveEditedMessage(i)} style={{ fontSize: 11, padding: "4px 9px", borderRadius: 7, border: "none", background: C.teal, color: "#fff", fontWeight: 700 }}>{t("Save")}</button>
+                      </div>
+                    </div>
+                  ) : (
+                    m.text && (
+                      <div style={{ display: "flex", alignItems: "flex-end", gap: 5, flexDirection: m.from === "me" ? "row-reverse" : "row" }}>
+                        <div style={{
+                          padding: "9px 13px", borderRadius: 14,
+                          background: m.from === "me" ? C.teal : C.cream, color: m.from === "me" ? "#fff" : C.ink, fontSize: 13.5, lineHeight: 1.4,
+                        }}>{m.text}</div>
+                        {m.from === "me" && (
+                          <div style={{ display: "flex", gap: 3, flexShrink: 0 }}>
+                            <button onClick={() => startEditMessage(i, m.text)} title={t("Edit")} style={{ background: "none", border: "none", color: C.inkSoft, display: "flex", padding: 2 }}><Pencil size={11} /></button>
+                            <button onClick={() => deleteMessage(i)} title={t("Delete")} style={{ background: "none", border: "none", color: C.inkSoft, display: "flex", padding: 2 }}><Trash2 size={11} /></button>
+                          </div>
+                        )}
+                      </div>
+                    )
                   )}
-                  <div style={{ fontSize: 10.5, color: C.inkSoft, marginTop: 3, textAlign: m.from === "me" ? "right" : "left" }}>{m.time}</div>
+                  <div style={{ fontSize: 10.5, color: C.inkSoft, marginTop: 3, textAlign: m.from === "me" ? "right" : "left" }}>
+                    {m.time}{m.edited && !m.deleted ? ` · ${t("edited")}` : ""}
+                  </div>
                 </div>
               ))}
             </div>
