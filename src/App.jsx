@@ -7325,6 +7325,15 @@ function tryBrowserNotify(title, body) {
 // Matches tone and emoji to the occasion instead of one flat template for
 // everything — a field trip or show-and-tell should read as exciting, while
 // a conference-week reminder should read as friendly and practical.
+// Whether an event's date (or the last day of a date range) has already
+// passed — used so announcements in the parent portal automatically drop off
+// instead of piling up with stale events forever.
+function eventHasPassed(e) {
+  if (!e.dates) return false;
+  const parts = e.dates.split("–").map((s) => s.trim());
+  const lastDate = parts[parts.length - 1];
+  return daysUntil(lastDate) < 0;
+}
 function eventAnnouncementOpener(type, name) {
   const n = name.toLowerCase();
   if (n.includes("show and tell") || n.includes("show & tell")) return { emoji: "🧸🗣️", lead: "Show & Tell is coming up!" };
@@ -8985,6 +8994,7 @@ function ParentApp({ families, onExit, showBackToProvider = true, status, setChi
   const myThreadName = fam.householdName || fam.child;
   const myThread = threads.find((th) => th.name === myThreadName);
   const [myDraft, setMyDraft] = useState("");
+  const [expandedEventId, setExpandedEventId] = useState(null);
   const sendToProvider = () => {
     if (!myDraft.trim()) return;
     if (myThread) {
@@ -9046,19 +9056,35 @@ function ParentApp({ families, onExit, showBackToProvider = true, status, setChi
 
       <div style={{ maxWidth: 560, margin: "0 auto", width: "100%", padding: "24px 20px 60px", display: "flex", flexDirection: "column", gap: 16 }}>
 
-        {events.filter((e) => e.notify).length > 0 && (
+        {events.filter((e) => e.notify && !eventHasPassed(e)).length > 0 && (
           <div style={{ background: C.tealTint, border: `1px solid ${C.teal}`, borderRadius: 16, overflow: "hidden" }}>
             <div style={{ padding: "13px 18px", borderBottom: `1px solid rgba(31,94,90,0.15)`, fontWeight: 700, fontSize: 13.5, color: C.tealDark, display: "flex", alignItems: "center", gap: 7 }}>
               <Sparkles size={15} /> {t("Announcements")}
             </div>
-            {events.filter((e) => e.notify).slice(0, 4).map((e) => {
+            {events.filter((e) => e.notify && !eventHasPassed(e)).slice(0, 6).map((e) => {
               const { emoji, lead } = eventAnnouncementOpener(e.type, e.name);
+              const isExpanded = expandedEventId === e.id;
+              const hasDetails = e.bringItems || e.notes;
               return (
-                <div key={e.id} style={{ padding: "12px 18px", borderBottom: `1px solid rgba(31,94,90,0.1)` }}>
-                  <div style={{ fontSize: 13.5, fontWeight: 600, color: C.tealDark }}>{emoji} {lead ? `${lead} ` : ""}{e.name}</div>
-                  <div style={{ fontSize: 12, color: C.tealDark, opacity: 0.8, marginTop: 2 }}>{e.dates}</div>
-                  {e.bringItems && <div style={{ fontSize: 12, color: C.tealDark, marginTop: 4, display: "flex", alignItems: "center", gap: 5 }}><Paperclip size={11} /> {t("Bring")}: {e.bringItems}</div>}
-                  {e.notes && <div style={{ fontSize: 11.5, color: C.tealDark, opacity: 0.8, marginTop: 3 }}>{e.notes}</div>}
+                <div key={e.id} style={{ borderBottom: `1px solid rgba(31,94,90,0.1)` }}>
+                  <button onClick={() => hasDetails && setExpandedEventId(isExpanded ? null : e.id)} style={{
+                    width: "100%", textAlign: "left", background: "none", border: "none", padding: "12px 18px",
+                    display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, cursor: hasDetails ? "pointer" : "default",
+                  }}>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontSize: 13.5, fontWeight: 600, color: C.tealDark }}>{emoji} {lead ? `${lead} ` : ""}{e.name}</div>
+                      <div style={{ fontSize: 12, color: C.tealDark, opacity: 0.8, marginTop: 2 }}>{e.dates}</div>
+                    </div>
+                    {hasDetails && (
+                      <ChevronDown size={15} color={C.tealDark} style={{ flexShrink: 0, marginTop: 2, transform: isExpanded ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />
+                    )}
+                  </button>
+                  {isExpanded && hasDetails && (
+                    <div style={{ padding: "0 18px 14px" }}>
+                      {e.bringItems && <div style={{ fontSize: 12.5, color: C.tealDark, marginTop: 2, display: "flex", alignItems: "center", gap: 5 }}><Paperclip size={11} /> {t("Bring")}: {e.bringItems}</div>}
+                      {e.notes && <div style={{ fontSize: 12.5, color: C.tealDark, opacity: 0.85, marginTop: 6 }}>{e.notes}</div>}
+                    </div>
+                  )}
                 </div>
               );
             })}
