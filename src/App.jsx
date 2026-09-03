@@ -305,7 +305,7 @@ const PACKET_CLOSURES = [
 // Special events and meetings — days the daycare is still OPEN, unlike closures,
 // but something noteworthy is happening (a conference week, a staff meeting, a
 // photo day). Kept as a distinct category from closures for that reason.
-const EVENT_TYPES = ["Parent-Teacher Conferences", "Staff Meeting", "Photo Day", "Field Trip", "Family Event", "Other"];
+const EVENT_TYPES = ["Activity Day", "Field Trip", "Parent-Teacher Conferences", "Staff Meeting", "Photo Day", "Family Event", "Announcement", "Other"];
 let eventSeq = 0;
 const CALENDAR_EVENTS_DEFAULT = [
   { id: "ev1", name: "Parent-Teacher Conference Week", type: "Parent-Teacher Conferences", dates: "09/14/2026 – 09/18/2026", notify: true, notes: "Sign-up sheet posted at drop-off; 15-minute slots per family." },
@@ -3074,7 +3074,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
               {screen === "families" && <Families families={families} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
               {screen === "bookings" && <Bookings families={families} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
               {screen === "staff" && <StaffScreen staff={staff} families={families} updateStaffMember={updateStaffMember} addStaffMember={addStaffMember} removeStaffMember={removeStaffMember} />}
-              {screen === "calendar" && <CalendarScreen schedule={weeklySchedule} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} />}
+              {screen === "calendar" && <CalendarScreen schedule={weeklySchedule} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} families={families} threads={threads} saveThreads={saveThreads} />}
               {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} />}
               {screen === "waitlist" && <WaitlistScreen prospects={prospects} updateProspect={updateProspect} removeProspect={removeProspect} logAccess={logAccess} families={families} providerInfo={providerInfo} />}
               {screen === "subsidy" && <Subsidy families={families} openFamId={openFamId} setOpenFamId={setOpenFamId} loaded={loaded} meetingMode={meetingMode} />}
@@ -3093,7 +3093,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
           )}
         </>
       ) : (
-        <ParentApp families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} />
+        <ParentApp families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} events={events} />
       )}
     </div>
     </LanguageContext.Provider>
@@ -5098,13 +5098,13 @@ function StaffDrawer({ member, onClose, update, remove }) {
 }
 
 /* --------------------------------- calendar ------------------------------------ */
-function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events, saveEvents }) {
+function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events, saveEvents, families, threads, saveThreads }) {
   const t = useT();
   const [editing, setEditing] = useState(false);
   const [local, setLocal] = useState(schedule);
   const [form, setForm] = useState({ start: "", end: "", name: "Additional provider closure", notify: false });
   const [tab, setTab] = useState("hours");
-  const [eventForm, setEventForm] = useState({ start: "", end: "", name: "", type: EVENT_TYPES[0], notify: false, notes: "" });
+  const [eventForm, setEventForm] = useState({ start: "", end: "", name: "", type: EVENT_TYPES[0], notify: false, notes: "", bringItems: "" });
 
   const updateDay = (i, field, val) => setLocal((s) => s.map((d, idx) => (idx === i ? { ...d, [field]: val } : d)));
   const slotsFor = (d) => d.timeSlots && d.timeSlots.length ? d.timeSlots : [d.hours || ""];
@@ -5140,8 +5140,17 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
     if (!eventForm.start || !eventForm.name.trim()) return;
     eventSeq += 1;
     const dates = eventForm.end && eventForm.end !== eventForm.start ? `${eventForm.start} – ${eventForm.end}` : eventForm.start;
-    saveEvents([{ id: `ev-new-${eventSeq}`, name: eventForm.name, type: eventForm.type, dates, notify: eventForm.notify, notes: eventForm.notes }, ...events]);
-    setEventForm({ start: "", end: "", name: "", type: EVENT_TYPES[0], notify: false, notes: "" });
+    saveEvents([{ id: `ev-new-${eventSeq}`, name: eventForm.name, type: eventForm.type, dates, notify: eventForm.notify, notes: eventForm.notes, bringItems: eventForm.bringItems }, ...events]);
+    if (eventForm.notify && families && threads && saveThreads) {
+      const names = [...new Set(families.map((f) => f.householdName))];
+      const { emoji, lead } = eventAnnouncementOpener(eventForm.type, eventForm.name);
+      const messageText = `${emoji} ${lead ? `${lead} ` : ""}${eventForm.name} — ${dates}.` +
+        (eventForm.bringItems ? ` 🎒 Please bring: ${eventForm.bringItems}.` : "") +
+        (eventForm.notes ? ` ${eventForm.notes}` : "");
+      broadcastToFamilies(threads, saveThreads, names, messageText, "announcement");
+      tryBrowserNotify(`Sent to ${names.length} ${names.length === 1 ? "family" : "families"}`, `${emoji} ${eventForm.name}`);
+    }
+    setEventForm({ start: "", end: "", name: "", type: EVENT_TYPES[0], notify: false, notes: "", bringItems: "" });
   };
   const removeEvent = (id) => saveEvents(events.filter((e) => e.id !== id));
 
@@ -5284,9 +5293,28 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
                 <Field label={t("End date (optional)")}><input type="date" value={eventForm.end} onChange={(e) => setEventForm({ ...eventForm, end: e.target.value })} style={inputStyle} /></Field>
               </div>
               <Field label={t("Notes (optional)")}><input value={eventForm.notes} onChange={(e) => setEventForm({ ...eventForm, notes: e.target.value })} style={inputStyle} /></Field>
+              <Field label={t("Ask families to bring (optional)")}><input value={eventForm.bringItems} onChange={(e) => setEventForm({ ...eventForm, bringItems: e.target.value })} placeholder={t("e.g. swimsuit, sunscreen, $5 for the trip")} style={inputStyle} /></Field>
               <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: C.inkSoft }}>
-                <input type="checkbox" checked={eventForm.notify} onChange={(e) => setEventForm({ ...eventForm, notify: e.target.checked })} /> {t("Notify parents")}
+                <input type="checkbox" checked={eventForm.notify} onChange={(e) => setEventForm({ ...eventForm, notify: e.target.checked })} /> {t("Notify parents when saved")}
               </label>
+              {eventForm.notify && eventForm.name.trim() && eventForm.start && (
+                <div style={{ background: C.cream, borderRadius: 9, padding: "10px 12px", fontSize: 12.5, color: C.ink }}>
+                  <div style={{ fontSize: 10.5, fontWeight: 700, color: C.inkSoft, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 5 }}>{t("Preview")}</div>
+                  {(() => {
+                    const dates = eventForm.end && eventForm.end !== eventForm.start ? `${eventForm.start} – ${eventForm.end}` : eventForm.start;
+                    const { emoji, lead } = eventAnnouncementOpener(eventForm.type, eventForm.name);
+                    return `${emoji} ${lead ? `${lead} ` : ""}${eventForm.name} — ${dates}.` +
+                      (eventForm.bringItems ? ` 🎒 ${t("Please bring")}: ${eventForm.bringItems}.` : "") +
+                      (eventForm.notes ? ` ${eventForm.notes}` : "");
+                  })()}
+                </div>
+              )}
+              {eventForm.notify && (
+                <div style={{ fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "flex-start", gap: 6 }}>
+                  <Info size={11} style={{ marginTop: 1, flexShrink: 0 }} />
+                  {t("Sends a message to every enrolled family and shows a browser notification while this tab is open. A real push notification that works when the app is closed needs backend support that isn't connected yet.")}
+                </div>
+              )}
               <button onClick={addEvent} style={{ padding: "10px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Add event")}</button>
             </div>
           </Card>
@@ -5300,9 +5328,10 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
                     <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                       <b style={{ fontSize: 13.5 }}>{e.name}</b>
                       <Pill label={t(e.type)} fg={C.sky} bg={C.skyTint} />
-                      {e.notify && <Pill label={t("Parents notified")} fg={C.teal} bg={C.tealTint} />}
+                      {e.notify && <Pill label={t("Sent to families")} fg={C.teal} bg={C.tealTint} />}
                     </div>
                     <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 3 }}>{e.dates}</div>
+                    {e.bringItems && <div style={{ fontSize: 11.5, color: C.tealDark, marginTop: 3, display: "flex", alignItems: "center", gap: 5 }}><Paperclip size={10} /> {t("Bring")}: {e.bringItems}</div>}
                     {e.notes && <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 3 }}>{e.notes}</div>}
                   </div>
                   <button onClick={() => removeEvent(e.id)} style={{ background: "none", border: "none", color: C.danger, flexShrink: 0 }}><Trash2 size={14} /></button>
@@ -7263,6 +7292,56 @@ function SecurityScreen({ accessLog, isEmpty }) {
 }
 
 /* --------------------------------- messages ------------------------------------ */
+// Shared by Messages and Calendar (event/announcement reminders) — appends a
+// message to each named family's thread, creating the thread if it doesn't
+// exist yet, so "notify parents" always actually produces something.
+function broadcastToFamilies(threads, saveThreads, names, text, kind) {
+  if (!text.trim() || names.length === 0) return threads;
+  let updated = [...threads];
+  names.forEach((name) => {
+    const existing = updated.find((th) => th.name === name);
+    if (existing) {
+      updated = updated.map((th) => (th.id === existing.id ? { ...th, unread: false, messages: [...th.messages, { from: "me", text, time: "Just now", attachment: null }] } : th));
+    } else {
+      const newId = `th-${Date.now()}-${name.replace(/\s+/g, "")}`;
+      updated = [{ id: newId, name, kind, unread: false, messages: [{ from: "me", text, time: "Just now", attachment: null }] }, ...updated];
+    }
+  });
+  saveThreads(updated);
+  return updated;
+}
+// Real browser notification (session-only) — this is genuinely live, not a
+// mockup, but it only fires while the provider has this tab open. True
+// background push (working when the app/tab is closed) needs a backend
+// push service and isn't something a frontend-only app can do on its own.
+function tryBrowserNotify(title, body) {
+  if (typeof Notification === "undefined") return;
+  if (Notification.permission === "granted") {
+    new Notification(title, { body });
+  } else if (Notification.permission !== "denied") {
+    Notification.requestPermission().then((perm) => { if (perm === "granted") new Notification(title, { body }); });
+  }
+}
+// Matches tone and emoji to the occasion instead of one flat template for
+// everything — a field trip or show-and-tell should read as exciting, while
+// a conference-week reminder should read as friendly and practical.
+function eventAnnouncementOpener(type, name) {
+  const n = name.toLowerCase();
+  if (n.includes("show and tell") || n.includes("show & tell")) return { emoji: "🧸🗣️", lead: "Show & Tell is coming up!" };
+  if (n.includes("volunteer")) return { emoji: "🙌💛", lead: "We could use your help!" };
+  if (n.includes("photo")) return { emoji: "📸✨", lead: "Smile — picture day is almost here!" };
+  const byType = {
+    "Activity Day": { emoji: "🎉🎨", lead: "It's going to be a fun one!" },
+    "Field Trip": { emoji: "🚌🌟", lead: "Adventure time!" },
+    "Photo Day": { emoji: "📸✨", lead: "Time to smile for the camera!" },
+    "Family Event": { emoji: "🎊👨‍👩‍👧", lead: "We can't wait to see you there!" },
+    "Parent-Teacher Conferences": { emoji: "📋", lead: "Friendly reminder:" },
+    "Staff Meeting": { emoji: "📌", lead: "Quick note:" },
+    "Announcement": { emoji: "📢", lead: "" },
+    "Other": { emoji: "📌", lead: "Friendly reminder:" },
+  };
+  return byType[type] || byType["Other"];
+}
 function Messages({ threads, saveThreads, families, staff }) {
   const t = useT();
   const [openId, setOpenId] = useState(threads[0]?.id || null);
@@ -7289,21 +7368,9 @@ function Messages({ threads, saveThreads, families, staff }) {
 
   const startThreadsAndSend = (names, text, kind) => {
     if (!text.trim() || names.length === 0) return;
-    let updated = [...threads];
-    let firstNewId = null;
-    names.forEach((name) => {
-      const existing = updated.find((th) => th.name === name);
-      if (existing) {
-        updated = updated.map((th) => th.id === existing.id ? { ...th, unread: false, messages: [...th.messages, { from: "me", text, time: "Just now", attachment: null }] } : th);
-        if (!firstNewId) firstNewId = existing.id;
-      } else {
-        const newId = `th-${Date.now()}-${name.replace(/\s+/g, "")}`;
-        updated = [{ id: newId, name, kind, unread: false, messages: [{ from: "me", text, time: "Just now", attachment: null }] }, ...updated];
-        if (!firstNewId) firstNewId = newId;
-      }
-    });
-    saveThreads(updated);
-    setOpenId(firstNewId);
+    const updated = broadcastToFamilies(threads, saveThreads, names, text, kind);
+    const target = updated.find((th) => th.name === names[0]);
+    if (target) setOpenId(target.id);
     setComposing(false);
   };
 
@@ -8865,7 +8932,7 @@ function SmallBtn({ icon: Icon, label }) {
 /* ===================================================================
    PARENT APP — read-only subsidy view for the family
    =================================================================== */
-function ParentApp({ families, onExit, showBackToProvider = true, status, setChildStatus, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage }) {
+function ParentApp({ families, onExit, showBackToProvider = true, status, setChildStatus, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage, events = [] }) {
   const t = useT();
   const [famId, setFamId] = useState(families[0]?.id);
   const fam = families.find((f) => f.id === famId) || families[0];
@@ -8912,6 +8979,21 @@ function ParentApp({ families, onExit, showBackToProvider = true, status, setChi
     setFlexForm({ type: FLEX_CARE_TYPES[0], date: "", hours: 1, notes: "", paymentMethod: PAYMENT_METHODS[0] });
   };
   const setMyFlexPaymentMethod = (id, method) => saveFlexCare(flexCareRequests.map((r) => (r.id === id ? { ...r, parentPaymentMethod: method } : r)));
+
+  // The parent's own conversation with the provider — a single thread, not a
+  // full inbox, since a family only talks to one provider.
+  const myThreadName = fam.householdName || fam.child;
+  const myThread = threads.find((th) => th.name === myThreadName);
+  const [myDraft, setMyDraft] = useState("");
+  const sendToProvider = () => {
+    if (!myDraft.trim()) return;
+    if (myThread) {
+      saveThreads(threads.map((th) => (th.id === myThread.id ? { ...th, unread: true, messages: [...th.messages, { from: "them", text: myDraft, time: "Just now" }] } : th)));
+    } else {
+      saveThreads([{ id: `th-parent-${Date.now()}`, name: myThreadName, unread: true, messages: [{ from: "them", text: myDraft, time: "Just now" }] }, ...threads]);
+    }
+    setMyDraft("");
+  };
 
   const monthlyAmount = fam.copay;
   const receiptMonths = ["May 2026", "June 2026", "July 2026"];
@@ -8963,6 +9045,54 @@ function ParentApp({ families, onExit, showBackToProvider = true, status, setChi
       </div>
 
       <div style={{ maxWidth: 560, margin: "0 auto", width: "100%", padding: "24px 20px 60px", display: "flex", flexDirection: "column", gap: 16 }}>
+
+        {events.filter((e) => e.notify).length > 0 && (
+          <div style={{ background: C.tealTint, border: `1px solid ${C.teal}`, borderRadius: 16, overflow: "hidden" }}>
+            <div style={{ padding: "13px 18px", borderBottom: `1px solid rgba(31,94,90,0.15)`, fontWeight: 700, fontSize: 13.5, color: C.tealDark, display: "flex", alignItems: "center", gap: 7 }}>
+              <Sparkles size={15} /> {t("Announcements")}
+            </div>
+            {events.filter((e) => e.notify).slice(0, 4).map((e) => {
+              const { emoji, lead } = eventAnnouncementOpener(e.type, e.name);
+              return (
+                <div key={e.id} style={{ padding: "12px 18px", borderBottom: `1px solid rgba(31,94,90,0.1)` }}>
+                  <div style={{ fontSize: 13.5, fontWeight: 600, color: C.tealDark }}>{emoji} {lead ? `${lead} ` : ""}{e.name}</div>
+                  <div style={{ fontSize: 12, color: C.tealDark, opacity: 0.8, marginTop: 2 }}>{e.dates}</div>
+                  {e.bringItems && <div style={{ fontSize: 12, color: C.tealDark, marginTop: 4, display: "flex", alignItems: "center", gap: 5 }}><Paperclip size={11} /> {t("Bring")}: {e.bringItems}</div>}
+                  {e.notes && <div style={{ fontSize: 11.5, color: C.tealDark, opacity: 0.8, marginTop: 3 }}>{e.notes}</div>}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
+          <div style={{ padding: "13px 18px", borderBottom: `1px solid ${C.line}`, fontWeight: 700, fontSize: 13.5, display: "flex", alignItems: "center", gap: 7 }}>
+            <MessageSquare size={15} color={C.teal} /> {t("Messages with your provider")}
+          </div>
+          <div style={{ maxHeight: 260, overflowY: "auto", padding: "12px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
+            {(!myThread || myThread.messages.length === 0) && (
+              <div style={{ fontSize: 12.5, color: C.inkSoft, textAlign: "center", padding: "8px 0" }}>{t("No messages yet — say hello!")}</div>
+            )}
+            {myThread && myThread.messages.map((m, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: m.from === "them" ? "flex-end" : "flex-start" }}>
+                <div style={{
+                  maxWidth: "80%", padding: "8px 12px", borderRadius: 12, fontSize: 13,
+                  background: m.from === "them" ? C.teal : C.cream, color: m.from === "them" ? "#fff" : C.ink,
+                }}>
+                  {m.text}
+                  <div style={{ fontSize: 10, opacity: 0.7, marginTop: 3 }}>{m.time}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: "flex", gap: 8, padding: "10px 18px 14px", borderTop: `1px solid ${C.line}` }}>
+            <input value={myDraft} onChange={(e) => setMyDraft(e.target.value)} onKeyDown={(e) => e.key === "Enter" && sendToProvider()}
+              placeholder={t("Type a message…")} style={{ ...inputStyle, borderRadius: 999 }} />
+            <button onClick={sendToProvider} style={{ width: 38, height: 38, borderRadius: "50%", border: "none", background: C.teal, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Send size={15} />
+            </button>
+          </div>
+        </div>
 
         {(() => {
           const s = status[fam.id];
