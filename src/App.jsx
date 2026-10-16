@@ -3320,8 +3320,10 @@ function Topbar({ screen, setScreen, families, staff, goBack, canGoBack, goToFam
   const householdMatches = families.filter((f) => f.householdName.toLowerCase().includes(q) || f.child.toLowerCase().includes(q));
   const exactSingleMatch = q.length >= 3 && householdMatches.length === 1 ? householdMatches[0] : null;
 
+  // Match on the child's name or the family (household) name, so typing "Reyes"
+  // surfaces the Reyes children right in the dropdown instead of only on Enter.
   const results = q.length === 0 ? [] : [
-    ...families.filter((f) => f.child.toLowerCase().includes(q)).slice(0, 5).map((f) => ({ label: f.child, sub: `${f.householdName} · ${t("Families")}`, icon: Users, screen: "families", famId: f.id })),
+    ...householdMatches.slice(0, 5).map((f) => ({ label: f.child, sub: `${f.householdName} · ${t("Families")}`, icon: Users, screen: "families", famId: f.id })),
     ...staff.filter((s) => s.name.toLowerCase().includes(q)).slice(0, 5).map((s) => ({ label: s.name, sub: `${t(s.role)} · ${t("Staff & Ratios")}`, icon: UserCog, screen: "staff" })),
     ...BLANK_FORMS.filter((f) => f.name.toLowerCase().includes(q)).slice(0, 3).map((f) => ({ label: f.name, sub: t("Blank forms & templates"), icon: FileText, screen: "compliance" })),
   ];
