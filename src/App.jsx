@@ -362,6 +362,8 @@ const CALENDAR_EVENTS_DEFAULT = demoDates([
   { id: "ev1", name: "Parent-Teacher Conference Week", type: "Parent-Teacher Conferences", dates: "09/14/2026 – 09/18/2026", notify: true, notes: "Sign-up sheet posted at drop-off; 15-minute slots per family." },
   { id: "ev2", name: "Fall Photo Day", type: "Photo Day", dates: "10/09/2026", notify: true, notes: "" },
   { id: "ev3", name: "Staff In-Service Meeting", type: "Staff Meeting", dates: "08/28/2026", notify: false, notes: "After close, 6:00 PM — no impact to families." },
+  { id: "ev4", name: "Pumpkin Patch Field Trip", type: "Field Trip", dates: "08/02/2026", notify: true, notes: "Permission slips due the Friday before.", bringItems: "closed-toe shoes, sun hat" },
+  { id: "ev5", name: "Fall Harvest Carnival", type: "Family Event", dates: "08/14/2026", notify: true, notes: "4–6 PM in the backyard. Families welcome!" },
 ]);
 
 const TOUR_STAGES = ["Inquiry", "Tour Scheduled", "Toured", "Follow-up", "Waitlist", "Enrolled", "Declined"];
@@ -1224,6 +1226,20 @@ const T = {
   "Cost": { es: "Costo", tl: "Gastos", zh: "费用", vi: "Chi phí", ko: "비용" },
   "Agencies": { es: "Agencias", tl: "Mga ahensya", zh: "机构", vi: "Cơ quan", ko: "기관" },
   "Not recorded": { es: "No registrado", tl: "Hindi naitala", zh: "未记录", vi: "Chưa ghi", ko: "기록 없음" },
+  "Today & this week": { es: "Hoy y esta semana", tl: "Ngayon at ngayong linggo", zh: "今天和本周", vi: "Hôm nay & tuần này", ko: "오늘 및 이번 주" },
+  "No events in the next 90 days. Add field trips, photo days, carnivals and family events in Calendar.": { es: "No hay eventos en los próximos 90 días. Agrega excursiones, días de fotos, carnavales y eventos familiares en Calendario.", tl: "Walang event sa susunod na 90 araw. Magdagdag ng field trip, photo day, carnival at family event sa Calendar.", zh: "未来90天没有活动。可在日历中添加郊游、拍照日、嘉年华和家庭活动。", vi: "Không có sự kiện trong 90 ngày tới. Thêm dã ngoại, ngày chụp ảnh, hội chợ và sự kiện gia đình trong Lịch.", ko: "향후 90일간 행사가 없습니다. 캘린더에서 현장학습, 사진 촬영일, 축제, 가족 행사를 추가하세요." },
+  "A subsidy agency or caseworker": { es: "Una agencia de subsidio o trabajador social", tl: "Isang subsidy agency o caseworker", zh: "补助机构或个案工作者", vi: "Cơ quan trợ cấp hoặc nhân viên phụ trách", ko: "보조금 기관 또는 담당자" },
+  "Someone else": { es: "Otra persona", tl: "Ibang tao", zh: "其他人", vi: "Người khác", ko: "기타" },
+  "Alaga support": { es: "Soporte de Alaga", tl: "Alaga support", zh: "Alaga支持团队", vi: "Hỗ trợ Alaga", ko: "Alaga 지원팀" },
+  "Agency or caseworker": { es: "Agencia o trabajador social", tl: "Ahensya o caseworker", zh: "机构或个案工作者", vi: "Cơ quan hoặc nhân viên phụ trách", ko: "기관 또는 담당자" },
+  "Someone new…": { es: "Alguien nuevo…", tl: "Bagong contact…", zh: "新联系人…", vi: "Người mới…", ko: "새 연락처…" },
+  "Who is this to?": { es: "¿Para quién es?", tl: "Para kanino ito?", zh: "发给谁？", vi: "Gửi cho ai?", ko: "받는 사람" },
+  "e.g. a vendor, landlord or substitute": { es: "p. ej. un proveedor, arrendador o suplente", tl: "hal. vendor, landlord o substitute", zh: "例如：供应商、房东或代班人员", vi: "vd: nhà cung cấp, chủ nhà hoặc người thay thế", ko: "예: 거래처, 집주인, 대체 교사" },
+  "e.g. Crystal Stairs — Denise T.": { es: "p. ej. Crystal Stairs — Denise T.", tl: "hal. Crystal Stairs — Denise T.", zh: "例如：Crystal Stairs — Denise T.", vi: "vd: Crystal Stairs — Denise T.", ko: "예: Crystal Stairs — Denise T." },
+  "Goes to the Alaga team. Replies show in Support → My Requests.": { es: "Llega al equipo de Alaga. Las respuestas aparecen en Soporte → Mis solicitudes.", tl: "Mapupunta sa Alaga team. Lalabas ang sagot sa Support → My Requests.", zh: "发送给Alaga团队。回复显示在“支持 → 我的请求”中。", vi: "Gửi đến đội Alaga. Phản hồi hiện trong Hỗ trợ → Yêu cầu của tôi.", ko: "Alaga 팀에 전달됩니다. 답변은 지원 → 내 요청에 표시됩니다." },
+  "Sent to Alaga support. Replies show in Support → My Requests.": { es: "Enviado al soporte de Alaga. Las respuestas aparecen en Soporte → Mis solicitudes.", tl: "Naipadala sa Alaga support. Lalabas ang sagot sa Support → My Requests.", zh: "已发送给Alaga支持团队。回复显示在“支持 → 我的请求”中。", vi: "Đã gửi đến hỗ trợ Alaga. Phản hồi hiện trong Hỗ trợ → Yêu cầu của tôi.", ko: "Alaga 지원팀에 전송되었습니다. 답변은 지원 → 내 요청에 표시됩니다." },
+  "Didn't move forward": { es: "No continuaron", tl: "Hindi tumuloy", zh: "未继续", vi: "Không tiếp tục", ko: "진행 안 한 가족" },
+  "To add a family, open them in Tours and set their stage to Waitlist. Families who didn't move forward are in Tours → Declined.": { es: "Para agregar una familia, ábrela en Visitas y cambia su etapa a Lista de espera. Las familias que no continuaron están en Visitas → Declinadas.", tl: "Para magdagdag, buksan ang pamilya sa Tours at gawing Waitlist ang stage. Nasa Tours → Declined ang mga hindi tumuloy.", zh: "如需添加家庭，请在“参观”中打开并将阶段设为候补。未继续的家庭在“参观 → 已拒绝”中。", vi: "Để thêm gia đình, mở trong Tham quan và đặt giai đoạn là Danh sách chờ. Gia đình không tiếp tục nằm ở Tham quan → Từ chối.", ko: "가족을 추가하려면 견학에서 열고 단계를 대기자로 바꾸세요. 진행하지 않은 가족은 견학 → 거절에 있습니다." },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -4148,7 +4164,10 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
   // Tuition still unpaid after this period's due date.
   const billingNow = reminderSettings ? currentBilling(reminderSettings) : null;
   const overdueTuition = billingNow && billingNow.overdue ? families.filter((f) => f.copay > 0 && !paidFor(f, billingNow.key)) : [];
-  const totalAttention = expiring.length + flexNeedingAttention.length + docsNeedingAttention.length + childrenMissingDocs.length + overdueTuition.length;
+  const dueSoon = briefingDueItems({ closures, prospects, families, licensing, reminderSettings, t,
+    go: { calendar: () => setScreen("calendar"), tours: () => setScreen("tours"), family: goToFamily, compliance: () => setScreen("compliance"), tuition: openTuition } });
+  const whenLabel = (n) => (n < 0 ? t("Overdue") : n === 0 ? t("Today") : n === 1 ? t("Tomorrow") : `${t("In")} ${n} ${t("days")}`);
+  const totalAttention = dueSoon.length + expiring.length + flexNeedingAttention.length + docsNeedingAttention.length + childrenMissingDocs.length + overdueTuition.length;
   const approveFlexInline = (id) => saveFlexCare(flexCareRequests.map((r) => (r.id === id ? { ...r, status: "approved" } : r)));
 
   const setupItems = computeSetupItems({ providerInfo, weeklySchedule, staff, families, prospects, compDocs });
@@ -4199,6 +4218,19 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
           )}
           {showAttention && totalAttention > 0 && (
             <div style={{ marginTop: 12, borderRadius: 10, overflow: "hidden", background: "rgba(255,255,255,0.08)" }}>
+              {dueSoon.length > 0 && (
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Today & this week")}</div>
+              )}
+              {dueSoon.map((it, i) => (
+                <div key={`due${i}`} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
+                  <button onClick={it.onClick} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
+                    <Dot c={it.n <= 0 ? "#F2A28A" : "#F2C88A"} /><b style={{ fontSize: 13 }}>{it.title}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {it.detail} · {whenLabel(it.n)}</span>
+                  </button>
+                  <button onClick={it.onClick} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                    {t("Review")}
+                  </button>
+                </div>
+              ))}
               {expiring.length > 0 && (
                 <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Subsidy")}</div>
               )}
@@ -4275,8 +4307,7 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
         </div>
       </div>
 
-      <ComingUp items={comingUpItems({ events, closures, prospects, families, licensing, compDocs, reminderSettings, t,
-        go: { calendar: () => setScreen("calendar"), tours: () => setScreen("tours"), family: goToFamily, subsidy: goToSubsidyFamily, compliance: () => setScreen("compliance"), tuition: openTuition } })} />
+      <ComingUp items={comingUpItems({ events, t, go: { calendar: () => setScreen("calendar") } })} onAdd={() => setScreen("calendar")} />
 
       {setupItems.some((i) => !i.done) ? (
         <Card title={t("Getting your account fully set up")} icon={ClipboardCheck}
@@ -4368,40 +4399,49 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
 // Everything with a date in the next few weeks: events and meetings, closures,
 // tours and follow-ups, children starting or graduating, renewals and tuition.
 const mdyOfDate = (d) => `${pad2(d.getMonth() + 1)}/${pad2(d.getDate())}/${d.getFullYear()}`;
-function comingUpItems({ events, closures, prospects, families, licensing, compDocs, reminderSettings, t, go }) {
+function comingUpItems({ events, t, go }) {
+  return events.map((e) => {
+    const d = parseAnyDate(String(e.dates || "").split(" – ")[0]);
+    const end = parseAnyDate(String(e.dates || "").split(" – ").pop());
+    if (!d) return null;
+    const n = daysUntil(mdyOfDate(d));
+    const nEnd = end ? daysUntil(mdyOfDate(end)) : n;
+    if (nEnd < 0 || n > 90) return null;
+    return { n: Math.max(n, 0), date: mdyOfDate(n < 0 ? startOfToday() : d), kind: "event", title: e.name, detail: [t(e.type || "Event"), e.bringItems ? `${t("Bring")}: ${e.bringItems}` : ""].filter(Boolean).join(" · "), onClick: go.calendar, urgent: n <= 1 };
+  }).filter(Boolean).sort((x, y) => x.n - y.n);
+}
+// Dated to-dos that show in Today's briefing once they're close.
+function briefingDueItems({ closures, prospects, families, licensing, reminderSettings, t, go }) {
   const items = [];
-  const add = (date, kind, title, detail, onClick, { window = 30, allowPast = false } = {}) => {
+  const add = (date, title, detail, onClick, maxDays, allowPast = false) => {
     const d = parseAnyDate(String(date || "").split(" – ")[0]);
     if (!d) return;
     const n = daysUntil(mdyOfDate(d));
-    if (n > window || (n < 0 && !allowPast)) return;
-    items.push({ n, date: mdyOfDate(d), kind, title, detail, onClick, urgent: n <= 1 });
+    if (n > maxDays || (n < 0 && !allowPast)) return;
+    items.push({ n, title, detail, onClick });
   };
-  events.forEach((e) => add(e.dates, "event", e.name, t(e.type || "Event"), go.calendar));
-  closures.forEach((c) => add(c.start || c.dates, "closure", c.name, t("Closed"), go.calendar));
+  closures.forEach((c) => add(c.start || c.dates, c.name, t("Closed"), go.calendar, 7));
   prospects.forEach((p) => {
-    if (p.stage === "Tour Scheduled" && p.tourDate) add(p.tourDate, "tour", p.name, t("Tour"), go.tours);
-    if (followupDue(p) || (p.followupDate && !CLOSED_STAGES.includes(p.stage))) add(p.followupDate, "followup", p.name, daysUntil(p.followupDate) < 0 ? t("Follow-up overdue") : t("Follow up"), go.tours, { allowPast: true });
+    if (p.stage === "Tour Scheduled" && p.tourDate) add(p.tourDate, p.name, t("Tour"), go.tours, 1);
+    if (followupDue(p)) add(p.followupDate, p.name, daysUntil(p.followupDate) < 0 ? t("Follow-up overdue") : t("Follow up today"), go.tours, 0, true);
   });
   families.forEach((f) => {
-    if (daysUntil(f.enrollDate) > 0) add(f.enrollDate, "start", f.child, t("First day of care"), () => go.family(f.id));
-    if (f.departedOn) add(f.departedOn, f.departureReason === "aged-out" ? "graduation" : "leaving", f.child, f.departureReason === "aged-out" ? t("Graduates") : t("Last day of care"), () => go.family(f.id), { window: 60 });
-    if (f.subsidized && f.authEnd) add(f.authEnd, "subsidy", f.child, `${programOf(f.programId)?.label || t("Subsidy")} ${t("authorization ends")}`, () => go.subsidy(f.id));
+    if (daysUntil(f.enrollDate) > 0) add(f.enrollDate, f.child, t("First day of care"), () => go.family(f.id), 7);
+    if (f.departedOn) add(f.departedOn, f.child, f.departureReason === "aged-out" ? t("Graduates") : t("Last day of care"), () => go.family(f.id), 7);
   });
-  if (licensing.renewalDate) add(licensing.renewalDate, "license", t("License renewal"), t("CCLD"), go.compliance, { window: 60 });
-  compDocs.forEach((d) => d.expiresOn && add(d.expiresOn, "document", t(d.name), t("Renews / expires"), go.compliance, { window: 60 }));
-  if (reminderSettings) add(nextDueDateFrom(reminderSettings), "tuition", t("Tuition due"), t("All families"), go.tuition);
-  return items.sort((a, b) => a.n - b.n);
+  if (licensing.renewalDate) add(licensing.renewalDate, t("License renewal"), "CCLD", go.compliance, 60, true);
+  if (reminderSettings) add(nextDueDateFrom(reminderSettings), t("Tuition due"), t("All families"), go.tuition, 3);
+  return items.sort((x, y) => x.n - y.n);
 }
 const COMING_UP_ICONS = { event: CalendarDays, closure: CalendarDays, tour: Users, followup: Phone, start: UserPlus, graduation: GraduationCap, leaving: LogOut, subsidy: ShieldCheck, license: ClipboardCheck, document: FileText, tuition: DollarSign };
-function ComingUp({ items }) {
+function ComingUp({ items, onAdd }) {
   const t = useT();
   const [all, setAll] = useState(false);
-  const shown = all ? items : items.slice(0, 7);
+  const shown = all ? items : items.slice(0, 5);
   const when = (n) => (n < 0 ? t("Overdue") : n === 0 ? t("Today") : n === 1 ? t("Tomorrow") : `${t("In")} ${n} ${t("days")}`);
   return (
-    <Card title={t("Coming up")} icon={CalendarClock} right={<span style={{ fontSize: 12, color: C.inkSoft }}>{t("Next 30 days")}</span>}>
-      {items.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("Nothing on the calendar for the next 30 days. Events, tours, start dates and renewals show up here.")}</div>}
+    <Card title={t("Coming up")} icon={CalendarClock} right={onAdd && <button onClick={onAdd} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}><Plus size={12} /> {t("Add event")}</button>}>
+      {items.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No events in the next 90 days. Add field trips, photo days, carnivals and family events in Calendar.")}</div>}
       {shown.map((it, i) => {
         const Icon = COMING_UP_ICONS[it.kind] || CalendarDays;
         return (
@@ -4423,7 +4463,7 @@ function ComingUp({ items }) {
           </button>
         );
       })}
-      {items.length > 7 && (
+      {items.length > 5 && (
         <button onClick={() => setAll(!all)} style={{ width: "100%", padding: "10px 0", background: "none", border: "none", fontSize: 12, fontWeight: 700, color: C.teal }}>
           {all ? t("Show less") : `${t("Show all")} (${items.length})`}
         </button>
@@ -6480,9 +6520,14 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
             </button>
           ))}
         </div>
-        <button onClick={handleAddFamily} style={{ display: "flex", alignItems: "center", gap: 7, padding: "9px 14px", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13 }}>
-          <UserPlus size={14} /> {t("Add family")}
-        </button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={() => { setView("list"); setStageFilter("Declined"); }} style={{ padding: "9px 14px", borderRadius: 9, border: `1px solid ${stageFilter === "Declined" && view === "list" ? C.teal : C.line}`, background: stageFilter === "Declined" && view === "list" ? C.tealTint : "#fff", color: C.inkSoft, fontWeight: 600, fontSize: 12.5 }}>
+            {t("Didn't move forward")} ({prospects.filter((p) => p.stage === "Declined").length})
+          </button>
+          <button onClick={handleAddFamily} style={{ display: "flex", alignItems: "center", gap: 7, padding: "9px 14px", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13 }}>
+            <UserPlus size={14} /> {t("Add family")}
+          </button>
+        </div>
       </div>
 
       {view === "kanban" ? (
@@ -6564,7 +6609,7 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 18px", borderBottom: `1px solid ${C.line}` }}>
                 <div style={{ minWidth: 0 }}>
                   <b style={{ fontSize: 13.5 }}>{p.name}</b>
-                  <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 2 }}>{p.language} · {p.children} · {t("Tour")}: {p.tourDate}</div>
+                  <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 2 }}>{p.language} · {p.children} · {t("Tour")}: {p.tourDate}{p.stage === "Declined" && p.declineReason ? ` · ${t(p.declineReason)}` : ""}</div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
                   <span style={{ fontSize: 12, color: C.inkSoft }}>{p.contact}</span>
@@ -6714,7 +6759,7 @@ function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, 
           );
         })}
         <div style={{ padding: "10px 18px", fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
-          <Info size={10} /> {t("To add a family, open them in Tours and set their stage to Waitlist. Families are listed in the order they joined.")}
+          <Info size={10} /> {t("To add a family, open them in Tours and set their stage to Waitlist. Families who didn't move forward are in Tours → Declined.")}
         </div>
       </Card>
 
@@ -9355,6 +9400,18 @@ function Messages({ threads: rawThreads, saveThreads, families, staff, goToFamil
     setDraft(""); setAttachment(null);
   };
 
+  const agencies = [...new Set([
+    ...rawThreads.filter((th) => th.kind === "agency").map((th) => th.name),
+    ...families.filter((f) => f.subsidized).flatMap((f) => [f.caseworker?.name ? `${programOf(f.programId)?.agency || ""} — ${f.caseworker.name}`.replace(/^ — /, "") : "", programOf(f.programId)?.agency || ""]),
+  ].filter(Boolean))];
+  const [tickets, setTickets] = usePersistentState("support-tickets", SUPPORT_TICKETS_DEFAULT);
+  const [supportSent, setSupportSent] = useState(false);
+  const sendToSupport = (text) => {
+    if (!text.trim()) return;
+    const now = new Date();
+    setTickets([{ id: Date.now(), provider: "Provider", subject: text.trim().slice(0, 60), category: "Other", status: "open", date: now.toLocaleDateString("en-US"), time: now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }), message: text.trim(), replies: [] }, ...(Array.isArray(tickets) ? tickets : [])]);
+    setComposing(false); setSupportSent(true);
+  };
   const startThreadsAndSend = (names, text, kind) => {
     if (!text.trim() || names.length === 0) return;
     const updated = broadcastToFamilies(rawThreads, saveThreads, names, text, kind, families);
@@ -9414,7 +9471,13 @@ function Messages({ threads: rawThreads, saveThreads, families, staff, goToFamil
       </div>
 
       <div style={{ flex: 1, minWidth: 0, background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, display: "flex", flexDirection: "column" }}>
-        {openSupport && (
+        {supportSent && (
+          <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 18px", background: C.tealTint, borderBottom: `1px solid ${C.line}`, borderRadius: "14px 14px 0 0", fontSize: 12, color: C.tealDark }}>
+            <CheckCircle2 size={13} /> {t("Sent to Alaga support. Replies show in Support → My Requests.")}
+            {openSupport && <button onClick={openSupport} style={{ marginLeft: "auto", fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("View")}</button>}
+          </div>
+        )}
+        {openSupport && !supportSent && (
           <button onClick={openSupport} style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 18px", background: C.cream, border: "none", borderBottom: `1px solid ${C.line}`, borderRadius: "14px 14px 0 0", fontSize: 12, color: C.inkSoft, textAlign: "left" }}>
             <LifeBuoy size={13} color={C.teal} /> {t("Need help from the Alaga team?")} <b style={{ color: C.teal }}>{t("Contact support")} →</b>
           </button>
@@ -9509,12 +9572,12 @@ function Messages({ threads: rawThreads, saveThreads, families, staff, goToFamil
           <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", color: C.inkSoft, fontSize: 13 }}>{t("Select a conversation")}</div>
         )}
       </div>
-      {composing && <ComposeModal families={families} staff={staff} onClose={() => setComposing(false)} onSend={startThreadsAndSend} />}
+      {composing && <ComposeModal families={families} staff={staff} agencies={agencies} onSupport={sendToSupport} onClose={() => setComposing(false)} onSend={startThreadsAndSend} />}
     </div>
   );
 }
 
-function ComposeModal({ families, staff, onClose, onSend }) {
+function ComposeModal({ families, staff, onClose, onSend, agencies = [], onSupport }) {
   const t = useT();
   const RECIPIENT_TYPES = [
     { id: "family", label: "One family" },
@@ -9522,7 +9585,12 @@ function ComposeModal({ families, staff, onClose, onSend }) {
     { id: "all-families", label: "All families" },
     { id: "staff", label: "One staff member" },
     { id: "all-staff", label: "All staff" },
+    { id: "agency", label: "A subsidy agency or caseworker" },
+    { id: "other", label: "Someone else" },
+    ...(onSupport ? [{ id: "support", label: "Alaga support" }] : []),
   ];
+  const [agency, setAgency] = useState(agencies[0] || "__new");
+  const [otherName, setOtherName] = useState("");
   const [recipientType, setRecipientType] = useState("family");
   const [selectedFamilies, setSelectedFamilies] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState("");
@@ -9544,6 +9612,9 @@ function ComposeModal({ families, staff, onClose, onSend }) {
     if (recipientType === "all-families") return [...new Set(families.map((f) => f.householdName || f.child))];
     if (recipientType === "staff") return selectedStaff ? [selectedStaff] : [];
     if (recipientType === "all-staff") return staff.map((s) => s.name);
+    if (recipientType === "agency") return agency === "__new" ? (otherName.trim() ? [otherName.trim()] : []) : [agency];
+    if (recipientType === "other") return otherName.trim() ? [otherName.trim()] : [];
+    if (recipientType === "support") return ["Alaga support"];
     return [];
   };
 
@@ -9592,6 +9663,21 @@ function ComposeModal({ families, staff, onClose, onSend }) {
             </Field>
           )}
 
+          {recipientType === "agency" && (
+            <>
+              <Field label={t("Agency or caseworker")}>
+                <Select value={agency} onChange={setAgency} options={[...agencies, "__new"]} labels={[...agencies, t("Someone new…")]} />
+              </Field>
+              {agency === "__new" && <Field label={t("Name")}><input value={otherName} onChange={(e) => setOtherName(e.target.value)} placeholder={t("e.g. Crystal Stairs — Denise T.")} style={inputStyle} /></Field>}
+            </>
+          )}
+          {recipientType === "other" && (
+            <Field label={t("Who is this to?")}><input value={otherName} onChange={(e) => setOtherName(e.target.value)} placeholder={t("e.g. a vendor, landlord or substitute")} style={inputStyle} /></Field>
+          )}
+          {recipientType === "support" && (
+            <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}><Info size={13} /> {t("Goes to the Alaga team. Replies show in Support → My Requests.")}</div>
+          )}
+
           {(recipientType === "all-families" || recipientType === "all-staff") && (
             <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6, padding: "8px 0" }}>
               <Info size={13} />
@@ -9607,7 +9693,7 @@ function ComposeModal({ families, staff, onClose, onSend }) {
               style={{ width: "100%", border: `1px solid ${C.line}`, borderRadius: 10, padding: "10px 12px", fontSize: 13, fontFamily: "inherit", resize: "vertical" }} />
           </Field>
 
-          <button onClick={() => onSend(names, text, recipientType.includes("staff") ? "staff" : recipientType.includes("all") ? "broadcast" : "direct")} disabled={!canSend} style={{
+          <button onClick={() => (recipientType === "support" ? onSupport(text) : onSend(names, text, recipientType.includes("staff") ? "staff" : recipientType === "agency" ? "agency" : recipientType === "other" ? "other" : recipientType.includes("all") ? "broadcast" : "direct"))} disabled={!canSend} style={{
             padding: "11px 0", borderRadius: 10, border: "none", background: canSend ? C.teal : "#D8DFD8", color: "#fff", fontWeight: 600, fontSize: 13.5,
           }}>
             {t("Send")} {names.length > 1 ? `(${names.length} ${t("recipients")})` : ""}
