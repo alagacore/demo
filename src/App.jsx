@@ -613,7 +613,12 @@ const FAMILIES = demoDates([
 ]);
 
 /* --------------------------------- helpers ----------------------------------- */
-const money = (n) => `$${n.toLocaleString()}`;
+// Whole dollars show as "$1,450"; anything with cents always shows two places ("$186.40").
+const money = (n) => {
+  const v = Number(n) || 0;
+  const cents = Math.round(v * 100) % 100 !== 0;
+  return `${v < 0 ? "-" : ""}$${Math.abs(v).toLocaleString("en-US", cents ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : { maximumFractionDigits: 0 })}`;
+};
 const programOf = (id) => PROGRAMS.find((p) => p.id === id);
 // Shared date helpers: the app stores dates as "MM/DD/YYYY" strings for display,
 // but the native calendar popup needs ISO ("YYYY-MM-DD"). These convert between
@@ -639,30 +644,81 @@ const daysUntil = (mmddyyyy) => {
   const diff = Math.round((new Date(y, m - 1, d) - startOfToday()) / 86400000);
   return diff;
 };
-// One universal billing due date applies to every family — either a
-// recurring day of the month (most common, e.g. "due on the 1st") or a
-// specific one-time date. Defaults to the 1st of the month if unset.
-function nextDueDateFrom(billing) {
-  if (billing && billing.mode === "date" && billing.date) return billing.date;
-  const day = Math.min(28, Math.max(1, (billing && billing.mode === "recurring" && billing.day) || 1));
-  const now = startOfToday();
-  const anchor = { y: now.getFullYear(), m: now.getMonth(), d: now.getDate() };
-  let y = anchor.y, m = anchor.m;
-  if (day <= anchor.d) { m += 1; if (m > 11) { m = 0; y += 1; } }
-  return `${String(m + 1).padStart(2, "0")}/${String(day).padStart(2, "0")}/${y}`;
+// Billing runs month by month. A family's payment is recorded against a
+// billing period ("2026-10"), so marking October paid doesn't mark November
+// paid too. One due date applies to every family: a recurring day of the
+// month (most common, "due on the 1st") or one specific date.
+const periodKeyOf = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}`;
+const periodLabel = (key) => { const [y, m] = key.split("-").map(Number); return new Date(y, m - 1, 1).toLocaleDateString("en-US", { month: "long", year: "numeric" }); };
+function billingDueDate(settings, ref = startOfToday()) {
+  const mode = settings?.dueDateMode || settings?.mode || "recurring";
+  const fixed = settings?.dueDate || settings?.date;
+  if (mode === "date" && fixed) return fixed;
+  const day = Math.min(28, Math.max(1, Number(settings?.dueDay || settings?.day) || 1));
+  return `${pad2(ref.getMonth() + 1)}/${pad2(day)}/${ref.getFullYear()}`;
 }
-// A configured late fee doesn't mean anything until it's actually enforced.
-// "Force" makes it real: once a family is past the universal due date and
-// still hasn't paid, this computes what's actually owed, including the fee.
+// The period being billed right now, its due date, and whether that date has passed.
+function currentBilling(settings) {
+  const due = billingDueDate(settings);
+  const key = periodKeyOf(parseAnyDate(due));
+  return { key, label: periodLabel(key), dueDate: due, overdue: daysUntil(due) < 0 };
+}
+// The next due date still ahead (this month's, or next month's once it has passed).
+function nextDueDateFrom(settings) {
+  const cur = billingDueDate(settings);
+  if (daysUntil(cur) >= 0) return cur;
+  const now = startOfToday();
+  return billingDueDate(settings, new Date(now.getFullYear(), now.getMonth() + 1, 1));
+}
+// Paid for a period: single payer, or every guardian in a split.
+const paidFor = (f, key) => (f.copaySplit ? f.copaySplit.length > 0 && f.copaySplit.every((s) => s.paidPeriods?.[key]) : !!f.paidPeriods?.[key]);
+const partlyPaidFor = (f, key) => !!(f.copaySplit && f.copaySplit.some((s) => s.paidPeriods?.[key]));
+// Every month this family has paid, newest first, combining split payers.
+function paymentsOf(f) {
+  const out = {};
+  const add = (pp, who) => Object.entries(pp || {}).forEach(([k, v]) => { (out[k] = out[k] || []).push({ ...v, who }); });
+  if (f.copaySplit) f.copaySplit.forEach((s) => add(s.paidPeriods, s.parent)); else add(f.paidPeriods, f.parents?.[0]?.name || f.parent);
+  return Object.entries(out).sort((a, b) => (a[0] < b[0] ? 1 : -1)).map(([key, entries]) => ({ key, entries, total: entries.reduce((s, e) => s + (Number(e.amount) || 0), 0) }));
+}
+// A configured late fee applies once this period's due date has passed and the
+// family still hasn't paid (only when "automatically apply" is on).
 function computeLateFee(f, reminderSettings, isPaidFn) {
   if (!reminderSettings.lateFeeEnabled || !reminderSettings.forceLateFee) return 0;
   if (!f.copay || f.copay <= 0) return 0;
-  const dueDate = nextDueDateFrom(reminderSettings);
-  const overdue = daysUntil(dueDate) < 0;
-  if (!overdue || isPaidFn(f)) return 0;
+  if (!currentBilling(reminderSettings).overdue || isPaidFn(f)) return 0;
   return reminderSettings.lateFeeType === "percent"
     ? Math.round(f.copay * (reminderSettings.lateFeePercent / 100) * 100) / 100
     : reminderSettings.lateFeeAmount;
+}
+// Sample daycare only: gives each family a payment history (last three months
+// paid, this month per its sample "received" flag) so billing and receipts
+// have something real to show.
+function withDemoPayments(f) {
+  if (f.paidPeriods || !f.copay || f.copay <= 0) return f;
+  const now = startOfToday();
+  const keys = [3, 2, 1, 0].map((back) => periodKeyOf(new Date(now.getFullYear(), now.getMonth() - back, 1)));
+  const history = (amount, method, paidNow) => Object.fromEntries(keys.filter((k, i) => i < 3 || paidNow).map((k) => {
+    const [y, m] = k.split("-").map(Number);
+    return [k, { date: `${pad2(m)}/03/${y}`, method, amount }];
+  }));
+  if (f.copaySplit) {
+    return { ...f, copaySplit: f.copaySplit.map((sp) => ({ ...sp, paidPeriods: history(sp.amount, sp.method || "Zelle", sp.received === true) })) };
+  }
+  return { ...f, paidPeriods: history(f.copay, f.paymentMethod || "Zelle", f.paymentReceived !== false) };
+}
+// A subsidized child's status comes from their record: any required form
+// missing (the recertification form only near renewal) → Docs needed;
+// authorization ends within 30 days → Expiring soon;
+// already ended → Expired; otherwise Active.
+function subsidyStatus(f) {
+  if (!f.subsidized) return f.status;
+  const left = daysUntil(f.authEnd);
+  // The recertification application only matters once renewal is coming up
+  // (within 30 days), and that window already shows as Expiring soon.
+  if ((f.forms || []).some((x) => x.status !== "submitted" && x.id !== "recert")) return "docs-needed";
+  if (left < 0) return "expired";
+  if (left <= 30) return "expiring";
+  return "active";
 }
 function groupByHousehold(families) {
   const map = new Map();
@@ -683,6 +739,7 @@ function defaultChildDocs(child) {
 }
 const STATUS_META = {
   active: { label: "Active", fg: C.teal, bg: C.tealTint },
+  expired: { label: "Expired", fg: C.danger, bg: C.dangerTint },
   expiring: { label: "Expiring soon", fg: C.amber, bg: C.amberTint },
   "docs-needed": { label: "Docs needed", fg: C.danger, bg: C.dangerTint },
 };
@@ -902,6 +959,45 @@ const T = {
   "These appear when you set a child's schedule. A child can also have their own drop-off and pick-up times.": { es: "Aparecen al configurar el horario de un niño. Un niño también puede tener sus propias horas de entrega y recogida.", tl: "Lumalabas ang mga ito kapag nagse-set ng iskedyul ng bata. Puwede ring may sariling oras ng hatid at sundo ang bata.", zh: "设置孩子时段时会显示这些选项。孩子也可以有自己的接送时间。", vi: "Các mục này hiện khi bạn đặt lịch cho trẻ. Trẻ cũng có thể có giờ đưa đón riêng.", ko: "아이 일정을 설정할 때 표시됩니다. 아이별 등·하원 시간도 따로 정할 수 있습니다." },
   "Their own drop-off and pick-up times (optional)": { es: "Sus propias horas de entrega y recogida (opcional)", tl: "Sariling oras ng hatid at sundo (opsyonal)", zh: "其专属接送时间（可选）", vi: "Giờ đưa đón riêng (tùy chọn)", ko: "아이별 등·하원 시간 (선택)" },
   "Hours": { es: "Horario", tl: "Oras", zh: "时间", vi: "Giờ", ko: "시간" },
+  "Expired": { es: "Vencido", tl: "Expired", zh: "已过期", vi: "Đã hết hạn", ko: "만료됨" },
+  "billed monthly": { es: "se cobra mensualmente", tl: "sinisingil buwan-buwan", zh: "按月收费", vi: "tính theo tháng", ko: "월별 청구" },
+  "past due since": { es: "vencido desde", tl: "lampas na mula", zh: "逾期自", vi: "quá hạn từ", ko: "연체 시작일" },
+  "Overdue": { es: "Vencido", tl: "Overdue", zh: "逾期", vi: "Quá hạn", ko: "연체" },
+  "undo": { es: "deshacer", tl: "i-undo", zh: "撤销", vi: "hoàn tác", ko: "취소" },
+  "Record": { es: "Registrar", tl: "Itala ang", zh: "记录", vi: "Ghi nhận", ko: "기록:" },
+  "payment": { es: "pago", tl: "bayad", zh: "付款", vi: "thanh toán", ko: "납부" },
+  "Record payment": { es: "Registrar pago", tl: "Itala ang bayad", zh: "记录付款", vi: "Ghi nhận thanh toán", ko: "납부 기록" },
+  "Payment history": { es: "Historial de pagos", tl: "Kasaysayan ng bayad", zh: "付款记录", vi: "Lịch sử thanh toán", ko: "납부 내역" },
+  "Childcare payment receipt": { es: "Recibo de pago de cuidado infantil", tl: "Resibo ng bayad sa childcare", zh: "托育付款收据", vi: "Biên lai thanh toán giữ trẻ", ko: "보육료 납부 영수증" },
+  "Issued": { es: "Emitido", tl: "Inisyu", zh: "开具于", vi: "Ngày lập", ko: "발행일" },
+  "Paid by": { es: "Pagado por", tl: "Binayaran ni", zh: "付款人", vi: "Người trả", ko: "납부자" },
+  "Service": { es: "Servicio", tl: "Serbisyo", zh: "服务", vi: "Dịch vụ", ko: "서비스" },
+  "Licensed family child care": { es: "Cuidado infantil familiar con licencia", tl: "Lisensyadong family child care", zh: "持证家庭托育", vi: "Giữ trẻ gia đình có giấy phép", ko: "인가 가정 보육" },
+  "Month of care": { es: "Mes de cuidado", tl: "Buwan ng pag-aalaga", zh: "托育月份", vi: "Tháng chăm sóc", ko: "보육 월" },
+  "Date paid": { es: "Fecha de pago", tl: "Petsa ng bayad", zh: "付款日期", vi: "Ngày trả", ko: "납부일" },
+  "Method": { es: "Método", tl: "Paraan", zh: "方式", vi: "Hình thức", ko: "방법" },
+  "Total paid": { es: "Total pagado", tl: "Kabuuang binayaran", zh: "合计已付", vi: "Tổng đã trả", ko: "납부 합계" },
+  "Provider tax ID (EIN or SSN)": { es: "Número fiscal del proveedor (EIN o SSN)", tl: "Tax ID ng provider (EIN o SSN)", zh: "托育者税号（EIN 或 SSN）", vi: "Mã số thuế người giữ trẻ (EIN hoặc SSN)", ko: "운영자 납세번호 (EIN 또는 SSN)" },
+  "Amounts are what the family paid out of pocket. Subsidy payments from agencies are not included.": { es: "Los montos son lo que la familia pagó de su bolsillo. No incluye pagos de subsidio de agencias.", tl: "Ang mga halaga ay binayaran mismo ng pamilya. Hindi kasama ang bayad ng subsidy mula sa agency.", zh: "金额为家庭自付部分，不含机构的补助款。", vi: "Số tiền là phần gia đình tự trả, không gồm khoản trợ cấp từ cơ quan.", ko: "금액은 가족 본인 부담분이며 기관 보조금은 포함되지 않습니다." },
+  "Annual childcare payment summary": { es: "Resumen anual de pagos de cuidado infantil", tl: "Taunang buod ng bayad sa childcare", zh: "年度托育付款汇总", vi: "Tổng kết thanh toán giữ trẻ hằng năm", ko: "연간 보육료 납부 요약" },
+  "No payments recorded yet — record them in Tuition.": { es: "Aún no hay pagos registrados; regístrelos en Colegiatura.", tl: "Wala pang naitalang bayad — itala sa Tuition.", zh: "尚无付款记录——请在学费中记录。", vi: "Chưa ghi nhận thanh toán — hãy ghi trong Học phí.", ko: "납부 기록이 없습니다 — 수업료에서 기록하세요." },
+  "No out-of-pocket payments for this child.": { es: "Sin pagos de bolsillo para este niño.", tl: "Walang out-of-pocket na bayad para sa batang ito.", zh: "该孩子没有自付款项。", vi: "Trẻ này không có khoản tự trả.", ko: "이 아이는 본인 부담금이 없습니다." },
+  "No payments recorded yet.": { es: "Aún no hay pagos registrados.", tl: "Wala pang naitalang bayad.", zh: "尚无付款记录。", vi: "Chưa ghi nhận thanh toán.", ko: "납부 기록이 없습니다." },
+  "Year summary": { es: "Resumen del año", tl: "Buod ng taon", zh: "年度汇总", vi: "Tổng kết năm", ko: "연간 요약" },
+  "Tuition": { es: "Colegiatura", tl: "Tuition", zh: "学费", vi: "Học phí", ko: "수업료" },
+  "partly paid": { es: "pagado en parte", tl: "bahagyang bayad", zh: "部分已付", vi: "trả một phần", ko: "일부 납부" },
+  "program": { es: "programa", tl: "programa", zh: "个项目", vi: "chương trình", ko: "개 프로그램" },
+  "programs": { es: "programas", tl: "programa", zh: "个项目", vi: "chương trình", ko: "개 프로그램" },
+  "No subsidized families yet. Choose Subsidy when you enroll a family and they'll appear here.": { es: "Aún no hay familias con subsidio. Elija Subsidio al inscribir una familia y aparecerá aquí.", tl: "Wala pang pamilyang may subsidy. Piliin ang Subsidy kapag nag-enroll ka ng pamilya at lalabas sila rito.", zh: "尚无受补助家庭。登记家庭时选择“补助”，即会显示在这里。", vi: "Chưa có gia đình nhận trợ cấp. Chọn Trợ cấp khi ghi danh, gia đình sẽ hiện ở đây.", ko: "아직 보조금 가족이 없습니다. 등록 시 보조금을 선택하면 여기에 표시됩니다." },
+  "No end date": { es: "Sin fecha de fin", tl: "Walang petsa ng pagtatapos", zh: "无截止日期", vi: "Không có ngày kết thúc", ko: "종료일 없음" },
+  "Updates from forms and authorization dates": { es: "Se actualiza según formularios y fechas de autorización", tl: "Nag-a-update batay sa forms at petsa ng awtorisasyon", zh: "根据表格和授权日期自动更新", vi: "Tự cập nhật theo giấy tờ và ngày ủy quyền", ko: "서류와 승인 날짜에 따라 갱신" },
+  "Add the end date so Alaga can remind you before it expires.": { es: "Agregue la fecha de fin para que Alaga le avise antes de que venza.", tl: "Ilagay ang petsa ng pagtatapos para mapaalalahanan ka ng Alaga bago ito mag-expire.", zh: "请添加截止日期，Alaga 会在到期前提醒您。", vi: "Thêm ngày kết thúc để Alaga nhắc bạn trước khi hết hạn.", ko: "만료 전에 알림을 받으려면 종료일을 입력하세요." },
+  "No forms tracked for this family.": { es: "No se rastrean formularios para esta familia.", tl: "Walang forms na sinusubaybayan para sa pamilyang ito.", zh: "该家庭没有跟踪的表格。", vi: "Không theo dõi giấy tờ nào cho gia đình này.", ko: "이 가족은 추적 중인 서류가 없습니다." },
+  "Mark missing": { es: "Marcar como faltante", tl: "Markahan na kulang", zh: "标记为缺失", vi: "Đánh dấu còn thiếu", ko: "누락으로 표시" },
+  "Email the family for missing forms": { es: "Pedir a la familia los formularios faltantes", tl: "I-email ang pamilya para sa kulang na forms", zh: "邮件请家庭补交表格", vi: "Email gia đình xin giấy tờ còn thiếu", ko: "누락 서류 요청 이메일" },
+  "Caseworker": { es: "Trabajador social", tl: "Caseworker", zh: "个案工作者", vi: "Nhân viên phụ trách", ko: "담당 사례관리자" },
+  "Caseworker name": { es: "Nombre del trabajador social", tl: "Pangalan ng caseworker", zh: "个案工作者姓名", vi: "Tên nhân viên phụ trách", ko: "담당자 이름" },
+  "Email caseworker": { es: "Escribir al trabajador social", tl: "I-email ang caseworker", zh: "邮件联系个案工作者", vi: "Email nhân viên phụ trách", ko: "담당자에게 이메일" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -3076,7 +3172,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
     languagesOffered: initialProviderInfo.languagesOffered || ["English"],
     subsidyPrograms: initialProviderInfo.subsidyPrograms || [],
   });
-  const baseFamilies = isEmpty ? [] : FAMILIES;
+  const baseFamilies = isEmpty ? [] : FAMILIES.map(withDemoPayments);
   const baseProspects = isEmpty ? [] : PROSPECTIVE_FAMILIES_DEFAULT;
   const baseExpenses = isEmpty ? [] : EXPENSES_DEFAULT;
   const baseCompDocsRaw = isEmpty ? COMPLIANCE_DOCS.map((d) => ({ ...d, status: "missing", date: undefined })) : COMPLIANCE_DOCS;
@@ -3285,7 +3381,8 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
 
   // A withdrawn child stays on the roster through their last day, then moves to Deenrolled.
   const families = [...baseFamilies, ...addedFamilies].map((f) => mergeFam(f, overrides))
-    .filter((f) => !(f.departedOn && daysUntil(f.departedOn) < 0));
+    .filter((f) => !(f.departedOn && daysUntil(f.departedOn) < 0))
+    .map((f) => (f.subsidized ? { ...f, status: subsidyStatus(f) } : f));
   const subsidizedFamsForBadge = families.filter((f) => f.subsidized);
   const expiringCount = subsidizedFamsForBadge.filter((f) => f.status !== "active" && !dismissedNotices.includes(f.id)).length;
   const unreadMessagesCount = threads.filter((th) => th.unread).length;
@@ -3344,7 +3441,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
           <main style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
             <Topbar screen={screen} setScreen={setScreen} provider={providerInfo} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} />
             <div style={{ flex: 1, overflowY: "auto", padding: "28px 32px 60px" }}>
-              {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} />}
+              {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} reminderSettings={reminderSettings} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
               {screen === "families" && <Families families={families} provider={providerInfo} onWithdraw={withdrawChild} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
               {screen === "bookings" && <Bookings families={families} schedule={fullWeek(weeklySchedule)} closures={closures} provider={providerInfo} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
@@ -3708,7 +3805,7 @@ function computeSetupItems({ providerInfo, weeklySchedule, staff, families, pros
   ];
 }
 
-function Dashboard({ setScreen, goToFamily, families, checklist, saveChecklist, dismissedNotices, saveDismissedNotices, tuitionRates, saveTuitionRates, weeklySchedule, staff, prospects, compDocs, providerInfo, flexCareRequests, saveFlexCare, goToSubsidyFamily, goToFlexRequest, meetingMode = false }) {
+function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, families, checklist, saveChecklist, dismissedNotices, saveDismissedNotices, tuitionRates, saveTuitionRates, weeklySchedule, staff, prospects, compDocs, providerInfo, flexCareRequests, saveFlexCare, goToSubsidyFamily, goToFlexRequest, meetingMode = false }) {
   const t = useT();
   const [newTask, setNewTask] = useState("");
   const [collapsed, setCollapsed] = useState({});
@@ -3729,7 +3826,10 @@ function Dashboard({ setScreen, goToFamily, families, checklist, saveChecklist, 
   const childrenMissingDocs = families
     .map((f) => ({ f, missing: defaultChildDocs(f).filter((d) => d.status === "missing").length }))
     .filter((x) => x.missing > 0);
-  const totalAttention = expiring.length + flexNeedingAttention.length + docsNeedingAttention.length + childrenMissingDocs.length;
+  // Tuition still unpaid after this period's due date.
+  const billingNow = reminderSettings ? currentBilling(reminderSettings) : null;
+  const overdueTuition = billingNow && billingNow.overdue ? families.filter((f) => f.copay > 0 && !paidFor(f, billingNow.key)) : [];
+  const totalAttention = expiring.length + flexNeedingAttention.length + docsNeedingAttention.length + childrenMissingDocs.length + overdueTuition.length;
   const approveFlexInline = (id) => saveFlexCare(flexCareRequests.map((r) => (r.id === id ? { ...r, status: "approved" } : r)));
 
   const setupItems = computeSetupItems({ providerInfo, weeklySchedule, staff, families, prospects, compDocs });
@@ -3810,6 +3910,19 @@ function Dashboard({ setScreen, goToFamily, families, checklist, saveChecklist, 
                       {t("Review")}
                     </button>
                   )}
+                </div>
+              ))}
+              {overdueTuition.length > 0 && (
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Tuition")} · {billingNow.label}</div>
+              )}
+              {overdueTuition.map((f) => (
+                <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
+                  <button onClick={openTuition} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
+                    <Dot c="#F2A28A" /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {meetingMode ? "••••" : money(f.copay)} {partlyPaidFor(f, billingNow.key) ? t("partly paid") : t("unpaid")} · {t("due")} {billingNow.dueDate}</span>
+                  </button>
+                  <button onClick={openTuition} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                    {t("Review")}
+                  </button>
                 </div>
               ))}
               {docsNeedingAttention.length > 0 && (
@@ -6239,6 +6352,49 @@ function printHTML(html) {
   }, 150);
 }
 
+// Childcare payment receipt for FSA / HSA / dependent-care claims: one or more
+// paid months for one child, with the provider's details and signature line.
+// The provider writes their tax ID by hand rather than storing it here.
+function printReceipt(f, payments, { provider = {}, t = (x) => x, title } = {}) {
+  const total = payments.reduce((s, p) => s + p.total, 0);
+  const rows = payments.map((p) => `<tr><td>${escapeHTML(periodLabel(p.key))}</td><td>${escapeHTML(p.entries.map((e) => e.date).join(", "))}</td><td>${escapeHTML(p.entries.map((e) => `${f.copaySplit ? `${e.who}: ` : ""}${t(e.method || "")}`).join(", "))}</td><td class="num">${escapeHTML(money(p.total))}</td></tr>`).join("");
+  printHTML(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHTML(title || t("Childcare payment receipt"))} — ${escapeHTML(f.child)}</title>
+    <style>
+      @page { size: letter; margin: 0.7in; }
+      body { font-family: Georgia, "Times New Roman", serif; color: #111; font-size: 11pt; margin: 0; }
+      header { display: flex; justify-content: space-between; border-bottom: 2px solid #111; padding-bottom: 8px; margin-bottom: 18px; }
+      .provider { font-weight: bold; font-size: 13pt; } .muted { color: #444; font-size: 9.5pt; } .right { text-align: right; }
+      .title { font-weight: bold; text-transform: uppercase; letter-spacing: 0.06em; font-size: 10pt; }
+      table { width: 100%; border-collapse: collapse; } th, td { text-align: left; padding: 6px; }
+      .info th { width: 30%; color: #444; font-weight: normal; }
+      .pay { margin-top: 16px; } .pay th { border-bottom: 1.5px solid #111; font-size: 9.5pt; } .pay td { border-bottom: 1px solid #ccc; }
+      .num { text-align: right; } .total td { font-weight: bold; border-top: 2px solid #111; border-bottom: none; }
+      .sign { display: flex; gap: 30px; margin-top: 40px; font-size: 9.5pt; color: #444; } .sign div { flex: 1; }
+      .line { display: block; border-bottom: 1px solid #111; height: 26px; margin-bottom: 4px; }
+      footer { margin-top: 26px; font-size: 8.5pt; color: #444; }
+    </style></head><body>
+      <header>
+        <div><div class="provider">${escapeHTML(provider.name || "")}</div><div class="muted">${escapeHTML([provider.lic, provider.city].filter(Boolean).join(" · "))}</div></div>
+        <div class="right"><div class="title">${escapeHTML(title || t("Childcare payment receipt"))}</div><div class="muted">${escapeHTML(t("Issued"))} ${escapeHTML(todayMDY())}</div></div>
+      </header>
+      <table class="info">
+        <tr><th>${escapeHTML(t("Child"))}</th><td>${escapeHTML(f.child)}</td></tr>
+        <tr><th>${escapeHTML(t("Paid by"))}</th><td>${escapeHTML((f.parents || []).map((p) => p.name).join(", ") || f.parent || "")}</td></tr>
+        <tr><th>${escapeHTML(t("Service"))}</th><td>${escapeHTML(t("Licensed family child care"))}</td></tr>
+      </table>
+      <table class="pay">
+        <tr><th>${escapeHTML(t("Month of care"))}</th><th>${escapeHTML(t("Date paid"))}</th><th>${escapeHTML(t("Method"))}</th><th class="num">${escapeHTML(t("Amount"))}</th></tr>
+        ${rows}
+        <tr class="total"><td colspan="3">${escapeHTML(t("Total paid"))}</td><td class="num">${escapeHTML(money(total))}</td></tr>
+      </table>
+      <div class="sign">
+        <div><span class="line"></span>${escapeHTML(t("Provider signature"))}</div>
+        <div><span class="line"></span>${escapeHTML(t("Provider tax ID (EIN or SSN)"))}</div>
+      </div>
+      <footer>${escapeHTML(t("Amounts are what the family paid out of pocket. Subsidy payments from agencies are not included."))}</footer>
+    </body></html>`);
+}
+
 // Monthly sign-in / sign-out sheets, one page per child, for subsidy
 // attendance records. Pre-fills times already recorded in Bookings and leaves
 // signature lines for parents. Days the child isn't scheduled, or the program
@@ -6682,7 +6838,26 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
   const refundTotal = refunds.reduce((s, r) => s + r.amount, 0);
   const incomeTotal = subsidyTotal + copayTotal + privateTotal + flexCareTotal;
   const owingFamilies = families.filter((f) => f.copay > 0);
-  const unpaidCount = families.filter((f) => f.copay > 0 && f.paymentReceived === false).length;
+  const billing = currentBilling(reminderSettings);
+  const unpaidFamilies = owingFamilies.filter((f) => !paidFor(f, billing.key));
+  const unpaidCount = unpaidFamilies.length;
+  // Record (or undo) a payment for the current billing period.
+  const recordPayment = (f, method, splitIndex = null) => {
+    const amount = splitIndex == null ? effectiveTuition(f, families, tuitionRates).discounted : f.copaySplit[splitIndex].amount;
+    const entry = { date: todayMDY(), method, amount };
+    if (splitIndex == null) {
+      const pp = { ...(f.paidPeriods || {}) };
+      if (pp[billing.key]) delete pp[billing.key]; else pp[billing.key] = entry;
+      onSave(f.id, { paidPeriods: pp, paymentMethod: method });
+    } else {
+      onSave(f.id, { copaySplit: f.copaySplit.map((sp, i) => {
+        if (i !== splitIndex) return sp;
+        const pp = { ...(sp.paidPeriods || {}) };
+        if (pp[billing.key]) delete pp[billing.key]; else pp[billing.key] = { ...entry, method: sp.method || method };
+        return { ...sp, paidPeriods: pp };
+      }) });
+    }
+  };
 
   const exportTuition = () => downloadCSV("alaga-tuition-subsidies.csv",
     ["Child", "Household", "Type", "Program", "Monthly coverage", "Parent amount"],
@@ -6705,12 +6880,18 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
   const splitDraftTotal = splitDraft.reduce((s, r) => s + (Number(r.amount) || 0), 0);
   const saveSplitDraft = (f) => {
     const entry = { date: todayMDY(), change: `Switched to split pay — ${splitDraft.map((r) => `${r.parent} ${money(Number(r.amount) || 0)}/mo`).join(", ")}` };
-    onSave(f.id, { copaySplit: splitDraft.map((r) => ({ parent: r.parent, amount: Number(r.amount) || 0 })), paymentArrangementHistory: [entry, ...(f.paymentArrangementHistory || [])] });
+    const previous = f.copaySplit || [];
+    onSave(f.id, { copaySplit: splitDraft.map((r, i) => {
+      const prior = previous.find((x) => x.parent === r.parent) || previous[i];
+      return { parent: r.parent, amount: Number(r.amount) || 0, method: prior?.method, paidPeriods: prior?.paidPeriods || (i === 0 ? f.paidPeriods : undefined) };
+    }), paymentArrangementHistory: [entry, ...(f.paymentArrangementHistory || [])] });
     setEditingSplitId(null);
   };
   const consolidateToSinglePayer = (f) => {
     const entry = { date: todayMDY(), change: `Consolidated to single payer` };
-    onSave(f.id, { copaySplit: null, paymentArrangementHistory: [entry, ...(f.paymentArrangementHistory || [])] });
+    // Months either guardian paid stay on record for the single payer.
+    const merged = Object.assign({}, ...(f.copaySplit || []).map((sp) => sp.paidPeriods || {}), f.paidPeriods || {});
+    onSave(f.id, { copaySplit: null, paidPeriods: merged, paymentArrangementHistory: [entry, ...(f.paymentArrangementHistory || [])] });
     setEditingSplitId(null);
   };
 
@@ -6737,9 +6918,9 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
         <>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
             <Kpi label={t("Subsidy reimbursement / mo")} value={meetingMode ? "••••" : money(subsidyTotal)} sub={t("from agencies")} accent={C.teal} />
-            <Kpi label={t("Private tuition / mo")} value={meetingMode ? "••••" : money(privateTotal)} sub={t("autopay")} />
+            <Kpi label={t("Private tuition / mo")} value={meetingMode ? "••••" : money(privateTotal)} sub={t("billed monthly")} />
             <Kpi label={t("Split-pay families")} value={String(splitFamilies.length)} sub={t("payment divided between guardians")} accent={C.sky} />
-            <Kpi label={t("Unpaid this period")} value={String(unpaidCount)} sub={t("tap a family below to update")} accent={unpaidCount > 0 ? C.amber : C.teal} />
+            <Kpi label={`${t("Unpaid")} · ${billing.label}`} value={`${unpaidCount} / ${owingFamilies.length}`} sub={billing.overdue && unpaidCount ? `${t("past due since")} ${billing.dueDate}` : `${t("due")} ${billing.dueDate}`} accent={unpaidCount > 0 ? (billing.overdue ? C.danger : C.amber) : C.teal} />
           </div>
           <Card title={t("Tuition rates & sibling discount")} icon={DollarSign}
             right={<button onClick={() => setRatesOpen(!ratesOpen)} style={{ background: "none", border: "none", color: C.inkSoft }}>
@@ -6804,16 +6985,17 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
           {(() => {
             const rows = families.map((f) => {
               const method = f.paymentMethod || "Not set";
-              const received = f.paymentReceived !== false;
               const tuitionInfo = effectiveTuition(f, families, tuitionRates);
-              const isFamilyPaid = f.copaySplit ? f.copaySplit.every((s) => s.received === true) : received;
+              const isFamilyPaid = paidFor(f, billing.key);
+              const received = isFamilyPaid;
               const appliedLateFee = computeLateFee(f, reminderSettings, () => isFamilyPaid);
               const totalAmount = tuitionInfo.discounted + appliedLateFee;
               const type = f.copaySplit ? t("Split") : f.subsidized ? t("Subsidized") : t("Private");
-              const statusRank = f.copay <= 0 ? 2 : isFamilyPaid ? 2 : (f.copaySplit && f.copaySplit.some((s) => s.received)) ? 1 : 0;
-              const statusLabel = f.copay <= 0 ? "—" : isFamilyPaid ? t("Paid") : (f.copaySplit && f.copaySplit.some((s) => s.received)) ? t("Partial") : t("Unpaid");
+              const partial = partlyPaidFor(f, billing.key);
+              const statusRank = f.copay <= 0 ? 2 : isFamilyPaid ? 2 : partial ? 1 : 0;
+              const statusLabel = f.copay <= 0 ? "—" : isFamilyPaid ? t("Paid") : partial ? t("Partial") : billing.overdue ? t("Overdue") : t("Unpaid");
               const paymentLabel = f.copaySplit ? f.copaySplit.map((s) => t(s.method || PAYMENT_METHODS[0])).join(", ") : t(method === "Not set" ? PAYMENT_METHODS[0] : method);
-              const dueDate = f.copay > 0 ? nextDueDateFrom(reminderSettings) : "—";
+              const dueDate = f.copay > 0 ? billing.dueDate : "—";
               return { f, method, received, tuitionInfo, appliedLateFee, totalAmount, type, statusRank, statusLabel, paymentLabel, dueDate, isFamilyPaid };
             });
             const sorters = {
@@ -6855,8 +7037,9 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                   <tbody>
                     {sorted.map(({ f, tuitionInfo, appliedLateFee, totalAmount, type, statusLabel, statusRank, paymentLabel, dueDate }) => {
                       const isOpen = expandedPayment === f.id;
-                      const statusColor = statusRank === 2 ? C.teal : statusRank === 1 ? C.amber : f.copay > 0 ? C.amber : C.inkSoft;
-                      const statusBg = statusRank === 2 ? C.tealTint : statusRank === 1 ? C.amberTint : f.copay > 0 ? C.amberTint : "#EFEBE1";
+                      const late = statusRank === 0 && f.copay > 0 && billing.overdue;
+                      const statusColor = statusRank === 2 ? C.teal : late ? C.danger : statusRank === 1 || f.copay > 0 ? C.amber : C.inkSoft;
+                      const statusBg = statusRank === 2 ? C.tealTint : late ? C.dangerTint : statusRank === 1 || f.copay > 0 ? C.amberTint : "#EFEBE1";
                       return (
                         <React.Fragment key={f.id}>
                           <tr onClick={() => setExpandedPayment(isOpen ? null : f.id)} style={{ borderBottom: isOpen ? "none" : `1px solid ${C.line}`, cursor: "pointer" }}>
@@ -6955,11 +7138,11 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                       {f.copay > 0 && !f.copaySplit && (
                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                           <Select value={f.paymentMethod === "Not set" || !f.paymentMethod ? PAYMENT_METHODS[0] : f.paymentMethod} onChange={(v) => onSave(f.id, { paymentMethod: v })} options={PAYMENT_METHODS} labels={PAYMENT_METHODS.map((m) => t(m))} />
-                          <button onClick={() => onSave(f.id, { paymentReceived: !(f.paymentReceived !== false) })} style={{
+                          <button onClick={() => recordPayment(f, f.paymentMethod && f.paymentMethod !== "Not set" ? f.paymentMethod : PAYMENT_METHODS[0])} style={{
                             display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "none",
-                            background: f.paymentReceived !== false ? C.tealTint : C.amberTint, color: f.paymentReceived !== false ? C.tealDark : "#7A5620", fontSize: 11, fontWeight: 700,
+                            background: received ? C.tealTint : C.teal, color: received ? C.tealDark : "#fff", fontSize: 11, fontWeight: 700,
                           }}>
-                            {f.paymentReceived !== false ? <CheckCircle2 size={12} /> : <Clock size={12} />} {f.paymentReceived !== false ? t("Received this period") : t("Not yet received")}
+                            {received ? <><CheckCircle2 size={12} /> {t("Paid")} {f.paidPeriods?.[billing.key]?.date} · {t("undo")}</> : <><Plus size={12} /> {t("Record")} {billing.label} {t("payment")}</>}
                           </button>
                         </div>
                       )}
@@ -6967,7 +7150,7 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                         <div style={{ display: "flex", flexDirection: "column", gap: 8, paddingTop: 4, borderTop: `1px solid ${C.line}` }}>
                           {f.copaySplit.map((s, i) => {
                             const splitMethod = s.method || PAYMENT_METHODS[0];
-                            const splitReceived = s.received === true;
+                            const splitReceived = !!s.paidPeriods?.[billing.key];
                             const updateSplit = (fields) => {
                               const next = f.copaySplit.map((x, xi) => (xi === i ? { ...x, ...fields } : x));
                               onSave(f.id, { copaySplit: next });
@@ -6976,16 +7159,27 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                               <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                                 <span style={{ fontSize: 11.5, fontWeight: 700, color: C.ink, minWidth: 90 }}>{s.parent}</span>
                                 <Select value={splitMethod} onChange={(v) => updateSplit({ method: v })} options={PAYMENT_METHODS} labels={PAYMENT_METHODS.map((m) => t(m))} />
-                                <button onClick={() => updateSplit({ received: !splitReceived })} style={{
+                                <span style={{ fontSize: 11.5, color: C.inkSoft }}>{money(s.amount)}</span>
+                                <button onClick={() => recordPayment(f, splitMethod, i)} style={{
                                   display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "none",
-                                  background: splitReceived ? C.tealTint : C.amberTint, color: splitReceived ? C.tealDark : "#7A5620", fontSize: 11, fontWeight: 700,
+                                  background: splitReceived ? C.tealTint : C.teal, color: splitReceived ? C.tealDark : "#fff", fontSize: 11, fontWeight: 700,
                                 }}>
-                                  {splitReceived ? <CheckCircle2 size={12} /> : <Clock size={12} />} {splitReceived ? t("Received") : t("Not yet received")}
+                                  {splitReceived ? <><CheckCircle2 size={12} /> {t("Paid")} {s.paidPeriods[billing.key].date} · {t("undo")}</> : <><Plus size={12} /> {t("Record payment")}</>}
                                 </button>
                               </div>
                             );
                           })}
                         </div>
+                      )}
+                      {f.copay > 0 && paymentsOf(f).length > 0 && (
+                        <details style={{ fontSize: 11.5, color: C.inkSoft }}>
+                          <summary style={{ cursor: "pointer", fontWeight: 600 }}>{t("Payment history")} ({paymentsOf(f).length})</summary>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 3, marginTop: 6, paddingLeft: 4 }}>
+                            {paymentsOf(f).slice(0, 12).map((p) => (
+                              <div key={p.key}>{periodLabel(p.key)} — {money(p.total)} · {p.entries.map((e) => `${f.copaySplit ? `${e.who}: ` : ""}${t(e.method || "")} ${e.date}`).join(", ")}</div>
+                            ))}
+                          </div>
+                        </details>
                       )}
                                 </div>
                               </td>
@@ -7118,7 +7312,7 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                     </div>
                   </div>
                 )}
-                {reminderSettings.enabled && owingFamilies.map((f) => {
+                {reminderSettings.enabled && owingFamilies.filter((f) => !paidFor(f, periodKeyOf(parseAnyDate(nextDueDateFrom(reminderSettings))))).map((f) => {
                   const universalDueDate = nextDueDateFrom(reminderSettings);
                   const daysToDue = daysUntil(universalDueDate);
                   return (
@@ -7145,14 +7339,14 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
         <Card title={t("Tuition receipts by child")} icon={FileText} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("For families' FSA / HSA reimbursement")}</span>}>
           {families.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No families enrolled yet.")}</div>}
           {families.map((f) => {
-            const months = ["May 2026", "June 2026", "July 2026"];
-            const amount = f.copay;
+            // Receipts come only from payments actually recorded in Tuition.
+            const paid = paymentsOf(f);
+            const months = paid.slice(0, 6);
             const fsa = f.fsaHsa && f.fsaHsa.enrolled ? f.fsaHsa : null;
-            const dl = (month) => downloadCSV(`alaga-receipt-${f.child.replace(/\s+/g, "-").toLowerCase()}-${month.replace(" ", "-")}.csv`,
-              ["Provider", "Child", "Service period", "Amount paid", "Purpose"],
-              [[providerInfo?.name || "", f.child, month, amount.toFixed(2), "Childcare tuition / copay — for FSA or HSA reimbursement submission"]]);
-            const dlYear = () => downloadCSV(`alaga-annual-summary-${f.child.replace(/\s+/g, "-").toLowerCase()}.csv`,
-              ["Provider", "Child", "Month", "Amount paid"], months.map((m) => [providerInfo?.name || "", f.child, m, amount.toFixed(2)]));
+            const year = String(startOfToday().getFullYear());
+            const thisYear = paid.filter((p) => p.key.startsWith(year));
+            const dl = (p) => printReceipt(f, [p], { provider: providerInfo, t });
+            const dlYear = () => printReceipt(f, thisYear.slice().reverse(), { provider: providerInfo, t, title: `${t("Annual childcare payment summary")} ${year}` });
             return (
               <div key={f.id} style={{ padding: "12px 18px", borderBottom: `1px solid ${C.line}` }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8, flexWrap: "wrap", gap: 6 }}>
@@ -7160,14 +7354,17 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                     <Dot c={f.color} /><b style={{ fontSize: 13.5 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>· {f.householdName}</span>
                     {fsa && <Pill label={`${t(fsa.accountType)}${fsa.employerName ? ` · ${fsa.employerName}` : ""}`} fg={C.teal} bg={C.tealTint} />}
                   </div>
-                  <button onClick={dlYear} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>
-                    <Download size={12} /> {t("Annual summary")}
-                  </button>
+                  {thisYear.length > 0 && (
+                    <button onClick={dlYear} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>
+                      <Printer size={12} /> {t("Annual summary")} {year}
+                    </button>
+                  )}
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                  {months.map((m) => (
-                    <button key={m} onClick={() => dl(m)} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: C.tealDark, background: C.tealTint, border: "none", borderRadius: 8, padding: "7px 11px" }}>
-                      <Download size={12} /> {m}
+                  {months.length === 0 && <span style={{ fontSize: 12, color: C.inkSoft }}>{f.copay > 0 ? t("No payments recorded yet — record them in Tuition.") : t("No out-of-pocket payments for this child.")}</span>}
+                  {months.map((p) => (
+                    <button key={p.key} onClick={() => dl(p)} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: C.tealDark, background: C.tealTint, border: "none", borderRadius: 8, padding: "7px 11px" }}>
+                      <Printer size={12} /> {periodLabel(p.key)} · {money(p.total)}
                     </button>
                   ))}
                 </div>
@@ -9553,7 +9750,7 @@ function Subsidy({ families: allFamilies, openFamId, setOpenFamId, loaded, meeti
         </div>
       )}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
-        <Kpi label={t("Subsidized families")} value={String(families.length)} sub={t("across 4 programs")} accent={C.teal} />
+        <Kpi label={t("Subsidized families")} value={String(families.length)} sub={`${t("across")} ${new Set(families.map((f) => f.programId)).size} ${t(new Set(families.map((f) => f.programId)).size === 1 ? "program" : "programs")}`} accent={C.teal} />
         <Kpi label={t("Monthly coverage")} value={money(totalCoverage)} sub={t("reimbursed by agencies")} accent={C.teal} />
         <Kpi label={t("Parent out-of-pocket")} value={money(totalCopay)} sub={t("in copays / mo")} accent={C.amber} />
         <Kpi label={t("Needs attention")} value={String(attention)} sub={t("expiring or missing docs")} accent={C.danger} />
@@ -9561,6 +9758,9 @@ function Subsidy({ families: allFamilies, openFamId, setOpenFamId, loaded, meeti
 
       <Card title={t("Families on subsidy")} icon={ShieldCheck}
         right={<span style={{ fontSize: 12, color: C.inkSoft }}>{t("Tap a family for full eligibility detail")}</span>}>
+        {families.length === 0 && (
+          <div style={{ padding: "30px 24px", textAlign: "center", fontSize: 12.5, color: C.inkSoft }}>{t("No subsidized families yet. Choose Subsidy when you enroll a family and they'll appear here.")}</div>
+        )}
         {families.map((f) => {
           const prog = programOf(f.programId);
           const dLeft = daysUntil(f.authEnd);
@@ -9574,7 +9774,7 @@ function Subsidy({ families: allFamilies, openFamId, setOpenFamId, loaded, meeti
                 <div style={{ width: 34, height: 34, borderRadius: "50%", background: f.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 13, flexShrink: 0 }}>{f.child[0]}</div>
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontWeight: 600, fontSize: 14 }}>{f.child} <span style={{ fontWeight: 400, color: C.inkSoft }}>· {f.parent}</span></div>
-                  <div style={{ fontSize: 12, color: C.inkSoft }}>{prog.label} · {prog.agency}</div>
+                  <div style={{ fontSize: 12, color: C.inkSoft }}>{prog?.label} · {prog?.agency}</div>
                 </div>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 18, flexShrink: 0 }}>
@@ -9589,7 +9789,7 @@ function Subsidy({ families: allFamilies, openFamId, setOpenFamId, loaded, meeti
                 <div style={{ textAlign: "right", minWidth: 92 }}>
                   <Pill {...trStatus(t, f.status)} />
                   <div style={{ fontSize: 11, color: dLeft <= 14 ? C.danger : C.inkSoft, marginTop: 3 }}>
-                    {dLeft > 0 ? `${t("Expires in")} ${dLeft}d` : t("expired")}
+                    {!f.authEnd || dLeft === 9999 ? t("No end date") : dLeft >= 0 ? `${t("Expires in")} ${dLeft}d` : t("expired")}
                   </div>
                 </div>
                 <ChevronRight size={16} color={C.inkSoft} />
@@ -9612,6 +9812,22 @@ function SubsidyDrawer({ fam, onClose, onSave, logAccess }) {
   const [sessionLength, setSessionLength] = useState(fam.sessionLength);
   const [authEnd, setAuthEnd] = useState(fam.authEnd);
   const [notes, setNotes] = useState(fam.notes);
+  const [forms, setForms] = useState(fam.forms || []);
+  const [caseworker, setCaseworker] = useState(fam.caseworker || { name: "", phone: "", email: "" });
+  // Marking a form on file (or back to missing) saves right away; the family's
+  // status follows automatically.
+  const toggleForm = (id) => {
+    const next = forms.map((x) => (x.id === id ? (x.status === "submitted" ? { id, status: "missing" } : { id, status: "submitted", date: todayMDY() }) : x));
+    setForms(next);
+    onSave(fam.id, { forms: next });
+  };
+  const missingForms = forms.filter((x) => x.status !== "submitted").map((x) => FORM_TEMPLATES.find((tpl) => tpl.id === x.id)?.name || x.id);
+  const requestMissing = () => {
+    const to = (fam.parents || []).map((p) => p.email).filter(Boolean).join(",");
+    const subject = encodeURIComponent(`Subsidy paperwork for ${fam.child}`);
+    const body = encodeURIComponent(`Hi,\n\nTo keep ${fam.child}'s ${prog?.label || "subsidy"} authorization current, we still need:\n\n${missingForms.map((m) => `- ${m}`).join("\n")}\n\nPlease send these when you can.\n\nThank you,`);
+    window.location.href = `mailto:${encodeURIComponent(to)}?subject=${subject}&body=${body}`;
+  };
   const [saveState, setSaveState] = useState("idle"); // idle | saving | saved | error
   const prog = programOf(programId);
   const dLeft = daysUntil(authEnd);
@@ -9621,7 +9837,7 @@ function SubsidyDrawer({ fam, onClose, onSave, logAccess }) {
   const handleSave = async () => {
     setSaveState("saving");
     const ok = await onSave(fam.id, {
-      providerType, programId, coverageAmount, copay, sessionsApproved, sessionLength, authEnd, notes,
+      providerType, programId, coverageAmount, copay, sessionsApproved, sessionLength, authEnd, notes, caseworker,
     });
     setSaveState(ok ? "saved" : "error");
     if (ok) setTimeout(() => setSaveState("idle"), 1800);
@@ -9647,12 +9863,8 @@ function SubsidyDrawer({ fam, onClose, onSave, logAccess }) {
               <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>{fam.child}</div>
               <div style={{ fontSize: 12.5, color: C.inkSoft }}>{fam.age} · parent/guardian {fam.parent}</div>
               <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 8 }}>
-                <Pill {...trStatus(t, fam.status)} />
-                {fam.status !== "active" && (
-                  <button onClick={markResolved} disabled={resolving} style={{ display: "flex", alignItems: "center", gap: 5, padding: "4px 9px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11, fontWeight: 600, color: C.teal }}>
-                    <CheckCircle2 size={11} /> {resolving ? t("Saving…") : t("Mark resolved")}
-                  </button>
-                )}
+                <Pill {...trStatus(t, subsidyStatus({ ...fam, forms, authEnd }))} />
+                <span style={{ fontSize: 11, color: C.inkSoft }}>{t("Updates from forms and authorization dates")}</span>
               </div>
             </div>
           </div>
@@ -9684,7 +9896,7 @@ function SubsidyDrawer({ fam, onClose, onSave, logAccess }) {
             </Field>
             <Field label={t("Subsidy program")}>
               <Select value={programId} onChange={setProgramId} options={PROGRAMS.map((p) => p.id)} labels={PROGRAMS.map((p) => p.label)} />
-              <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 4 }}>{t("Administering agency:")} {prog.agency}</div>
+              <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 4 }}>{t("Administering agency:")} {prog?.agency}</div>
             </Field>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -9710,19 +9922,19 @@ function SubsidyDrawer({ fam, onClose, onSave, logAccess }) {
                 <div style={{ flex: 1, border: `1px solid ${C.line}`, borderRadius: 9, padding: "9px 11px", fontSize: 13, color: C.inkSoft, background: "#FAF8F3" }}>{fam.authStart}</div>
                 <span style={{ color: C.inkSoft, fontSize: 12 }}>{t("to")}</span>
                 <div style={{ flex: 1, position: "relative" }}>
-                  <input value={authEnd} onChange={(e) => setAuthEnd(e.target.value)}
-                    style={{ width: "100%", border: `1px solid ${C.line}`, borderRadius: 9, padding: "9px 11px", fontSize: 13, color: C.ink }} />
+                  <DateField value={/^\d{2}\/\d{2}\/\d{4}$/.test(authEnd || "") ? authEnd : ""} onChange={(v) => setAuthEnd(v || "")} placeholder={t("From the authorization letter")} />
                 </div>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 6, fontSize: 11.5, color: dLeft <= 14 ? C.danger : C.inkSoft }}>
-                <Clock size={12} /> {dLeft > 0 ? `${t("Expires in")} ${dLeft} ${t("days — plan recertification")}` : t("Authorization has expired")}
+                <Clock size={12} /> {!authEnd || dLeft === 9999 ? t("Add the end date so Alaga can remind you before it expires.") : dLeft >= 0 ? `${t("Expires in")} ${dLeft} ${t("days — plan recertification")}` : t("Authorization has expired")}
               </div>
             </Field>
           </Section>
 
           {/* forms & eligibility documents */}
           <Section title={t("Forms & eligibility documents")} icon={FileText}>
-            {fam.forms.map((f) => {
+            {forms.length === 0 && <div style={{ fontSize: 12.5, color: C.inkSoft }}>{t("No forms tracked for this family.")}</div>}
+            {forms.map((f) => {
               const meta = trForm(t, f.status);
               const name = FORM_TEMPLATES.find((tpl) => tpl.id === f.id).name;
               return (
@@ -9736,28 +9948,31 @@ function SubsidyDrawer({ fam, onClose, onSave, logAccess }) {
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
                     <span style={{ fontSize: 11.5, fontWeight: 700, color: meta.color }}>{meta.label}</span>
-                    {f.status === "submitted" ? (
-                      <IconBtn icon={Download} title={t("Download")} />
-                    ) : (
-                      <IconBtn icon={Upload} title="Upload / request" accent />
-                    )}
+                    <button onClick={() => toggleForm(f.id)} style={{ padding: "4px 9px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11, fontWeight: 600, color: f.status === "submitted" ? C.inkSoft : C.tealDark }}>
+                      {f.status === "submitted" ? t("Mark missing") : t("Mark on file")}
+                    </button>
                   </div>
                 </div>
               );
             })}
-            <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-              <SmallBtn icon={Printer} label={t("Print eligibility notice")} />
-              <SmallBtn icon={Send} label={t("Request missing docs")} />
-            </div>
+            {missingForms.length > 0 && (
+              <button onClick={requestMissing} style={{ marginTop: 12, alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12, fontWeight: 600, color: C.tealDark }}>
+                <Send size={13} /> {t("Email the family for missing forms")} ({missingForms.length})
+              </button>
+            )}
           </Section>
 
           {/* agency contact */}
-          <Section title={t("Agency contact")} icon={Phone}>
-            <div style={{ fontSize: 13, fontWeight: 600 }}>{prog.agency}</div>
-            <div style={{ display: "flex", gap: 16, marginTop: 6, fontSize: 12.5, color: C.inkSoft }}>
-              <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Phone size={13} /> (213) 555-0148</span>
-              <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Mail size={13} /> cases@{prog.agency.toLowerCase().replace(/[^a-z]/g, "")}.org</span>
+          <Section title={t("Caseworker")} icon={Phone}>
+            <div style={{ fontSize: 12, color: C.inkSoft, marginBottom: 8 }}>{prog?.agency}</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              <input value={caseworker.name} onChange={(e) => setCaseworker({ ...caseworker, name: e.target.value })} placeholder={t("Caseworker name")} style={{ ...inputStyle, gridColumn: "1 / -1" }} />
+              <input value={caseworker.phone} onChange={(e) => setCaseworker({ ...caseworker, phone: e.target.value })} placeholder={t("Phone")} style={inputStyle} />
+              <input value={caseworker.email} onChange={(e) => setCaseworker({ ...caseworker, email: e.target.value })} placeholder={t("Email")} style={inputStyle} />
             </div>
+            {caseworker.email && (
+              <a href={`mailto:${caseworker.email}?subject=${encodeURIComponent(`${fam.child} — ${prog?.label || "subsidy"}`)}`} style={{ marginTop: 8, display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: C.teal }}><Mail size={12} /> {t("Email caseworker")}</a>
+            )}
           </Section>
 
           {/* notes */}
@@ -9991,14 +10206,10 @@ function ParentApp({ families, onExit, showBackToProvider = true, status, setChi
     setMyDraft("");
   };
 
-  const monthlyAmount = fam.copay;
-  const receiptMonths = ["May 2026", "June 2026", "July 2026"];
-  const downloadReceipt = (month) => downloadCSV(`alaga-receipt-${fam.child.replace(/\s+/g, "-").toLowerCase()}-${month.replace(" ", "-")}.csv`,
-    ["Provider", "Child", "Service period", "Amount paid", "Purpose"],
-    [[provider.name, fam.child, month, monthlyAmount.toFixed(2), "Childcare tuition / copay — for FSA or HSA reimbursement submission"]]);
-  const downloadYearSummary = () => downloadCSV(`alaga-annual-summary-${fam.child.replace(/\s+/g, "-").toLowerCase()}.csv`,
-    ["Provider", "Child", "Month", "Amount paid"],
-    receiptMonths.map((m) => [provider.name, fam.child, m, monthlyAmount.toFixed(2)]));
+  // Receipts list only months the provider has recorded as paid.
+  const paidMonths = paymentsOf(fam).slice(0, 12);
+  const downloadReceipt = (p) => printReceipt(fam, [p], { provider, t });
+  const downloadYearSummary = () => printReceipt(fam, paidMonths.filter((p) => p.key.startsWith(String(startOfToday().getFullYear()))).reverse(), { provider, t, title: `${t("Annual childcare payment summary")} ${startOfToday().getFullYear()}` });
 
   return (
     <div style={{ flex: 1, minHeight: "100vh", display: "flex", flexDirection: "column", background: C.cream }}>
@@ -10211,14 +10422,15 @@ function ParentApp({ families, onExit, showBackToProvider = true, status, setChi
                 <FileText size={15} color={C.teal} /> {t("Receipts for reimbursement")}
               </div>
               <button onClick={downloadYearSummary} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, fontWeight: 700, color: C.tealDark, background: "none", border: "none" }}>
-                <Download size={12} /> {t("Download all")}
+                <Printer size={12} /> {t("Year summary")}
               </button>
             </div>
-            {receiptMonths.map((m) => (
-              <div key={m} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 18px", borderBottom: `1px solid ${C.line}` }}>
+            {paidMonths.length === 0 && <div style={{ padding: "12px 18px", fontSize: 12.5, color: C.inkSoft }}>{t("No payments recorded yet.")}</div>}
+            {paidMonths.map((m) => (
+              <div key={m.key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 18px", borderBottom: `1px solid ${C.line}` }}>
                 <div>
-                  <div style={{ fontSize: 13.5, fontWeight: 500 }}>{m}</div>
-                  <div style={{ fontSize: 11.5, color: C.inkSoft }}>{money(monthlyAmount)} {t("paid")}</div>
+                  <div style={{ fontSize: 13.5, fontWeight: 500 }}>{periodLabel(m.key)}</div>
+                  <div style={{ fontSize: 11.5, color: C.inkSoft }}>{money(m.total)} {t("paid")} · {m.entries.map((e) => e.date).join(", ")}</div>
                 </div>
                 <button onClick={() => downloadReceipt(m)} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: C.tealDark, background: C.tealTint, border: "none", borderRadius: 8, padding: "7px 11px" }}>
                   <Download size={13} /> {t("Download")}
