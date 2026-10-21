@@ -8,7 +8,7 @@ import {
   Pencil, Plus, Trash2, Split, ArrowLeft, Shield, FileCheck, HeartPulse, Flame, Eye,
   Moon, Contrast, Type, ZapOff, Lock, ListChecks, UserPlus, Settings as Gear, LifeBuoy, Paperclip, Image as ImageIcon,
   ArrowRight, Building2, Rocket, PlayCircle, UploadCloud, TrendingUp, Wand2, UserCog, Scale, ArrowLeftRight, Volume2, Square, Hourglass,
-  Wallet, Baby, Cookie, Puzzle, SprayCan, Palette,
+  Wallet, Baby, Cookie, Puzzle, SprayCan, Palette, LogOut, Check,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell,
@@ -303,7 +303,7 @@ const COMPLIANCE_DOCS = demoDates([
 
 const MESSAGE_THREADS = [
   {
-    id: 1, name: "Maria Reyes (Sofia)", unread: true,
+    id: 1, name: "Maria Reyes (Sofia)", household: "reyes", unread: true,
     messages: [
       { from: "them", text: "Hi! Sofia's recert paperwork mentioned an attendance sheet — could I get a copy?", time: "Yesterday, 6:40 PM" },
       { from: "me", text: "Of course — I'll have it ready at drop-off tomorrow.", time: "Yesterday, 7:02 PM" },
@@ -311,20 +311,20 @@ const MESSAGE_THREADS = [
     ],
   },
   {
-    id: 2, name: "Crystal Stairs — Denise T.", unread: true,
+    id: 2, name: "Crystal Stairs — Denise T.", kind: "agency", unread: true,
     messages: [
       { from: "them", text: "Recert packet for Villanueva bridge case attached — please review and confirm receipt.", time: "Yesterday" },
     ],
   },
   {
-    id: 3, name: "Mark Cruz (Leo)", unread: false,
+    id: 3, name: "Mark Cruz (Leo)", household: "cruz", unread: false,
     messages: [
       { from: "me", text: "Just confirming — Leo's schedule moves to part-day starting in September?", time: "Mon, 8:15 AM" },
       { from: "them", text: "Confirmed — moving to part-day starting September.", time: "Mon, 9:02 AM" },
     ],
   },
   {
-    id: 4, name: "Divine Bautista (Amara)", unread: false,
+    id: 4, name: "Divine Bautista (Amara)", household: "bautista", unread: false,
     messages: [
       { from: "them", text: "Amara did great at pickup today, thank you for the patience this week!", time: "Fri" },
       { from: "me", text: "She's doing wonderfully — see you Monday!", time: "Fri" },
@@ -1058,6 +1058,90 @@ const T = {
   "Parent not yet notified": { es: "Padre aún no notificado", tl: "Hindi pa naabisuhan ang magulang", zh: "尚未通知家长", vi: "Chưa báo phụ huynh", ko: "부모 미통지" },
   "Parent notified": { es: "Padre notificado", tl: "Naabisuhan ang magulang", zh: "已通知家长", vi: "Đã báo phụ huynh", ko: "부모 통지 완료" },
   "Incident history": { es: "Historial de incidentes", tl: "Kasaysayan ng insidente", zh: "事件记录", vi: "Lịch sử sự cố", ko: "사고 기록" },
+  "Account": { es: "Cuenta", tl: "Account", zh: "账户", vi: "Tài khoản", ko: "계정" },
+  "Add a family who left before you used Alaga": { es: "Agregar una familia que se fue antes de usar Alaga", tl: "Magdagdag ng pamilyang umalis bago mo ginamit ang Alaga", zh: "添加在使用Alaga之前离开的家庭", vi: "Thêm gia đình đã rời đi trước khi bạn dùng Alaga", ko: "Alaga 사용 전에 떠난 가족 추가" },
+  "Add a past family": { es: "Agregar una familia anterior", tl: "Magdagdag ng dating pamilya", zh: "添加过往家庭", vi: "Thêm gia đình cũ", ko: "이전 가족 추가" },
+  "Add it so receipts are complete": { es: "Agrégala para que los recibos estén completos", tl: "Idagdag para kumpleto ang mga resibo", zh: "请添加，以便收据信息完整", vi: "Thêm để biên nhận đầy đủ", ko: "영수증 정보를 완성하려면 추가하세요" },
+  "Add past family": { es: "Agregar familia anterior", tl: "Idagdag ang dating pamilya", zh: "添加过往家庭", vi: "Thêm gia đình cũ", ko: "이전 가족 추가" },
+  "Add your licensed capacity in Settings": { es: "Agrega tu capacidad autorizada en Configuración", tl: "Idagdag ang lisensyadong kapasidad sa Settings", zh: "请在设置中添加许可容量", vi: "Thêm sức chứa được cấp phép trong Cài đặt", ko: "설정에서 허가 정원을 추가하세요" },
+  "Address": { es: "Dirección", tl: "Address", zh: "地址", vi: "Địa chỉ", ko: "주소" },
+  "Agency": { es: "Agencia", tl: "Ahensya", zh: "机构", vi: "Cơ quan", ko: "기관" },
+  "All": { es: "Todos", tl: "Lahat", zh: "全部", vi: "Tất cả", ko: "전체" },
+  "Ask us to delete your account": { es: "Pídenos eliminar tu cuenta", tl: "Hilingin sa amin na burahin ang account mo", zh: "请求我们删除您的账户", vi: "Yêu cầu chúng tôi xóa tài khoản", ko: "계정 삭제 요청" },
+  "Attendance": { es: "Asistencia", tl: "Attendance", zh: "出勤", vi: "Điểm danh", ko: "출석" },
+  "Business email": { es: "Correo del negocio", tl: "Email ng negosyo", zh: "商务邮箱", vi: "Email doanh nghiệp", ko: "사업장 이메일" },
+  "Business phone": { es: "Teléfono del negocio", tl: "Telepono ng negosyo", zh: "商务电话", vi: "Điện thoại doanh nghiệp", ko: "사업장 전화" },
+  "Cancel your subscription": { es: "Cancela tu suscripción", tl: "I-cancel ang subscription", zh: "取消订阅", vi: "Hủy gói đăng ký", ko: "구독 취소" },
+  "Canceled — access continues through": { es: "Cancelada — el acceso continúa hasta", tl: "Na-cancel — tuloy ang access hanggang", zh: "已取消 — 可使用至", vi: "Đã hủy — vẫn truy cập được đến", ko: "취소됨 — 이용 가능 기한" },
+  "Change password": { es: "Cambiar contraseña", tl: "Palitan ang password", zh: "更改密码", vi: "Đổi mật khẩu", ko: "비밀번호 변경" },
+  "Children's documents": { es: "Documentos de los niños", tl: "Mga dokumento ng mga bata", zh: "儿童文件", vi: "Giấy tờ của trẻ", ko: "아동 서류" },
+  "Closure notice": { es: "Aviso de cierre", tl: "Abiso ng pagsasara", zh: "停业通知", vi: "Thông báo nghỉ", ko: "휴원 안내" },
+  "Couldn't send the email. Try again in a moment.": { es: "No se pudo enviar el correo. Inténtalo de nuevo en un momento.", tl: "Hindi naipadala ang email. Subukan ulit mamaya.", zh: "无法发送邮件，请稍后再试。", vi: "Không gửi được email. Vui lòng thử lại sau.", ko: "이메일을 보내지 못했습니다. 잠시 후 다시 시도하세요." },
+  "Current children with guardians, schedules and funding.": { es: "Niños actuales con tutores, horarios y financiamiento.", tl: "Kasalukuyang mga bata kasama ang guardian, iskedyul at pondo.", zh: "当前儿童及其监护人、时间安排和资金来源。", vi: "Trẻ hiện tại cùng người giám hộ, lịch và nguồn chi trả.", ko: "현재 아동과 보호자, 일정, 비용 부담 정보." },
+  "Download .zip": { es: "Descargar .zip", tl: "I-download ang .zip", zh: "下载 .zip", vi: "Tải .zip", ko: "ZIP 다운로드" },
+  "Download a copy of your records": { es: "Descarga una copia de tus registros", tl: "I-download ang kopya ng mga record mo", zh: "下载记录副本", vi: "Tải bản sao hồ sơ", ko: "기록 사본 다운로드" },
+  "Download again": { es: "Descargar de nuevo", tl: "I-download ulit", zh: "再次下载", vi: "Tải lại", ko: "다시 다운로드" },
+  "Download everything": { es: "Descargar todo", tl: "I-download lahat", zh: "全部下载", vi: "Tải tất cả", ko: "전체 다운로드" },
+  "Download reports": { es: "Descargar informes", tl: "I-download ang mga ulat", zh: "下载报告", vi: "Tải báo cáo", ko: "보고서 다운로드" },
+  "Download your records first": { es: "Primero descarga tus registros", tl: "I-download muna ang mga record mo", zh: "请先下载记录", vi: "Hãy tải hồ sơ trước", ko: "먼저 기록을 다운로드하세요" },
+  "Download your records first (step 1).": { es: "Primero descarga tus registros (paso 1).", tl: "I-download muna ang mga record mo (hakbang 1).", zh: "请先下载记录（第1步）。", vi: "Hãy tải hồ sơ trước (bước 1).", ko: "먼저 기록을 다운로드하세요 (1단계)." },
+  "Downloaded": { es: "Descargado", tl: "Na-download", zh: "已下载", vi: "Đã tải", ko: "다운로드 완료" },
+  "Enrollment roster": { es: "Lista de inscripción", tl: "Listahan ng naka-enroll", zh: "在册名单", vi: "Danh sách ghi danh", ko: "등록 명단" },
+  "Enter a number from 1 to": { es: "Ingresa un número del 1 al", tl: "Maglagay ng numero mula 1 hanggang", zh: "请输入1到", vi: "Nhập số từ 1 đến", ko: "1부터 다음 사이의 숫자 입력:" },
+  "for this license type.": { es: "para este tipo de licencia.", tl: "para sa uri ng lisensyang ito.", zh: "之间的数字（此执照类型）。", vi: "cho loại giấy phép này.", ko: "(이 면허 유형 기준)." },
+  "Enter your licensed capacity.": { es: "Ingresa tu capacidad autorizada.", tl: "Ilagay ang lisensyadong kapasidad.", zh: "请输入许可容量。", vi: "Nhập sức chứa được cấp phép.", ko: "허가 정원을 입력하세요." },
+  "Every child's days, times in and out, and absences — for subsidy agencies and your records.": { es: "Días, horas de entrada y salida y ausencias de cada niño — para agencias de subsidio y tus registros.", tl: "Mga araw, oras ng pasok at labas, at absent ng bawat bata — para sa subsidy agency at sa records mo.", zh: "每个孩子的出勤日、入园离园时间和缺勤 — 供补助机构和您存档。", vi: "Ngày, giờ đến/về và vắng mặt của từng trẻ — cho cơ quan trợ cấp và hồ sơ của bạn.", ko: "아동별 출석일, 등·하원 시간, 결석 — 보조금 기관 제출 및 기록용." },
+  "Every expense you've logged, by category.": { es: "Cada gasto registrado, por categoría.", tl: "Lahat ng gastos na naitala mo, ayon sa kategorya.", zh: "您记录的所有支出，按类别。", vi: "Mọi chi phí đã ghi, theo danh mục.", ko: "기록한 모든 지출(분류별)." },
+  "Every incident you've logged, with how parents were notified.": { es: "Cada incidente registrado y cómo se notificó a los padres.", tl: "Lahat ng insidenteng naitala, at paano naabisuhan ang magulang.", zh: "您记录的所有事件及家长通知方式。", vi: "Mọi sự cố đã ghi và cách báo phụ huynh.", ko: "기록한 모든 사고와 부모 통지 방법." },
+  "Every tuition and copay payment, with who paid and how — for your accountant.": { es: "Cada pago de colegiatura y copago, con quién pagó y cómo — para tu contador.", tl: "Lahat ng bayad sa tuition at copay, kung sino at paano nagbayad — para sa accountant mo.", zh: "每笔学费和自付款，包括付款人和方式 — 供会计使用。", vi: "Mọi khoản học phí và đồng chi trả, ai trả và trả thế nào — cho kế toán.", ko: "모든 수업료·본인부담금 결제와 납부자, 결제 방법 — 회계사용." },
+  "Full — no openings": { es: "Lleno — sin vacantes", tl: "Puno — walang bakante", zh: "已满 — 无空位", vi: "Đã đủ — không còn chỗ", ko: "정원 마감 — 자리 없음" },
+  "opening": { es: "vacante", tl: "bakante", zh: "个空位", vi: "chỗ trống", ko: "자리" },
+  "openings": { es: "vacantes", tl: "bakante", zh: "个空位", vi: "chỗ trống", ko: "자리" },
+  "Go step by step — nothing is deleted until the last step": { es: "Paso a paso — nada se elimina hasta el último paso", tl: "Isa-isang hakbang — walang buburahin hanggang sa huling hakbang", zh: "逐步进行 — 最后一步之前不会删除任何内容", vi: "Làm từng bước — không xóa gì cho đến bước cuối", ko: "단계별로 진행 — 마지막 단계 전까지 아무것도 삭제되지 않습니다" },
+  "Go to Plan & Billing": { es: "Ir a Plan y facturación", tl: "Pumunta sa Plan & Billing", zh: "前往套餐与账单", vi: "Đến Gói & Thanh toán", ko: "요금제 및 결제로 이동" },
+  "Incident log": { es: "Registro de incidentes", tl: "Talaan ng insidente", zh: "事件记录", vi: "Nhật ký sự cố", ko: "사고 기록" },
+  "Income & expenses by month": { es: "Ingresos y gastos por mes", tl: "Kita at gastos bawat buwan", zh: "每月收支", vi: "Thu chi theo tháng", ko: "월별 수입 및 지출" },
+  "Last sign-in": { es: "Último inicio de sesión", tl: "Huling pag-sign in", zh: "上次登录", vi: "Lần đăng nhập gần nhất", ko: "마지막 로그인" },
+  "Leaving Alaga": { es: "Dejar Alaga", tl: "Pag-alis sa Alaga", zh: "离开Alaga", vi: "Rời Alaga", ko: "Alaga 떠나기" },
+  "Let families know (optional)": { es: "Avisa a las familias (opcional)", tl: "Ipaalam sa mga pamilya (opsyonal)", zh: "通知家庭（可选）", vi: "Báo cho các gia đình (tùy chọn)", ko: "가족에게 알리기 (선택)" },
+  "Loading…": { es: "Cargando…", tl: "Naglo-load…", zh: "加载中…", vi: "Đang tải…", ko: "불러오는 중…" },
+  "Missing documents": { es: "Documentos faltantes", tl: "Kulang na dokumento", zh: "缺少的文件", vi: "Giấy tờ còn thiếu", ko: "누락 서류" },
+  "No account is signed in on this device.": { es: "No hay ninguna cuenta iniciada en este dispositivo.", tl: "Walang naka-sign in na account sa device na ito.", zh: "此设备上未登录任何账户。", vi: "Chưa có tài khoản nào đăng nhập trên thiết bị này.", ko: "이 기기에 로그인된 계정이 없습니다." },
+  "No conversations match.": { es: "Ninguna conversación coincide.", tl: "Walang tugmang usapan.", zh: "没有匹配的对话。", vi: "Không có cuộc trò chuyện phù hợp.", ko: "일치하는 대화가 없습니다." },
+  "No expenses logged this month.": { es: "No hay gastos registrados este mes.", tl: "Walang naitalang gastos ngayong buwan.", zh: "本月未记录支出。", vi: "Chưa ghi chi phí tháng này.", ko: "이번 달 기록된 지출이 없습니다." },
+  "Opens in Excel, Google Sheets or Numbers": { es: "Se abre en Excel, Google Sheets o Numbers", tl: "Bumubukas sa Excel, Google Sheets o Numbers", zh: "可在Excel、Google表格或Numbers中打开", vi: "Mở bằng Excel, Google Sheets hoặc Numbers", ko: "Excel, Google Sheets, Numbers에서 열 수 있습니다" },
+  "Password reset email sent to": { es: "Correo para restablecer contraseña enviado a", tl: "Naipadala ang email para sa pag-reset ng password sa", zh: "重置密码邮件已发送至", vi: "Đã gửi email đặt lại mật khẩu đến", ko: "비밀번호 재설정 이메일 발송:" },
+  "Payments received": { es: "Pagos recibidos", tl: "Mga natanggap na bayad", zh: "已收款项", vi: "Khoản đã nhận", ko: "받은 결제" },
+  "Payments received, refunds and logged expenses for each month — a starting point for taxes.": { es: "Pagos recibidos, reembolsos y gastos de cada mes — un punto de partida para los impuestos.", tl: "Mga natanggap na bayad, refund at gastos bawat buwan — panimula para sa buwis.", zh: "每月收款、退款和支出 — 报税的起点。", vi: "Khoản nhận, hoàn tiền và chi phí mỗi tháng — điểm khởi đầu để khai thuế.", ko: "월별 받은 결제, 환불, 지출 — 세금 준비의 출발점." },
+  "Pickup reminder": { es: "Recordatorio de recogida", tl: "Paalala sa pagsundo", zh: "接孩子提醒", vi: "Nhắc đón trẻ", ko: "픽업 알림" },
+  "Reports": { es: "Informes", tl: "Mga ulat", zh: "报告", vi: "Báo cáo", ko: "보고서" },
+  "Reports & your data": { es: "Informes y tus datos", tl: "Mga ulat at data mo", zh: "报告与数据", vi: "Báo cáo & dữ liệu", ko: "보고서 및 데이터" },
+  "Request account deletion": { es: "Solicitar eliminación de cuenta", tl: "Humiling ng pagbura ng account", zh: "申请删除账户", vi: "Yêu cầu xóa tài khoản", ko: "계정 삭제 요청" },
+  "Search messages…": { es: "Buscar mensajes…", tl: "Maghanap ng mensahe…", zh: "搜索消息…", vi: "Tìm tin nhắn…", ko: "메시지 검색…" },
+  "Send to all families": { es: "Enviar a todas las familias", tl: "Ipadala sa lahat ng pamilya", zh: "发送给所有家庭", vi: "Gửi cho tất cả gia đình", ko: "모든 가족에게 보내기" },
+  "Sent — see Messages": { es: "Enviado — ver Mensajes", tl: "Naipadala — tingnan ang Messages", zh: "已发送 — 查看消息", vi: "Đã gửi — xem Tin nhắn", ko: "전송됨 — 메시지 확인" },
+  "Sign out": { es: "Cerrar sesión", tl: "Mag-sign out", zh: "退出登录", vi: "Đăng xuất", ko: "로그아웃" },
+  "Signed in as": { es: "Sesión iniciada como", tl: "Naka-sign in bilang", zh: "当前登录", vi: "Đăng nhập với", ko: "로그인 계정" },
+  "Start from a template (optional)": { es: "Empezar con una plantilla (opcional)", tl: "Magsimula sa template (opsyonal)", zh: "从模板开始（可选）", vi: "Bắt đầu từ mẫu (tùy chọn)", ko: "템플릿으로 시작 (선택)" },
+  "Street address (shown on receipts and printouts)": { es: "Dirección (aparece en recibos e impresiones)", tl: "Address (makikita sa resibo at printout)", zh: "街道地址（显示在收据和打印件上）", vi: "Địa chỉ (hiện trên biên nhận và bản in)", ko: "주소 (영수증 및 인쇄물에 표시)" },
+  "This month's costs by category": { es: "Costos de este mes por categoría", tl: "Gastos ngayong buwan ayon sa kategorya", zh: "本月各类成本", vi: "Chi phí tháng này theo danh mục", ko: "이번 달 분류별 비용" },
+  "Unread": { es: "No leídos", tl: "Hindi pa nabasa", zh: "未读", vi: "Chưa đọc", ko: "읽지 않음" },
+  "View family": { es: "Ver familia", tl: "Tingnan ang pamilya", zh: "查看家庭", vi: "Xem gia đình", ko: "가족 보기" },
+  "When you withdraw a child in Families, they're added here automatically.": { es: "Cuando das de baja a un niño en Familias, se agrega aquí automáticamente.", tl: "Kapag nag-withdraw ka ng bata sa Families, awtomatiko siyang nadadagdag dito.", zh: "在“家庭”中办理退园后，会自动添加到这里。", vi: "Khi bạn cho trẻ nghỉ trong mục Gia đình, trẻ sẽ tự động được thêm vào đây.", ko: "가족 화면에서 퇴소 처리하면 자동으로 여기에 추가됩니다." },
+  "Which documents are on file for each child, and when they renew.": { es: "Qué documentos hay de cada niño y cuándo se renuevan.", tl: "Aling dokumento ang nakatala para sa bawat bata, at kailan ito magre-renew.", zh: "每个孩子已存档的文件及续期时间。", vi: "Giấy tờ nào đã có cho từng trẻ và khi nào cần gia hạn.", ko: "아동별 보관 서류와 갱신 시기." },
+  "Write a message": { es: "Escribir un mensaje", tl: "Sumulat ng mensahe", zh: "写消息", vi: "Viết tin nhắn", ko: "메시지 작성" },
+  "Yesterday": { es: "Ayer", tl: "Kahapon", zh: "昨天", vi: "Hôm qua", ko: "어제" },
+  "You're exploring a demo — no account is signed in.": { es: "Estás explorando una demostración — no hay ninguna cuenta iniciada.", tl: "Demo ang tinitingnan mo — walang naka-sign in na account.", zh: "您正在体验演示 — 未登录账户。", vi: "Bạn đang xem bản demo — chưa đăng nhập tài khoản.", ko: "데모를 보고 있습니다 — 로그인된 계정이 없습니다." },
+  "Your export downloaded as one .zip file — every report plus a complete backup.": { es: "Tu exportación se descargó como un archivo .zip — todos los informes y una copia completa.", tl: "Na-download ang export bilang isang .zip — lahat ng ulat at kumpletong backup.", zh: "导出已下载为一个 .zip 文件 — 包含所有报告和完整备份。", vi: "Bản xuất đã tải dưới dạng một tệp .zip — mọi báo cáo và bản sao đầy đủ.", ko: "내보내기가 .zip 파일 하나로 다운로드되었습니다 — 모든 보고서와 전체 백업 포함." },
+  "after payroll & this month's expenses": { es: "después de nómina y gastos del mes", tl: "pagkatapos ng payroll at gastos ngayong buwan", zh: "扣除工资和本月支出后", vi: "sau lương và chi phí tháng này", ko: "급여 및 이번 달 지출 차감 후" },
+  "files": { es: "archivos", tl: "file", zh: "个文件", vi: "tệp", ko: "개 파일" },
+  "Deletion is permanent. Without a request, a canceled account becomes a read-only archive after 90 days.": { es: "La eliminación es permanente. Sin una solicitud, una cuenta cancelada pasa a ser un archivo de solo lectura después de 90 días.", tl: "Permanente ang pagbura. Kung walang hiling, magiging read-only archive ang na-cancel na account pagkalipas ng 90 araw.", zh: "删除是永久性的。如未申请，已取消的账户将在90天后变为只读存档。", vi: "Xóa là vĩnh viễn. Nếu không yêu cầu, tài khoản đã hủy sẽ thành kho lưu trữ chỉ đọc sau 90 ngày.", ko: "삭제는 영구적입니다. 요청하지 않으면 취소된 계정은 90일 후 읽기 전용 보관 상태가 됩니다." },
+  "Request sent. The Alaga team will confirm by email before anything is deleted — you can follow it in Support.": { es: "Solicitud enviada. El equipo de Alaga confirmará por correo antes de eliminar algo — puedes seguirla en Soporte.", tl: "Naipadala ang hiling. Kukumpirmahin ng Alaga team sa email bago burahin ang anuman — masusundan mo ito sa Support.", zh: "申请已发送。Alaga团队会在删除前通过邮件确认 — 您可在“支持”中查看进度。", vi: "Đã gửi yêu cầu. Đội Alaga sẽ xác nhận qua email trước khi xóa — bạn có thể theo dõi trong Hỗ trợ.", ko: "요청이 전송되었습니다. 삭제 전에 Alaga 팀이 이메일로 확인합니다 — 지원에서 진행 상황을 볼 수 있습니다." },
+  "Closing your child care business? Also tell your Licensing Program Analyst and every subsidy agency you work with, and keep children's records for at least 3 years after care ends.": { es: "¿Vas a cerrar tu negocio de cuidado infantil? Avisa también a tu Analista del Programa de Licencias y a cada agencia de subsidio, y conserva los registros de los niños al menos 3 años después de terminar el cuidado.", tl: "Isasara mo ba ang child care business mo? Ipaalam din sa Licensing Program Analyst mo at sa bawat subsidy agency, at itago ang records ng mga bata nang hindi bababa sa 3 taon pagkatapos ng pag-aalaga.", zh: "要关闭托育业务？请同时通知您的执照项目分析员和所有合作的补助机构，并在照护结束后至少保留儿童记录3年。", vi: "Đóng cửa cơ sở giữ trẻ? Hãy báo cho Chuyên viên Cấp phép và mọi cơ quan trợ cấp bạn làm việc cùng, và giữ hồ sơ trẻ ít nhất 3 năm sau khi kết thúc chăm sóc.", ko: "보육 사업을 종료하시나요? 면허 담당관(LPA)과 협력 중인 모든 보조금 기관에도 알리고, 보육 종료 후 최소 3년간 아동 기록을 보관하세요." },
+  "Need a report for an agency, your accountant or taxes? Attendance, payments and year-end summaries download from Settings.": { es: "¿Necesitas un informe para una agencia, tu contador o impuestos? La asistencia, los pagos y los resúmenes anuales se descargan en Configuración.", tl: "Kailangan ng ulat para sa ahensya, accountant o buwis? Ang attendance, bayad at year-end summary ay nada-download sa Settings.", zh: "需要给机构、会计或报税用的报告？出勤、收款和年度汇总可在设置中下载。", vi: "Cần báo cáo cho cơ quan, kế toán hoặc thuế? Tải điểm danh, thanh toán và tổng kết năm trong Cài đặt.", ko: "기관, 회계사, 세금용 보고서가 필요하신가요? 출석, 결제, 연말 요약은 설정에서 다운로드하세요." },
+  "One .zip file with every report above, past families, staff, facility documents, messages, tours, 12 months of attendance, and a complete backup of your records. Uploaded scans and photos are listed by file name.": { es: "Un archivo .zip con todos los informes anteriores, familias anteriores, personal, documentos del centro, mensajes, visitas, 12 meses de asistencia y una copia completa de tus registros. Los escaneos y fotos subidos aparecen por nombre de archivo.", tl: "Isang .zip na may lahat ng ulat sa itaas, dating pamilya, staff, dokumento ng pasilidad, mensahe, tour, 12 buwang attendance, at kumpletong backup ng records mo. Nakalista ayon sa pangalan ang mga na-upload na scan at larawan.", zh: "一个 .zip 文件，包含上述所有报告、过往家庭、员工、机构文件、消息、参观记录、12个月出勤和完整的记录备份。已上传的扫描件和照片按文件名列出。", vi: "Một tệp .zip gồm mọi báo cáo trên, gia đình cũ, nhân viên, giấy tờ cơ sở, tin nhắn, lịch tham quan, 12 tháng điểm danh và bản sao đầy đủ hồ sơ. Bản quét và ảnh đã tải lên được liệt kê theo tên tệp.", ko: "위의 모든 보고서, 이전 가족, 직원, 시설 서류, 메시지, 견학, 12개월 출석, 전체 기록 백업이 담긴 .zip 파일 하나. 업로드한 스캔본과 사진은 파일 이름으로 표시됩니다." },
+  "Printable monthly sign-in sheets are in Bookings. Receipts for families are in Finances → Receipts.": { es: "Las hojas de entrada mensuales imprimibles están en Reservas. Los recibos para las familias están en Finanzas → Recibos.", tl: "Nasa Bookings ang printable na buwanang sign-in sheet. Nasa Finances → Receipts ang mga resibo ng pamilya.", zh: "可打印的月度签到表在“预订”中。家庭收据在“财务 → 收据”中。", vi: "Bảng ký đến/về hàng tháng có trong Đặt chỗ. Biên nhận cho gia đình ở Tài chính → Biên nhận.", ko: "인쇄용 월별 출석부는 예약에, 가족용 영수증은 재무 → 영수증에 있습니다." },
+  "Hi families — a quick update: we're changing how we keep records and messages. Starting [date], please reach us at [phone/email]. Thank you!": { es: "Hola, familias — una breve actualización: estamos cambiando cómo guardamos registros y mensajes. A partir del [fecha], comuníquense con nosotros al [teléfono/correo]. ¡Gracias!", tl: "Hi mga pamilya — maikling update: binabago namin kung paano namin itinatago ang records at mensahe. Simula [petsa], kontakin kami sa [telepono/email]. Salamat!", zh: "各位家长好——简短通知：我们将更改记录和消息的管理方式。自[日期]起，请通过[电话/邮箱]联系我们。谢谢！", vi: "Chào các gia đình — cập nhật nhanh: chúng tôi đang thay đổi cách lưu hồ sơ và tin nhắn. Từ [ngày], vui lòng liên hệ qua [điện thoại/email]. Cảm ơn!", ko: "가족 여러분 안녕하세요 — 기록과 메시지 관리 방식이 바뀝니다. [날짜]부터는 [전화/이메일]로 연락해 주세요. 감사합니다!" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -1866,15 +1950,56 @@ function buildBudgetHistory() {
 }
 const BUDGET_HISTORY = buildBudgetHistory();
 
-function downloadCSV(filename, headers, rows) {
-  const esc = (v) => `"${String(v).replace(/"/g, '""')}"`;
-  const csv = [headers.map(esc).join(","), ...rows.map((r) => r.map(esc).join(","))].join("\r\n");
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+function csvText(headers, rows) {
+  const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  return [headers.map(esc).join(","), ...rows.map((r) => r.map(esc).join(","))].join("\r\n");
+}
+function downloadBlob(filename, blob) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url; a.download = filename;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function downloadCSV(filename, headers, rows) {
+  downloadBlob(filename, new Blob([csvText(headers, rows)], { type: "text/csv;charset=utf-8;" }));
+}
+// A plain .zip (stored, not compressed) so a full export arrives as one file
+// instead of a burst of separate downloads the browser may block.
+function crc32(bytes) {
+  let crc = 0xFFFFFFFF;
+  for (let i = 0; i < bytes.length; i++) {
+    let c = (crc ^ bytes[i]) & 0xFF;
+    for (let k = 0; k < 8; k++) c = c & 1 ? (c >>> 1) ^ 0xEDB88320 : c >>> 1;
+    crc = (crc >>> 8) ^ c;
+  }
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+function makeZip(files) {
+  const enc = new TextEncoder();
+  const now = new Date();
+  const dosTime = (now.getHours() << 11) | (now.getMinutes() << 5) | Math.floor(now.getSeconds() / 2);
+  const dosDate = ((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+  const parts = [], central = [];
+  let offset = 0;
+  files.forEach((f) => {
+    const name = enc.encode(f.name), data = enc.encode(f.text), crc = crc32(data);
+    const h = new DataView(new ArrayBuffer(30));
+    h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+    h.setUint16(10, dosTime, true); h.setUint16(12, dosDate, true); h.setUint32(14, crc, true);
+    h.setUint32(18, data.length, true); h.setUint32(22, data.length, true); h.setUint16(26, name.length, true); h.setUint16(28, 0, true);
+    parts.push(new Uint8Array(h.buffer), name, data);
+    const c = new DataView(new ArrayBuffer(46));
+    c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(10, 0, true);
+    c.setUint16(12, dosTime, true); c.setUint16(14, dosDate, true); c.setUint32(16, crc, true); c.setUint32(20, data.length, true); c.setUint32(24, data.length, true);
+    c.setUint16(28, name.length, true); c.setUint32(42, offset, true);
+    central.push(new Uint8Array(c.buffer), name);
+    offset += 30 + name.length + data.length;
+  });
+  const cdSize = central.reduce((n, a) => n + a.length, 0);
+  const e = new DataView(new ArrayBuffer(22));
+  e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, cdSize, true); e.setUint32(16, offset, true);
+  return new Blob([...parts, ...central, new Uint8Array(e.buffer)], { type: "application/zip" });
 }
 
 const SESSION_TIMES = {
@@ -3266,6 +3391,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
     });
   }, []);
   const setScreen = navigateToScreen;
+  const [settingsTab, setSettingsTab] = useState("profile");
   const [openFamId, setOpenFamId] = useState(null);
   const [openHousehold, setOpenHousehold] = useState(null);
   const [flexHighlightId, setFlexHighlightId] = useState(null);
@@ -3292,7 +3418,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const [language, setLanguage] = useState(onboardingData?.language || "English");
   const [tier, saveTier] = usePersistentState(forceTier ? `platform-tier-demo-${forceTier}` : "platform-tier", forceTier || "simple");
   const tierLocked = !!forceTier;
-  const [billing, saveBilling] = usePersistentState("plan-billing", { cycle: "monthly", status: "active", canceledAt: null });
+  const [billing, saveBilling] = usePersistentState(`plan-billing${sfx}`, { cycle: "monthly", status: "active", canceledAt: null, startedOn: todayMDY() });
   const [payrollSettings, savePayrollSettings] = usePersistentState(`payroll-settings${sfx}`, { frequency: "Biweekly", nextPayDate: shiftDemoString("08/07/2026"), providerConnected: false, providerName: "" });
   const [flexCareRequests, saveFlexCare] = usePersistentState(`flex-care${sfx}`, isEmpty ? [] : FLEX_CARE_DEFAULT);
   const [refunds, saveRefunds] = usePersistentState(`refunds${sfx}`, isEmpty ? [] : REFUNDS_DEFAULT);
@@ -3521,11 +3647,13 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
               {screen === "payments" && <Finances careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} activeTab={financesTab} setActiveTab={setFinancesTab} />}
               {screen === "compliance" && <Compliance licensing={licensing} saveLicensing={saveLicensing} docs={compDocs} onSave={saveCompDoc} families={families} provider={providerInfo} staff={staff} setScreen={setScreen} incidents={incidents} saveIncidents={saveIncidents} mandatedNotes={mandatedNotes} saveMandatedNotes={saveMandatedNotes} />}
               {screen === "security" && <SecurityScreen accessLog={accessLog} isEmpty={isEmpty} />}
-              {screen === "messages" && <Messages threads={threads} saveThreads={saveThreads} families={families} staff={staff} />}
-              {screen === "analytics" && <Analytics families={families} expenses={expenses} prospects={prospects} staff={staff} alumni={alumni} addDeparture={addDeparture} refunds={refunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={setScreen} />}
+              {screen === "messages" && <Messages threads={threads} saveThreads={saveThreads} families={families} staff={staff} goToFamily={goToFamily} />}
+              {screen === "analytics" && <Analytics families={families} expenses={expenses} prospects={prospects} staff={staff} alumni={alumni} addDeparture={addDeparture} refunds={refunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={(id, opts) => { if (opts?.tab) setSettingsTab(opts.tab); setScreen(id); }} provider={providerInfo} />}
               {screen === "growth" && <GrowthScreen families={families} prospects={prospects} weeklySchedule={weeklySchedule} growth={growth} saveGrowth={saveGrowth} provider={providerInfo} staff={staff} />}
               {screen === "support" && <SupportScreen providerInfo={providerInfo} />}
-              {screen === "settings" && <SettingsScreen language={language} setLanguage={setLanguage} a11y={a11y} saveA11y={saveA11y} tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} billing={billing} saveBilling={saveBilling} families={families} staff={staff} expenses={expenses} compDocs={compDocs} provider={providerInfo} saveProviderInfo={saveProviderInfo} refunds={refunds} />}
+              {screen === "settings" && <SettingsScreen tab={settingsTab} setTab={setSettingsTab} language={language} setLanguage={setLanguage} a11y={a11y} saveA11y={saveA11y} tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} billing={billing} saveBilling={saveBilling} families={families} staff={staff} expenses={expenses} compDocs={compDocs} provider={providerInfo} saveProviderInfo={saveProviderInfo} refunds={refunds}
+                exportCtx={{ provider: providerInfo, licensing, families, allFamilies: [...baseFamilies, ...addedFamilies].map((f) => mergeFam(f, overrides)), alumni, staff, attendanceLog, schedule: fullWeek(weeklySchedule), closures, compDocs, incidents, expenses, refunds, threads, prospects }}
+                threads={threads} saveThreads={saveThreads} isDemo={!isEmpty || !!forceTier || meetingMode} onSignOut={onExitToLanding} />}
             </div>
           </main>
           {screen === "subsidy" && openFam && (
@@ -5805,7 +5933,7 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
     saveClosures([{ id: Date.now(), name: form.name.trim() || "Closed", dates, start: form.start, end, notified: form.notify }, ...closures]);
     if (form.notify && families && threads && saveThreads) {
       const names = [...new Set(families.map((f) => f.householdName))];
-      broadcastToFamilies(threads, saveThreads, names, `📅 We'll be closed ${dates}${form.name.trim() ? ` (${form.name.trim()})` : ""}. Please plan care accordingly.`, "announcement");
+      broadcastToFamilies(threads, saveThreads, names, `📅 We'll be closed ${dates}${form.name.trim() ? ` (${form.name.trim()})` : ""}. Please plan care accordingly.`, "announcement", families);
     }
     setForm({ start: "", end: "", name: "", notify: false });
   };
@@ -5825,7 +5953,7 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
       const messageText = `${emoji} ${lead ? `${lead} ` : ""}${eventForm.name} — ${dates}.` +
         (eventForm.bringItems ? ` 🎒 Please bring: ${eventForm.bringItems}.` : "") +
         (eventForm.notes ? ` ${eventForm.notes}` : "");
-      broadcastToFamilies(threads, saveThreads, names, messageText, "announcement");
+      broadcastToFamilies(threads, saveThreads, names, messageText, "announcement", families);
       tryBrowserNotify(`Sent to ${names.length} ${names.length === 1 ? "family" : "families"}`, `${emoji} ${eventForm.name}`);
     }
     setEventForm({ start: "", end: "", name: "", type: EVENT_TYPES[0], notify: false, notes: "", bringItems: "" });
@@ -6344,7 +6472,7 @@ function printChildSheets(children, { parents = [], provider = {}, t = (x) => x,
         <header>
           <div>
             <div class="provider">${escapeHTML(provider.name || "")}</div>
-            <div class="muted">${escapeHTML([provider.lic, provider.city].filter(Boolean).join(" · "))}</div>
+            <div class="muted">${escapeHTML([provider.lic, provider.city].filter(Boolean).join(" · "))}</div>${providerContact(provider) ? `<div class="muted">${escapeHTML(providerContact(provider))}</div>` : ""}
           </div>
           <div class="right">
             <div class="title">${escapeHTML(t("Child information sheet"))}</div>
@@ -6412,6 +6540,93 @@ function printChildSheets(children, { parents = [], provider = {}, t = (x) => x,
   printHTML(html);
 }
 // A hidden frame avoids pop-up blockers and leaves the app as it was.
+// Reports a provider can download any time (and that go into the full export).
+// Each returns { file, headers, rows }.
+const slugOf = (x) => String(x || "alaga").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase();
+const monthKeyOfDate = (mdy) => { const d = parseAnyDate(mdy); return d ? periodKeyOf(d) : ""; };
+const REPORTS = {
+  roster: (ctx) => ({
+    file: "enrollment-roster.csv",
+    headers: ["Child", "Household", "Parent / guardian", "Phone", "Email", "Classroom", "Start date", "Days of care", "Hours", "Funding", "Withdrawal date"],
+    rows: ctx.families.map((f) => [f.child, f.householdName, f.parents?.[0]?.name || f.parent, f.parents?.[0]?.phone || "", f.parents?.[0]?.email || "",
+      classroomOf(f.classroom)?.label || "", f.enrollDate, childDays(f).join(" "), childHours(f) || "",
+      f.subsidized ? `${programOf(f.programId)?.label || "Subsidy"} (${programOf(f.programId)?.agency || ""})` : "Private pay", f.departedOn || ""]),
+  }),
+  attendance: (ctx, key) => {
+    const [y, m] = key.split("-").map(Number);
+    const rows = [];
+    ctx.families.forEach((f) => {
+      const d = careDatesFor(f, key, ctx);
+      const startD = parseAnyDate(f.enrollDate), leftD = f.departedOn ? parseAnyDate(f.departedOn) : null;
+      for (let day = 1; day <= new Date(y, m, 0).getDate(); day++) {
+        const mdy = `${pad2(m)}/${pad2(day)}/${y}`;
+        const raw = (ctx.attendanceLog[mdy] || {})[f.id];
+        const rec = raw === true ? { in: "" } : raw;
+        const scheduled = d.scheduled.includes(mdy);
+        if (!rec && !scheduled) continue;
+        const dd = new Date(y, m - 1, day);
+        if (!rec && ((startD && dd < startD) || (leftD && dd > leftD))) continue;
+        rows.push([f.child, mdy, rec?.absent ? "Absent" : rec ? "Present" : "Not recorded", rec?.in && rec.in !== "—" ? rec.in : "", rec?.out || "", scheduled ? "Yes" : "No"]);
+      }
+    });
+    return { file: `attendance-${key}.csv`, headers: ["Child", "Date", "Status", "Time in", "Time out", "Scheduled day"], rows };
+  },
+  payments: (ctx, year) => ({
+    file: `payments-received-${year}.csv`,
+    headers: ["Child", "Billing month", "Date paid", "Paid by", "Method", "Amount"],
+    rows: ctx.allFamilies.flatMap((f) => paymentsOf(f).filter((p) => p.key.startsWith(`${year}-`))
+      .flatMap((p) => p.entries.map((e) => [f.child, periodLabel(p.key), e.date || "", e.who || "", e.method || "", (Number(e.amount) || 0).toFixed(2)]))),
+  }),
+  yearSummary: (ctx, year) => {
+    const rows = Array.from({ length: 12 }, (_, i) => {
+      const key = `${year}-${pad2(i + 1)}`;
+      const received = ctx.allFamilies.reduce((n, f) => n + (paymentsOf(f).find((p) => p.key === key)?.total || 0), 0);
+      const refunds = ctx.refunds.filter((r) => monthKeyOfDate(r.date) === key).reduce((n, r) => n + (Number(r.amount) || 0), 0);
+      const spent = ctx.expenses.filter((e) => monthKeyOfDate(e.date) === key).reduce((n, e) => n + (Number(e.amount) || 0), 0);
+      return [periodLabel(key), received.toFixed(2), refunds.toFixed(2), spent.toFixed(2), (received - refunds - spent).toFixed(2)];
+    });
+    return { file: `income-and-expenses-${year}.csv`, headers: ["Month", "Tuition & copays received", "Refunds", "Expenses logged", "Net (before payroll and subsidy reimbursements)"], rows };
+  },
+  expenses: (ctx) => ({ file: "business-expenses.csv", headers: ["Date", "Category", "Subcategory", "Description", "Amount"], rows: ctx.expenses.map((e) => [e.date, e.category, e.subcategory || "", e.description, (Number(e.amount) || 0).toFixed(2)]) }),
+  refunds: (ctx) => ({ file: "refunds.csv", headers: ["Child", "Amount", "Reason", "Date", "Method", "Notes"], rows: ctx.refunds.map((r) => [r.child, (Number(r.amount) || 0).toFixed(2), r.reason, r.date, r.method, r.notes || ""]) }),
+  staff: (ctx) => ({ file: "staff.csv", headers: ["Name", "Role", "Hire date", "End date", "Status"], rows: ctx.staff.map((m) => [m.name, m.role, m.hireDate || "", m.endDate || "", m.status]) }),
+  compliance: (ctx) => ({ file: "facility-documents.csv", headers: ["Document", "Status", "Renews / expires", "Notes", "File"], rows: ctx.compDocs.map((d) => [d.name, d.displayStatus || d.status, d.expiresOn || "", d.date || "", d.fileName || ""]) }),
+  childDocs: (ctx) => ({ file: "children-documents.csv", headers: ["Child", "Document", "Status", "Date on file", "Renew by"], rows: ctx.families.flatMap((f) => defaultChildDocs(f).map((d) => [f.child, d.name || CHILD_DOC_TEMPLATES.find((x) => x.id === d.id)?.name || d.id, d.status, d.date || "", d.expiresOn || ""])) }),
+  incidents: (ctx) => ({ file: "incident-log.csv", headers: ["Child", "Date", "Time", "Severity", "What happened", "Action taken", "Others involved", "Reported by", "Parent notified", "Notified how / when"], rows: ctx.incidents.map((i) => [i.child, i.date, i.time, i.severity, i.description, i.actionTaken, i.others, i.reportedBy || "", i.parentNotified ? "Yes" : "No", [i.notifiedHow, i.notifiedAt].filter(Boolean).join(" · ")]) }),
+  messages: (ctx) => ({ file: "messages.csv", headers: ["Conversation", "From", "When", "Message", "Attachment"], rows: ctx.threads.flatMap((th) => th.messages.map((m) => [th.name, m.from === "me" ? "You" : th.name, m.at ? new Date(m.at).toLocaleString("en-US") : m.time || "", m.deleted ? "(deleted)" : m.text, m.attachment?.name || ""])) }),
+  pastFamilies: (ctx) => ({ file: "past-families.csv", headers: ["Child", "Classroom", "Start date", "Last day", "Reason"], rows: ctx.alumni.map((a) => [a.name, classroomOf(a.classroom)?.label || "", a.enrollDate, a.leftDate, DEPARTURE_REASONS.find((r) => r.id === a.reason)?.label || a.reason]) }),
+  tours: (ctx) => ({ file: "tours-and-waitlist.csv", headers: ["Family", "Stage", "Contact", "Children", "Care type", "Desired start", "Tour date", "Notes"], rows: ctx.prospects.map((p) => [p.name || p.family || "", p.stage, p.contact || "", p.children || "", p.careType || "", p.start || p.desiredStart || "", p.tourDate || "", p.notes || ""]) }),
+};
+function downloadReport(id, ctx, arg) {
+  const r = REPORTS[id](ctx, arg);
+  downloadCSV(`${slugOf(ctx.provider?.name)}-${r.file}`, r.headers, r.rows);
+}
+// Everything in one .zip: every report, plus backup.json with the raw records.
+function downloadFullExport(ctx) {
+  const year = startOfToday().getFullYear();
+  const months = Array.from({ length: 12 }, (_, i) => periodKeyOf(new Date(year, startOfToday().getMonth() - i, 1)));
+  const reports = [
+    REPORTS.roster(ctx), REPORTS.pastFamilies(ctx), REPORTS.childDocs(ctx), REPORTS.staff(ctx), REPORTS.compliance(ctx),
+    REPORTS.incidents(ctx), REPORTS.payments(ctx, year), REPORTS.payments(ctx, year - 1), REPORTS.yearSummary(ctx, year),
+    REPORTS.expenses(ctx), REPORTS.refunds(ctx), REPORTS.messages(ctx), REPORTS.tours(ctx),
+    ...months.map((k) => REPORTS.attendance(ctx, k)).filter((r) => r.rows.length),
+  ];
+  const backup = {
+    exportedAt: new Date().toISOString(), provider: ctx.provider, licensing: ctx.licensing,
+    families: ctx.allFamilies, pastFamilies: ctx.alumni, staff: ctx.staff, attendance: ctx.attendanceLog,
+    facilityDocuments: ctx.compDocs, incidents: ctx.incidents, expenses: ctx.expenses, refunds: ctx.refunds,
+    messages: ctx.threads, tours: ctx.prospects, closures: ctx.closures,
+  };
+  const readme = `Alaga export for ${ctx.provider?.name || ""}\r\nCreated ${new Date().toLocaleString("en-US")}\r\n\r\n` +
+    `Each .csv file opens in Excel, Google Sheets or Numbers. backup.json is a complete copy of your records.\r\n` +
+    `Uploaded files (scans and photos) are listed by name; download those separately.\r\n` +
+    `Keep this copy: as the licensee, you're responsible for keeping children's records after care ends.\r\n`;
+  const files = [{ name: "README.txt", text: readme }, ...reports.map((r) => ({ name: r.file, text: csvText(r.headers, r.rows) })), { name: "backup.json", text: JSON.stringify(backup, null, 2) }];
+  downloadBlob(`${slugOf(ctx.provider?.name)}-alaga-export-${todayMDY().replace(/\//g, "-")}.zip`, makeZip(files));
+  return files.length;
+}
+
+const providerContact = (p = {}) => [p.address, p.phone, p.email].filter(Boolean).join(" · ");
 function printHTML(html) {
   const frame = document.createElement("iframe");
   frame.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;";
@@ -6477,7 +6692,7 @@ function printReceipt(f, payments, { provider = {}, t = (x) => x, title, datesFo
       footer { margin-top: 26px; font-size: 8.5pt; color: #444; }
     </style></head><body>
       <header>
-        <div><div class="provider">${escapeHTML(provider.name || "")}</div><div class="muted">${escapeHTML([provider.lic, provider.city].filter(Boolean).join(" · "))}</div></div>
+        <div><div class="provider">${escapeHTML(provider.name || "")}</div><div class="muted">${escapeHTML([provider.lic, provider.city].filter(Boolean).join(" · "))}</div>${providerContact(provider) ? `<div class="muted">${escapeHTML(providerContact(provider))}</div>` : ""}</div>
         <div class="right"><div class="title">${escapeHTML(title || t("Childcare payment receipt"))}</div><div class="muted">${escapeHTML(t("Issued"))} ${escapeHTML(todayMDY())}</div></div>
       </header>
       <table class="info">
@@ -6564,7 +6779,7 @@ const PRINT_BASE_CSS = `
   .sign { display: flex; gap: 24px; margin-top: 28px; font-size: 9pt; color: #444; } .sign div { flex: 1; }
   .line { display: block; border-bottom: 1px solid #111; height: 24px; margin-bottom: 3px; }
   footer { margin-top: 18px; font-size: 8.5pt; color: #444; }`;
-const printHeader = (provider, title, sub) => `<header><div><div class="provider">${escapeHTML(provider.name || "")}</div><div class="muted">${escapeHTML([provider.lic, provider.city].filter(Boolean).join(" · "))}</div></div><div class="right"><div class="title">${escapeHTML(title)}</div><div class="muted">${escapeHTML(sub || "")}</div></div></header>`;
+const printHeader = (provider, title, sub) => `<header><div><div class="provider">${escapeHTML(provider.name || "")}</div><div class="muted">${escapeHTML([provider.lic, provider.city].filter(Boolean).join(" · "))}</div>${providerContact(provider) ? `<div class="muted">${escapeHTML(providerContact(provider))}</div>` : ""}</div><div class="right"><div class="title">${escapeHTML(title)}</div><div class="muted">${escapeHTML(sub || "")}</div></div></header>`;
 
 // Printable incident report for the provider's file (and to share with the parent).
 function printIncidentReport(inc, { provider = {}, t = (x) => x } = {}) {
@@ -6650,7 +6865,7 @@ function printSignInSheets(children, { year, month, attendanceLog = {}, schedule
     return `
       <section class="sheet">
         <header>
-          <div><div class="provider">${escapeHTML(provider.name || "")}</div><div class="muted">${escapeHTML([provider.lic, provider.city].filter(Boolean).join(" · "))}</div></div>
+          <div><div class="provider">${escapeHTML(provider.name || "")}</div><div class="muted">${escapeHTML([provider.lic, provider.city].filter(Boolean).join(" · "))}</div>${providerContact(provider) ? `<div class="muted">${escapeHTML(providerContact(provider))}</div>` : ""}</div>
           <div class="right"><div class="title">${escapeHTML(t("Monthly sign-in / sign-out sheet"))}</div><div class="muted">${escapeHTML(monthName)}</div></div>
         </header>
         <table class="meta">
@@ -8683,16 +8898,35 @@ function SecurityScreen({ accessLog, isEmpty }) {
 // Shared by Messages and Calendar (event/announcement reminders) — appends a
 // message to each named family's thread, creating the thread if it doesn't
 // exist yet, so "notify parents" always actually produces something.
-function broadcastToFamilies(threads, saveThreads, names, text, kind) {
+// Messages carry a real timestamp; older sample messages keep their text label.
+const msgNow = () => ({ at: Date.now(), time: "" });
+function fmtMsgTime(m, t = (x) => x) {
+  if (!m) return "";
+  if (!m.at) return m.time || "";
+  const d = new Date(m.at);
+  const diff = Math.round((startOfToday() - new Date(d.getFullYear(), d.getMonth(), d.getDate())) / 86400000);
+  const tm = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  if (diff <= 0) return tm;
+  if (diff === 1) return `${t("Yesterday")}, ${tm}`;
+  return `${d.toLocaleDateString("en-US", { month: "short", day: "numeric" })}, ${tm}`;
+}
+const threadLastAt = (th) => { const m = th.messages[th.messages.length - 1]; return (m && m.at) || 0; };
+// One conversation per household: matched by household id first, then by name.
+function findThread(threads, { household, name }) {
+  return threads.find((th) => (household && th.household === household)) || threads.find((th) => th.name === name);
+}
+function broadcastToFamilies(threads, saveThreads, names, text, kind, families = []) {
   if (!text.trim() || names.length === 0) return threads;
   let updated = [...threads];
   names.forEach((name) => {
-    const existing = updated.find((th) => th.name === name);
+    const fam = families.find((f) => (f.householdName || f.child) === name);
+    const household = fam?.household;
+    const existing = findThread(updated, { household, name });
     if (existing) {
-      updated = updated.map((th) => (th.id === existing.id ? { ...th, unread: false, messages: [...th.messages, { from: "me", text, time: "Just now", attachment: null }] } : th));
+      updated = updated.map((th) => (th.id === existing.id ? { ...th, unread: false, messages: [...th.messages, { from: "me", text, ...msgNow(), attachment: null }] } : th));
     } else {
       const newId = `th-${Date.now()}-${name.replace(/\s+/g, "")}`;
-      updated = [{ id: newId, name, kind, unread: false, messages: [{ from: "me", text, time: "Just now", attachment: null }] }, ...updated];
+      updated = [{ id: newId, name, household, kind, unread: false, messages: [{ from: "me", text, ...msgNow(), attachment: null }] }, ...updated];
     }
   });
   saveThreads(updated);
@@ -8739,9 +8973,21 @@ function eventAnnouncementOpener(type, name) {
   };
   return byType[type] || byType["Other"];
 }
-function Messages({ threads, saveThreads, families, staff }) {
+function Messages({ threads: rawThreads, saveThreads, families, staff, goToFamily }) {
   const t = useT();
+  const [query, setQuery] = useState("");
+  const [unreadOnly, setUnreadOnly] = useState(false);
+  // Newest conversation first.
+  const threads = [...rawThreads].sort((a, b) => threadLastAt(b) - threadLastAt(a));
   const [openId, setOpenId] = useState(threads[0]?.id || null);
+  const shown = threads.filter((th) => (!unreadOnly || th.unread)
+    && (!query.trim() || `${th.name} ${th.messages.map((m) => m.text).join(" ")}`.toLowerCase().includes(query.trim().toLowerCase())));
+  const unreadCount = threads.filter((th) => th.unread).length;
+  // Opening a conversation marks it read.
+  useEffect(() => {
+    const th = rawThreads.find((x) => x.id === openId);
+    if (th && th.unread) saveThreads(rawThreads.map((x) => (x.id === openId ? { ...x, unread: false } : x)));
+  }, [openId, rawThreads]);
   const [draft, setDraft] = useState("");
   const [attachment, setAttachment] = useState(null);
   const [composing, setComposing] = useState(false);
@@ -8777,14 +9023,14 @@ function Messages({ threads, saveThreads, families, staff }) {
   const send = () => {
     if (!draft.trim() && !attachment) return;
     saveThreads(threads.map((th) => th.id === openId
-      ? { ...th, unread: false, messages: [...th.messages, { from: "me", text: draft, time: "Just now", attachment }] }
+      ? { ...th, unread: false, messages: [...th.messages, { from: "me", text: draft, ...msgNow(), attachment }] }
       : th));
     setDraft(""); setAttachment(null);
   };
 
   const startThreadsAndSend = (names, text, kind) => {
     if (!text.trim() || names.length === 0) return;
-    const updated = broadcastToFamilies(threads, saveThreads, names, text, kind);
+    const updated = broadcastToFamilies(rawThreads, saveThreads, names, text, kind, families);
     const target = updated.find((th) => th.name === names[0]);
     if (target) setOpenId(target.id);
     setComposing(false);
@@ -8798,13 +9044,24 @@ function Messages({ threads, saveThreads, families, staff }) {
             <Plus size={14} /> {t("New message")}
           </button>
         </div>
+        {threads.length > 0 && (
+          <div style={{ padding: "8px 10px", borderBottom: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 6 }}>
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("Search messages…")} style={{ ...inputStyle, width: "100%", padding: "7px 10px", fontSize: 12.5 }} />
+            <div style={{ display: "flex", gap: 6 }}>
+              {[[false, t("All")], [true, `${t("Unread")}${unreadCount ? ` (${unreadCount})` : ""}`]].map(([v, label]) => (
+                <button key={String(v)} onClick={() => setUnreadOnly(v)} style={{ padding: "4px 10px", borderRadius: 999, fontSize: 11.5, fontWeight: 700, border: `1px solid ${unreadOnly === v ? C.teal : C.line}`, background: unreadOnly === v ? C.tealTint : "#fff", color: unreadOnly === v ? C.tealDark : C.inkSoft }}>{label}</button>
+              ))}
+            </div>
+          </div>
+        )}
+        {threads.length > 0 && shown.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft, textAlign: "center" }}>{t("No conversations match.")}</div>}
         {threads.length === 0 && (
           <div style={{ padding: 24, textAlign: "center" }}>
             <div style={{ display: "flex", justifyContent: "center", marginBottom: 4 }}><EmptyIllustration size={60} /></div>
             <div style={{ fontSize: 12.5, color: C.inkSoft, lineHeight: 1.5 }}>{t("No conversations yet. Messages from families will appear here.")}</div>
           </div>
         )}
-        {threads.map((th) => {
+        {shown.map((th) => {
           const last = th.messages[th.messages.length - 1];
           return (
             <button key={th.id} onClick={() => setOpenId(th.id)} style={{
@@ -8814,9 +9071,11 @@ function Messages({ threads, saveThreads, families, staff }) {
               <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
                 <Dot c={th.unread ? C.coral : C.line} />
                 <b style={{ fontSize: 13 }}>{th.name}</b>
+                {th.kind === "agency" && <span style={{ fontSize: 10, fontWeight: 700, color: C.sky }}>{t("Agency")}</span>}
+                {th.kind === "staff" && <span style={{ fontSize: 10, fontWeight: 700, color: C.inkSoft }}>{t("Staff")}</span>}
               </div>
-              <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{last.attachment ? `📎 ${last.attachment.name}` : last.text}</div>
-              <div style={{ fontSize: 10.5, color: C.inkSoft, marginTop: 2 }}>{last.time}</div>
+              <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{last.deleted ? t("Message deleted") : last.attachment ? `📎 ${last.attachment.name}` : `${last.from === "me" ? `${t("You")}: ` : ""}${last.text}`}</div>
+              <div style={{ fontSize: 10.5, color: C.inkSoft, marginTop: 2 }}>{fmtMsgTime(last, t)}</div>
             </button>
           );
         })}
@@ -8825,7 +9084,19 @@ function Messages({ threads, saveThreads, families, staff }) {
       <div style={{ flex: 1, minWidth: 0, background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, display: "flex", flexDirection: "column" }}>
         {open ? (
           <>
-            <div style={{ padding: "14px 18px", borderBottom: `1px solid ${C.line}`, fontWeight: 600, fontSize: 14.5 }}>{open.name}</div>
+            {(() => {
+              const fam = families.find((f) => (open.household && f.household === open.household) || (f.householdName || f.child) === open.name);
+              const kids = fam ? families.filter((f) => f.household === fam.household).map((f) => f.child.split(" ")[0]).join(", ") : "";
+              return (
+                <div style={{ padding: "12px 18px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: 14.5 }}>{open.name}</div>
+                    {kids && <div style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Children")}: {kids}</div>}
+                  </div>
+                  {fam && goToFamily && <button onClick={() => goToFamily(fam.id)} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: `1px solid ${C.line}`, borderRadius: 8, padding: "6px 10px" }}>{t("View family")}</button>}
+                </div>
+              );
+            })()}
             <div style={{ flex: 1, overflowY: "auto", padding: "16px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
               {open.messages.map((m, i) => (
                 <div key={i} style={{ alignSelf: m.from === "me" ? "flex-end" : "flex-start", maxWidth: "72%" }}>
@@ -8868,7 +9139,7 @@ function Messages({ threads, saveThreads, families, staff }) {
                     )
                   )}
                   <div style={{ fontSize: 10.5, color: C.inkSoft, marginTop: 3, textAlign: m.from === "me" ? "right" : "left" }}>
-                    {m.time}{m.edited && !m.deleted ? ` · ${t("edited")}` : ""}
+                    {fmtMsgTime(m, t)}{m.edited && !m.deleted ? ` · ${t("edited")}` : ""}
                   </div>
                 </div>
               ))}
@@ -8916,6 +9187,14 @@ function ComposeModal({ families, staff, onClose, onSend }) {
   const [selectedFamilies, setSelectedFamilies] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState("");
   const [text, setText] = useState("");
+  const TEMPLATES = [
+    ["", t("Start from a template (optional)")],
+    ["Hi! A friendly reminder that this month's tuition is due. Let me know if you have any questions.", t("Tuition reminder")],
+    ["Hi! We still need a few documents for your child's file. Could you send them this week?", t("Missing documents")],
+    ["Hi! Just a reminder that pickup is by closing time. Thank you for helping us end the day on time.", t("Pickup reminder")],
+    ["Hi! We'll be closed on [date]. Please plan care accordingly.", t("Closure notice")],
+  ];
+  const [template, setTemplate] = useState("");
 
   const toggleFamily = (name) => setSelectedFamilies((s) => s.includes(name) ? s.filter((x) => x !== name) : [...s, name]);
 
@@ -8982,12 +9261,13 @@ function ComposeModal({ families, staff, onClose, onSend }) {
             </div>
           )}
 
+          <Select value={template} onChange={(v) => { setTemplate(v); if (v) setText(v); }} options={TEMPLATES.map((x) => x[0])} labels={TEMPLATES.map((x) => x[1])} />
           <Field label={t("Message")}>
             <textarea value={text} onChange={(e) => setText(e.target.value)} rows={4} placeholder={t("Write your message…")}
               style={{ width: "100%", border: `1px solid ${C.line}`, borderRadius: 10, padding: "10px 12px", fontSize: 13, fontFamily: "inherit", resize: "vertical" }} />
           </Field>
 
-          <button onClick={() => onSend(names, text, recipientType.includes("all") ? "broadcast" : "direct")} disabled={!canSend} style={{
+          <button onClick={() => onSend(names, text, recipientType.includes("staff") ? "staff" : recipientType.includes("all") ? "broadcast" : "direct")} disabled={!canSend} style={{
             padding: "11px 0", borderRadius: 10, border: "none", background: canSend ? C.teal : "#D8DFD8", color: "#fff", fontWeight: 600, fontSize: 13.5,
           }}>
             {t("Send")} {names.length > 1 ? `(${names.length} ${t("recipients")})` : ""}
@@ -8999,8 +9279,12 @@ function ComposeModal({ families, staff, onClose, onSend }) {
 }
 
 /* --------------------------------- analytics ------------------------------------ */
-function Analytics({ families, expenses, prospects, staff, alumni, addDeparture, refunds, flexCareRequests, tuitionRates, setScreen }) {
+function Analytics({ families, expenses: allExpenses, prospects, staff, alumni, addDeparture, refunds, flexCareRequests, tuitionRates, setScreen, provider = {} }) {
   const t = useT();
+  const thisMonth = periodKeyOf(startOfToday());
+  const expenses = allExpenses.filter((e) => monthKeyOfDate(e.date) === thisMonth);
+  const capacity = Number(provider.capacity) || 0;
+  const openings = Math.max(0, capacity - families.length);
   const classroomData = groupByClassroom(families).map((g) => ({ name: g.classroom.label, children: g.families.length }));
   const subsidyTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + (f.coverageBasis === "monthly" ? f.coverageAmount : 0), 0);
   const copayTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + effectiveTuition(f, families, tuitionRates).discounted, 0);
@@ -9051,20 +9335,31 @@ function Analytics({ families, expenses, prospects, staff, alumni, addDeparture,
     ...EXPENSE_CATEGORIES.map((cat) => ({ name: t(cat), amount: expenses.filter((e) => e.category === cat).reduce((s, e) => s + e.amount, 0) })),
   ].filter((c) => c.amount > 0);
 
-  const occupancyTrend = [
-    { month: "Feb", occupancy: 12 }, { month: "Mar", occupancy: 12 }, { month: "Apr", occupancy: 13 },
-    { month: "May", occupancy: 13 }, { month: "Jun", occupancy: 14 }, { month: "Jul", occupancy: families.length },
-  ];
+  // Children enrolled at the end of each of the last six months, from start
+  // dates and withdrawal dates (current families plus past ones).
+  const occupancyTrend = Array.from({ length: 6 }, (_, i) => {
+    const now = startOfToday();
+    const first = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+    const end = i === 5 ? now : new Date(first.getFullYear(), first.getMonth() + 1, 0);
+    const inCare = (start, left) => { const s0 = parseAnyDate(start); const l = left ? parseAnyDate(left) : null; return s0 && s0 <= end && (!l || l >= end); };
+    const current = families.filter((f) => inCare(f.enrollDate, f.departedOn)).length;
+    const past = alumni.filter((a) => !families.some((f) => f.id === a.familyId) && inCare(a.enrollDate, a.leftDate)).length;
+    return { month: first.toLocaleDateString("en-US", { month: "short" }), occupancy: current + past };
+  });
   const PIE_COLORS = [C.teal, C.amber, C.sky, C.coral];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "10px 14px", borderRadius: 12, background: C.cream, fontSize: 12.5, color: C.inkSoft }}>
+        <span><Info size={13} style={{ verticalAlign: -2, marginRight: 6 }} />{t("Need a report for an agency, your accountant or taxes? Attendance, payments and year-end summaries download from Settings.")}</span>
+        <button onClick={() => setScreen && setScreen("settings", { tab: "data" })} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "#fff", border: `1px solid ${C.line}`, borderRadius: 8, padding: "6px 10px", whiteSpace: "nowrap" }}>{t("Download reports")}</button>
+      </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 14 }}>
-        <Kpi label={t("Occupancy")} value={`${families.length} / ${families.length}`} sub={t("0 openings this month")} accent={C.teal} />
+        <Kpi label={t("Occupancy")} value={capacity ? `${families.length} / ${capacity}` : String(families.length)} sub={capacity ? (openings === 0 ? t("Full — no openings") : `${openings} ${t(openings === 1 ? "opening" : "openings")}`) : t("Add your licensed capacity in Settings")} accent={openings === 0 ? C.amber : C.teal} />
         <Kpi label={t("Subsidy share of revenue")} value={incomeTotal > 0 ? `${Math.round(((subsidyTotal + copayTotal) / incomeTotal) * 100)}%` : "0%"} sub={`${subsidizedCount} ${t("of")} ${families.length} ${t("families")}`} />
         <Kpi label={t("Monthly income")} value={money(incomeTotal)} sub={t("tuition, subsidy, copay & flex care")} accent={C.teal} />
         <Kpi label={t("Flex & after-hours care")} value={money(flexCareTotal)} sub={flexCareUnpaidTotal > 0 ? `${money(flexCareUnpaidTotal)} ${t("not yet collected")}` : t("early drop-off, weekend, extra days…")} accent={flexCareUnpaidTotal > 0 ? C.amber : C.teal} onClick={() => setScreen && setScreen("bookings")} />
-        <Kpi label={t("Net income")} value={money(net)} sub={t("after payroll & expenses")} accent={net >= 0 ? C.teal : C.danger} />
+        <Kpi label={t("Net income")} value={money(net)} sub={t("after payroll & this month's expenses")} accent={net >= 0 ? C.teal : C.danger} />
         <Kpi label={t("Labor cost")} value={`${laborShare}%`} sub={t("of monthly income")} accent={laborShare > 50 ? C.amber : C.sky} />
       </div>
 
@@ -9100,16 +9395,16 @@ function Analytics({ families, expenses, prospects, staff, alumni, addDeparture,
             <LineChart data={occupancyTrend} margin={{ top: 4, right: 12, left: -18, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={C.line} vertical={false} />
               <XAxis dataKey="month" tick={{ fontSize: 11, fill: C.inkSoft }} axisLine={{ stroke: C.line }} tickLine={false} />
-              <YAxis domain={[0, Math.max(14, families.length)]} tick={{ fontSize: 11, fill: C.inkSoft }} axisLine={false} tickLine={false} />
+              <YAxis allowDecimals={false} domain={[0, Math.max(capacity, families.length, 1)]} tick={{ fontSize: 11, fill: C.inkSoft }} axisLine={false} tickLine={false} />
               <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: `1px solid ${C.line}` }} />
               <Line type="monotone" dataKey="occupancy" stroke={C.teal} strokeWidth={2.5} dot={{ r: 3, fill: C.teal }} />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title={t("Business expenses by category")}>
+        <ChartCard title={t("This month's costs by category")}>
           {expenseByCategory.length === 0 ? (
-            <div style={{ padding: 30, fontSize: 12.5, color: C.inkSoft, textAlign: "center" }}>{t("No expenses logged yet.")}</div>
+            <div style={{ padding: 30, fontSize: 12.5, color: C.inkSoft, textAlign: "center" }}>{t("No expenses logged this month.")}</div>
           ) : (
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={expenseByCategory} layout="vertical" margin={{ top: 4, right: 16, left: 10, bottom: 0 }}>
@@ -9163,10 +9458,12 @@ function ChartCard({ title, children }) {
 function FamilyRetention({ families, alumni, addDeparture, avgTenureMonths, longest, retentionRate, positiveDepartures, negativeDepartures, tenureDistribution }) {
   const t = useT();
   const [form, setForm] = useState({ name: "", classroom: CLASSROOMS[0].id, enrollDate: "", leftDate: "", reason: DEPARTURE_REASONS[0].id });
+  const [addingPast, setAddingPast] = useState(false);
 
   const logDeparture = () => {
     if (!form.name.trim() || !form.enrollDate || !form.leftDate) return;
     addDeparture({ ...form });
+    setAddingPast(false);
     setForm({ name: "", classroom: CLASSROOMS[0].id, enrollDate: "", leftDate: "", reason: DEPARTURE_REASONS[0].id });
   };
 
@@ -9215,7 +9512,13 @@ function FamilyRetention({ families, alumni, addDeparture, avgTenureMonths, long
         </Card>
       </div>
 
-      <Card title={t("Log a departure")} icon={Plus} right={<span style={{ fontSize: 11, color: C.inkSoft }}>{t("Keeps retention data accurate as families leave")}</span>}>
+      {!addingPast ? (
+        <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+          <Info size={12} /> {t("When you withdraw a child in Families, they're added here automatically.")}
+          <button onClick={() => setAddingPast(true)} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none", padding: 0 }}>{t("Add a family who left before you used Alaga")}</button>
+        </div>
+      ) : (
+      <Card title={t("Add a past family")} icon={Plus} right={<button onClick={() => setAddingPast(false)} style={{ background: "none", border: "none", color: C.inkSoft }}><X size={15} /></button>}>
         <div style={{ padding: 18, display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 12 }}>
           <Field label={t("Child's name")}><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={inputStyle} /></Field>
           <Field label={t("Enrollment date")}><DateField value={form.enrollDate} onChange={(v) => setForm({ ...form, enrollDate: v })} /></Field>
@@ -9225,9 +9528,10 @@ function FamilyRetention({ families, alumni, addDeparture, avgTenureMonths, long
           </Field>
         </div>
         <div style={{ padding: "0 18px 18px" }}>
-          <button onClick={logDeparture} style={{ padding: "9px 16px", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 12.5 }}>{t("Log departure")}</button>
+          <button onClick={logDeparture} style={{ padding: "9px 16px", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 12.5 }}>{t("Add past family")}</button>
         </div>
       </Card>
+      )}
     </div>
   );
 }
@@ -9238,6 +9542,7 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
   const t = useT();
   const [step, setStep] = useState(growth.started ? "checklist" : "overview");
   const [packetOpen, setPacketOpen] = useState(false);
+  const [subTab, setSubTab] = useState("checklist");
   const [form, setForm] = useState({ targetCapacity: growth.targetCapacity, targetStaff: growth.targetStaff, timeline: growth.timeline });
 
   const openDays = weeklySchedule.filter((d) => d.open);
@@ -9321,7 +9626,6 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
   const grouped = Object.keys(EXPANSION_CATEGORIES).map((cat) => ({
     cat, label: EXPANSION_CATEGORIES[cat], items: growth.checklist.filter((i) => i.category === cat),
   })).filter((g) => g.items.length > 0);
-  const [subTab, setSubTab] = useState("checklist");
   const SUB_TABS = [
     ["checklist", t("Checklist")],
     ["families", t("Families to Notify")],
@@ -9671,7 +9975,16 @@ function TicketDrawer({ ticket, onClose, onToggleStatus, onReply }) {
   );
 }
 
-function PlanBilling({ tier, saveTier, tierLocked, meetingMode, billing, saveBilling, families, staff, expenses, compDocs, provider, refunds }) {
+// Access after canceling runs to the end of the period already paid for.
+function billingPeriodEnd(billing, from = startOfToday()) {
+  const start = parseAnyDate(billing.startedOn) || from;
+  const months = billing.cycle === "annual" ? 12 : 1;
+  let end = new Date(start);
+  while (end <= from) end = new Date(end.getFullYear(), end.getMonth() + months, end.getDate());
+  end.setDate(end.getDate() - 1);
+  return `${pad2(end.getMonth() + 1)}/${pad2(end.getDate())}/${end.getFullYear()}`;
+}
+function PlanBilling({ tier, saveTier, tierLocked, meetingMode, billing, saveBilling, families, staff, expenses, compDocs, provider, refunds, downloadBackup }) {
   const t = useT();
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [exported, setExported] = useState(false);
@@ -9692,27 +10005,10 @@ function PlanBilling({ tier, saveTier, tierLocked, meetingMode, billing, saveBil
     saveTier(planId);
     if (canceled) saveBilling({ ...billing, status: "active", canceledAt: null });
   };
-  const exportEverything = () => {
-    downloadCSV(`alaga-export-families-${provider.name.replace(/\s+/g, "-").toLowerCase()}.csv`,
-      ["Child", "Household", "Classroom", "Type", "Program", "Enrolled", "Accommodations"],
-      families.map((f) => [f.child, f.householdName, classroomOf(f.classroom)?.label || "", f.subsidized ? "Subsidized" : "Private-pay", f.subsidized ? (programOf(f.programId)?.label || "") : "", f.enrollDate, f.accommodations || ""]));
-    downloadCSV(`alaga-export-staff-${provider.name.replace(/\s+/g, "-").toLowerCase()}.csv`,
-      ["Name", "Role", "Hire date", "End date", "Status"],
-      staff.map((s) => [s.name, t(s.role), s.hireDate, s.endDate || "", s.status]));
-    downloadCSV(`alaga-export-finances-${provider.name.replace(/\s+/g, "-").toLowerCase()}.csv`,
-      ["Date", "Category", "Description", "Amount"],
-      expenses.map((e) => [e.date, e.category, e.description, e.amount.toFixed(2)]));
-    downloadCSV(`alaga-export-compliance-${provider.name.replace(/\s+/g, "-").toLowerCase()}.csv`,
-      ["Document", "Status", "Date"],
-      compDocs.map((d) => [d.name, d.status, d.date || ""]));
-    downloadCSV(`alaga-export-refunds-${provider.name.replace(/\s+/g, "-").toLowerCase()}.csv`,
-      ["Child", "Amount", "Reason", "Date", "Method", "Notes"],
-      refunds.map((r) => [r.child, r.amount.toFixed(2), t(r.reason), r.date, t(r.method), r.notes || ""]));
-    setExported(true);
-  };
+  const exportEverything = () => { downloadBackup && downloadBackup(); setExported(true); };
   const confirmCancelSubscription = () => {
     exportEverything();
-    saveBilling({ ...billing, status: "canceled", canceledAt: todayMDY() });
+    saveBilling({ ...billing, status: "canceled", canceledAt: todayMDY(), accessUntil: billingPeriodEnd(billing) });
     setConfirmCancel(false);
   };
   const reactivate = () => saveBilling({ ...billing, status: "active", canceledAt: null });
@@ -9725,7 +10021,7 @@ function PlanBilling({ tier, saveTier, tierLocked, meetingMode, billing, saveBil
       <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 16 }}>
         {canceled && (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderRadius: 10, background: C.dangerTint, color: C.danger, fontSize: 12.5 }}>
-            <span>{t("Your subscription is canceled — access continues through")} {billing.canceledAt}.</span>
+            <span>{t("Your subscription is canceled — access continues through")} {billing.accessUntil || billingPeriodEnd(billing)}.</span>
             <button onClick={reactivate} style={{ fontWeight: 700, background: "none", border: "none", color: C.danger, textDecoration: "underline", fontSize: 12.5 }}>{t("Reactivate")}</button>
           </div>
         )}
@@ -9804,11 +10100,11 @@ function PlanBilling({ tier, saveTier, tierLocked, meetingMode, billing, saveBil
         <div style={{ borderTop: `1px solid ${C.line}`, paddingTop: 14 }}>
           <div style={{ fontSize: 11.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6 }}>{t("Cancellation & data retention policy")}</div>
           <div style={{ fontSize: 12, color: C.inkSoft, lineHeight: 1.6 }}>
-            {t("Cancel anytime — you'll keep full access through the end of your current billing period, no refund for partial periods. On cancellation, Alaga automatically generates a full export of your records for you to keep. Your account stays fully reactivatable for 90 days, then converts to a read-only archive for up to 3 years — matching California's minimum retention period for children's records — before permanent deletion. Keeping your own copy is still your responsibility as the licensee; Alaga holding a copy doesn't substitute for that. Downgrading from Extended to Simple takes effect immediately; upgrading is prorated for the rest of the current period.")}
+            {t("Cancel anytime — you'll keep full access through the end of your current billing period, no refund for partial periods. On cancellation, Alaga downloads a full export of your records for you to keep. Your account stays reactivatable for 90 days, then becomes a read-only archive for up to 3 years before permanent deletion. California licensing requires some children's records to be kept for at least 3 years after care ends — keeping your own copy is your responsibility as the licensee. Downgrading from Extended to Simple takes effect immediately; upgrading is prorated for the rest of the current period.")}
           </div>
           {exported && (
             <div style={{ marginTop: 10, padding: "9px 12px", borderRadius: 9, background: C.tealTint, color: C.tealDark, fontSize: 12, display: "flex", alignItems: "center", gap: 8 }}>
-              <CheckCircle2 size={14} /> {t("Your data export downloaded — families, staff, finances, and compliance records.")}
+              <CheckCircle2 size={14} /> {t("Your export downloaded as one .zip file — every report plus a complete backup.")}
             </div>
           )}
           {!canceled && !exported && (
@@ -9861,7 +10157,7 @@ function CCLDVerifyLink({ lic }) {
   );
 }
 
-function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier, tierLocked, meetingMode, billing, saveBilling, families, staff, expenses, compDocs, provider, saveProviderInfo, refunds }) {
+function SettingsScreen({ tab: tabProp, setTab: setTabProp, exportCtx, threads, saveThreads, isDemo, onSignOut, language, setLanguage, a11y, saveA11y, tier, saveTier, tierLocked, meetingMode, billing, saveBilling, families, staff, expenses, compDocs, provider, saveProviderInfo, refunds }) {
   const t = useT();
   const ALL_LANGS = ["English", "Español", "Tagalog", "中文", "Tiếng Việt", "한국어"];
   // Language is an accessibility need, not a premium feature — every language is
@@ -9875,12 +10171,19 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
   const [profile, setProfile] = useState(provider);
   const [comparisonOpen, setComparisonOpen] = useState(false);
 
-  const saveProfile = () => { saveProviderInfo(profile); setEditingProfile(false); };
-  const [tab, setTab] = useState("profile");
+  const capLimit = CAPACITY_LIMITS[profile.providerType];
+  const capInvalid = !profile.capacity || profile.capacity < 1 || (capLimit && profile.capacity > capLimit);
+  const saveProfile = () => { if (capInvalid) return; saveProviderInfo(profile); setEditingProfile(false); };
+  const [localTab, setLocalTab] = useState("profile");
+  const tab = tabProp || localTab;
+  const setTab = setTabProp || setLocalTab;
+  const downloadBackup = () => downloadFullExport(exportCtx);
   const TABS = [
     ["profile", t("Business Profile")],
+    ["data", t("Reports & your data")],
     ["language", t("Language & Accessibility")],
     ["billing", t("Plan & Billing")],
+    ["account", t("Account")],
   ];
 
   return (
@@ -9897,7 +10200,7 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
       {tab === "profile" && (
       <Card title={t("Business profile")} icon={Building2}
         right={editingProfile
-          ? <button onClick={saveProfile} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("Save changes")}</button>
+          ? <button onClick={saveProfile} disabled={capInvalid} style={{ fontSize: 12, fontWeight: 700, color: capInvalid ? C.inkSoft : C.teal, background: "none", border: "none" }}>{t("Save changes")}</button>
           : <button onClick={() => setEditingProfile(true)} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}><Pencil size={12} /> {t("Edit")}</button>}>
         {editingProfile ? (
           <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
@@ -9908,7 +10211,13 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               <Field label={t("Provider type")}><Select value={profile.providerType} onChange={(v) => setProfile({ ...profile, providerType: v })} options={PROVIDER_TYPES} /></Field>
-              <Field label={t("Licensed capacity")}><input type="number" value={profile.capacity} onChange={(e) => setProfile({ ...profile, capacity: Number(e.target.value) })} style={inputStyle} /></Field>
+              <Field label={t("Licensed capacity")}><input type="number" min={1} max={capLimit} value={profile.capacity} onChange={(e) => setProfile({ ...profile, capacity: Number(e.target.value) })} style={{ ...inputStyle, borderColor: capInvalid ? C.danger : C.line }} /></Field>
+            </div>
+            {capInvalid && <div style={{ fontSize: 11.5, color: C.danger }}>{capLimit ? `${t("Enter a number from 1 to")} ${capLimit} ${t("for this license type.")}` : t("Enter your licensed capacity.")}</div>}
+            <Field label={t("Street address (shown on receipts and printouts)")}><input value={profile.address || ""} onChange={(e) => setProfile({ ...profile, address: e.target.value })} placeholder="123 Main St, Culver City, CA 90230" style={inputStyle} /></Field>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <Field label={t("Business phone")}><input value={profile.phone || ""} onChange={(e) => setProfile({ ...profile, phone: e.target.value })} placeholder="(310) 555-0100" style={inputStyle} /></Field>
+              <Field label={t("Business email")}><input value={profile.email || ""} onChange={(e) => setProfile({ ...profile, email: e.target.value })} placeholder="hello@example.com" style={inputStyle} /></Field>
             </div>
             <div style={{ display: "flex", gap: 8 }}>
               <button onClick={() => { setEditingProfile(false); setProfile(provider); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Cancel")}</button>
@@ -9922,6 +10231,9 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
               right={profile.lic === "License pending" ? <Pill label={t("Pending")} fg={C.amber} bg={C.amberTint} /> : <b>{profile.lic}</b>} />
             <Row left={<span style={{ color: C.inkSoft }}>{t("Provider type")}</span>} right={<b>{profile.providerType}</b>} />
             <Row left={<span style={{ color: C.inkSoft }}>{t("Licensed capacity")}</span>} right={<b>{profile.capacity}</b>} />
+            <Row left={<span style={{ color: C.inkSoft }}>{t("Address")}</span>} right={profile.address ? <b>{profile.address}</b> : <span style={{ fontSize: 12, color: C.amber }}>{t("Add it so receipts are complete")}</span>} />
+            <Row left={<span style={{ color: C.inkSoft }}>{t("Phone")}</span>} right={<b>{profile.phone || "—"}</b>} />
+            <Row left={<span style={{ color: C.inkSoft }}>{t("Email")}</span>} right={<b>{profile.email || "—"}</b>} />
             {profile.lic !== "License pending" && <CCLDVerifyLink lic={profile.lic} />}
           </div>
         )}
@@ -9929,8 +10241,14 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
       )}
 
       {tab === "billing" && (
-        <PlanBilling tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} billing={billing} saveBilling={saveBilling} families={families} staff={staff} expenses={expenses} compDocs={compDocs} provider={provider} refunds={refunds} />
+        <PlanBilling tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} billing={billing} saveBilling={saveBilling} families={families} staff={staff} expenses={expenses} compDocs={compDocs} provider={provider} refunds={refunds} downloadBackup={downloadBackup} />
       )}
+
+      {tab === "data" && (
+        <YourDataTab ctx={exportCtx} downloadBackup={downloadBackup} goToBilling={() => setTab("billing")} billing={billing} threads={threads} saveThreads={saveThreads} families={families} provider={provider} />
+      )}
+
+      {tab === "account" && <AccountTab isDemo={isDemo} onSignOut={onSignOut} />}
 
       {tab === "language" && (
       <>
@@ -9969,6 +10287,163 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
     </div>
   );
 }
+function YourDataTab({ ctx, downloadBackup, goToBilling, billing, threads, saveThreads, families, provider }) {
+  const t = useT();
+  const now = startOfToday();
+  const months = Array.from({ length: 12 }, (_, i) => periodKeyOf(new Date(now.getFullYear(), now.getMonth() - i, 1)));
+  const years = [now.getFullYear(), now.getFullYear() - 1];
+  const [month, setMonth] = useState(months[0]);
+  const [year, setYear] = useState(years[0]);
+  const [exportedCount, setExportedCount] = useState(0);
+  const [notifyOpen, setNotifyOpen] = useState(false);
+  const [notifyText, setNotifyText] = useState(t("Hi families — a quick update: we're changing how we keep records and messages. Starting [date], please reach us at [phone/email]. Thank you!"));
+  const [notified, setNotified] = useState(false);
+  const [deletionRequested, setDeletionRequested] = useState(false);
+  const [tickets, setTickets] = usePersistentState("support-tickets", SUPPORT_TICKETS_DEFAULT);
+  const canceled = billing.status === "canceled";
+  const dl = (id, arg) => downloadReport(id, ctx, arg);
+  const btn = { display: "flex", alignItems: "center", gap: 6, padding: "7px 12px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12, fontWeight: 700, color: C.tealDark, whiteSpace: "nowrap" };
+  const reportRow = (title, desc, control, onClick) => (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 18px", borderBottom: `1px solid ${C.line}` }}>
+      <div style={{ minWidth: 0 }}>
+        <div style={{ fontSize: 13.5, fontWeight: 600 }}>{title}</div>
+        <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 2 }}>{desc}</div>
+      </div>
+      <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
+        {control}
+        <button onClick={onClick} style={btn}><Download size={13} /> CSV</button>
+      </div>
+    </div>
+  );
+  const monthSelect = <Select value={month} onChange={setMonth} options={months} labels={months.map(periodLabel)} />;
+  const yearSelect = <Select value={String(year)} onChange={(v) => setYear(Number(v))} options={years.map(String)} />;
+  const sendNotice = () => {
+    const names = [...new Set(families.map((f) => f.householdName || f.child))];
+    broadcastToFamilies(threads, saveThreads, names, notifyText, "announcement", families);
+    setNotified(true); setNotifyOpen(false);
+  };
+  const requestDeletion = () => {
+    const now2 = new Date();
+    setTickets([{ id: Date.now(), provider: provider?.name || "Provider", subject: "Account deletion request", category: "Account or login", status: "open",
+      date: now2.toLocaleDateString("en-US"), time: now2.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+      message: `Please delete the Alaga account and all records for ${provider?.name || "this provider"} (${provider?.lic || ""}). Requested ${todayMDY()}.`, replies: [] }, ...(Array.isArray(tickets) ? tickets : [])]);
+    setDeletionRequested(true);
+  };
+  const step = (n, done, title, body) => (
+    <div style={{ display: "flex", gap: 12, padding: "14px 18px", borderBottom: `1px solid ${C.line}` }}>
+      <div style={{ width: 24, height: 24, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, background: done ? C.teal : C.cream, color: done ? "#fff" : C.inkSoft }}>{done ? <Check size={13} /> : n}</div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 13.5, fontWeight: 600 }}>{title}</div>
+        <div style={{ marginTop: 4 }}>{body}</div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <Card title={t("Reports")} icon={FileText} right={<span style={{ fontSize: 12, color: C.inkSoft }}>{t("Opens in Excel, Google Sheets or Numbers")}</span>}>
+        {reportRow(t("Attendance"), t("Every child's days, times in and out, and absences — for subsidy agencies and your records."), monthSelect, () => dl("attendance", month))}
+        {reportRow(t("Payments received"), t("Every tuition and copay payment, with who paid and how — for your accountant."), yearSelect, () => dl("payments", year))}
+        {reportRow(t("Income & expenses by month"), t("Payments received, refunds and logged expenses for each month — a starting point for taxes."), yearSelect, () => dl("yearSummary", year))}
+        {reportRow(t("Enrollment roster"), t("Current children with guardians, schedules and funding."), null, () => dl("roster"))}
+        {reportRow(t("Children's documents"), t("Which documents are on file for each child, and when they renew."), null, () => dl("childDocs"))}
+        {reportRow(t("Incident log"), t("Every incident you've logged, with how parents were notified."), null, () => dl("incidents"))}
+        {reportRow(t("Business expenses"), t("Every expense you've logged, by category."), null, () => dl("expenses"))}
+        <div style={{ padding: "10px 18px", fontSize: 11.5, color: C.inkSoft }}>{t("Printable monthly sign-in sheets are in Bookings. Receipts for families are in Finances → Receipts.")}</div>
+      </Card>
+
+      <Card title={t("Download everything")} icon={Download}>
+        <div style={{ padding: 18, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14 }}>
+          <div style={{ fontSize: 12.5, color: C.inkSoft, lineHeight: 1.55 }}>
+            {t("One .zip file with every report above, past families, staff, facility documents, messages, tours, 12 months of attendance, and a complete backup of your records. Uploaded scans and photos are listed by file name.")}
+            {exportedCount > 0 && <div style={{ marginTop: 6, color: C.teal, fontWeight: 700 }}>{t("Downloaded")} — {exportedCount} {t("files")}</div>}
+          </div>
+          <button onClick={() => setExportedCount(downloadBackup())} style={{ ...btn, background: C.teal, color: "#fff", border: "none", padding: "10px 16px" }}><Download size={14} /> {t("Download .zip")}</button>
+        </div>
+      </Card>
+
+      <Card title={t("Leaving Alaga")} icon={LogOut} right={<span style={{ fontSize: 12, color: C.inkSoft }}>{t("Go step by step — nothing is deleted until the last step")}</span>}>
+        {step(1, exportedCount > 0, t("Download a copy of your records"),
+          <button onClick={() => setExportedCount(downloadBackup())} style={btn}><Download size={13} /> {exportedCount > 0 ? t("Download again") : t("Download .zip")}</button>)}
+        {step(2, notified, t("Let families know (optional)"),
+          notifyOpen ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <textarea value={notifyText} onChange={(e) => setNotifyText(e.target.value)} rows={3} style={{ width: "100%", border: `1px solid ${C.line}`, borderRadius: 10, padding: "9px 11px", fontSize: 12.5, fontFamily: "inherit" }} />
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={sendNotice} disabled={!families.length} style={{ ...btn, background: C.teal, color: "#fff", border: "none" }}><Send size={12} /> {t("Send to all families")}</button>
+                <button onClick={() => setNotifyOpen(false)} style={btn}>{t("Cancel")}</button>
+              </div>
+            </div>
+          ) : notified ? <span style={{ fontSize: 12, color: C.teal, fontWeight: 600 }}>{t("Sent — see Messages")}</span>
+            : <button onClick={() => setNotifyOpen(true)} style={btn}><MessageSquare size={13} /> {t("Write a message")}</button>)}
+        {step(3, canceled, t("Cancel your subscription"),
+          canceled ? <span style={{ fontSize: 12, color: C.inkSoft }}>{t("Canceled — access continues through")} {billing.accessUntil || billingPeriodEnd(billing)}.</span>
+            : <button onClick={goToBilling} style={btn}>{t("Go to Plan & Billing")}</button>)}
+        {step(4, deletionRequested, t("Ask us to delete your account"),
+          deletionRequested ? <span style={{ fontSize: 12, color: C.inkSoft }}>{t("Request sent. The Alaga team will confirm by email before anything is deleted — you can follow it in Support.")}</span>
+            : <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <div style={{ fontSize: 11.5, color: C.inkSoft, lineHeight: 1.5 }}>{t("Deletion is permanent. Without a request, a canceled account becomes a read-only archive after 90 days.")}</div>
+                <button onClick={requestDeletion} disabled={exportedCount === 0} title={exportedCount === 0 ? t("Download your records first") : ""} style={{ ...btn, alignSelf: "flex-start", color: exportedCount === 0 ? C.inkSoft : C.danger }}>{t("Request account deletion")}</button>
+                {exportedCount === 0 && <div style={{ fontSize: 11, color: C.inkSoft }}>{t("Download your records first (step 1).")}</div>}
+              </div>)}
+        <div style={{ padding: "12px 18px", fontSize: 11.5, color: C.inkSoft, lineHeight: 1.55, display: "flex", gap: 8 }}>
+          <Info size={13} style={{ flexShrink: 0, marginTop: 1 }} />
+          <span>{t("Closing your child care business? Also tell your Licensing Program Analyst and every subsidy agency you work with, and keep children's records for at least 3 years after care ends.")}</span>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+function AccountTab({ isDemo, onSignOut }) {
+  const t = useT();
+  const [user, setUser] = useState(null);
+  const [checked, setChecked] = useState(false);
+  const [msg, setMsg] = useState("");
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try { const { auth } = await import("./firebase.js"); if (alive) setUser(auth.currentUser); } catch (e) { /* not signed in */ }
+      if (alive) setChecked(true);
+    })();
+    return () => { alive = false; };
+  }, []);
+  const resetPassword = async () => {
+    try {
+      const { sendPasswordResetEmail } = await import("firebase/auth");
+      const { auth } = await import("./firebase.js");
+      await sendPasswordResetEmail(auth, user.email);
+      setMsg(`${t("Password reset email sent to")} ${user.email}.`);
+    } catch (e) { setMsg(t("Couldn't send the email. Try again in a moment.")); }
+  };
+  const signOutNow = async () => {
+    try { const { signOut } = await import("firebase/auth"); const { auth } = await import("./firebase.js"); await signOut(auth); } catch (e) { /* already signed out */ }
+    onSignOut && onSignOut();
+  };
+  return (
+    <Card title={t("Account")} icon={Lock}>
+      <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
+        {!checked ? <div style={{ fontSize: 12.5, color: C.inkSoft }}>{t("Loading…")}</div> : user ? (
+          <>
+            <Row left={<span style={{ color: C.inkSoft }}>{t("Signed in as")}</span>} right={<b>{user.email}</b>} />
+            {user.metadata?.lastSignInTime && <Row left={<span style={{ color: C.inkSoft }}>{t("Last sign-in")}</span>} right={<span style={{ fontSize: 13 }}>{new Date(user.metadata.lastSignInTime).toLocaleString("en-US")}</span>} />}
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <button onClick={resetPassword} style={{ padding: "8px 14px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 700, color: C.tealDark }}>{t("Change password")}</button>
+              <button onClick={signOutNow} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12.5, fontWeight: 700 }}><LogOut size={13} /> {t("Sign out")}</button>
+            </div>
+            {msg && <div style={{ fontSize: 12, color: C.tealDark }}>{msg}</div>}
+          </>
+        ) : (
+          <>
+            <div style={{ fontSize: 12.5, color: C.inkSoft }}>{isDemo ? t("You're exploring a demo — no account is signed in.") : t("No account is signed in on this device.")}</div>
+            <button onClick={signOutNow} style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 700, color: C.tealDark }}><LogOut size={13} /> {t("Back to start")}</button>
+          </>
+        )}
+      </div>
+    </Card>
+  );
+}
+
 function ToggleSwitch({ on, onClick }) {
   return (
     <button onClick={onClick} style={{
@@ -10426,13 +10901,13 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, statu
     saveFlexCare([{ id: `fc${flexSeq}`, child: fam.child, classroom: fam.classroom, type: flexForm.type, date: flexForm.date, hours: Number(flexForm.hours), notes: flexForm.notes, status: "pending", requestedBy: "parent", parentPaymentMethod: flexForm.paymentMethod, paymentConfirmed: false }, ...flexCareRequests]);
     const threadName = fam.householdName || fam.child;
     const noteText = `${t("New flex care request")}: ${t(flexForm.type)}, ${flexForm.date} — ${t("view and respond in Bookings")}.`;
-    const existingThread = threads.find((th) => th.name === threadName);
+    const existingThread = findThread(threads, { household: fam.household, name: threadName });
     if (existingThread) {
       saveThreads(threads.map((th) => th.id === existingThread.id
-        ? { ...th, unread: true, messages: [...th.messages, { from: "them", text: noteText, time: "Just now" }] }
+        ? { ...th, unread: true, messages: [...th.messages, { from: "them", text: noteText, ...msgNow() }] }
         : th));
     } else {
-      saveThreads([{ id: `th-flex-${Date.now()}`, name: threadName, unread: true, messages: [{ from: "them", text: noteText, time: "Just now" }] }, ...threads]);
+      saveThreads([{ id: `th-flex-${Date.now()}`, name: threadName, household: fam.household, unread: true, messages: [{ from: "them", text: noteText, ...msgNow() }] }, ...threads]);
     }
     setFlexForm({ type: FLEX_CARE_TYPES[0], date: "", hours: 1, notes: "", paymentMethod: PAYMENT_METHODS[0] });
   };
@@ -10441,15 +10916,15 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, statu
   // The parent's own conversation with the provider — a single thread, not a
   // full inbox, since a family only talks to one provider.
   const myThreadName = fam.householdName || fam.child;
-  const myThread = threads.find((th) => th.name === myThreadName);
+  const myThread = findThread(threads, { household: fam.household, name: myThreadName });
   const [myDraft, setMyDraft] = useState("");
   const [expandedEventId, setExpandedEventId] = useState(null);
   const sendToProvider = () => {
     if (!myDraft.trim()) return;
     if (myThread) {
-      saveThreads(threads.map((th) => (th.id === myThread.id ? { ...th, unread: true, messages: [...th.messages, { from: "them", text: myDraft, time: "Just now" }] } : th)));
+      saveThreads(threads.map((th) => (th.id === myThread.id ? { ...th, unread: true, messages: [...th.messages, { from: "them", text: myDraft, ...msgNow() }] } : th)));
     } else {
-      saveThreads([{ id: `th-parent-${Date.now()}`, name: myThreadName, unread: true, messages: [{ from: "them", text: myDraft, time: "Just now" }] }, ...threads]);
+      saveThreads([{ id: `th-parent-${Date.now()}`, name: myThreadName, household: fam.household, unread: true, messages: [{ from: "them", text: myDraft, ...msgNow() }] }, ...threads]);
     }
     setMyDraft("");
   };
