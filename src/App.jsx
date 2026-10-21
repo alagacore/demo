@@ -878,6 +878,22 @@ const T = {
   "Past": { es: "Pasados", tl: "Nakaraan", zh: "已过", vi: "Đã qua", ko: "지난 휴원" },
   "Days they attend": { es: "Días que asiste", tl: "Mga araw na pumapasok", zh: "入托日", vi: "Những ngày đi học", ko: "등원 요일" },
   "More days than the subsidy approves — extra days may need to be billed privately.": { es: "Más días de los que aprueba el subsidio; los días extra pueden cobrarse de forma privada.", tl: "Mas maraming araw kaysa aprubado ng subsidy — maaaring singilin nang pribado ang dagdag na araw.", zh: "天数超过补助批准范围——额外天数可能需自费。", vi: "Nhiều ngày hơn mức trợ cấp duyệt — ngày thêm có thể phải tự trả.", ko: "보조금 승인 일수보다 많습니다 — 추가 일수는 개인 부담일 수 있습니다." },
+  "Monthly sign-in / sign-out sheet": { es: "Hoja mensual de entrada y salida", tl: "Buwanang sign-in / sign-out sheet", zh: "每月签到/签退表", vi: "Bảng ký vào / ký ra hằng tháng", ko: "월간 등·하원 서명부" },
+  "Parent / guardian": { es: "Padre / tutor", tl: "Magulang / tagapag-alaga", zh: "父母 / 监护人", vi: "Cha mẹ / người giám hộ", ko: "부모 / 보호자" },
+  "Day": { es: "Día", tl: "Araw", zh: "星期", vi: "Thứ", ko: "요일" },
+  "Time in": { es: "Hora de entrada", tl: "Oras ng pasok", zh: "到园时间", vi: "Giờ vào", ko: "등원 시간" },
+  "Time out": { es: "Hora de salida", tl: "Oras ng labas", zh: "离园时间", vi: "Giờ ra", ko: "하원 시간" },
+  "Parent signature": { es: "Firma del padre", tl: "Pirma ng magulang", zh: "家长签名", vi: "Chữ ký phụ huynh", ko: "보호자 서명" },
+  "No scheduled days this month.": { es: "No hay días programados este mes.", tl: "Walang naka-schedule na araw ngayong buwan.", zh: "本月没有排定的入托日。", vi: "Không có ngày theo lịch trong tháng này.", ko: "이번 달 예정된 등원일이 없습니다." },
+  "Parent / guardian signature": { es: "Firma del padre / tutor", tl: "Pirma ng magulang / tagapag-alaga", zh: "父母/监护人签名", vi: "Chữ ký cha mẹ / người giám hộ", ko: "부모/보호자 서명" },
+  "Provider signature": { es: "Firma del proveedor", tl: "Pirma ng provider", zh: "托育者签名", vi: "Chữ ký người giữ trẻ", ko: "운영자 서명" },
+  "If your agency requires its own attendance form, copy these times onto it.": { es: "Si su agencia exige su propio formulario de asistencia, copie estas horas en él.", tl: "Kung may sariling attendance form ang agency mo, kopyahin doon ang mga oras na ito.", zh: "如机构要求使用其官方出勤表，请将这些时间抄录到该表上。", vi: "Nếu cơ quan yêu cầu mẫu điểm danh riêng, hãy chép các giờ này sang mẫu đó.", ko: "기관 전용 출석 양식이 필요하면 이 시간을 옮겨 적으세요." },
+  "Sign-in sheets": { es: "Hojas de entrada", tl: "Sign-in sheets", zh: "签到表", vi: "Bảng ký tên", ko: "등·하원 서명부" },
+  "Subsidized children": { es: "Niños con subsidio", tl: "Mga batang may subsidy", zh: "受补助儿童", vi: "Trẻ có trợ cấp", ko: "보조금 아동" },
+  "All children": { es: "Todos los niños", tl: "Lahat ng bata", zh: "所有儿童", vi: "Tất cả trẻ", ko: "모든 아동" },
+  "page": { es: "página", tl: "pahina", zh: "页", vi: "trang", ko: "페이지" },
+  "pages": { es: "páginas", tl: "pahina", zh: "页", vi: "trang", ko: "페이지" },
+  "One page per child with each scheduled day, times already recorded here, and lines for parent signatures.": { es: "Una página por niño con cada día programado, las horas ya registradas aquí y líneas para la firma de los padres.", tl: "Isang pahina bawat bata: bawat naka-schedule na araw, mga oras na naitala na rito, at linya para sa pirma ng magulang.", zh: "每个孩子一页：列出每个排定日、此处已记录的时间以及家长签名栏。", vi: "Mỗi trẻ một trang: các ngày theo lịch, giờ đã ghi ở đây và dòng chữ ký phụ huynh.", ko: "아이별 한 장: 예정된 날짜, 여기 기록된 시간, 보호자 서명란." },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -4803,6 +4819,9 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
 
   const [selectedDate, setSelectedDate] = useState(TODAY);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [sheetsOpen, setSheetsOpen] = useState(false);
+  const [sheetMonth, setSheetMonth] = useState(0); // 0 = this month, -1 = last month
+  const [sheetWho, setSheetWho] = useState("subsidized");
   const [bookingsTab, setBookingsTab] = useState(highlightId ? "flex" : "roster");
   useEffect(() => { if (highlightId) setBookingsTab("flex"); }, [highlightId]);
   const [denyingId, setDenyingId] = useState(null);
@@ -4926,10 +4945,32 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
               <div style={{ fontSize: 11.5, color: C.inkSoft }}>{dateShort}, {selectedDate.getFullYear()} {isToday && `· ${t("today")}`}</div>
             </div>
           </div>
-          <button onClick={() => setPickerOpen(!pickerOpen)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: `1px solid ${C.line}`, background: pickerOpen ? C.tealTint : "#fff", color: C.tealDark, fontWeight: 700, fontSize: 12.5 }}>
-            <CalendarDays size={14} /> {t("Change date")}
-          </button>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={() => { setSheetsOpen(!sheetsOpen); setPickerOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: `1px solid ${C.line}`, background: sheetsOpen ? C.tealTint : "#fff", color: C.tealDark, fontWeight: 700, fontSize: 12.5 }}>
+              <Printer size={14} /> {t("Sign-in sheets")}
+            </button>
+            <button onClick={() => { setPickerOpen(!pickerOpen); setSheetsOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: `1px solid ${C.line}`, background: pickerOpen ? C.tealTint : "#fff", color: C.tealDark, fontWeight: 700, fontSize: 12.5 }}>
+              <CalendarDays size={14} /> {t("Change date")}
+            </button>
+          </div>
         </div>
+        {sheetsOpen && (() => {
+          const base = new Date(TODAY.getFullYear(), TODAY.getMonth() + sheetMonth, 1);
+          const who = sheetWho === "subsidized" ? families.filter((f) => f.subsidized) : families;
+          const label = (off) => new Date(TODAY.getFullYear(), TODAY.getMonth() + off, 1).toLocaleDateString("en-US", { month: "long", year: "numeric" });
+          return (
+            <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.line}`, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+              <Select value={String(sheetMonth)} onChange={(v) => setSheetMonth(Number(v))} options={["0", "-1", "1"]} labels={[label(0), label(-1), label(1)]} />
+              <Select value={sheetWho} onChange={setSheetWho} options={["subsidized", "all"]} labels={[t("Subsidized children"), t("All children")]} />
+              <span style={{ fontSize: 11.5, color: C.inkSoft }}>{who.length} {t(who.length === 1 ? "page" : "pages")}</span>
+              <button disabled={!who.length} onClick={() => printSignInSheets(who, { year: base.getFullYear(), month: base.getMonth(), attendanceLog, schedule, closures, provider, t })}
+                style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 6, padding: "7px 14px", borderRadius: 8, border: "none", background: who.length ? C.teal : "#C9C4B4", color: "#fff", fontSize: 12, fontWeight: 700 }}>
+                <Printer size={13} /> {t("Print")}
+              </button>
+              <div style={{ width: "100%", fontSize: 11, color: C.inkSoft }}>{t("One page per child with each scheduled day, times already recorded here, and lines for parent signatures.")}</div>
+            </div>
+          );
+        })()}
         {pickerOpen && (
           <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.line}`, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
             <input type="date" value={dateISO} onChange={(e) => { if (e.target.value) { const [y, m, d] = e.target.value.split("-").map(Number); setSelectedDate(new Date(y, m - 1, d)); } }} style={inputStyle} />
@@ -6132,7 +6173,10 @@ function printChildSheets(children, { parents = [], provider = {}, t = (x) => x,
       .box { display: inline-block; width: 12px; height: 12px; border: 1px solid #111; margin-right: 7px; text-align: center; line-height: 11px; font-size: 10px; }
       footer { margin-top: 22px; font-size: 8.5pt; color: #444; border-top: 1px solid #999; padding-top: 6px; }
     </style></head><body>${children.map(sheet).join("")}</body></html>`;
-  // A hidden frame avoids pop-up blockers and leaves the app as it was.
+  printHTML(html);
+}
+// A hidden frame avoids pop-up blockers and leaves the app as it was.
+function printHTML(html) {
   const frame = document.createElement("iframe");
   frame.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;";
   document.body.appendChild(frame);
@@ -6143,6 +6187,72 @@ function printChildSheets(children, { parents = [], provider = {}, t = (x) => x,
     frame.contentWindow.print();
     setTimeout(() => frame.remove(), 1000);
   }, 150);
+}
+
+// Monthly sign-in / sign-out sheets, one page per child, for subsidy
+// attendance records. Pre-fills times already recorded in Bookings and leaves
+// signature lines for parents. Days the child isn't scheduled, or the program
+// is closed, are left off.
+function printSignInSheets(children, { year, month, attendanceLog = {}, schedule = [], closures = [], provider = {}, t = (x) => x }) {
+  const monthName = new Date(year, month, 1).toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const sheet = (c) => {
+    const prog = c.subsidized ? programOf(c.programId) : null;
+    const rows = [];
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date = new Date(year, month, d);
+      const mdy = `${pad2(month + 1)}/${pad2(d)}/${year}`;
+      const weekday = DAY_BY_INDEX[date.getDay()];
+      const open = (schedule.find((x) => x.day === weekday)?.open) && !closureOn(closures, mdy);
+      if (!open || !childDays(c).includes(weekday)) continue;
+      const raw = (attendanceLog[mdy] || {})[c.id];
+      const rec = raw === true ? {} : raw || {};
+      rows.push(`<tr><td>${escapeHTML(mdy)}</td><td>${escapeHTML(t(weekday).slice(0, 3))}</td>` +
+        (rec.absent
+          ? `<td colspan="4" class="absent">${escapeHTML(t("Absent"))}</td>`
+          : `<td>${escapeHTML(rec.in && rec.in !== "—" ? rec.in : "")}</td><td></td><td>${escapeHTML(rec.out || "")}</td><td></td>`) +
+        `</tr>`);
+    }
+    return `
+      <section class="sheet">
+        <header>
+          <div><div class="provider">${escapeHTML(provider.name || "")}</div><div class="muted">${escapeHTML([provider.lic, provider.city].filter(Boolean).join(" · "))}</div></div>
+          <div class="right"><div class="title">${escapeHTML(t("Monthly sign-in / sign-out sheet"))}</div><div class="muted">${escapeHTML(monthName)}</div></div>
+        </header>
+        <table class="meta">
+          <tr><th>${escapeHTML(t("Child"))}</th><td>${escapeHTML(c.child)}</td><th>${escapeHTML(t("Parent / guardian"))}</th><td>${escapeHTML(c.parents?.[0]?.name || c.parent || "")}</td></tr>
+          <tr><th>${escapeHTML(t("Program"))}</th><td>${escapeHTML(prog ? `${prog.label} — ${prog.agency}` : t("Private pay"))}</td><th>${escapeHTML(t("Schedule"))}</th><td>${escapeHTML(`${c.sessionsApproved || ""} · ${childDays(c).map((x) => t(x).slice(0, 3)).join(", ")}`)}</td></tr>
+        </table>
+        <table class="log">
+          <tr><th>${escapeHTML(t("Date"))}</th><th>${escapeHTML(t("Day"))}</th><th>${escapeHTML(t("Time in"))}</th><th>${escapeHTML(t("Parent signature"))}</th><th>${escapeHTML(t("Time out"))}</th><th>${escapeHTML(t("Parent signature"))}</th></tr>
+          ${rows.join("") || `<tr><td colspan="6" class="absent">${escapeHTML(t("No scheduled days this month."))}</td></tr>`}
+        </table>
+        <div class="sign">
+          <div><span class="line"></span>${escapeHTML(t("Parent / guardian signature"))}</div>
+          <div><span class="line"></span>${escapeHTML(t("Provider signature"))}</div>
+          <div><span class="line short"></span>${escapeHTML(t("Date"))}</div>
+        </div>
+        <footer>${escapeHTML(t("If your agency requires its own attendance form, copy these times onto it."))}</footer>
+      </section>`;
+  };
+  printHTML(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHTML(t("Sign-in sheets"))} — ${escapeHTML(monthName)}</title>
+    <style>
+      @page { size: letter; margin: 0.5in; }
+      body { font-family: Georgia, "Times New Roman", serif; color: #111; font-size: 10pt; margin: 0; }
+      .sheet { page-break-after: always; } .sheet:last-child { page-break-after: auto; }
+      header { display: flex; justify-content: space-between; border-bottom: 2px solid #111; padding-bottom: 6px; margin-bottom: 10px; }
+      .provider { font-weight: bold; font-size: 11.5pt; } .title { font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; font-size: 9.5pt; }
+      .right { text-align: right; } .muted { color: #444; font-size: 9pt; }
+      table { width: 100%; border-collapse: collapse; }
+      .meta th { text-align: left; color: #444; font-weight: normal; width: 16%; padding: 3px 4px; } .meta td { padding: 3px 4px; }
+      .log { margin-top: 10px; } .log th { font-size: 8.5pt; text-align: left; border-bottom: 1.5px solid #111; padding: 4px; }
+      .log td { border-bottom: 1px solid #bbb; padding: 0 4px; height: 22px; } .log td:nth-child(4), .log td:nth-child(6) { width: 26%; }
+      .absent { color: #444; font-style: italic; }
+      .sign { display: flex; gap: 24px; margin-top: 22px; font-size: 9pt; color: #444; }
+      .sign div { flex: 1; } .sign div:last-child { flex: 0.5; }
+      .line { display: block; border-bottom: 1px solid #111; height: 22px; margin-bottom: 3px; }
+      footer { margin-top: 14px; font-size: 8pt; color: #444; }
+    </style></head><body>${children.map(sheet).join("")}</body></html>`);
 }
 
 /* ------------------------------ enrollment ------------------------------------ */
