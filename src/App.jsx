@@ -8,7 +8,7 @@ import {
   Pencil, Plus, Trash2, Split, ArrowLeft, Shield, FileCheck, HeartPulse, Flame, Eye,
   Moon, Contrast, Type, ZapOff, Lock, ListChecks, UserPlus, Settings as Gear, LifeBuoy, Paperclip, Image as ImageIcon,
   ArrowRight, Building2, Rocket, PlayCircle, UploadCloud, TrendingUp, Wand2, UserCog, Scale, ArrowLeftRight, Volume2, Square, Hourglass,
-  Wallet, Baby, Cookie, Puzzle, SprayCan, Palette, LogOut, Check,
+  Wallet, Baby, Cookie, Puzzle, SprayCan, Palette, LogOut, Check, GraduationCap, Bell, BellOff,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell,
@@ -366,15 +366,20 @@ const CALENDAR_EVENTS_DEFAULT = demoDates([
 
 const TOUR_STAGES = ["Inquiry", "Tour Scheduled", "Toured", "Follow-up", "Waitlist", "Enrolled", "Declined"];
 let tourSeq = 0;
+// How long a family has sat in its current stage, and whether a follow-up is due.
+const daysInStage = (p) => (p.stageSince ? -daysUntil(p.stageSince) : null);
+const followupDue = (p) => !!p.followupDate && daysUntil(p.followupDate) <= 0 && !["Enrolled", "Declined"].includes(p.stage);
+const CLOSED_STAGES = ["Enrolled", "Declined"];
+const DECLINE_REASONS = ["Found other care", "No longer needs care", "Didn't respond", "Moved away", "Cost", "Other"];
 function tourFam(o) { tourSeq += 1; return { id: `t${tourSeq}`, ...o }; }
 const PROSPECTIVE_FAMILIES_DEFAULT = demoDates([
-  tourFam({ name: "Ramirez Family", stage: "Inquiry", tourDate: "Not scheduled", careType: "Full-time", children: "1 (age 2)", start: "September 2026", language: "Español", contact: "(310) 555-0711", notes: "Found us via Facebook group for Culver City parents.", followup: "Call to schedule a tour." }),
-  tourFam({ name: "Nguyen Family", stage: "Tour Scheduled", tourDate: "08/03/2026", careType: "Part-time", children: "1 (age 4)", start: "August 2026", language: "Tiếng Việt", contact: "(310) 555-0733", notes: "Currently at a center-based program, looking for smaller ratio.", followup: "Confirm tour 24 hrs prior." }),
-  tourFam({ name: "Kim Family", stage: "Toured", tourDate: "07/20/2026", careType: "Full-time", children: "2 (ages 1, 3)", start: "October 2026", language: "한국어", contact: "(310) 555-0759", notes: "Toured well — asked detailed questions about subsidy eligibility.", followup: "Send CalWORKs info packet." }),
-  tourFam({ name: "Alvarez Family", stage: "Follow-up", tourDate: "07/10/2026", careType: "Full-time", children: "1 (age 5)", start: "ASAP", language: "Español", contact: "(310) 555-0782", notes: "Urgent need — current provider closing end of month.", followup: "Follow up on enrollment decision by Fri." }),
-  tourFam({ name: "Brown Family", stage: "Waitlist", tourDate: "06/28/2026", careType: "Full-time", children: "1 (age 2)", start: "January 2027", language: "English", contact: "(310) 555-0804", notes: "No infant/toddler openings until January.", followup: "Check back in November." }),
-  tourFam({ name: "Torres Family", stage: "Enrolled", tourDate: "05/12/2026", careType: "Full-time", children: "1 (age 4)", start: "06/01/2026", language: "Español", contact: "(310) 555-0829", notes: "Enrolled — see Families tab for full record.", followup: "" }),
-  tourFam({ name: "Patel Family", stage: "Declined", tourDate: "06/02/2026", careType: "Part-time", children: "1 (age 3)", start: "—", language: "English", contact: "(310) 555-0861", notes: "Chose a center closer to their workplace.", followup: "" }),
+  tourFam({ name: "Ramirez Family", stageSince: "07/22/2026", followupDate: "07/27/2026", stage: "Inquiry", tourDate: "Not scheduled", careType: "Full-time", children: "1 (age 2)", start: "September 2026", language: "Español", contact: "(310) 555-0711", notes: "Found us via Facebook group for Culver City parents.", followup: "Call to schedule a tour." }),
+  tourFam({ name: "Nguyen Family", stageSince: "07/21/2026", stage: "Tour Scheduled", tourDate: "08/03/2026", careType: "Part-time", children: "1 (age 4)", start: "August 2026", language: "Tiếng Việt", contact: "(310) 555-0733", notes: "Currently at a center-based program, looking for smaller ratio.", followup: "Confirm tour 24 hrs prior." }),
+  tourFam({ name: "Kim Family", stageSince: "07/20/2026", followupDate: "07/28/2026", stage: "Toured", tourDate: "07/20/2026", careType: "Full-time", children: "2 (ages 1, 3)", start: "October 2026", language: "한국어", contact: "(310) 555-0759", notes: "Toured well — asked detailed questions about subsidy eligibility.", followup: "Send CalWORKs info packet." }),
+  tourFam({ name: "Alvarez Family", stageSince: "07/01/2026", followupDate: "07/24/2026", stage: "Follow-up", tourDate: "07/10/2026", careType: "Full-time", children: "1 (age 5)", start: "ASAP", language: "Español", contact: "(310) 555-0782", notes: "Urgent need — current provider closing end of month.", followup: "Follow up on enrollment decision by Fri." }),
+  tourFam({ name: "Brown Family", stageSince: "06/30/2026", stage: "Waitlist", tourDate: "06/28/2026", careType: "Full-time", children: "1 (age 2)", start: "January 2027", language: "English", contact: "(310) 555-0804", notes: "No infant/toddler openings until January.", followup: "Check back in November." }),
+  tourFam({ name: "Torres Family", stageSince: "06/01/2026", stage: "Enrolled", tourDate: "05/12/2026", careType: "Full-time", children: "1 (age 4)", start: "06/01/2026", language: "Español", contact: "(310) 555-0829", notes: "Enrolled — see Families tab for full record.", followup: "" }),
+  tourFam({ name: "Patel Family", stageSince: "06/05/2026", declineReason: "Found other care", stage: "Declined", tourDate: "06/02/2026", careType: "Part-time", children: "1 (age 3)", start: "—", language: "English", contact: "(310) 555-0861", notes: "Chose a center closer to their workplace.", followup: "" }),
 ]);
 
 // self-contained QR code (no network dependency) encoding a parent self-check-in link
@@ -1142,6 +1147,83 @@ const T = {
   "One .zip file with every report above, past families, staff, facility documents, messages, tours, 12 months of attendance, and a complete backup of your records. Uploaded scans and photos are listed by file name.": { es: "Un archivo .zip con todos los informes anteriores, familias anteriores, personal, documentos del centro, mensajes, visitas, 12 meses de asistencia y una copia completa de tus registros. Los escaneos y fotos subidos aparecen por nombre de archivo.", tl: "Isang .zip na may lahat ng ulat sa itaas, dating pamilya, staff, dokumento ng pasilidad, mensahe, tour, 12 buwang attendance, at kumpletong backup ng records mo. Nakalista ayon sa pangalan ang mga na-upload na scan at larawan.", zh: "一个 .zip 文件，包含上述所有报告、过往家庭、员工、机构文件、消息、参观记录、12个月出勤和完整的记录备份。已上传的扫描件和照片按文件名列出。", vi: "Một tệp .zip gồm mọi báo cáo trên, gia đình cũ, nhân viên, giấy tờ cơ sở, tin nhắn, lịch tham quan, 12 tháng điểm danh và bản sao đầy đủ hồ sơ. Bản quét và ảnh đã tải lên được liệt kê theo tên tệp.", ko: "위의 모든 보고서, 이전 가족, 직원, 시설 서류, 메시지, 견학, 12개월 출석, 전체 기록 백업이 담긴 .zip 파일 하나. 업로드한 스캔본과 사진은 파일 이름으로 표시됩니다." },
   "Printable monthly sign-in sheets are in Bookings. Receipts for families are in Finances → Receipts.": { es: "Las hojas de entrada mensuales imprimibles están en Reservas. Los recibos para las familias están en Finanzas → Recibos.", tl: "Nasa Bookings ang printable na buwanang sign-in sheet. Nasa Finances → Receipts ang mga resibo ng pamilya.", zh: "可打印的月度签到表在“预订”中。家庭收据在“财务 → 收据”中。", vi: "Bảng ký đến/về hàng tháng có trong Đặt chỗ. Biên nhận cho gia đình ở Tài chính → Biên nhận.", ko: "인쇄용 월별 출석부는 예약에, 가족용 영수증은 재무 → 영수증에 있습니다." },
   "Hi families — a quick update: we're changing how we keep records and messages. Starting [date], please reach us at [phone/email]. Thank you!": { es: "Hola, familias — una breve actualización: estamos cambiando cómo guardamos registros y mensajes. A partir del [fecha], comuníquense con nosotros al [teléfono/correo]. ¡Gracias!", tl: "Hi mga pamilya — maikling update: binabago namin kung paano namin itinatago ang records at mensahe. Simula [petsa], kontakin kami sa [telepono/email]. Salamat!", zh: "各位家长好——简短通知：我们将更改记录和消息的管理方式。自[日期]起，请通过[电话/邮箱]联系我们。谢谢！", vi: "Chào các gia đình — cập nhật nhanh: chúng tôi đang thay đổi cách lưu hồ sơ và tin nhắn. Từ [ngày], vui lòng liên hệ qua [điện thoại/email]. Cảm ơn!", ko: "가족 여러분 안녕하세요 — 기록과 메시지 관리 방식이 바뀝니다. [날짜]부터는 [전화/이메일]로 연락해 주세요. 감사합니다!" },
+  "Add a birth date": { es: "Agrega la fecha de nacimiento", tl: "Idagdag ang kaarawan", zh: "添加出生日期", vi: "Thêm ngày sinh", ko: "생년월일 추가" },
+  "Alerts off": { es: "Alertas desactivadas", tl: "Naka-off ang alerto", zh: "提醒已关闭", vi: "Tắt thông báo", ko: "알림 끔" },
+  "Alerts on": { es: "Alertas activadas", tl: "Naka-on ang alerto", zh: "提醒已开启", vi: "Bật thông báo", ko: "알림 켬" },
+  "Appointment": { es: "Cita", tl: "Appointment", zh: "预约外出", vi: "Đi khám/hẹn", ko: "외출(진료)" },
+  "At appointment since": { es: "En una cita desde", tl: "Nasa appointment mula", zh: "外出预约，自", vi: "Đi hẹn từ", ko: "외출 시작" },
+  "Back in": { es: "Regresó", tl: "Nakabalik na", zh: "已返回", vi: "Đã quay lại", ko: "복귀" },
+  "Birth date": { es: "Fecha de nacimiento", tl: "Kaarawan", zh: "出生日期", vi: "Ngày sinh", ko: "생년월일" },
+  "Birth date (optional)": { es: "Fecha de nacimiento (opcional)", tl: "Kaarawan (opsyonal)", zh: "出生日期（可选）", vi: "Ngày sinh (tùy chọn)", ko: "생년월일 (선택)" },
+  "CCLD": { es: "CCLD", tl: "CCLD", zh: "CCLD", vi: "CCLD", ko: "CCLD" },
+  "Call": { es: "Llamar", tl: "Tumawag", zh: "致电", vi: "Gọi", ko: "전화" },
+  "Checked in at": { es: "Llegó a las", tl: "Nag-check in nang", zh: "入园时间", vi: "Đã đến lúc", ko: "등원 시간" },
+  "Coming up": { es: "Próximamente", tl: "Paparating", zh: "即将到来", vi: "Sắp tới", ko: "다가오는 일정" },
+  "Due today": { es: "Vence hoy", tl: "Due ngayon", zh: "今天到期", vi: "Đến hạn hôm nay", ko: "오늘 마감" },
+  "Everyone": { es: "Todos", tl: "Lahat", zh: "所有人", vi: "Tất cả", ko: "전체" },
+  "Fall": { es: "Otoño de", tl: "Taglagas", zh: "秋季", vi: "Mùa thu", ko: "가을" },
+  "Families stay in a stage until you move them. Set a follow-up date and it shows on your dashboard; enrolled and declined families fold away after 30 days.": { es: "Las familias permanecen en una etapa hasta que las muevas. Fija una fecha de seguimiento y aparecerá en tu panel; las familias inscritas o que declinaron se ocultan después de 30 días.", tl: "Nananatili ang pamilya sa isang stage hangga't hindi mo inililipat. Maglagay ng follow-up date at lalabas ito sa dashboard; itinatago ang mga naka-enroll at tumanggi pagkalipas ng 30 araw.", zh: "家庭会停留在当前阶段，直到您移动它们。设置跟进日期后会显示在主页上；已入园和已拒绝的家庭30天后会收起。", vi: "Gia đình ở lại giai đoạn cho đến khi bạn chuyển. Đặt ngày theo dõi để hiện trên trang chính; gia đình đã ghi danh hoặc từ chối sẽ được thu gọn sau 30 ngày.", ko: "가족은 직접 옮기기 전까지 해당 단계에 머뭅니다. 후속 연락 날짜를 정하면 대시보드에 표시되며, 등록·거절된 가족은 30일 후 접힙니다." },
+  "First day of care": { es: "Primer día de cuidado", tl: "Unang araw ng pag-aalaga", zh: "首日入园", vi: "Ngày đầu đến trường", ko: "첫 등원일" },
+  "Follow up": { es: "Dar seguimiento", tl: "Mag-follow up", zh: "跟进", vi: "Theo dõi", ko: "후속 연락" },
+  "Follow up by": { es: "Dar seguimiento antes de", tl: "Mag-follow up bago", zh: "跟进截止", vi: "Theo dõi trước", ko: "후속 연락 기한" },
+  "Follow up today": { es: "Dar seguimiento hoy", tl: "Mag-follow up ngayon", zh: "今天跟进", vi: "Theo dõi hôm nay", ko: "오늘 후속 연락" },
+  "Follow-up due": { es: "Seguimiento pendiente", tl: "May follow-up", zh: "需跟进", vi: "Cần theo dõi", ko: "후속 연락 필요" },
+  "Follow-up overdue": { es: "Seguimiento atrasado", tl: "Lampas na ang follow-up", zh: "跟进已逾期", vi: "Quá hạn theo dõi", ko: "후속 연락 지연" },
+  "follow-up due": { es: "seguimiento pendiente", tl: "follow-up na due", zh: "个待跟进", vi: "cần theo dõi", ko: "후속 연락 필요" },
+  "follow-ups due": { es: "seguimientos pendientes", tl: "follow-up na due", zh: "个待跟进", vi: "cần theo dõi", ko: "후속 연락 필요" },
+  "Graduates": { es: "Se gradúa", tl: "Magtatapos", zh: "毕业", vi: "Tốt nghiệp", ko: "졸업" },
+  "graduates": { es: "se gradúa", tl: "magtatapos", zh: "毕业", vi: "tốt nghiệp", ko: "졸업" },
+  "Graduating": { es: "Se gradúa", tl: "Magtatapos", zh: "即将毕业", vi: "Sắp tốt nghiệp", ko: "졸업 예정" },
+  "Here right now": { es: "Presentes ahora", tl: "Narito ngayon", zh: "当前在园", vi: "Đang có mặt", ko: "현재 원내" },
+  "Hide older": { es: "Ocultar anteriores", tl: "Itago ang mas luma", zh: "隐藏较早的", vi: "Ẩn mục cũ", ko: "이전 항목 숨기기" },
+  "Show older": { es: "Mostrar anteriores", tl: "Ipakita ang mas luma", zh: "显示较早的", vi: "Hiện mục cũ", ko: "이전 항목 보기" },
+  "Kindergarten-eligible": { es: "Puede entrar a kínder", tl: "Puwede nang mag-kindergarten", zh: "可上幼儿园大班", vi: "Đủ tuổi mẫu giáo lớn", ko: "유치원 입학 가능" },
+  "Label": { es: "Etiqueta", tl: "Label", zh: "标签", vi: "Nhãn", ko: "분류" },
+  "Last contacted": { es: "Último contacto", tl: "Huling nakontak", zh: "上次联系", vi: "Liên hệ lần cuối", ko: "마지막 연락" },
+  "Last day before kindergarten": { es: "Último día antes del kínder", tl: "Huling araw bago mag-kindergarten", zh: "上大班前最后一天", vi: "Ngày cuối trước khi vào mẫu giáo lớn", ko: "유치원 입학 전 마지막 날" },
+  "Leaves": { es: "Se va", tl: "Aalis", zh: "离园", vi: "Nghỉ", ko: "퇴소" },
+  "leaves": { es: "se va", tl: "aalis", zh: "离园", vi: "nghỉ", ko: "퇴소" },
+  "Leaving for an appointment and coming back later": { es: "Sale a una cita y regresa más tarde", tl: "Aalis para sa appointment at babalik mamaya", zh: "外出预约，稍后返回", vi: "Đi hẹn và quay lại sau", ko: "진료 등으로 외출 후 복귀 예정" },
+  "Marked absent today": { es: "Ausente hoy", tl: "Absent ngayong araw", zh: "今天缺勤", vi: "Hôm nay vắng mặt", ko: "오늘 결석" },
+  "Need help from the Alaga team?": { es: "¿Necesitas ayuda del equipo de Alaga?", tl: "Kailangan ng tulong mula sa Alaga team?", zh: "需要Alaga团队的帮助？", vi: "Cần đội Alaga hỗ trợ?", ko: "Alaga 팀의 도움이 필요하신가요?" },
+  "New message alerts are off": { es: "Las alertas de mensajes nuevos están desactivadas", tl: "Naka-off ang alerto sa bagong mensahe", zh: "新消息提醒已关闭", vi: "Đã tắt thông báo tin nhắn mới", ko: "새 메시지 알림 꺼짐" },
+  "New message alerts are on": { es: "Las alertas de mensajes nuevos están activadas", tl: "Naka-on ang alerto sa bagong mensahe", zh: "新消息提醒已开启", vi: "Đã bật thông báo tin nhắn mới", ko: "새 메시지 알림 켜짐" },
+  "Next 30 days": { es: "Próximos 30 días", tl: "Susunod na 30 araw", zh: "未来30天", vi: "30 ngày tới", ko: "향후 30일" },
+  "No date set": { es: "Sin fecha", tl: "Walang petsa", zh: "未设置日期", vi: "Chưa đặt ngày", ko: "날짜 없음" },
+  "Not moving forward": { es: "No continuará", tl: "Hindi na tutuloy", zh: "不再继续", vi: "Không tiếp tục", ko: "진행 안 함" },
+  "Not returning": { es: "No regresará", tl: "Hindi na babalik", zh: "不再返回", vi: "Không quay lại", ko: "복귀 안 함" },
+  "Nothing on the calendar for the next 30 days. Events, tours, start dates and renewals show up here.": { es: "Nada en el calendario para los próximos 30 días. Aquí aparecen eventos, visitas, fechas de inicio y renovaciones.", tl: "Walang nakatakda sa susunod na 30 araw. Lalabas dito ang events, tour, start date at renewal.", zh: "未来30天暂无安排。活动、参观、入园日期和续期都会显示在这里。", vi: "Không có gì trong 30 ngày tới. Sự kiện, tham quan, ngày bắt đầu và gia hạn sẽ hiện ở đây.", ko: "향후 30일 일정이 없습니다. 행사, 견학, 시작일, 갱신이 여기에 표시됩니다." },
+  "Opens your email, texting or phone app with a message drafted. Nothing is sent automatically.": { es: "Abre tu correo, mensajes o teléfono con un mensaje redactado. No se envía nada automáticamente.", tl: "Bubuksan ang email, text o phone app mo na may nakahandang mensahe. Walang awtomatikong ipapadala.", zh: "打开您的邮件、短信或电话应用并预填消息。不会自动发送。", vi: "Mở email, tin nhắn hoặc điện thoại với tin soạn sẵn. Không gửi tự động.", ko: "이메일, 문자, 전화 앱을 열고 메시지 초안을 채워 둡니다. 자동으로 보내지지 않습니다." },
+  "Out for an appointment since": { es: "En una cita desde", tl: "Nasa appointment mula", zh: "外出预约，自", vi: "Đi hẹn từ", ko: "외출 시작" },
+  "Picked up at": { es: "Recogido a las", tl: "Sinundo nang", zh: "接走时间", vi: "Được đón lúc", ko: "하원 시간" },
+  "Picked up for the day": { es: "Recogido por hoy", tl: "Sinundo na para sa araw na ito", zh: "今天已接走", vi: "Đã được đón về", ko: "오늘 하원 완료" },
+  "picked up": { es: "recogidos", tl: "nasundo na", zh: "已接走", vi: "đã đón", ko: "하원" },
+  "Plan graduation": { es: "Planear graduación", tl: "Iplano ang pagtatapos", zh: "安排毕业", vi: "Lên lịch tốt nghiệp", ko: "졸업 계획" },
+  "Plan graduation for": { es: "Planear graduación de", tl: "Iplano ang pagtatapos ni", zh: "安排毕业：", vi: "Lên lịch tốt nghiệp cho", ko: "졸업 계획:" },
+  "Remove from waitlist": { es: "Quitar de la lista de espera", tl: "Alisin sa waitlist", zh: "从候补名单移除", vi: "Xóa khỏi danh sách chờ", ko: "대기자 명단에서 제거" },
+  "Save graduation date": { es: "Guardar fecha de graduación", tl: "I-save ang petsa ng pagtatapos", zh: "保存毕业日期", vi: "Lưu ngày tốt nghiệp", ko: "졸업일 저장" },
+  "Send us a message": { es: "Envíanos un mensaje", tl: "Padalhan kami ng mensahe", zh: "给我们留言", vi: "Gửi tin nhắn cho chúng tôi", ko: "메시지 보내기" },
+  "Show all": { es: "Mostrar todo", tl: "Ipakita lahat", zh: "显示全部", vi: "Hiện tất cả", ko: "모두 보기" },
+  "Show less": { es: "Mostrar menos", tl: "Ipakita nang mas kaunti", zh: "收起", vi: "Thu gọn", ko: "간단히 보기" },
+  "Starts": { es: "Empieza", tl: "Magsisimula", zh: "开始", vi: "Bắt đầu", ko: "시작" },
+  "starts": { es: "empieza", tl: "magsisimula", zh: "开始于", vi: "bắt đầu", ko: "시작" },
+  "Text": { es: "Mensaje", tl: "Text", zh: "短信", vi: "Nhắn tin", ko: "문자" },
+  "They move to Declined in Tours with this reason, so you keep the history.": { es: "Pasan a Declinadas en Visitas con este motivo, para que conserves el historial.", tl: "Lilipat sila sa Declined sa Tours kasama ang dahilang ito, para may record ka.", zh: "他们会带着此原因移到“参观”中的“已拒绝”，保留记录。", vi: "Gia đình sẽ chuyển sang Từ chối trong Tham quan kèm lý do này để bạn giữ lịch sử.", ko: "이 사유와 함께 견학의 거절 단계로 옮겨져 기록이 남습니다." },
+  "Tuition due": { es: "Vence la colegiatura", tl: "Due ang tuition", zh: "学费到期", vi: "Hạn học phí", ko: "수업료 마감" },
+  "Use the form on this page — replies show under My Requests": { es: "Usa el formulario de esta página — las respuestas aparecen en Mis solicitudes", tl: "Gamitin ang form sa page na ito — lalabas ang sagot sa My Requests", zh: "使用本页表单 — 回复显示在“我的请求”中", vi: "Dùng biểu mẫu trên trang này — phản hồi hiện trong Yêu cầu của tôi", ko: "이 페이지의 양식을 이용하세요 — 답변은 내 요청에 표시됩니다" },
+  "Why?": { es: "¿Por qué?", tl: "Bakit?", zh: "原因？", vi: "Lý do?", ko: "사유" },
+  "at an appointment": { es: "en una cita", tl: "nasa appointment", zh: "外出预约中", vi: "đang đi hẹn", ko: "외출 중" },
+  "authorization ends": { es: "autorización termina", tl: "matatapos ang authorization", zh: "授权结束", vi: "hết hạn cấp phép", ko: "승인 종료" },
+  "away": { es: "fuera", tl: "wala", zh: "外出", vi: "vắng", ko: "외출" },
+  "days in this stage": { es: "días en esta etapa", tl: "araw sa stage na ito", zh: "天在此阶段", vi: "ngày ở giai đoạn này", ko: "일째 이 단계" },
+  "times total": { es: "veces en total", tl: "beses lahat", zh: "次（共计）", vi: "lần tổng cộng", ko: "회 연락" },
+  "Found other care": { es: "Encontró otro cuidado", tl: "Nakahanap ng ibang care", zh: "找到其他托育", vi: "Đã tìm nơi khác", ko: "다른 보육 시설 선택" },
+  "No longer needs care": { es: "Ya no necesita cuidado", tl: "Hindi na kailangan ng care", zh: "不再需要托育", vi: "Không còn cần giữ trẻ", ko: "보육 불필요" },
+  "Didn't respond": { es: "No respondió", tl: "Hindi sumagot", zh: "未回复", vi: "Không phản hồi", ko: "응답 없음" },
+  "Moved away": { es: "Se mudó", tl: "Lumipat", zh: "已搬走", vi: "Đã chuyển đi", ko: "이사" },
+  "Cost": { es: "Costo", tl: "Gastos", zh: "费用", vi: "Chi phí", ko: "비용" },
+  "Agencies": { es: "Agencias", tl: "Mga ahensya", zh: "机构", vi: "Cơ quan", ko: "기관" },
+  "Not recorded": { es: "No registrado", tl: "Hindi naitala", zh: "未记录", vi: "Chưa ghi", ko: "기록 없음" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -2015,6 +2097,9 @@ let ACTIVE_CARE_SCHEDULES = DEFAULT_CARE_SCHEDULES;
 const sessionTime = (sl) => ACTIVE_CARE_SCHEDULES.find((x) => x.name === sl)?.hours || SESSION_TIMES[sl] || sl;
 // A child's own drop-off/pick-up times win over their schedule's usual hours.
 const childHours = (f) => (f.customHours && f.customHours.trim()) || sessionTime(f.sessionLength);
+// Attendance records can include times a child stepped out (an appointment) and came back.
+const isAway = (rec) => !!(rec && (rec.outings || []).some((o) => !o.back));
+const outingsText = (rec, t = (x) => x) => (rec?.outings || []).map((o) => `${t("away")} ${o.out}–${o.back || "…"}`).join(", ");
 
 
 // Which days a child actually attends — falls back to a sensible default derived from
@@ -2197,6 +2282,13 @@ function qualifiedStaffCount(staff) {
 }
 
 /* --------------------------- family tenure & retention --------------------------- */
+// California: kindergarten when a child turns 5 on or before September 1.
+function kindergartenYear(birth) {
+  const d = parseAnyDate(birth);
+  if (!d) return null;
+  const y = d.getFullYear() + 5;
+  return d <= new Date(d.getFullYear(), 8, 1) ? y : y + 1;
+}
 const DEPARTURE_REASONS = [
   { id: "aged-out", label: "Aged out / started kindergarten", positive: true },
   { id: "moved", label: "Family relocated", positive: true },
@@ -3392,6 +3484,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   }, []);
   const setScreen = navigateToScreen;
   const [settingsTab, setSettingsTab] = useState("profile");
+  const [messageToast, setMessageToast] = useState(null);
   const [openFamId, setOpenFamId] = useState(null);
   const [openHousehold, setOpenHousehold] = useState(null);
   const [flexHighlightId, setFlexHighlightId] = useState(null);
@@ -3538,7 +3631,8 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
     saveProspects(prospects.map((p) => {
       if (p.id !== id) return p;
       const joiningWaitlist = fields.stage === "Waitlist" && p.stage !== "Waitlist";
-      return { ...p, ...fields, ...(joiningWaitlist ? { waitlistedOn: todayMDY(), waitlistedAt: Date.now() } : {}) };
+      const stageChanged = fields.stage && fields.stage !== p.stage;
+      return { ...p, ...fields, ...(stageChanged ? { stageSince: todayMDY() } : {}), ...(joiningWaitlist ? { waitlistedOn: todayMDY(), waitlistedAt: Date.now() } : {}) };
     }));
   }, [prospects, saveProspects]);
   // Turning a tour family into enrolled children: creates one family record per
@@ -3576,6 +3670,23 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const subsidizedFamsForBadge = families.filter((f) => f.subsidized);
   const expiringCount = subsidizedFamsForBadge.filter((f) => f.status !== "active" && !dismissedNotices.includes(f.id)).length;
   const unreadMessagesCount = threads.filter((th) => th.unread).length;
+  // New message alerts: an in-app notice, plus a browser notification when the
+  // provider has allowed them. (Alerts while Alaga is closed need the backend.)
+  const [messageAlerts, saveMessageAlerts] = usePersistentState(`message-alerts${sfx}`, true);
+  const incomingCount = threads.reduce((n, th) => n + th.messages.filter((m) => m.from !== "me").length, 0);
+  const incomingRef = React.useRef({ count: null, since: Date.now() });
+  useEffect(() => {
+    const r = incomingRef.current;
+    if (r.count !== null && incomingCount > r.count && Date.now() - r.since > 1500) {
+      const th = [...threads].sort((a, b) => threadLastAt(b) - threadLastAt(a)).find((x) => x.unread) || threads[0];
+      const last = th?.messages[th.messages.length - 1];
+      if (th && messageAlerts) {
+        setMessageToast({ name: th.name, text: last?.text || "" });
+        if (typeof Notification !== "undefined" && Notification.permission === "granted") new Notification(`New message from ${th.name}`, { body: last?.text || "" });
+      }
+    }
+    r.count = incomingCount;
+  }, [incomingCount]);
   const flexAttentionCount = flexCareRequests.filter((r) => r.status === "pending" || (r.status === "approved" && !r.paymentConfirmed)).length;
   const navItems = NAV.filter((n) => tier === "extended" || !n.extended).map((n) => {
     if (n.id === "subsidy") return { ...n, badge: expiringCount > 0 ? expiringCount : undefined };
@@ -3635,19 +3746,19 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
           <main style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
             <Topbar screen={screen} setScreen={setScreen} provider={providerInfo} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} />
             <div style={{ flex: 1, overflowY: "auto", padding: "28px 32px 60px" }}>
-              {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} reminderSettings={reminderSettings} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} />}
+              {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} reminderSettings={reminderSettings} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} events={events} closures={closures} licensing={licensing} goToTour={() => setScreen("tours")} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
               {screen === "families" && <Families families={families} provider={providerInfo} onWithdraw={withdrawChild} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
               {screen === "bookings" && <Bookings families={families} schedule={fullWeek(weeklySchedule)} closures={closures} provider={providerInfo} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
               {screen === "staff" && <StaffScreen staff={staff} families={families} updateStaffMember={updateStaffMember} addStaffMember={addStaffMember} removeStaffMember={removeStaffMember} />}
               {screen === "calendar" && <CalendarScreen careSchedules={careSchedules} saveCareSchedules={saveCareSchedules} schedule={fullWeek(weeklySchedule)} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} families={families} threads={threads} saveThreads={saveThreads} />}
-              {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} startEnroll={(p) => setEnrollingProspectId(p.id)} />}
+              {screen === "tours" && <ToursScreen providerInfo={providerInfo} prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} startEnroll={(p) => setEnrollingProspectId(p.id)} />}
               {screen === "waitlist" && <WaitlistScreen prospects={prospects} updateProspect={updateProspect} removeProspect={removeProspect} logAccess={logAccess} families={families} providerInfo={providerInfo} startEnroll={(p) => setEnrollingProspectId(p.id)} />}
               {screen === "subsidy" && <Subsidy families={families} openFamId={openFamId} setOpenFamId={setOpenFamId} loaded={loaded} meetingMode={meetingMode} />}
               {screen === "payments" && <Finances careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} activeTab={financesTab} setActiveTab={setFinancesTab} />}
               {screen === "compliance" && <Compliance licensing={licensing} saveLicensing={saveLicensing} docs={compDocs} onSave={saveCompDoc} families={families} provider={providerInfo} staff={staff} setScreen={setScreen} incidents={incidents} saveIncidents={saveIncidents} mandatedNotes={mandatedNotes} saveMandatedNotes={saveMandatedNotes} />}
               {screen === "security" && <SecurityScreen accessLog={accessLog} isEmpty={isEmpty} />}
-              {screen === "messages" && <Messages threads={threads} saveThreads={saveThreads} families={families} staff={staff} goToFamily={goToFamily} />}
+              {screen === "messages" && <Messages threads={threads} saveThreads={saveThreads} families={families} staff={staff} goToFamily={goToFamily} openSupport={() => setScreen("support")} alertsOn={messageAlerts} setAlertsOn={saveMessageAlerts} />}
               {screen === "analytics" && <Analytics families={families} expenses={expenses} prospects={prospects} staff={staff} alumni={alumni} addDeparture={addDeparture} refunds={refunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={(id, opts) => { if (opts?.tab) setSettingsTab(opts.tab); setScreen(id); }} provider={providerInfo} />}
               {screen === "growth" && <GrowthScreen families={families} prospects={prospects} weeklySchedule={weeklySchedule} growth={growth} saveGrowth={saveGrowth} provider={providerInfo} staff={staff} />}
               {screen === "support" && <SupportScreen providerInfo={providerInfo} />}
@@ -3656,6 +3767,17 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
                 threads={threads} saveThreads={saveThreads} isDemo={!isEmpty || !!forceTier || meetingMode} onSignOut={onExitToLanding} />}
             </div>
           </main>
+          {messageToast && screen !== "messages" && (
+            <div style={{ position: "fixed", right: 20, bottom: 20, zIndex: 70, width: 320, background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, boxShadow: "0 12px 32px rgba(0,0,0,0.18)", padding: "12px 14px", display: "flex", gap: 10 }}>
+              <MessageSquare size={18} color={C.teal} style={{ flexShrink: 0, marginTop: 2 }} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 12.5, fontWeight: 700 }}>{messageToast.name}</div>
+                <div style={{ fontSize: 12, color: C.inkSoft, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{messageToast.text}</div>
+                <button onClick={() => { setMessageToast(null); setScreen("messages"); }} style={{ marginTop: 6, fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none", padding: 0 }}>Open messages</button>
+              </div>
+              <button onClick={() => setMessageToast(null)} style={{ background: "none", border: "none", color: C.inkSoft, alignSelf: "flex-start" }}><X size={14} /></button>
+            </div>
+          )}
           {screen === "subsidy" && openFam && (
             <SubsidyDrawer fam={openFam} onClose={() => setOpenFamId(null)} onSave={saveOverride} logAccess={logAccess} />
           )}
@@ -3869,7 +3991,7 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
         })()}
       </nav>
 
-      {setMode && (
+      {false && setMode && (
         <button onClick={() => setMode("parent")} style={{
           display: "flex", alignItems: "center", gap: 10, padding: "9px 10px", borderRadius: 9, marginTop: 10,
           border: "1px solid rgba(255,255,255,0.18)", background: "transparent", color: "#CBDAD2", fontSize: 13, fontWeight: 600, textAlign: "left",
@@ -4001,7 +4123,7 @@ function computeSetupItems({ providerInfo, weeklySchedule, staff, families, pros
   ];
 }
 
-function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, families, checklist, saveChecklist, dismissedNotices, saveDismissedNotices, tuitionRates, saveTuitionRates, weeklySchedule, staff, prospects, compDocs, providerInfo, flexCareRequests, saveFlexCare, goToSubsidyFamily, goToFlexRequest, meetingMode = false }) {
+function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, families, checklist, saveChecklist, dismissedNotices, saveDismissedNotices, tuitionRates, saveTuitionRates, weeklySchedule, staff, prospects, compDocs, providerInfo, flexCareRequests, saveFlexCare, goToSubsidyFamily, goToFlexRequest, meetingMode = false, events = [], closures = [], licensing = {} }) {
   const t = useT();
   const [newTask, setNewTask] = useState("");
   const [collapsed, setCollapsed] = useState({});
@@ -4153,6 +4275,9 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
         </div>
       </div>
 
+      <ComingUp items={comingUpItems({ events, closures, prospects, families, licensing, compDocs, reminderSettings, t,
+        go: { calendar: () => setScreen("calendar"), tours: () => setScreen("tours"), family: goToFamily, subsidy: goToSubsidyFamily, compliance: () => setScreen("compliance"), tuition: openTuition } })} />
+
       {setupItems.some((i) => !i.done) ? (
         <Card title={t("Getting your account fully set up")} icon={ClipboardCheck}
           right={<span style={{ fontSize: 12, color: C.inkSoft }}>{setupDoneCount}/{setupItems.length} {t("done")}</span>}>
@@ -4237,6 +4362,73 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
       </div>
 
     </div>
+  );
+}
+
+// Everything with a date in the next few weeks: events and meetings, closures,
+// tours and follow-ups, children starting or graduating, renewals and tuition.
+const mdyOfDate = (d) => `${pad2(d.getMonth() + 1)}/${pad2(d.getDate())}/${d.getFullYear()}`;
+function comingUpItems({ events, closures, prospects, families, licensing, compDocs, reminderSettings, t, go }) {
+  const items = [];
+  const add = (date, kind, title, detail, onClick, { window = 30, allowPast = false } = {}) => {
+    const d = parseAnyDate(String(date || "").split(" – ")[0]);
+    if (!d) return;
+    const n = daysUntil(mdyOfDate(d));
+    if (n > window || (n < 0 && !allowPast)) return;
+    items.push({ n, date: mdyOfDate(d), kind, title, detail, onClick, urgent: n <= 1 });
+  };
+  events.forEach((e) => add(e.dates, "event", e.name, t(e.type || "Event"), go.calendar));
+  closures.forEach((c) => add(c.start || c.dates, "closure", c.name, t("Closed"), go.calendar));
+  prospects.forEach((p) => {
+    if (p.stage === "Tour Scheduled" && p.tourDate) add(p.tourDate, "tour", p.name, t("Tour"), go.tours);
+    if (followupDue(p) || (p.followupDate && !CLOSED_STAGES.includes(p.stage))) add(p.followupDate, "followup", p.name, daysUntil(p.followupDate) < 0 ? t("Follow-up overdue") : t("Follow up"), go.tours, { allowPast: true });
+  });
+  families.forEach((f) => {
+    if (daysUntil(f.enrollDate) > 0) add(f.enrollDate, "start", f.child, t("First day of care"), () => go.family(f.id));
+    if (f.departedOn) add(f.departedOn, f.departureReason === "aged-out" ? "graduation" : "leaving", f.child, f.departureReason === "aged-out" ? t("Graduates") : t("Last day of care"), () => go.family(f.id), { window: 60 });
+    if (f.subsidized && f.authEnd) add(f.authEnd, "subsidy", f.child, `${programOf(f.programId)?.label || t("Subsidy")} ${t("authorization ends")}`, () => go.subsidy(f.id));
+  });
+  if (licensing.renewalDate) add(licensing.renewalDate, "license", t("License renewal"), t("CCLD"), go.compliance, { window: 60 });
+  compDocs.forEach((d) => d.expiresOn && add(d.expiresOn, "document", t(d.name), t("Renews / expires"), go.compliance, { window: 60 }));
+  if (reminderSettings) add(nextDueDateFrom(reminderSettings), "tuition", t("Tuition due"), t("All families"), go.tuition);
+  return items.sort((a, b) => a.n - b.n);
+}
+const COMING_UP_ICONS = { event: CalendarDays, closure: CalendarDays, tour: Users, followup: Phone, start: UserPlus, graduation: GraduationCap, leaving: LogOut, subsidy: ShieldCheck, license: ClipboardCheck, document: FileText, tuition: DollarSign };
+function ComingUp({ items }) {
+  const t = useT();
+  const [all, setAll] = useState(false);
+  const shown = all ? items : items.slice(0, 7);
+  const when = (n) => (n < 0 ? t("Overdue") : n === 0 ? t("Today") : n === 1 ? t("Tomorrow") : `${t("In")} ${n} ${t("days")}`);
+  return (
+    <Card title={t("Coming up")} icon={CalendarClock} right={<span style={{ fontSize: 12, color: C.inkSoft }}>{t("Next 30 days")}</span>}>
+      {items.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("Nothing on the calendar for the next 30 days. Events, tours, start dates and renewals show up here.")}</div>}
+      {shown.map((it, i) => {
+        const Icon = COMING_UP_ICONS[it.kind] || CalendarDays;
+        return (
+          <button key={i} onClick={it.onClick} style={{ width: "100%", textAlign: "left", background: "none", border: "none", borderRadius: 0, padding: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 18px", borderBottom: `1px solid ${C.line}` }}>
+              <div style={{ width: 64, flexShrink: 0 }}>
+                <div style={{ fontSize: 11.5, fontWeight: 700, color: it.urgent ? C.danger : C.tealDark }}>{when(it.n)}</div>
+                <div style={{ fontSize: 10.5, color: C.inkSoft }}>{it.date.slice(0, 5)}</div>
+              </div>
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: it.urgent ? C.dangerTint : C.cream, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <Icon size={14} color={it.urgent ? C.danger : C.tealDark} />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{it.title}</div>
+                <div style={{ fontSize: 11.5, color: C.inkSoft }}>{it.detail}</div>
+              </div>
+              <ChevronRight size={14} color={C.inkSoft} />
+            </div>
+          </button>
+        );
+      })}
+      {items.length > 7 && (
+        <button onClick={() => setAll(!all)} style={{ width: "100%", padding: "10px 0", background: "none", border: "none", fontSize: 12, fontWeight: 700, color: C.teal }}>
+          {all ? t("Show less") : `${t("Show all")} (${items.length})`}
+        </button>
+      )}
+    </Card>
   );
 }
 
@@ -4502,8 +4694,14 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
               border: "none", borderRadius: 0, padding: 0,
             }}>
               <Row
-                left={<><Dot c={h.children[0].color} /><b>{h.householdName}</b><span style={{ color: C.inkSoft }}>{h.children.length} {t(h.children.length === 1 ? "child" : "children")} · {h.parents[0].name}</span></>}
+                left={<><Dot c={h.children[0].color} /><b>{h.householdName}</b><span style={{ color: C.inkSoft }}>{h.children.map((c) => c.child.split(" ")[0]).join(", ")} · {h.parents[0].name}</span></>}
                 right={<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  {(householdsRaw.find((x) => x.household === h.household)?.children || []).filter((c) => daysUntil(c.enrollDate) > 0 && daysUntil(c.enrollDate) !== 9999).map((c) => (
+                    <Pill key={`s${c.id}`} label={`${c.child.split(" ")[0]} ${t("starts")} ${c.enrollDate}`} fg={C.sky} bg={C.skyTint} />
+                  ))}
+                  {h.children.filter((c) => c.departedOn).map((c) => (
+                    <Pill key={`g${c.id}`} label={`${c.child.split(" ")[0]} ${c.departureReason === "aged-out" ? t("graduates") : t("leaves")} ${c.departedOn}`} fg="#7A5620" bg={C.amberTint} />
+                  ))}
                   {anySiblingDiscount && <Pill label={t("Sibling discount")} fg={C.teal} bg={C.tealTint} />}
                   {anySplit && <Pill label={t("Split tuition")} fg={C.sky} bg={C.skyTint} />}
                   {anyAttention && <Pill label={t("Needs attention")} fg={C.amber} bg={C.amberTint} />}
@@ -4553,7 +4751,11 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
             <div style={{ width: 44, height: 44, borderRadius: "50%", background: household.children[0].color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 16, flexShrink: 0 }}>{household.householdName[0]}</div>
             <div>
               <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>{household.householdName}</div>
-              <div style={{ fontSize: 12.5, color: C.inkSoft }}>{household.children.length} {t(household.children.length === 1 ? "child" : "children")} {t("enrolled")}</div>
+              <div style={{ fontSize: 12.5, color: C.inkSoft }}>{(() => {
+                const pend = household.children.filter((c) => daysUntil(c.enrollDate) > 0 && daysUntil(c.enrollDate) !== 9999);
+                const act = household.children.length - pend.length;
+                return [act ? `${act} ${t("enrolled")}` : "", ...pend.map((c) => `${c.child.split(" ")[0]} ${t("starts")} ${c.enrollDate}`)].filter(Boolean).join(" · ");
+              })()}</div>
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
@@ -4579,6 +4781,8 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
                   </div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  {daysUntil(c.enrollDate) > 0 && daysUntil(c.enrollDate) !== 9999 && <Pill label={`${t("Starts")} ${c.enrollDate}`} fg={C.sky} bg={C.skyTint} />}
+                  {c.departedOn && <Pill label={`${c.departureReason === "aged-out" ? t("Graduates") : t("Leaves")} ${c.departedOn}`} fg="#7A5620" bg={C.amberTint} />}
                   <Pill label={c.subsidized ? t(STATUS_META[c.status].label) : t("Private pay")} fg={c.subsidized ? STATUS_META[c.status].fg : C.sky} bg={c.subsidized ? STATUS_META[c.status].bg : C.skyTint} />
                   <ChevronRight size={14} color={C.inkSoft} />
                 </div>
@@ -4704,11 +4908,15 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
 function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRates, families, onWithdraw, openTuition, parents = [], provider }) {
   const t = useT();
   const [editingBasics, setEditingBasics] = useState(false);
-  const [basics, setBasics] = useState({ child: child.child, age: child.age, classroom: child.classroom, enrollDate: child.enrollDate });
+  const [basics, setBasics] = useState({ child: child.child, age: child.age, classroom: child.classroom, enrollDate: child.enrollDate, birthDate: child.birthDate || "" });
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawForm, setWithdrawForm] = useState({ leftDate: todayMDY(), reason: DEPARTURE_REASONS[0].id });
+  const kYear = kindergartenYear(child.birthDate);
+  const startsIn = daysUntil(child.enrollDate);
+  // Suggest mid-August of the kindergarten year, never a date already past.
+  const planGraduation = () => { const sug = kYear ? `08/15/${kYear}` : ""; setWithdrawForm({ leftDate: sug && daysUntil(sug) >= 0 ? sug : "", reason: "aged-out" }); setWithdrawing(true); };
   const saveBasics = async () => {
-    const fields = { child: basics.child.trim() || child.child, age: basics.age, enrollDate: basics.enrollDate || child.enrollDate };
+    const fields = { child: basics.child.trim() || child.child, age: basics.age, enrollDate: basics.enrollDate || child.enrollDate, birthDate: basics.birthDate || "" };
     if (basics.classroom !== child.classroom) {
       fields.classroom = basics.classroom;
       fields.classroomHistory = [{ from: child.classroom, to: basics.classroom, date: todayMDY(), time: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }), reason: "Updated in family record" }, ...(child.classroomHistory || [])];
@@ -4806,6 +5014,7 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
               <div style={{ marginTop: 6, display: "flex", gap: 6, flexWrap: "wrap" }}>
                 <Pill label={child.subsidized ? t(STATUS_META[child.status].label) : t("Private pay")} fg={child.subsidized ? STATUS_META[child.status].fg : C.sky} bg={child.subsidized ? STATUS_META[child.status].bg : C.skyTint} />
                 {siblingComputed?.discountApplied && <Pill label={t("Sibling discount")} fg={C.teal} bg={C.tealTint} />}
+                {startsIn > 0 && startsIn !== 9999 && <Pill label={`${t("Starts")} ${child.enrollDate}`} fg={C.sky} bg={C.skyTint} />}
               </div>
             </div>
           </div>
@@ -4820,7 +5029,7 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
         <div style={{ flex: 1, overflowY: "auto", padding: "18px 22px 26px", display: "flex", flexDirection: "column", gap: 20 }}>
           {child.departedOn && (
             <div style={{ padding: "10px 12px", borderRadius: 10, background: C.amberTint, color: C.tealDark, fontSize: 12.5, display: "flex", alignItems: "center", gap: 7 }}>
-              <CalendarDays size={13} /> {t("Last day of care")}: <b>{child.departedOn}</b>
+              {child.departureReason === "aged-out" ? <GraduationCap size={14} /> : <CalendarDays size={13} />} {child.departureReason === "aged-out" ? t("Graduating") : t("Last day of care")}: <b>{child.departedOn}</b>
               <button onClick={() => (onWithdraw ? onWithdraw(child, null) : onSave(child.id, { departedOn: null, departureReason: null }))} style={{ marginLeft: "auto", background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 700 }}>{t("Undo")}</button>
             </div>
           )}
@@ -4830,6 +5039,8 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                 <StatBlock label={t("Age group")} value={classroomLabelWithRange(child.classroom)} />
                 <StatBlock label={t("Start date")} value={child.enrollDate} />
+                <StatBlock label={t("Birth date")} value={child.birthDate || "—"} />
+                <StatBlock label={t("Kindergarten-eligible")} value={kYear ? `${t("Fall")} ${kYear}` : t("Add a birth date")} />
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -4838,9 +5049,12 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
                   <Field label={t("Age")}><input value={basics.age} onChange={(e) => setBasics({ ...basics, age: e.target.value })} style={inputStyle} /></Field>
                   <Field label={t("Age group")}><Select value={basics.classroom} onChange={(v) => setBasics({ ...basics, classroom: v })} options={CLASSROOMS.map((c) => c.id)} labels={CLASSROOMS.map((c) => classroomLabelWithRange(c.id))} /></Field>
                 </div>
-                <Field label={t("Start date")}><DateField value={basics.enrollDate} onChange={(v) => setBasics({ ...basics, enrollDate: v || "" })} allowClear={false} /></Field>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                  <Field label={t("Start date")}><DateField value={basics.enrollDate} onChange={(v) => setBasics({ ...basics, enrollDate: v || "" })} allowClear={false} /></Field>
+                  <Field label={t("Birth date (optional)")}><DateField value={basics.birthDate} onChange={(v) => setBasics({ ...basics, birthDate: v || "" })} /></Field>
+                </div>
                 <div style={{ display: "flex", gap: 8 }}>
-                  <button onClick={() => { setEditingBasics(false); setBasics({ child: child.child, age: child.age, classroom: child.classroom, enrollDate: child.enrollDate }); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Cancel")}</button>
+                  <button onClick={() => { setEditingBasics(false); setBasics({ child: child.child, age: child.age, classroom: child.classroom, enrollDate: child.enrollDate, birthDate: child.birthDate || "" }); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Cancel")}</button>
                   <button onClick={saveBasics} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Save changes")}</button>
                 </div>
               </div>
@@ -5101,22 +5315,25 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
         <div style={{ padding: "14px 22px", borderTop: `1px solid ${C.line}` }}>
           {withdrawing ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <div style={{ fontSize: 12.5, fontWeight: 700, color: C.ink }}>{t("Deenroll")} {child.child}</div>
+              <div style={{ fontSize: 12.5, fontWeight: 700, color: C.ink }}>{withdrawForm.reason === "aged-out" ? t("Plan graduation for") : t("Deenroll")} {child.child}</div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                <Field label={t("Last day of care")}><DateField value={withdrawForm.leftDate} onChange={(v) => setWithdrawForm({ ...withdrawForm, leftDate: v || "" })} allowClear={false} /></Field>
+                <Field label={withdrawForm.reason === "aged-out" ? t("Last day before kindergarten") : t("Last day of care")}><DateField value={withdrawForm.leftDate} onChange={(v) => setWithdrawForm({ ...withdrawForm, leftDate: v || "" })} allowClear={false} /></Field>
                 <Field label={t("Reason")}><Select value={withdrawForm.reason} onChange={(v) => setWithdrawForm({ ...withdrawForm, reason: v })} options={DEPARTURE_REASONS.map((r) => r.id)} labels={DEPARTURE_REASONS.map((r) => t(r.label))} /></Field>
               </div>
               <div style={{ fontSize: 11.5, color: C.inkSoft }}>{t("They stay on your roster through their last day, then move to Deenrolled. Their record is kept.")}</div>
               <div style={{ display: "flex", gap: 8 }}>
                 <button onClick={() => setWithdrawing(false)} style={{ flex: 1, padding: "10px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Cancel")}</button>
-                <button onClick={confirmWithdraw} style={{ flex: 1, padding: "10px 0", borderRadius: 10, border: "none", background: C.danger, color: "#fff", fontWeight: 700, fontSize: 13 }}>{t("Confirm deenrollment")}</button>
+                <button onClick={confirmWithdraw} style={{ flex: 1, padding: "10px 0", borderRadius: 10, border: "none", background: withdrawForm.reason === "aged-out" ? C.teal : C.danger, color: "#fff", fontWeight: 700, fontSize: 13 }}>{withdrawForm.reason === "aged-out" ? t("Save graduation date") : t("Confirm deenrollment")}</button>
               </div>
             </div>
           ) : (
             <div style={{ display: "flex", gap: 10 }}>
               <button onClick={onClose} style={{ flex: 2, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13.5 }}>{t("Close")}</button>
               {onWithdraw && !child.departedOn && (
-                <button onClick={() => setWithdrawing(true)} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.dangerTint}`, background: C.dangerTint, color: C.danger, fontWeight: 600, fontSize: 13 }}>{t("Deenroll")}</button>
+                <button onClick={planGraduation} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", color: C.tealDark, fontWeight: 600, fontSize: 13 }}><GraduationCap size={14} /> {t("Plan graduation")}</button>
+              )}
+              {onWithdraw && !child.departedOn && (
+                <button onClick={() => { setWithdrawForm({ leftDate: todayMDY(), reason: "moved" }); setWithdrawing(true); }} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.dangerTint}`, background: C.dangerTint, color: C.danger, fontWeight: 600, fontSize: 13 }}>{t("Deenroll")}</button>
               )}
             </div>
           )}
@@ -5212,7 +5429,9 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
   // roster even though it isn't one of their regular days.
   const sameDay = (a, b) => { const x = parseAnyDate(a), y = parseAnyDate(b); return x && y && x.toDateString() === y.toDateString(); };
   const flexAddsChild = (f) => flexCareRequests.some((r) => r.child === f.child && r.status === "approved" && ["Extra day", "Weekend care"].includes(r.type) && sameDay(r.date, dateFull));
-  const dayFamilies = families.filter((f) => (childDays(f).includes(selectedWeekday) && !closedToday) || flexAddsChild(f));
+  // Only children whose care has started by this day (and hasn't ended).
+  const inCareOn = (f) => { const s0 = parseAnyDate(f.enrollDate); const l = f.departedOn ? parseAnyDate(f.departedOn) : null; const d = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate()); return (!s0 || s0 <= d) && (!l || l >= d); };
+  const dayFamilies = families.filter((f) => inCareOn(f) && ((childDays(f).includes(selectedWeekday) && !closedToday) || flexAddsChild(f)));
   const dayRoster = groupByClassroom(dayFamilies);
 
   // Each child's day: arrival and departure times, or marked absent.
@@ -5230,7 +5449,14 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
   const checkOut = (id) => setRecord(id, { ...recordOf(id), out: nowTime() });
   const markAbsent = (id) => setRecord(id, { absent: true });
   const clearRecord = (id) => setRecord(id, null);
-  const presentCount = dayFamilies.filter((f) => recordOf(f.id).in).length;
+  // Stepping out for an appointment and coming back the same day.
+  const stepOut = (id) => { const r = recordOf(id); setRecord(id, { ...r, outings: [...(r.outings || []), { out: nowTime(), reason: "appointment" }] }); };
+  const backFromOuting = (id) => { const r = recordOf(id); setRecord(id, { ...r, outings: (r.outings || []).map((o) => (o.back ? o : { ...o, back: nowTime() })) }); };
+  const notReturning = (id) => { const r = recordOf(id); const open = (r.outings || []).find((o) => !o.back); setRecord(id, { ...r, out: open ? open.out : nowTime(), outReason: "appointment", outings: (r.outings || []).filter((o) => o.back) }); };
+  const arrivedCount = dayFamilies.filter((f) => recordOf(f.id).in).length;
+  const awayCount = dayFamilies.filter((f) => { const r = recordOf(f.id); return r.in && !r.out && isAway(r); }).length;
+  const pickedUpCount = dayFamilies.filter((f) => { const r = recordOf(f.id); return r.in && r.out; }).length;
+  const presentCount = arrivedCount - awayCount - pickedUpCount;
   const absentCount = dayFamilies.filter((f) => recordOf(f.id).absent).length;
 
   const CURRENT_TIME = nowTime();
@@ -5316,7 +5542,9 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
         <Kpi label={t("Licensed capacity")} value={`${totalEnrolled} / ${licensedCapacity}`} sub={t("children enrolled, out of your license")} accent={totalEnrolled > licensedCapacity ? C.danger : C.teal} />
-        <Kpi label={isToday ? t("Here today") : t("Booked that day")} value={`${presentCount} / ${dayFamilies.length}`} sub={`${dayFamilies.length} ${t(dayFamilies.length === 1 ? "child booked" : "children booked")}${absentCount ? ` · ${absentCount} ${t("absent")}` : ""}`} accent={C.sky} />
+        <Kpi label={isToday ? t("Here right now") : t("Booked that day")} value={isToday ? `${presentCount} / ${dayFamilies.length}` : String(dayFamilies.length)}
+          sub={[`${dayFamilies.length} ${t(dayFamilies.length === 1 ? "child booked" : "children booked")}`,
+            pickedUpCount ? `${pickedUpCount} ${t("picked up")}` : "", awayCount ? `${awayCount} ${t("at an appointment")}` : "", absentCount ? `${absentCount} ${t("absent")}` : ""].filter(Boolean).join(" · ")} accent={C.sky} />
       </div>
 
       <Card title={isToday ? t("Today's bookings") : `${t(selectedWeekday || "Weekend")}'s ${t("bookings")}`} icon={CalendarClock}
@@ -5381,16 +5609,25 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
                               <CheckCircle2 size={12} /> {t("Check in")}
                             </button>
                           </>
+                        ) : !rec.out && isAway(rec) ? (
+                          <>
+                            <Pill label={`${t("At appointment since")} ${(rec.outings || []).find((o) => !o.back)?.out}`} fg="#7A5620" bg={C.amberTint} />
+                            <button onClick={() => backFromOuting(f.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "none", background: C.teal, color: "#fff", fontSize: 11, fontWeight: 700 }}>
+                              <CheckCircle2 size={12} /> {t("Back in")}
+                            </button>
+                            <button onClick={() => notReturning(f.id)} title={t("Picked up for the day")} style={{ padding: "5px 9px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", color: C.inkSoft, fontSize: 11, fontWeight: 700 }}>{t("Not returning")}</button>
+                          </>
                         ) : !rec.out ? (
                           <>
-                            <span style={{ fontSize: 11.5, color: C.tealDark, fontWeight: 700 }}>{t("In")} {rec.in}</span>
+                            <span style={{ fontSize: 11.5, color: C.tealDark, fontWeight: 700 }}>{t("In")} {rec.in}{outingsText(rec, t) ? ` · ${outingsText(rec, t)}` : ""}</span>
+                            <button onClick={() => stepOut(f.id)} title={t("Leaving for an appointment and coming back later")} style={{ padding: "5px 9px", borderRadius: 7, border: `1px solid ${C.amber}`, background: C.amberTint, color: "#7A5620", fontSize: 11, fontWeight: 700 }}>{t("Appointment")}</button>
                             <button onClick={() => checkOut(f.id)} style={{ padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.teal}`, background: C.tealTint, color: C.tealDark, fontSize: 11, fontWeight: 700 }}>{t("Check out")}</button>
                             <button onClick={() => clearRecord(f.id)} title={t("Undo")} style={{ background: "none", border: "none", color: C.inkSoft, padding: 2 }}><X size={12} /></button>
                           </>
                         ) : (
                           <>
-                            <span style={{ fontSize: 11.5, color: C.inkSoft, fontWeight: 600 }}>{rec.in} – {rec.out}</span>
-                            <button onClick={() => setRecord(f.id, { in: rec.in })} title={t("Undo check-out")} style={{ background: "none", border: "none", color: C.inkSoft, padding: 2 }}><X size={12} /></button>
+                            <span style={{ fontSize: 11.5, color: C.inkSoft, fontWeight: 600 }}>{rec.in} – {rec.out}{outingsText(rec, t) ? ` · ${outingsText(rec, t)}` : ""}</span>
+                            <button onClick={() => { const { out, outReason, ...rest } = rec; setRecord(f.id, rest); }} title={t("Undo check-out")} style={{ background: "none", border: "none", color: C.inkSoft, padding: 2 }}><X size={12} /></button>
                           </>
                         )}
                       </div>
@@ -6180,7 +6417,7 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
 }
 
 /* --------------------------------- tours ------------------------------------ */
-function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, logAccess, startEnroll }) {
+function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, logAccess, startEnroll, providerInfo }) {
   const t = useT();
   const [openId, setOpenId] = useState(null);
   const [confirmingId, setConfirmingId] = useState(null);
@@ -6222,9 +6459,15 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
   };
 
   const listRows = (stageFilter === "all" ? prospects : prospects.filter((p) => p.stage === stageFilter)).slice().sort(SORTS[sortBy]);
+  const [showOlder, setShowOlder] = useState({});
+  const dueCount = prospects.filter(followupDue).length;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
+        <Info size={12} /> {t("Families stay in a stage until you move them. Set a follow-up date and it shows on your dashboard; enrolled and declined families fold away after 30 days.")}
+        {dueCount > 0 && <Pill label={`${dueCount} ${t(dueCount === 1 ? "follow-up due" : "follow-ups due")}`} fg="#7A5620" bg={C.amberTint} />}
+      </div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", background: C.cream, borderRadius: 9, padding: 3 }}>
           {["kanban", "list"].map((v) => (
@@ -6245,12 +6488,15 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
       {view === "kanban" ? (
       <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8 }}>
         {TOUR_STAGES.map((stage) => {
-          const items = prospects.filter((p) => p.stage === stage);
+          const all = prospects.filter((p) => p.stage === stage);
+          // Enrolled and Declined families fold away 30 days after they got there.
+          const older = CLOSED_STAGES.includes(stage) ? all.filter((p) => (daysInStage(p) ?? 0) > 30) : [];
+          const items = showOlder[stage] ? all : all.filter((p) => !older.includes(p));
           return (
             <div key={stage} style={{ background: C.paper, border: `1px solid ${C.line}`, borderTop: `3px solid ${COLUMN_ACCENT[stage]}`, borderRadius: 14, minHeight: 220, padding: 12, width: 210, flexShrink: 0 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                 <div style={{ fontWeight: 700, fontSize: 12.5, color: C.tealDark }}>{t(stage)}</div>
-                <span style={{ fontSize: 11, color: C.inkSoft, fontWeight: 700 }}>{items.length}</span>
+                <span style={{ fontSize: 11, color: C.inkSoft, fontWeight: 700 }}>{all.length}</span>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {items.map((p) => {
@@ -6261,6 +6507,9 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
                       <button onClick={() => setOpenId(p.id)} style={{ width: "100%", textAlign: "left", padding: "9px 10px 6px", background: "none", border: "none", fontSize: 12.5 }}>
                         <b>{p.name}</b>
                         <div style={{ color: C.inkSoft, fontSize: 11, marginTop: 2 }}>{p.language} · {p.children}</div>
+                        {followupDue(p) && <div style={{ marginTop: 4 }}><Pill label={daysUntil(p.followupDate) < 0 ? `${t("Follow-up overdue")} · ${p.followupDate}` : t("Follow up today")} fg="#7A5620" bg={C.amberTint} /></div>}
+                        {!followupDue(p) && !CLOSED_STAGES.includes(p.stage) && daysInStage(p) > 14 && <div style={{ color: C.amber, fontSize: 10.5, marginTop: 3, fontWeight: 600 }}>{daysInStage(p)} {t("days in this stage")}</div>}
+                        {p.stage === "Declined" && p.declineReason && <div style={{ color: C.inkSoft, fontSize: 10.5, marginTop: 3 }}>{t(p.declineReason)}</div>}
                       </button>
                       {confirming ? (
                         <div style={{ display: "flex", borderTop: `1px solid ${C.line}` }}>
@@ -6290,6 +6539,11 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
                     </div>
                   );
                 })}
+                {older.length > 0 && (
+                  <button onClick={() => setShowOlder((o) => ({ ...o, [stage]: !o[stage] }))} style={{ fontSize: 11, fontWeight: 700, color: C.inkSoft, background: "none", border: `1px dashed ${C.line}`, borderRadius: 8, padding: "6px 0" }}>
+                    {showOlder[stage] ? t("Hide older") : `${t("Show older")} (${older.length})`}
+                  </button>
+                )}
               </div>
             </div>
           );
@@ -6314,6 +6568,7 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
                   <span style={{ fontSize: 12, color: C.inkSoft }}>{p.contact}</span>
+                  {followupDue(p) && <Pill label={t("Follow-up due")} fg="#7A5620" bg={C.amberTint} />}
                   <Pill label={t(p.stage)} fg={COLUMN_ACCENT[p.stage]} bg={p.stage === "Enrolled" ? C.tealTint : p.stage === "Declined" ? C.dangerTint : C.cream} />
                   <ChevronRight size={14} color={C.inkSoft} />
                 </div>
@@ -6322,7 +6577,7 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
           ))}
         </Card>
       )}
-      {open && <ProspectDrawer prospect={open} onClose={() => { setOpenId(null); setNewlyAddedId(null); }} update={updateProspect} remove={removeProspect} logAccess={logAccess} initialEditing={open.id === newlyAddedId} startEnroll={(p) => { setOpenId(null); startEnroll(p); }} />}
+      {open && <ProspectDrawer providerInfo={providerInfo} prospect={open} onClose={() => { setOpenId(null); setNewlyAddedId(null); }} update={updateProspect} remove={removeProspect} logAccess={logAccess} initialEditing={open.id === newlyAddedId} startEnroll={(p) => { setOpenId(null); startEnroll(p); }} />}
     </div>
   );
 }
@@ -6347,6 +6602,9 @@ function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, 
   const atCapacity = totalCapacity > 0 && totalEnrolled >= totalCapacity;
 
   const moveToTour = (p) => updateProspect(p.id, { stage: "Tour Scheduled" });
+  const [decliningId, setDecliningId] = useState(null);
+  const [declineReason, setDeclineReason] = useState(DECLINE_REASONS[0]);
+  const confirmDecline = (p) => { updateProspect(p.id, { stage: "Declined", declineReason, declinedOn: todayMDY() }); setDecliningId(null); };
   const moveToEnrolled = (p) => (startEnroll ? startEnroll(p) : updateProspect(p.id, { stage: "Enrolled" }));
 
   // Two real, tracked steps once a spot opens: first let the family know a
@@ -6420,10 +6678,20 @@ function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, 
                 {p.notes && <span style={{ fontSize: 11.5, color: C.inkSoft, fontStyle: "italic" }}>{p.notes}</span>}
               </button>
               <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                <button onClick={() => { setDecliningId(decliningId === p.id ? null : p.id); setDeclineReason(DECLINE_REASONS[0]); }} style={{ padding: "6px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 600, color: C.danger }}>{t("Not moving forward")}</button>
                 <button onClick={() => moveToTour(p)} style={{ padding: "6px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 600, color: C.inkSoft }}>{t("Move to Tour")}</button>
                 <button onClick={() => moveToEnrolled(p)} style={{ padding: "6px 10px", borderRadius: 7, border: "none", background: C.teal, color: "#fff", fontSize: 11.5, fontWeight: 700 }}>{t("Enroll")}</button>
               </div>
             </div>
+            {decliningId === p.id && (
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginLeft: 38, flexWrap: "wrap", padding: "8px 10px", borderRadius: 9, background: C.dangerTint }}>
+                <span style={{ fontSize: 12, fontWeight: 600, color: C.danger }}>{t("Why?")}</span>
+                <Select value={declineReason} onChange={setDeclineReason} options={DECLINE_REASONS} labels={DECLINE_REASONS.map((r) => t(r))} />
+                <button onClick={() => confirmDecline(p)} style={{ padding: "6px 10px", borderRadius: 7, border: "none", background: C.danger, color: "#fff", fontSize: 11.5, fontWeight: 700 }}>{t("Remove from waitlist")}</button>
+                <button onClick={() => setDecliningId(null)} style={{ padding: "6px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 600, color: C.inkSoft }}>{t("Cancel")}</button>
+                <span style={{ width: "100%", fontSize: 11, color: C.inkSoft }}>{t("They move to Declined in Tours with this reason, so you keep the history.")}</span>
+              </div>
+            )}
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginLeft: 38, flexWrap: "wrap" }}>
               {notifiedAt ? (
                 <Pill label={`${t("Notified")} ${notifiedAt.date}`} fg={C.teal} bg={C.tealTint} />
@@ -6566,10 +6834,10 @@ const REPORTS = {
         if (!rec && !scheduled) continue;
         const dd = new Date(y, m - 1, day);
         if (!rec && ((startD && dd < startD) || (leftD && dd > leftD))) continue;
-        rows.push([f.child, mdy, rec?.absent ? "Absent" : rec ? "Present" : "Not recorded", rec?.in && rec.in !== "—" ? rec.in : "", rec?.out || "", scheduled ? "Yes" : "No"]);
+        rows.push([f.child, mdy, rec?.absent ? "Absent" : rec ? "Present" : "Not recorded", rec?.in && rec.in !== "—" ? rec.in : "", rec?.out || "", outingsText(rec), scheduled ? "Yes" : "No"]);
       }
     });
-    return { file: `attendance-${key}.csv`, headers: ["Child", "Date", "Status", "Time in", "Time out", "Scheduled day"], rows };
+    return { file: `attendance-${key}.csv`, headers: ["Child", "Date", "Status", "Time in", "Time out", "Away during the day", "Scheduled day"], rows };
   },
   payments: (ctx, year) => ({
     file: `payments-received-${year}.csv`,
@@ -6859,7 +7127,7 @@ function printSignInSheets(children, { year, month, attendanceLog = {}, schedule
       rows.push(`<tr><td>${escapeHTML(mdy)}</td><td>${escapeHTML(t(weekday).slice(0, 3))}</td>` +
         (rec.absent
           ? `<td colspan="4" class="absent">${escapeHTML(t("Absent"))}</td>`
-          : `<td>${escapeHTML(rec.in && rec.in !== "—" ? rec.in : "")}</td><td></td><td>${escapeHTML(rec.out || "")}</td><td></td>`) +
+          : `<td>${escapeHTML(rec.in && rec.in !== "—" ? rec.in : "")}${rec.outings?.length ? `<div class="muted" style="font-size:9pt">${escapeHTML(outingsText(rec, t))}</div>` : ""}</td><td></td><td>${escapeHTML(rec.out || "")}</td><td></td>`) +
         `</tr>`);
     }
     return `
@@ -7132,7 +7400,7 @@ function EnrollModal({ prospect, providerInfo, tuitionRates, onCancel, onEnroll 
   );
 }
 
-function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialEditing = false, startEnroll }) {
+function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialEditing = false, startEnroll, providerInfo = {} }) {
   const t = useT();
   const [editing, setEditing] = useState(initialEditing);
   const [form, setForm] = useState(prospect);
@@ -7145,6 +7413,23 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
   const field = (key) => (e) => setForm({ ...form, [key]: e.target.value });
   const handleSave = () => { update(prospect.id, form); setSaveState("saved"); setTimeout(() => setSaveState("idle"), 1200); setEditing(false); };
   const doRemove = () => { remove(prospect.id); onClose(); };
+  const contactLog = prospect.contactLog || [];
+  // Opens the family's email, texting or phone app with a follow-up drafted,
+  // and records that you reached out. A follow-up that was due is cleared.
+  const reachOut = (method) => {
+    const first = (prospect.name || "").replace(/ Family$/, "");
+    const msg = prospect.stage === "Toured" || prospect.stage === "Follow-up"
+      ? `Hi ${first} family, thank you for touring ${providerInfo.name || "our program"}! Do you have any questions, or would you like to talk about next steps for enrollment?`
+      : `Hi ${first} family, this is ${providerInfo.name || "your child care provider"} following up on your interest in care. Would you like to schedule a tour?`;
+    const phone = String(prospect.contact || "").replace(/[^\d+]/g, "");
+    if (method === "email") window.location.href = `mailto:${encodeURIComponent(prospect.email || "")}?subject=${encodeURIComponent(`Following up — ${providerInfo.name || "child care"}`)}&body=${encodeURIComponent(msg)}`;
+    if (method === "text") window.location.href = `sms:${phone}?&body=${encodeURIComponent(msg)}`;
+    if (method === "call") window.location.href = `tel:${phone}`;
+    const entry = { date: todayMDY(), method };
+    update(prospect.id, { contactLog: [entry, ...contactLog], ...(followupDue(prospect) ? { followupDate: "" } : {}) });
+    setForm((f) => ({ ...f, contactLog: [entry, ...contactLog], ...(followupDue(prospect) ? { followupDate: "" } : {}) }));
+  };
+  const setFollowup = (v) => { update(prospect.id, { followupDate: v || "" }); setForm((f) => ({ ...f, followupDate: v || "" })); };
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 40, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
@@ -7153,7 +7438,10 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
         <div style={{ padding: "20px 22px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <div>
             <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>{form.name}</div>
-            <div style={{ marginTop: 6 }}><Pill label={t(form.stage)} fg={C.sky} bg={C.skyTint} /></div>
+            <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 8 }}>
+              <Pill label={t(prospect.stage)} fg={C.sky} bg={C.skyTint} />
+              {daysInStage(prospect) !== null && <span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("since")} {prospect.stageSince} · {daysInStage(prospect)} {t("days")}</span>}
+            </div>
           </div>
           <button onClick={onClose} style={{ background: "none", border: "none", color: C.inkSoft, padding: 4 }}><X size={19} /></button>
         </div>
@@ -7169,6 +7457,25 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
               ))}
             </div>
           </Section>
+
+          {!CLOSED_STAGES.includes(prospect.stage) && (
+          <Section title={t("Follow up")} icon={Clock}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ display: "flex", alignItems: "flex-end", gap: 10 }}>
+                <Field label={t("Follow up by")}><DateField value={form.followupDate || ""} onChange={setFollowup} placeholder={t("No date set")} /></Field>
+                {followupDue(prospect) && <Pill label={daysUntil(prospect.followupDate) < 0 ? t("Overdue") : t("Due today")} fg="#7A5620" bg={C.amberTint} />}
+              </div>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {[["email", Mail, t("Email")], ["text", MessageSquare, t("Text")], ["call", Phone, t("Call")]].map(([m, Icon, label]) => (
+                  <button key={m} onClick={() => reachOut(m)} disabled={m === "email" ? !prospect.email : !prospect.contact} style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 12px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12, fontWeight: 700, color: (m === "email" ? prospect.email : prospect.contact) ? C.tealDark : "#C9C4B4" }}><Icon size={13} /> {label}</button>
+                ))}
+              </div>
+              <div style={{ fontSize: 11.5, color: C.inkSoft }}>
+                {contactLog.length ? `${t("Last contacted")} ${contactLog[0].date} · ${t(contactLog[0].method === "email" ? "Email" : contactLog[0].method === "text" ? "Text" : "Call")}${contactLog.length > 1 ? ` · ${contactLog.length} ${t("times total")}` : ""}` : t("Opens your email, texting or phone app with a message drafted. Nothing is sent automatically.")}
+              </div>
+            </div>
+          </Section>
+          )}
 
           <Section title={t("Details")} icon={Users}
             right={!editing && <button onClick={() => setEditing(true)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 700 }}><Pencil size={12} /> {t("Edit")}</button>}>
@@ -7199,6 +7506,7 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
                 <Row left={<span style={{ color: C.inkSoft }}>{t("Children")}</span>} right={<b>{form.children}</b>} />
                 <Row left={<span style={{ color: C.inkSoft }}>{t("Desired start date")}</span>} right={<b>{form.start}</b>} />
                 <Row left={<span style={{ color: C.inkSoft }}>{t("Tour date")}</span>} right={<b>{form.tourDate}</b>} />
+                {prospect.stage === "Declined" && <Row left={<span style={{ color: C.inkSoft }}>{t("Reason")}</span>} right={<b>{t(prospect.declineReason || "Not recorded")}</b>} />}
                 <div style={{ padding: "9px 0" }}><span style={{ color: C.inkSoft, fontSize: 12 }}>{t("Notes")}</span><p style={{ margin: "4px 0 0", fontSize: 13 }}>{form.notes || "—"}</p></div>
                 <div style={{ padding: "9px 0" }}><span style={{ color: C.inkSoft, fontSize: 12 }}>{t("Next follow-up")}</span><p style={{ margin: "4px 0 0", fontSize: 13 }}>{form.followup || "—"}</p></div>
               </div>
@@ -8973,14 +9281,33 @@ function eventAnnouncementOpener(type, name) {
   };
   return byType[type] || byType["Other"];
 }
-function Messages({ threads: rawThreads, saveThreads, families, staff, goToFamily }) {
+// Which group a conversation belongs to. Families are matched by household or
+// name; anything not recognized lands in Other (a new number, a vendor…) until
+// the provider labels it.
+function threadGroup(th, families = [], staff = []) {
+  if (th.kind === "agency") return "agency";
+  if (th.kind === "staff" || staff.some((m) => m.name === th.name)) return "staff";
+  if (th.kind === "other") return "other";
+  if (th.household || ["direct", "broadcast", "announcement", "family"].includes(th.kind) || families.some((f) => (f.householdName || f.child) === th.name || th.name.includes(f.parent || "\u0000"))) return "family";
+  return "other";
+}
+const THREAD_GROUPS = [["family", "Families"], ["agency", "Agencies"], ["staff", "Staff"], ["other", "Other"]];
+function Messages({ threads: rawThreads, saveThreads, families, staff, goToFamily, openSupport, alertsOn = true, setAlertsOn }) {
   const t = useT();
   const [query, setQuery] = useState("");
   const [unreadOnly, setUnreadOnly] = useState(false);
+  const [group, setGroup] = useState("all");
+  const toggleAlerts = async () => {
+    const next = !alertsOn;
+    if (next && typeof Notification !== "undefined" && Notification.permission === "default") { try { await Notification.requestPermission(); } catch (e) { /* ignore */ } }
+    setAlertsOn && setAlertsOn(next);
+  };
+  const labelThread = (id, kind) => saveThreads(rawThreads.map((x) => (x.id === id ? { ...x, kind } : x)));
   // Newest conversation first.
   const threads = [...rawThreads].sort((a, b) => threadLastAt(b) - threadLastAt(a));
   const [openId, setOpenId] = useState(threads[0]?.id || null);
-  const shown = threads.filter((th) => (!unreadOnly || th.unread)
+  const groupCounts = Object.fromEntries(THREAD_GROUPS.map(([g]) => [g, threads.filter((th) => threadGroup(th, families, staff) === g).length]));
+  const shown = threads.filter((th) => (!unreadOnly || th.unread) && (group === "all" || threadGroup(th, families, staff) === group)
     && (!query.trim() || `${th.name} ${th.messages.map((m) => m.text).join(" ")}`.toLowerCase().includes(query.trim().toLowerCase())));
   const unreadCount = threads.filter((th) => th.unread).length;
   // Opening a conversation marks it read.
@@ -9047,11 +9374,15 @@ function Messages({ threads: rawThreads, saveThreads, families, staff, goToFamil
         {threads.length > 0 && (
           <div style={{ padding: "8px 10px", borderBottom: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 6 }}>
             <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("Search messages…")} style={{ ...inputStyle, width: "100%", padding: "7px 10px", fontSize: 12.5 }} />
-            <div style={{ display: "flex", gap: 6 }}>
+            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
               {[[false, t("All")], [true, `${t("Unread")}${unreadCount ? ` (${unreadCount})` : ""}`]].map(([v, label]) => (
                 <button key={String(v)} onClick={() => setUnreadOnly(v)} style={{ padding: "4px 10px", borderRadius: 999, fontSize: 11.5, fontWeight: 700, border: `1px solid ${unreadOnly === v ? C.teal : C.line}`, background: unreadOnly === v ? C.tealTint : "#fff", color: unreadOnly === v ? C.tealDark : C.inkSoft }}>{label}</button>
               ))}
+              <button onClick={toggleAlerts} title={alertsOn ? t("New message alerts are on") : t("New message alerts are off")} style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 4, padding: "4px 8px", borderRadius: 999, fontSize: 11, fontWeight: 700, border: `1px solid ${C.line}`, background: "#fff", color: alertsOn ? C.tealDark : C.inkSoft }}>
+                {alertsOn ? <Bell size={12} /> : <BellOff size={12} />} {alertsOn ? t("Alerts on") : t("Alerts off")}
+              </button>
             </div>
+            <Select value={group} onChange={setGroup} options={["all", ...THREAD_GROUPS.map((g) => g[0])]} labels={[t("Everyone"), ...THREAD_GROUPS.map(([g, label]) => `${t(label)} (${groupCounts[g]})`)]} />
           </div>
         )}
         {threads.length > 0 && shown.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft, textAlign: "center" }}>{t("No conversations match.")}</div>}
@@ -9071,8 +9402,9 @@ function Messages({ threads: rawThreads, saveThreads, families, staff, goToFamil
               <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
                 <Dot c={th.unread ? C.coral : C.line} />
                 <b style={{ fontSize: 13 }}>{th.name}</b>
-                {th.kind === "agency" && <span style={{ fontSize: 10, fontWeight: 700, color: C.sky }}>{t("Agency")}</span>}
-                {th.kind === "staff" && <span style={{ fontSize: 10, fontWeight: 700, color: C.inkSoft }}>{t("Staff")}</span>}
+                {threadGroup(th, families, staff) === "agency" && <span style={{ fontSize: 10, fontWeight: 700, color: C.sky }}>{t("Agency")}</span>}
+                {threadGroup(th, families, staff) === "staff" && <span style={{ fontSize: 10, fontWeight: 700, color: C.inkSoft }}>{t("Staff")}</span>}
+                {threadGroup(th, families, staff) === "other" && <span style={{ fontSize: 10, fontWeight: 700, color: C.amber }}>{t("Other")}</span>}
               </div>
               <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{last.deleted ? t("Message deleted") : last.attachment ? `📎 ${last.attachment.name}` : `${last.from === "me" ? `${t("You")}: ` : ""}${last.text}`}</div>
               <div style={{ fontSize: 10.5, color: C.inkSoft, marginTop: 2 }}>{fmtMsgTime(last, t)}</div>
@@ -9082,6 +9414,11 @@ function Messages({ threads: rawThreads, saveThreads, families, staff, goToFamil
       </div>
 
       <div style={{ flex: 1, minWidth: 0, background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, display: "flex", flexDirection: "column" }}>
+        {openSupport && (
+          <button onClick={openSupport} style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 18px", background: C.cream, border: "none", borderBottom: `1px solid ${C.line}`, borderRadius: "14px 14px 0 0", fontSize: 12, color: C.inkSoft, textAlign: "left" }}>
+            <LifeBuoy size={13} color={C.teal} /> {t("Need help from the Alaga team?")} <b style={{ color: C.teal }}>{t("Contact support")} →</b>
+          </button>
+        )}
         {open ? (
           <>
             {(() => {
@@ -9093,7 +9430,10 @@ function Messages({ threads: rawThreads, saveThreads, families, staff, goToFamil
                     <div style={{ fontWeight: 600, fontSize: 14.5 }}>{open.name}</div>
                     {kids && <div style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Children")}: {kids}</div>}
                   </div>
-                  {fam && goToFamily && <button onClick={() => goToFamily(fam.id)} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: `1px solid ${C.line}`, borderRadius: 8, padding: "6px 10px" }}>{t("View family")}</button>}
+                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    <Select value={threadGroup(open, families, staff)} onChange={(v) => labelThread(open.id, v === "family" ? "direct" : v)} options={THREAD_GROUPS.map((g) => g[0])} labels={THREAD_GROUPS.map(([, label]) => `${t("Label")}: ${t(label)}`)} />
+                    {fam && goToFamily && <button onClick={() => goToFamily(fam.id)} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: `1px solid ${C.line}`, borderRadius: 8, padding: "6px 10px" }}>{t("View family")}</button>}
+                  </div>
                 </div>
               );
             })()}
@@ -9873,8 +10213,8 @@ function SupportScreen({ providerInfo }) {
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <MessageSquare size={16} color={C.teal} />
               <div>
-                <div style={{ fontSize: 12, color: C.inkSoft }}>{t("Live chat")}</div>
-                <div style={{ fontSize: 13.5, fontWeight: 600 }}>{t("Available from the Messages tab")}</div>
+                <div style={{ fontSize: 12, color: C.inkSoft }}>{t("Send us a message")}</div>
+                <div style={{ fontSize: 13.5, fontWeight: 600 }}>{t("Use the form on this page — replies show under My Requests")}</div>
               </div>
             </div>
             <div style={{ fontSize: 11.5, color: C.inkSoft, lineHeight: 1.5, marginTop: 4 }}>
@@ -11042,29 +11382,19 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, statu
         </div>
 
         {(() => {
-          const s = status[fam.id];
-          if (!s) return null;
-          const isIn = s.status === "in";
-          const isAppointment = !isIn && s.reason === "appointment";
+          const rec0 = ((careCtx?.attendanceLog || {})[todayMDY()] || {})[fam.id];
+          if (!rec0) return null;
+          const rec = rec0 === true ? { in: "—" } : rec0;
+          const away = !rec.out && isAway(rec);
+          const label = rec.absent ? t("Marked absent today") : rec.out ? `${t("Picked up at")} ${rec.out}` : away ? `${t("Out for an appointment since")} ${(rec.outings || []).find((o) => !o.back)?.out}` : `${t("Checked in at")} ${rec.in}`;
+          const color = rec.absent || rec.out ? C.inkSoft : away ? C.amber : C.teal;
           return (
-            <div style={{ background: C.paper, border: `1px solid ${isAppointment ? C.amber : C.line}`, borderRadius: 16, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{ width: 40, height: 40, borderRadius: "50%", background: fam.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, flexShrink: 0 }}>{fam.child[0]}</div>
-                <div>
-                  <Pill label={isIn ? t("Checked in") : isAppointment ? t("Out — Appointment") : t("Checked out")} fg={isIn ? C.teal : isAppointment ? C.amber : C.inkSoft} bg={isIn ? C.tealTint : isAppointment ? C.amberTint : "#F1EEE5"} />
-                  {s.time && <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 4 }}>{isIn ? t("since") : t("at")} {s.time}</div>}
-                </div>
-              </div>
-              <div style={{ display: "flex", gap: 8 }}>
-                {isIn ? (
-                  <button onClick={() => setChildStatus(fam, "out", "appointment")} style={{ padding: "8px 12px", borderRadius: 9, border: `1px solid ${C.amber}`, background: C.amberTint, color: "#7A5620", fontSize: 12, fontWeight: 700, whiteSpace: "nowrap" }}>
-                    {t("Sign out for appointment")}
-                  </button>
-                ) : (
-                  <button onClick={() => setChildStatus(fam, "in")} style={{ padding: "8px 12px", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontSize: 12, fontWeight: 700, whiteSpace: "nowrap" }}>
-                    {t("Sign back in")}
-                  </button>
-                )}
+            <div style={{ background: C.paper, border: `1px solid ${away ? C.amber : C.line}`, borderRadius: 16, padding: "14px 20px", display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{ width: 40, height: 40, borderRadius: "50%", background: fam.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, flexShrink: 0 }}>{fam.child[0]}</div>
+              <div>
+                <div style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Today")}</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color }}>{label}</div>
+                {outingsText(rec, t) && <div style={{ fontSize: 11.5, color: C.inkSoft }}>{outingsText(rec, t)}</div>}
               </div>
             </div>
           );
