@@ -998,6 +998,12 @@ const T = {
   "Caseworker": { es: "Trabajador social", tl: "Caseworker", zh: "个案工作者", vi: "Nhân viên phụ trách", ko: "담당 사례관리자" },
   "Caseworker name": { es: "Nombre del trabajador social", tl: "Pangalan ng caseworker", zh: "个案工作者姓名", vi: "Tên nhân viên phụ trách", ko: "담당자 이름" },
   "Email caseworker": { es: "Escribir al trabajador social", tl: "I-email ang caseworker", zh: "邮件联系个案工作者", vi: "Email nhân viên phụ trách", ko: "담당자에게 이메일" },
+  "Dates of care": { es: "Fechas de cuidado", tl: "Mga petsa ng pag-aalaga", zh: "托育日期", vi: "Ngày chăm sóc", ko: "보육 날짜" },
+  "Check or edit the dates before printing. Some FSA and dependent-care administrators require exact dates.": { es: "Revise o edite las fechas antes de imprimir. Algunos administradores de FSA y cuidado de dependientes exigen fechas exactas.", tl: "Suriin o i-edit ang mga petsa bago mag-print. May mga FSA at dependent-care administrator na humihingi ng eksaktong petsa.", zh: "打印前请核对或编辑日期。部分 FSA 及受抚养人照护管理机构要求列出确切日期。", vi: "Kiểm tra hoặc sửa ngày trước khi in. Một số đơn vị quản lý FSA và chăm sóc người phụ thuộc yêu cầu ngày chính xác.", ko: "인쇄 전에 날짜를 확인하거나 수정하세요. 일부 FSA 및 부양가족 돌봄 관리기관은 정확한 날짜를 요구합니다." },
+  "Days attended": { es: "Días asistidos", tl: "Mga araw na pumasok", zh: "实际出勤日", vi: "Ngày đã đi học", ko: "출석일" },
+  "Scheduled days": { es: "Días programados", tl: "Mga naka-schedule na araw", zh: "排定日", vi: "Ngày theo lịch", ko: "예정일" },
+  "Whole month": { es: "Todo el mes", tl: "Buong buwan", zh: "整月", vi: "Cả tháng", ko: "한 달 전체" },
+  "Save and print": { es: "Guardar e imprimir", tl: "I-save at i-print", zh: "保存并打印", vi: "Lưu và in", ko: "저장 후 인쇄" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -3450,7 +3456,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
               {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} startEnroll={(p) => setEnrollingProspectId(p.id)} />}
               {screen === "waitlist" && <WaitlistScreen prospects={prospects} updateProspect={updateProspect} removeProspect={removeProspect} logAccess={logAccess} families={families} providerInfo={providerInfo} startEnroll={(p) => setEnrollingProspectId(p.id)} />}
               {screen === "subsidy" && <Subsidy families={families} openFamId={openFamId} setOpenFamId={setOpenFamId} loaded={loaded} meetingMode={meetingMode} />}
-              {screen === "payments" && <Finances families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} activeTab={financesTab} setActiveTab={setFinancesTab} />}
+              {screen === "payments" && <Finances careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} activeTab={financesTab} setActiveTab={setFinancesTab} />}
               {screen === "compliance" && <Compliance docs={compDocs} onSave={saveCompDoc} families={families} provider={providerInfo} staff={staff} setScreen={setScreen} incidents={incidents} saveIncidents={saveIncidents} mandatedNotes={mandatedNotes} saveMandatedNotes={saveMandatedNotes} />}
               {screen === "security" && <SecurityScreen accessLog={accessLog} isEmpty={isEmpty} />}
               {screen === "messages" && <Messages threads={threads} saveThreads={saveThreads} families={families} staff={staff} />}
@@ -3474,7 +3480,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
           )}
         </>
       ) : (
-        <ParentApp families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} events={events} />
+        <ParentApp careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} events={events} />
       )}
     </div>
     </LanguageContext.Provider>
@@ -6352,12 +6358,41 @@ function printHTML(html) {
   }, 150);
 }
 
+// Dates of care for a child in a billing month ("2026-10"): days they were
+// checked in, and days they were scheduled (open days, no closures, up to today).
+function careDatesFor(f, key, { attendanceLog = {}, schedule = [], closures = [] } = {}) {
+  const [y, m] = key.split("-").map(Number);
+  const last = new Date(y, m, 0).getDate();
+  const today = startOfToday();
+  const attended = [], scheduled = [];
+  for (let d = 1; d <= last; d++) {
+    const date = new Date(y, m - 1, d);
+    const mdy = `${pad2(m)}/${pad2(d)}/${y}`;
+    const rec = (attendanceLog[mdy] || {})[f.id];
+    if (rec === true || (rec && rec.in)) attended.push(mdy);
+    if (date > today) continue;
+    const weekday = DAY_BY_INDEX[date.getDay()];
+    const open = schedule.length ? schedule.find((x) => x.day === weekday)?.open : WEEK_DAYS.includes(weekday);
+    if (open && !closureOn(closures, mdy) && childDays(f).includes(weekday)) scheduled.push(mdy);
+  }
+  return { attended, scheduled, range: `${pad2(m)}/01/${y} – ${pad2(m)}/${pad2(last)}/${y}` };
+}
+// What a receipt lists for a month: the provider's saved wording if they edited
+// it; otherwise the days attended when attendance was recorded for most of the
+// month; otherwise the scheduled days (so a half-tracked month isn't understated).
+function receiptDatesText(f, key, ctx) {
+  if (f.receiptDates && f.receiptDates[key]) return f.receiptDates[key];
+  const d = careDatesFor(f, key, ctx);
+  const useAttended = d.attended.length > 0 && d.attended.length >= d.scheduled.length / 2;
+  return (useAttended ? d.attended : d.scheduled).join(", ") || d.range;
+}
+
 // Childcare payment receipt for FSA / HSA / dependent-care claims: one or more
 // paid months for one child, with the provider's details and signature line.
 // The provider writes their tax ID by hand rather than storing it here.
-function printReceipt(f, payments, { provider = {}, t = (x) => x, title } = {}) {
+function printReceipt(f, payments, { provider = {}, t = (x) => x, title, datesFor } = {}) {
   const total = payments.reduce((s, p) => s + p.total, 0);
-  const rows = payments.map((p) => `<tr><td>${escapeHTML(periodLabel(p.key))}</td><td>${escapeHTML(p.entries.map((e) => e.date).join(", "))}</td><td>${escapeHTML(p.entries.map((e) => `${f.copaySplit ? `${e.who}: ` : ""}${t(e.method || "")}`).join(", "))}</td><td class="num">${escapeHTML(money(p.total))}</td></tr>`).join("");
+  const rows = payments.map((p) => `<tr><td>${escapeHTML(periodLabel(p.key))}${datesFor && datesFor(p.key) ? `<div class="dates">${escapeHTML(t("Dates of care"))}: ${escapeHTML(datesFor(p.key))}</div>` : ""}</td><td>${escapeHTML(p.entries.map((e) => e.date).join(", "))}</td><td>${escapeHTML(p.entries.map((e) => `${f.copaySplit ? `${e.who}: ` : ""}${t(e.method || "")}`).join(", "))}</td><td class="num">${escapeHTML(money(p.total))}</td></tr>`).join("");
   printHTML(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHTML(title || t("Childcare payment receipt"))} — ${escapeHTML(f.child)}</title>
     <style>
       @page { size: letter; margin: 0.7in; }
@@ -6369,6 +6404,7 @@ function printReceipt(f, payments, { provider = {}, t = (x) => x, title } = {}) 
       .info th { width: 30%; color: #444; font-weight: normal; }
       .pay { margin-top: 16px; } .pay th { border-bottom: 1.5px solid #111; font-size: 9.5pt; } .pay td { border-bottom: 1px solid #ccc; }
       .num { text-align: right; } .total td { font-weight: bold; border-top: 2px solid #111; border-bottom: none; }
+      .dates { font-size: 9pt; color: #333; margin-top: 3px; line-height: 1.4; } .pay td { vertical-align: top; }
       .sign { display: flex; gap: 30px; margin-top: 40px; font-size: 9.5pt; color: #444; } .sign div { flex: 1; }
       .line { display: block; border-bottom: 1px solid #111; height: 26px; margin-bottom: 4px; }
       footer { margin-top: 26px; font-size: 8.5pt; color: #444; }
@@ -6393,6 +6429,58 @@ function printReceipt(f, payments, { provider = {}, t = (x) => x, title } = {}) 
       </div>
       <footer>${escapeHTML(t("Amounts are what the family paid out of pocket. Subsidy payments from agencies are not included."))}</footer>
     </body></html>`);
+}
+
+// Lets the provider review and edit the exact dates of care before a receipt
+// prints — some FSA / dependent-care administrators require them. The edited
+// wording is saved so the same dates appear next time and in the parent view.
+function ReceiptDatesDialog({ family, payments, ctx, provider, title, onSave, onClose }) {
+  const t = useT();
+  const initial = Object.fromEntries(payments.map((p) => [p.key, receiptDatesText(family, p.key, ctx)]));
+  const [texts, setTexts] = useState(initial);
+  const choose = (key, list) => setTexts((x) => ({ ...x, [key]: list }));
+  const print = async () => {
+    const saved = { ...(family.receiptDates || {}) };
+    payments.forEach((p) => { saved[p.key] = texts[p.key]; });
+    if (onSave) await onSave(family.id, { receiptDates: saved });
+    printReceipt(family, payments, { provider, t, title, datesFor: (key) => texts[key] });
+    onClose();
+  };
+  const chip = { padding: "5px 9px", borderRadius: 999, fontSize: 11.5, fontWeight: 600, border: `1px solid ${C.line}`, background: "#fff", color: C.tealDark };
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+      <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.35)" }} />
+      <div style={{ position: "relative", width: 600, maxWidth: "94vw", maxHeight: "88vh", background: C.paper, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column" }}>
+        <div style={{ padding: "18px 22px 12px", borderBottom: `1px solid ${C.line}` }}>
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 18, fontWeight: 600 }}>{t("Dates of care")} · {family.child}</div>
+          <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 3 }}>{t("Check or edit the dates before printing. Some FSA and dependent-care administrators require exact dates.")}</div>
+        </div>
+        <div style={{ flex: 1, overflowY: "auto", padding: "14px 22px", display: "flex", flexDirection: "column", gap: 16 }}>
+          {payments.map((p) => {
+            const d = careDatesFor(family, p.key, ctx);
+            return (
+              <div key={p.key} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: 700 }}>
+                  <span>{periodLabel(p.key)}</span><span>{money(p.total)}</span>
+                </div>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  {d.attended.length > 0 && <button type="button" onClick={() => choose(p.key, d.attended.join(", "))} style={chip}>{t("Days attended")} ({d.attended.length})</button>}
+                  {d.scheduled.length > 0 && <button type="button" onClick={() => choose(p.key, d.scheduled.join(", "))} style={chip}>{t("Scheduled days")} ({d.scheduled.length})</button>}
+                  <button type="button" onClick={() => choose(p.key, d.range)} style={chip}>{t("Whole month")}</button>
+                </div>
+                <textarea value={texts[p.key]} onChange={(e) => setTexts((x) => ({ ...x, [p.key]: e.target.value }))} rows={3}
+                  style={{ width: "100%", border: `1px solid ${C.line}`, borderRadius: 9, padding: "8px 10px", fontSize: 12.5, fontFamily: "inherit", resize: "vertical", color: C.ink }} />
+              </div>
+            );
+          })}
+        </div>
+        <div style={{ padding: "12px 22px", borderTop: `1px solid ${C.line}`, display: "flex", gap: 10 }}>
+          <button onClick={onClose} style={{ flex: 1, padding: "10px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Cancel")}</button>
+          <button onClick={print} style={{ flex: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "10px 0", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 13 }}><Printer size={14} /> {t("Save and print")}</button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // Monthly sign-in / sign-out sheets, one page per child, for subsidy
@@ -6795,7 +6883,7 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
 }
 
 /* --------------------------------- payments ------------------------------------ */
-function Finances({ families, expenses, saveExpenses, reminderSettings, saveReminderSettings, staff, tier, payrollSettings, savePayrollSettings, onSave, refunds, saveRefunds, flexCareRequests, tuitionRates, saveTuitionRates, setScreen, providerInfo, meetingMode = false, budgetPlan, saveBudgetPlan, activeTab, setActiveTab }) {
+function Finances({ careCtx, families, expenses, saveExpenses, reminderSettings, saveReminderSettings, staff, tier, payrollSettings, savePayrollSettings, onSave, refunds, saveRefunds, flexCareRequests, tuitionRates, saveTuitionRates, setScreen, providerInfo, meetingMode = false, budgetPlan, saveBudgetPlan, activeTab, setActiveTab }) {
   const t = useT();
   const [tabLocal, setTabLocal] = useState("tuition");
   // Sidebar sub-nav can control which Finances tab is active directly; falls
@@ -6819,6 +6907,7 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
   const setSiblingDiscountFin = (field, val) => setRates((r) => ({ ...r, siblingDiscount: { ...(r.siblingDiscount || TUITION_RATES_DEFAULT.siblingDiscount), [field]: val } }));
   const saveRatesNow = async () => { await saveTuitionRates(rates); setEditingRates(false); };
   const [remindersOpen, setRemindersOpen] = useState(false);
+  const [receiptFor, setReceiptFor] = useState(null); // { familyId, payments, title }
   const isSimple = tier === "simple";
   // Budget Planner is available on both plans — it's core business ops, not a
   // premium feature, so it's listed identically for Simple and Extended.
@@ -7345,8 +7434,8 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
             const fsa = f.fsaHsa && f.fsaHsa.enrolled ? f.fsaHsa : null;
             const year = String(startOfToday().getFullYear());
             const thisYear = paid.filter((p) => p.key.startsWith(year));
-            const dl = (p) => printReceipt(f, [p], { provider: providerInfo, t });
-            const dlYear = () => printReceipt(f, thisYear.slice().reverse(), { provider: providerInfo, t, title: `${t("Annual childcare payment summary")} ${year}` });
+            const dl = (p) => setReceiptFor({ familyId: f.id, payments: [p] });
+            const dlYear = () => setReceiptFor({ familyId: f.id, payments: thisYear.slice().reverse(), title: `${t("Annual childcare payment summary")} ${year}` });
             return (
               <div key={f.id} style={{ padding: "12px 18px", borderBottom: `1px solid ${C.line}` }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8, flexWrap: "wrap", gap: 6 }}>
@@ -7375,6 +7464,10 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
             <Info size={10} /> {t("These same receipts are also available to each family in their own parent view.")}
           </div>
         </Card>
+        {receiptFor && families.find((f) => f.id === receiptFor.familyId) && (
+          <ReceiptDatesDialog family={families.find((f) => f.id === receiptFor.familyId)} payments={receiptFor.payments} title={receiptFor.title}
+            ctx={careCtx} provider={providerInfo} onSave={onSave} onClose={() => setReceiptFor(null)} />
+        )}
         </>
       ) : tab === "refunds" ? (
         <RefundsCard families={families} refunds={refunds} saveRefunds={saveRefunds} onExport={exportRefunds} />
@@ -10142,7 +10235,7 @@ function SmallBtn({ icon: Icon, label }) {
 /* ===================================================================
    PARENT APP — read-only subsidy view for the family
    =================================================================== */
-function ParentApp({ families, onExit, showBackToProvider = true, status, setChildStatus, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage, events = [] }) {
+function ParentApp({ careCtx, families, onExit, showBackToProvider = true, status, setChildStatus, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage, events = [] }) {
   const t = useT();
   const [famId, setFamId] = useState(families[0]?.id);
   const fam = families.find((f) => f.id === famId) || families[0];
@@ -10208,8 +10301,9 @@ function ParentApp({ families, onExit, showBackToProvider = true, status, setChi
 
   // Receipts list only months the provider has recorded as paid.
   const paidMonths = paymentsOf(fam).slice(0, 12);
-  const downloadReceipt = (p) => printReceipt(fam, [p], { provider, t });
-  const downloadYearSummary = () => printReceipt(fam, paidMonths.filter((p) => p.key.startsWith(String(startOfToday().getFullYear()))).reverse(), { provider, t, title: `${t("Annual childcare payment summary")} ${startOfToday().getFullYear()}` });
+  const receiptDates = (key) => receiptDatesText(fam, key, careCtx);
+  const downloadReceipt = (p) => printReceipt(fam, [p], { provider, t, datesFor: receiptDates });
+  const downloadYearSummary = () => printReceipt(fam, paidMonths.filter((p) => p.key.startsWith(String(startOfToday().getFullYear()))).reverse(), { provider, t, datesFor: receiptDates, title: `${t("Annual childcare payment summary")} ${startOfToday().getFullYear()}` });
 
   return (
     <div style={{ flex: 1, minHeight: "100vh", display: "flex", flexDirection: "column", background: C.cream }}>
