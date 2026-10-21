@@ -108,10 +108,51 @@ function EmptyIllustration({ size = 76 }) {
 }
 
 /* ---------------------------------- data ------------------------------------ */
+// The sample daycare's data was written as of July 26, 2026. Rather than freeze
+// the whole app on that day, every sample date is moved forward by however long
+// it's been since then — so a subsidy that "expires in 7 days" in the sample
+// still expires in 7 days, and real providers' dates are measured from today.
+const startOfToday = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+const DEMO_WRITTEN_ON = new Date(2026, 6, 26);
+const DEMO_SHIFT_DAYS = Math.round((startOfToday() - DEMO_WRITTEN_ON) / 86400000);
+const DEMO_SHIFT_MONTHS = Math.round(DEMO_SHIFT_DAYS / 30.44);
+const MONTH_FULL = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const pad2 = (n) => String(n).padStart(2, "0");
+function shiftDemoString(str) {
+  if (!DEMO_SHIFT_DAYS) return str;
+  return str
+    .replace(/(?<![\d/])(\d{2})\/(\d{2})\/(\d{4})(?![\d/])/g, (_, m, d, y) => {
+      const dt = new Date(+y, +m - 1, +d + DEMO_SHIFT_DAYS);
+      return `${pad2(dt.getMonth() + 1)}/${pad2(dt.getDate())}/${dt.getFullYear()}`;
+    })
+    .replace(/(?<![\d/])(\d{2})\/(20\d{2})(?![\d/])/g, (_, m, y) => {
+      const dt = new Date(+y, +m - 1 + DEMO_SHIFT_MONTHS, 1);
+      return `${pad2(dt.getMonth() + 1)}/${dt.getFullYear()}`;
+    })
+    .replace(new RegExp(`\\b(${MONTH_FULL.join("|")}) (20\\d{2})\\b`, "g"), (_, mName, y) => {
+      const dt = new Date(+y, MONTH_FULL.indexOf(mName) + DEMO_SHIFT_MONTHS, 1);
+      return `${MONTH_FULL[dt.getMonth()]} ${dt.getFullYear()}`;
+    });
+}
+// Walks plain sample-data objects and arrays; leaves icons and other components alone.
+function demoDates(value, shift = shiftDemoString) {
+  if (typeof value === "string") return shift(value);
+  if (Array.isArray(value)) return value.map((v) => demoDates(v, shift));
+  if (value && Object.getPrototypeOf(value) === Object.prototype) {
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, demoDates(v, shift)]));
+  }
+  return value;
+}
+// Sample expenses move by whole months instead, so they stay grouped in one month.
+const shiftDemoMonth = (str) => str.replace(/(?<![\d/])(\d{2})\/(\d{2})\/(\d{4})(?![\d/])/g, (_, m, d, y) => {
+  let dt = new Date(+y, +m - 1 + DEMO_SHIFT_MONTHS, Math.min(+d, 28));
+  if (dt > startOfToday()) dt = startOfToday(); // never log a sample expense in the future
+  return `${pad2(dt.getMonth() + 1)}/${pad2(dt.getDate())}/${dt.getFullYear()}`;
+});
 const PROVIDER = { name: "Tita's Family Child Care", city: "Culver City, CA", lic: "FCC License #198-402-3211" };
 
 /* --------------------------- platform admin (10 providers) --------------------------- */
-const ADMIN_PROVIDERS_DEFAULT = [
+const ADMIN_PROVIDERS_DEFAULT = demoDates([
   { id: 1, name: "Tita's Family Child Care", contact: "Maria Reyes", city: "Culver City, CA", tier: "extended", status: "active", cycle: "monthly", children: 9, capacity: 8, signupDate: "01/08/2026", convertedDate: "01/22/2026", lastActive: "07/30/2026", founding: true },
   { id: 2, name: "Sunshine Steps FCC", contact: "Denise Coleman", city: "Inglewood, CA", tier: "extended", status: "active", cycle: "annual", children: 12, capacity: 14, signupDate: "01/22/2026", convertedDate: "02/05/2026", lastActive: "07/29/2026", founding: true },
   { id: 3, name: "Little Sprouts Home Daycare", contact: "Priya Nair", city: "Torrance, CA", tier: "simple", status: "active", cycle: "monthly", children: 5, capacity: 6, signupDate: "02/14/2026", convertedDate: "02/28/2026", lastActive: "07/28/2026", founding: true },
@@ -122,7 +163,7 @@ const ADMIN_PROVIDERS_DEFAULT = [
   { id: 8, name: "Rainbow Bridge FCC", contact: "Yolanda Perez", city: "Downey, CA", tier: "simple", status: "canceled", cycle: "monthly", children: 0, capacity: 6, signupDate: "02/05/2026", convertedDate: "02/19/2026", canceledDate: "06/12/2026", cancelReason: "price", lastActive: "06/12/2026", founding: true },
   { id: 9, name: "Growing Roots Childcare", contact: "Fatima Haidari", city: "Anaheim, CA", tier: "extended", status: "active", cycle: "annual", children: 13, capacity: 14, signupDate: "04/16/2026", convertedDate: "04/30/2026", lastActive: "07/29/2026", founding: false },
   { id: 10, name: "Little Explorers Home Daycare", contact: "Grace Kim", city: "Glendale, CA", tier: "simple", status: "trial", cycle: "monthly", children: 3, capacity: 6, signupDate: "07/24/2026", convertedDate: null, lastActive: "07/30/2026", founding: false },
-];
+]);
 
 // Trials that started but never converted to a paid plan — kept separately so trial
 // conversion and paid-customer churn can be computed as two distinct, correct metrics
@@ -134,11 +175,11 @@ const ADMIN_CANCEL_REASONS = [
   { id: "competitor", label: "Chose a different platform" },
   { id: "no-response", label: "Went quiet — no reason given" },
 ];
-const ADMIN_LOST_TRIALS = [
+const ADMIN_LOST_TRIALS = demoDates([
   { id: "lt1", name: "Cozy Corner FCC", city: "Whittier, CA", trialStartDate: "02/10/2026", lostDate: "02/24/2026", reason: "features" },
   { id: "lt2", name: "Happy Hearts Daycare", city: "Norwalk, CA", trialStartDate: "04/02/2026", lostDate: "04/16/2026", reason: "competitor" },
   { id: "lt3", name: "Sunny Days Home Care", city: "El Monte, CA", trialStartDate: "05/20/2026", lostDate: "06/03/2026", reason: "no-response" },
-];
+]);
 
 // Consent-gated support access — same storage record read from both the Admin provider
 // drawer and that provider's own Privacy & Security screen, so a request/grant/revoke
@@ -250,7 +291,7 @@ const FORM_TEMPLATES = [
   { id: "provider", name: "Provider Payment Agreement" },
 ];
 
-const COMPLIANCE_DOCS = [
+const COMPLIANCE_DOCS = demoDates([
   { id: "license", name: "CCLD Facility License", icon: Shield, status: "submitted", date: "renews 03/2027" },
   { id: "inspection", name: "Most Recent Inspection Report", icon: FileCheck, status: "submitted", date: "04/12/2026 — no citations" },
   { id: "insurance", name: "General Liability Insurance", icon: ShieldCheck, status: "submitted", date: "renews 01/2027" },
@@ -258,7 +299,7 @@ const COMPLIANCE_DOCS = [
   { id: "fire", name: "Fire & Safety Clearance", icon: Flame, status: "submitted", date: "renews 05/2027" },
   { id: "background", name: "Staff Background Check Clearances", icon: FileCheck, status: "submitted", date: "current — all staff" },
   { id: "handbook", name: "Provider Policies & Parent Handbook", icon: FileText, status: "submitted", date: "updated 01/2026" },
-];
+]);
 
 const MESSAGE_THREADS = [
   {
@@ -308,16 +349,16 @@ const PACKET_CLOSURES = [
 // photo day). Kept as a distinct category from closures for that reason.
 const EVENT_TYPES = ["Activity Day", "Field Trip", "Parent-Teacher Conferences", "Staff Meeting", "Photo Day", "Family Event", "Announcement", "Other"];
 let eventSeq = 0;
-const CALENDAR_EVENTS_DEFAULT = [
+const CALENDAR_EVENTS_DEFAULT = demoDates([
   { id: "ev1", name: "Parent-Teacher Conference Week", type: "Parent-Teacher Conferences", dates: "09/14/2026 – 09/18/2026", notify: true, notes: "Sign-up sheet posted at drop-off; 15-minute slots per family." },
   { id: "ev2", name: "Fall Photo Day", type: "Photo Day", dates: "10/09/2026", notify: true, notes: "" },
   { id: "ev3", name: "Staff In-Service Meeting", type: "Staff Meeting", dates: "08/28/2026", notify: false, notes: "After close, 6:00 PM — no impact to families." },
-];
+]);
 
 const TOUR_STAGES = ["Inquiry", "Tour Scheduled", "Toured", "Follow-up", "Waitlist", "Enrolled", "Declined"];
 let tourSeq = 0;
 function tourFam(o) { tourSeq += 1; return { id: `t${tourSeq}`, ...o }; }
-const PROSPECTIVE_FAMILIES_DEFAULT = [
+const PROSPECTIVE_FAMILIES_DEFAULT = demoDates([
   tourFam({ name: "Ramirez Family", stage: "Inquiry", tourDate: "Not scheduled", careType: "Full-time", children: "1 (age 2)", start: "September 2026", language: "Español", contact: "(310) 555-0711", notes: "Found us via Facebook group for Culver City parents.", followup: "Call to schedule a tour." }),
   tourFam({ name: "Nguyen Family", stage: "Tour Scheduled", tourDate: "08/03/2026", careType: "Part-time", children: "1 (age 4)", start: "August 2026", language: "Tiếng Việt", contact: "(310) 555-0733", notes: "Currently at a center-based program, looking for smaller ratio.", followup: "Confirm tour 24 hrs prior." }),
   tourFam({ name: "Kim Family", stage: "Toured", tourDate: "07/20/2026", careType: "Full-time", children: "2 (ages 1, 3)", start: "October 2026", language: "한국어", contact: "(310) 555-0759", notes: "Toured well — asked detailed questions about subsidy eligibility.", followup: "Send CalWORKs info packet." }),
@@ -325,7 +366,7 @@ const PROSPECTIVE_FAMILIES_DEFAULT = [
   tourFam({ name: "Brown Family", stage: "Waitlist", tourDate: "06/28/2026", careType: "Full-time", children: "1 (age 2)", start: "January 2027", language: "English", contact: "(310) 555-0804", notes: "No infant/toddler openings until January.", followup: "Check back in November." }),
   tourFam({ name: "Torres Family", stage: "Enrolled", tourDate: "05/12/2026", careType: "Full-time", children: "1 (age 4)", start: "06/01/2026", language: "Español", contact: "(310) 555-0829", notes: "Enrolled — see Families tab for full record.", followup: "" }),
   tourFam({ name: "Patel Family", stage: "Declined", tourDate: "06/02/2026", careType: "Part-time", children: "1 (age 3)", start: "—", language: "English", contact: "(310) 555-0861", notes: "Chose a center closer to their workplace.", followup: "" }),
-];
+]);
 
 // self-contained QR code (no network dependency) encoding a parent self-check-in link
 const QR_CHECKIN_URL = "https://alaga.app/checkin/tita-fcc";
@@ -338,7 +379,7 @@ function fam(o) {
   return { id: famSeq, ...o };
 }
 
-const FAMILIES = [
+const FAMILIES = demoDates([
   fam({
     child: "Sofia Reyes", enrollDate: "02/06/2023", household: "reyes", householdName: "Reyes Family", subsidized: true, age: "4y", parent: "Maria Reyes", color: C.teal, classroom: "preschool",
     parents: [
@@ -560,7 +601,7 @@ const FAMILIES = [
     forms: [],
     notes: "Ella's younger brother — both private-pay, so this is the demo's example of the default sibling-discount rule actually applying.",
   }),
-];
+]);
 
 /* --------------------------------- helpers ----------------------------------- */
 const money = (n) => `$${n.toLocaleString()}`;
@@ -580,12 +621,13 @@ function isoToMDY(iso) {
   if (!y || !m || !d) return "";
   return `${String(m).padStart(2, "0")}/${String(d).padStart(2, "0")}/${y}`;
 }
-const todayMDY = () => isoToMDY(new Date().toISOString().slice(0, 10));
+// Local calendar date (toISOString would give tomorrow's date in the evening, Pacific time).
+const todayMDY = () => { const d = new Date(); return `${pad2(d.getMonth() + 1)}/${pad2(d.getDate())}/${d.getFullYear()}`; };
 const initialsOf = (name) => (name || "").split(/\s+/).filter((w) => /^[A-Za-z]/.test(w)).slice(0, 2).map((w) => w[0].toUpperCase()).join("") || "?";
 const daysUntil = (mmddyyyy) => {
   if (!mmddyyyy || !mmddyyyy.includes("/")) return 9999;
   const [m, d, y] = mmddyyyy.split("/").map(Number);
-  const diff = Math.round((new Date(y, m - 1, d) - new Date(2026, 6, 26)) / 86400000);
+  const diff = Math.round((new Date(y, m - 1, d) - startOfToday()) / 86400000);
   return diff;
 };
 // One universal billing due date applies to every family — either a
@@ -594,7 +636,8 @@ const daysUntil = (mmddyyyy) => {
 function nextDueDateFrom(billing) {
   if (billing && billing.mode === "date" && billing.date) return billing.date;
   const day = Math.min(28, Math.max(1, (billing && billing.mode === "recurring" && billing.day) || 1));
-  const anchor = { y: 2026, m: 6, d: 26 }; // same fixed "today" as daysUntil, above
+  const now = startOfToday();
+  const anchor = { y: now.getFullYear(), m: now.getMonth(), d: now.getDate() };
   let y = anchor.y, m = anchor.m;
   if (day <= anchor.d) { m += 1; if (m > 11) { m = 0; y += 1; } }
   return `${String(m + 1).padStart(2, "0")}/${String(day).padStart(2, "0")}/${y}`;
@@ -626,7 +669,7 @@ function defaultChildDocs(child) {
   return CHILD_DOC_TEMPLATES.map((d) => ({
     id: d.id,
     status: missing.includes(d.id) ? "missing" : "submitted",
-    date: missing.includes(d.id) ? undefined : child.authStart !== "Ongoing" ? child.authStart : "06/01/2026",
+    date: missing.includes(d.id) ? undefined : child.authStart !== "Ongoing" ? child.authStart : shiftDemoString("06/01/2026"),
   }));
 }
 const STATUS_META = {
@@ -671,6 +714,8 @@ const T = {
   "License number": { es: "Número de licencia", tl: "Numero ng lisensya", zh: "许可证号码", vi: "Số giấy phép", ko: "면허 번호" },
   "Licensed capacity": { es: "Capacidad con licencia", tl: "Lisensyadong kapasidad", zh: "许可容量", vi: "Sức chứa được cấp phép", ko: "허가 정원" },
   "Extended plan": { es: "Plan Extendido", tl: "Extended plan", zh: "扩展版套餐", vi: "Gói Mở rộng", ko: "확장 요금제" },
+  "Simple plan": { es: "Plan Simple", tl: "Simple plan", zh: "简易版套餐", vi: "Gói Đơn giản", ko: "심플 요금제" },
+  "Change plan in Settings": { es: "Cambie de plan en Configuración", tl: "Palitan ang plan sa Settings", zh: "在设置中更改套餐", vi: "Đổi gói trong Cài đặt", ko: "설정에서 요금제 변경" },
   "Pay frequency": { es: "Frecuencia de pago", tl: "Dalas ng bayad", zh: "发薪频率", vi: "Tần suất trả lương", ko: "급여 지급 주기" },
   "Next pay date": { es: "Próxima fecha de pago", tl: "Susunod na petsa ng bayad", zh: "下次发薪日期", vi: "Ngày trả lương tiếp theo", ko: "다음 급여일" },
   "Weekly": { es: "Semanal", tl: "Lingguhan", zh: "每周", vi: "Hàng tuần", ko: "매주" },
@@ -1470,14 +1515,14 @@ function subcategoriesFor(categoryLabel) {
   const cat = EXPENSE_TAXONOMY.find((c) => c.label === categoryLabel);
   return cat ? cat.subcategories : [];
 }
-const EXPENSES_DEFAULT = [
+const EXPENSES_DEFAULT = demoDates([
   { id: 1, date: "07/02/2026", category: "Food & Snacks", subcategory: "Meal ingredients", description: "Weekly grocery run — snacks & lunch ingredients", amount: 186.40 },
   { id: 2, date: "07/08/2026", category: "Materials & Art Supplies", subcategory: "Paper & craft supplies", description: "Construction paper, glue sticks, paint", amount: 64.12 },
   { id: 3, date: "07/12/2026", category: "Toys & Play Equipment", subcategory: "Indoor toys", description: "Wooden puzzle set, sensory bin fillers", amount: 92.30 },
   { id: 4, date: "07/15/2026", category: "Toys & Play Equipment", subcategory: "Outdoor / playground equipment", description: "Replacement outdoor climbing mat", amount: 210.00 },
   { id: 5, date: "07/19/2026", category: "Food & Snacks", subcategory: "Snacks", description: "Weekly grocery run", amount: 174.85 },
   { id: 6, date: "07/22/2026", category: "Maintenance & Repairs", subcategory: "Plumbing / electrical", description: "Fence gate latch repair", amount: 45.00 },
-];
+], shiftDemoMonth);
 
 /* ------------------------------ budget planner --------------------------------- */
 // Forward-looking spend allocation — distinct from Business Expenses above, which is a
@@ -1642,18 +1687,18 @@ const PAYMENT_METHODS = ["Cash", "Check", "Zelle", "Venmo", "Bank transfer", "Ot
 const REFUND_REASONS = ["Overpayment", "Withdrawal / early departure", "Closure credit", "Service issue", "Other"];
 let flexSeq = 0;
 function flexReq(o) { flexSeq += 1; return { id: `fc${flexSeq}`, status: "pending", requestedBy: "provider", parentPaymentMethod: null, paymentConfirmed: false, ...o }; }
-const FLEX_CARE_DEFAULT = [
+const FLEX_CARE_DEFAULT = demoDates([
   flexReq({ child: "Sofia Reyes", classroom: "preschool", type: "Early drop-off", date: "08/03/2026", hours: 1.5, notes: "Morning meeting ran early", status: "approved", parentPaymentMethod: "Zelle", paymentConfirmed: true }),
   flexReq({ child: "Leo Cruz", classroom: "prek", type: "Extended pickup", date: "08/04/2026", hours: 2, notes: "Traffic — running late from work", status: "approved", parentPaymentMethod: "Cash", paymentConfirmed: false }),
   flexReq({ child: "Nina Aquino", classroom: "infants", type: "Extra day", date: "08/07/2026", hours: 8, notes: "Needs Friday coverage this week only" }),
-];
+]);
 
 let refundSeq = 0;
 let incidentSeq = 0;
 function refundEntry(o) { refundSeq += 1; return { id: `rf${refundSeq}`, ...o }; }
-const REFUNDS_DEFAULT = [
+const REFUNDS_DEFAULT = demoDates([
   refundEntry({ child: "Kai Villanueva", amount: 85, reason: "Closure credit", date: "07/10/2026", method: "Zelle", notes: "Unplanned closure day — prorated credit issued" }),
-];
+]);
 
 const PLAN_PRICING = {
   simple: { monthly: 29, annual: 290 },
@@ -1679,7 +1724,7 @@ const CERT_TEMPLATES = [
 ];
 let staffSeq = 0;
 function staffMember(o) { staffSeq += 1; return { id: staffSeq, ...o }; }
-const STAFF_DEFAULT = [
+const STAFF_DEFAULT = demoDates([
   staffMember({
     name: "Tita Reyes", role: "Owner / Lead Teacher", classroom: "all", hireDate: "01/2019",
     hoursPerWeek: 45, payType: "salary", payRate: 4200, status: "active",
@@ -1695,7 +1740,7 @@ const STAFF_DEFAULT = [
     hoursPerWeek: 20, payType: "hourly", payRate: 17, status: "active",
     certs: { livescan: "complete", cpr: "missing", health: "complete", ece: "missing", mandated: "complete" },
   }),
-];
+]);
 
 const MONTHLY_WEEKS = 4.33;
 function monthlyPay(s) {
@@ -1751,7 +1796,7 @@ const DEPARTURE_REASONS = [
 function tenureMonths(startStr, endStr) {
   const [sm, sd, sy] = startStr.split("/").map(Number);
   const start = new Date(sy, sm - 1, sd);
-  const end = endStr ? (() => { const [em, ed, ey] = endStr.split("/").map(Number); return new Date(ey, em - 1, ed); })() : new Date(2026, 6, 28);
+  const end = endStr ? (() => { const [em, ed, ey] = endStr.split("/").map(Number); return new Date(ey, em - 1, ed); })() : startOfToday();
   return Math.max(0, Math.round((end - start) / (1000 * 60 * 60 * 24 * 30.44)));
 }
 function formatTenure(months) {
@@ -1762,13 +1807,13 @@ function formatTenure(months) {
 }
 let alumniSeq = 0;
 function alum(o) { alumniSeq += 1; return { id: `a${alumniSeq}`, ...o }; }
-const ALUMNI_DEFAULT = [
+const ALUMNI_DEFAULT = demoDates([
   alum({ name: "Ethan Kim", classroom: "prek", enrollDate: "01/10/2021", leftDate: "06/14/2024", reason: "aged-out" }),
   alum({ name: "Zoe Martinez", classroom: "preschool", enrollDate: "03/02/2023", leftDate: "01/20/2025", reason: "moved" }),
   alum({ name: "Noah Diaz", classroom: "toddlers", enrollDate: "09/11/2024", leftDate: "02/03/2025", reason: "switched" }),
   alum({ name: "Ava Thompson", classroom: "prek", enrollDate: "06/05/2022", leftDate: "08/22/2025", reason: "aged-out" }),
   alum({ name: "Liam Foster", classroom: "infants", enrollDate: "11/14/2024", leftDate: "05/09/2025", reason: "other" }),
-];
+]);
 
 const CHILD_DOC_TEMPLATES = [
   { id: "enroll", name: "Enrollment Agreement" },
@@ -2574,13 +2619,13 @@ function AdminScreen({ onBack }) {
 function AdminProviderDrawer({ provider, mrrValue, onClose, statusMeta }) {
   const [access, saveAccess] = usePersistentState(`support-access-provider-${provider.id}`, SUPPORT_ACCESS_DEFAULT);
   const [viewingSummary, setViewingSummary] = useState(false);
-  const isExpired = access.status === "granted" && access.expiresAt && new Date(access.expiresAt) < new Date("2026-07-30");
+  const isExpired = access.status === "granted" && access.expiresAt && new Date(access.expiresAt) < startOfToday();
   const isActive = access.status === "granted" && !isExpired;
 
-  const requestAccess = () => saveAccess({ ...access, status: "requested", requestedAt: "07/30/2026 · 10:00 AM" });
+  const requestAccess = () => saveAccess({ ...access, status: "requested", requestedAt: `${todayMDY()} · ${new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}` });
   const revokeFromAdmin = () => saveAccess({ ...SUPPORT_ACCESS_DEFAULT });
   const viewDashboard = () => {
-    saveAccess({ ...access, log: [{ by: "Alaga Support (you)", at: "07/30/2026 · 10:14 AM", action: "Viewed account summary" }, ...access.log] });
+    saveAccess({ ...access, log: [{ by: "Alaga Support (you)", at: `${todayMDY()} · ${new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}`, action: "Viewed account summary" }, ...access.log] });
     setViewingSummary(true);
   };
 
@@ -2959,7 +3004,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const [tier, saveTier] = usePersistentState(forceTier ? `platform-tier-demo-${forceTier}` : "platform-tier", forceTier || "simple");
   const tierLocked = !!forceTier;
   const [billing, saveBilling] = usePersistentState("plan-billing", { cycle: "monthly", status: "active", canceledAt: null });
-  const [payrollSettings, savePayrollSettings] = usePersistentState(`payroll-settings${sfx}`, { frequency: "Biweekly", nextPayDate: "08/07/2026", providerConnected: false, providerName: "" });
+  const [payrollSettings, savePayrollSettings] = usePersistentState(`payroll-settings${sfx}`, { frequency: "Biweekly", nextPayDate: shiftDemoString("08/07/2026"), providerConnected: false, providerName: "" });
   const [flexCareRequests, saveFlexCare] = usePersistentState(`flex-care${sfx}`, isEmpty ? [] : FLEX_CARE_DEFAULT);
   const [refunds, saveRefunds] = usePersistentState(`refunds${sfx}`, isEmpty ? [] : REFUNDS_DEFAULT);
   const [attendanceLog, saveAttendanceLog] = usePersistentState(`attendance${sfx}`, {});
@@ -3069,7 +3114,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   }, [staff, saveStaff]);
   const addStaffMember = useCallback(() => {
     staffSeq += 1;
-    saveStaff([{ id: staffSeq, name: "New staff member", role: STAFF_ROLES[1], classroom: "all", hireDate: "07/2026", hoursPerWeek: 20, payType: "hourly", payRate: 18, status: "active", certs: { livescan: "missing", cpr: "missing", health: "missing", ece: "missing", mandated: "missing" } }, ...staff]);
+    saveStaff([{ id: staffSeq, name: "New staff member", role: STAFF_ROLES[1], classroom: "all", hireDate: todayMDY().replace(/\/\d{2}\//, "/"), hoursPerWeek: 20, payType: "hourly", payRate: 18, status: "active", certs: { livescan: "missing", cpr: "missing", health: "missing", ece: "missing", mandated: "missing" } }, ...staff]);
   }, [staff, saveStaff]);
   const removeStaffMember = useCallback((id) => {
     saveStaff(staff.filter((s) => s.id !== id));
@@ -3276,14 +3321,13 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
           {meetingMode ? <><Lock size={11} /> {t("Meeting-safe demo")}</> : (tier === "extended" ? t("Extended plan demo") : t("Simple plan demo"))}
         </div>
       ) : (
-        <div style={{ display: "flex", background: "rgba(255,255,255,0.08)", borderRadius: 9, padding: 3, margin: "0 0 14px" }}>
-          {["simple", "extended"].map((tv) => (
-            <button key={tv} onClick={() => saveTier(tv)} style={{
-              flex: 1, padding: "7px 0", borderRadius: 7, border: "none", fontSize: 11.5, fontWeight: 700,
-              background: tier === tv ? "#fff" : "transparent", color: tier === tv ? C.tealDark : "#CBDAD2",
-            }}>{tv === "simple" ? t("Simple") : t("Extended")}</button>
-          ))}
-        </div>
+        // Shows the current plan only; changing plans happens in Settings → Plan & Billing.
+        <button onClick={() => setScreen("settings")} title={t("Change plan in Settings")} style={{
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0", width: "100%",
+          borderRadius: 9, border: "none", background: "rgba(255,255,255,0.08)", margin: "0 0 14px", fontSize: 11.5, fontWeight: 700, color: "#EFEAE0",
+        }}>
+          {tier === "extended" ? t("Extended plan") : t("Simple plan")} <ChevronRight size={12} style={{ opacity: 0.7 }} />
+        </button>
       )}
 
       {isEmpty && (
@@ -4195,7 +4239,7 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
     const file = e.target.files && e.target.files[0];
     e.target.value = "";
     if (!file || !uploadingDocId) return;
-    const next = docs.map((d) => d.id === uploadingDocId ? { ...d, status: "submitted", date: "07/30/2026", fileName: file.name } : d);
+    const next = docs.map((d) => d.id === uploadingDocId ? { ...d, status: "submitted", date: todayMDY(), fileName: file.name } : d);
     setDocs(next);
     onSave(child.id, { documents: next });
     setUploadingDocId(null);
@@ -4493,7 +4537,7 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
       highlightRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, [highlightId]);
-  const TODAY = new Date(2026, 6, 27); // Monday, July 27, 2026 — this screen's fixed "today"
+  const TODAY = startOfToday();
   const WEEKDAY_BY_INDEX = { 1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday" };
   const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -5020,7 +5064,7 @@ function StaffDrawer({ member, onClose, update, remove }) {
     const file = e.target.files && e.target.files[0];
     e.target.value = "";
     if (!file || !uploadingDocId) return;
-    const next = docs.map((d) => d.id === uploadingDocId ? { ...d, status: "submitted", date: "07/30/2026", fileName: file.name } : d);
+    const next = docs.map((d) => d.id === uploadingDocId ? { ...d, status: "submitted", date: todayMDY(), fileName: file.name } : d);
     setDocs(next);
     update(member.id, { documents: next });
     setUploadingDocId(null);
@@ -6719,11 +6763,11 @@ const EXPENSE_MONTHS = ["January", "February", "March", "April", "May", "June", 
 function BusinessExpenses({ expenses, saveExpenses, incomeTotal, expenseTotal, onExport, payrollTotal, refundTotal }) {
   const t = useT();
   const [form, setForm] = useState({ date: "", category: EXPENSE_CATEGORIES[0], subcategory: subcategoriesFor(EXPENSE_CATEGORIES[0])[0]?.label || "", description: "", amount: "" });
-  const [viewMonth, setViewMonth] = useState({ month: 6, year: 2026 }); // 0-indexed: 6 = July
+  const [viewMonth, setViewMonth] = useState(() => ({ month: new Date().getMonth(), year: new Date().getFullYear() })); // month is 0-indexed
   const [scanState, setScanState] = useState("idle"); // idle | scanning | review
   const receiptInputRef = React.useRef(null);
   const net = incomeTotal - expenseTotal - payrollTotal - refundTotal;
-  const isCurrentMonth = viewMonth.month === 6 && viewMonth.year === 2026;
+  const isCurrentMonth = viewMonth.month === new Date().getMonth() && viewMonth.year === new Date().getFullYear();
   const currentSubcats = subcategoriesFor(form.category);
   const selectedSubcat = currentSubcats.find((s) => s.label === form.subcategory);
 
@@ -6734,7 +6778,7 @@ function BusinessExpenses({ expenses, saveExpenses, incomeTotal, expenseTotal, o
     setScanState("scanning");
     setTimeout(() => {
       setForm({
-        date: "2026-07-30", category: "Cleaning & Sanitizing", subcategory: "Disinfecting wipes",
+        date: `${new Date().getFullYear()}-${pad2(new Date().getMonth() + 1)}-${pad2(new Date().getDate())}`, category: "Cleaning & Sanitizing", subcategory: "Disinfecting wipes",
         description: "Target — disinfecting wipes, hand soap, trash bags", amount: "34.82",
       });
       setScanState("review");
@@ -7127,7 +7171,7 @@ function AuditMode({ docs, families, onClose, provider, staff }) {
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "28px 24px 60px" }}>
         <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, color: C.tealDark }}>{provider.name}</div>
         <div style={{ fontSize: 13, color: C.inkSoft, marginTop: 4 }}>{provider.lic} · {provider.city}</div>
-        <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{t("Packet generated")}: 07/27/2026</div>
+        <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{t("Packet generated")}: {todayMDY()}</div>
 
         <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: C.tealDark, marginTop: 26, marginBottom: 10 }}>{t("License & ratio status")}</h3>
         <Row left={<b>{t("License renewal")}</b>} right={<Pill label={t("Current — renews 03/2027")} fg={C.teal} bg={C.tealTint} />} />
@@ -7245,21 +7289,21 @@ function SecurityScreen({ accessLog, isEmpty }) {
   const t = useT();
   const [access, saveAccess] = usePersistentState("support-access-provider-1", SUPPORT_ACCESS_DEFAULT);
   const [durationChoice, setDurationChoice] = useState(ACCESS_DURATIONS[1].id);
-  const isExpired = access.status === "granted" && access.expiresAt && new Date(access.expiresAt) < new Date("2026-07-30");
+  const isExpired = access.status === "granted" && access.expiresAt && new Date(access.expiresAt) < startOfToday();
   const isActive = access.status === "granted" && !isExpired;
 
   const approve = () => {
     const d = ACCESS_DURATIONS.find((x) => x.id === durationChoice);
     const days = durationChoice === "24h" ? 1 : durationChoice === "7d" ? 7 : 30;
-    const expires = new Date("2026-07-30"); expires.setDate(expires.getDate() + days);
-    saveAccess({ ...access, status: "granted", grantedAt: "07/30/2026", durationLabel: d.label, expiresAt: expires.toISOString().slice(0, 10) });
+    const expires = startOfToday(); expires.setDate(expires.getDate() + days);
+    saveAccess({ ...access, status: "granted", grantedAt: todayMDY(), durationLabel: d.label, expiresAt: expires.toISOString().slice(0, 10) });
   };
   const decline = () => saveAccess({ ...access, status: "declined" });
   const revoke = () => saveAccess({ ...SUPPORT_ACCESS_DEFAULT });
   const proactivelyGrant = () => {
     const days = durationChoice === "24h" ? 1 : durationChoice === "7d" ? 7 : 30;
-    const expires = new Date("2026-07-30"); expires.setDate(expires.getDate() + days);
-    saveAccess({ ...access, status: "granted", grantedAt: "07/30/2026", durationLabel: ACCESS_DURATIONS.find((x) => x.id === durationChoice).label, expiresAt: expires.toISOString().slice(0, 10) });
+    const expires = startOfToday(); expires.setDate(expires.getDate() + days);
+    saveAccess({ ...access, status: "granted", grantedAt: todayMDY(), durationLabel: ACCESS_DURATIONS.find((x) => x.id === durationChoice).label, expiresAt: expires.toISOString().slice(0, 10) });
   };
 
   const PRINCIPLES = [
@@ -8128,7 +8172,7 @@ function GrowthPacket({ growth, families, provider, currentCapacity, onClose }) 
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "28px 24px 60px" }}>
         <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, color: C.tealDark }}>{provider.name}</div>
         <div style={{ fontSize: 13, color: C.inkSoft, marginTop: 4 }}>{provider.lic} · {provider.city}</div>
-        <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{t("Packet generated")}: 07/28/2026</div>
+        <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{t("Packet generated")}: {todayMDY()}</div>
 
         <div style={{ background: C.amberTint, border: "1px solid #E4C77A", borderRadius: 12, padding: "14px 16px", marginTop: 18, fontSize: 12, color: "#7A5620", lineHeight: 1.55 }}>
           {t("This checklist reflects general California Small/Large Family Child Care Home licensing patterns as a starting point. It is not a guarantee of current requirements — confirm specifics with your Licensing Program Analyst (LPA) before submitting anything.")}
@@ -8166,10 +8210,10 @@ function GrowthPacket({ growth, families, provider, currentCapacity, onClose }) 
   );
 }
 
-const SUPPORT_TICKETS_DEFAULT = [
+const SUPPORT_TICKETS_DEFAULT = demoDates([
   { id: 1, provider: "Demo Provider", subject: "Can't download July attendance CSV", category: "Technical issue", status: "resolved", date: "07/22/2026", time: "2:41 PM", message: "The Export CSV button on Bookings doesn't seem to do anything when I click it on Safari.", replies: [{ from: "support", text: "This was a Safari-specific pop-up blocker issue — should be fixed now. Let us know if it happens again!", date: "07/23/2026", time: "10:05 AM" }] },
   { id: 2, provider: "Demo Provider", subject: "Question about CalWORKs Stage 2 to Stage 1 transition", category: "Subsidy / eligibility question", status: "open", date: "07/25/2026", time: "9:14 AM", message: "One of my families is transitioning from Stage 2 to Stage 1 — do I need to create a new subsidy record or just update the program on the existing one?", replies: [] },
-];
+]);
 function SupportScreen({ providerInfo }) {
   const t = useT();
   const CATEGORIES = ["Technical issue", "Billing question", "Subsidy / eligibility question", "Account or login", "Feature request", "Other"];
@@ -8407,7 +8451,7 @@ function PlanBilling({ tier, saveTier, tierLocked, meetingMode, billing, saveBil
   };
   const confirmCancelSubscription = () => {
     exportEverything();
-    saveBilling({ ...billing, status: "canceled", canceledAt: "08/27/2026" });
+    saveBilling({ ...billing, status: "canceled", canceledAt: todayMDY() });
     setConfirmCancel(false);
   };
   const reactivate = () => saveBilling({ ...billing, status: "active", canceledAt: null });
