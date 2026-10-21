@@ -16,23 +16,26 @@ import {
 } from "recharts";
 
 /* ---------------------------------- tokens --------------------------------- */
+// Softer, lighter palette: warm off-white surfaces, one muted terracotta for
+// actions and focus, and quieter tints for status. Text meets WCAG AA contrast.
 const C = {
-  cream: "#F8F1E1",
+  cream: "#FAF6EF",
   paper: "#FFFFFF",
+  side: "#F5F0E8",
   ink: "#2E2A22",
-  inkSoft: "#6B5F4D",
-  teal: "#C65F17",
-  tealDark: "#A65C1A",
-  tealTint: "#FBE4D1",
-  amber: "#C1934E",
-  amberTint: "#F3E6D1",
-  coral: "#DD7B25",
-  coralTint: "#FCE6D3",
-  sky: "#AF9557",
-  skyTint: "#EFE9DB",
-  line: "#E3D8C3",
+  inkSoft: "#6A6052",
+  teal: "#B05A22",
+  tealDark: "#8E4E1F",
+  tealTint: "#F7EADF",
+  amber: "#966B2B",
+  amberTint: "#F6EEDF",
+  coral: "#BE6A2C",
+  coralTint: "#F9ECDF",
+  sky: "#7D6C45",
+  skyTint: "#F1ECE2",
+  line: "#EAE2D5",
   danger: "#B3483C",
-  dangerTint: "#F7E3E0",
+  dangerTint: "#F8E9E6",
 };
 
 const FONTS = `
@@ -3968,31 +3971,31 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
   const [expandedGroups, setExpandedGroups] = useState({});
   return (
     <aside style={{
-      width: 232, flexShrink: 0, background: C.tealDark, color: "#EFEAE0", display: "flex", flexDirection: "column", padding: "22px 14px",
-      backgroundImage: BANIG_PATTERN("#FFFFFF", 0.05), backgroundSize: "16px 16px",
+      width: 232, flexShrink: 0, background: C.side, color: C.ink, display: "flex", flexDirection: "column", padding: "22px 14px",
+      borderRight: `1px solid ${C.line}`,
     }}>
       {onExitToLanding && (
         <button onClick={onExitToLanding} style={{
           display: "flex", alignItems: "center", gap: 7, alignSelf: "flex-start",
-          padding: "6px 10px 6px 8px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.18)", background: "transparent",
-          color: "#CBDAD2", fontSize: 11.5, fontWeight: 600, marginBottom: 12,
+          padding: "6px 10px 6px 8px", borderRadius: 8, border: `1px solid ${C.line}`, background: "transparent",
+          color: C.inkSoft, fontSize: 11.5, fontWeight: 600, marginBottom: 12,
         }}>
           <ArrowLeft size={12} /> {t("Back to start")}
         </button>
       )}
 
       <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "4px 8px 22px" }}>
-        <AlagaMark size={30} color="#EFEAE0" arch={false} />
+        <AlagaMark size={30} color={C.ink} arch={false} />
         <div>
           <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 900, lineHeight: 1 }}>alaga</div>
-          <div style={{ fontSize: 8.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "#B9CFC6", marginTop: 4 }}>{t("Nurturing the foundation for your childcare business")}</div>
+          <div style={{ fontSize: 8.5, letterSpacing: "0.14em", textTransform: "uppercase", color: C.inkSoft, marginTop: 4 }}>{t("Nurturing the foundation for your childcare business")}</div>
         </div>
       </div>
 
       {tierLocked ? (
         <div style={{
           display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0",
-          borderRadius: 9, background: "rgba(255,255,255,0.08)", margin: "0 0 14px", fontSize: 11.5, fontWeight: 700, color: "#EFEAE0",
+          borderRadius: 9, background: "#fff", margin: "0 0 14px", fontSize: 11.5, fontWeight: 700, color: C.ink,
         }}>
           {meetingMode ? <><Lock size={11} /> {t("Meeting-safe demo")}</> : (tier === "extended" ? t("Extended plan demo") : t("Simple plan demo"))}
         </div>
@@ -4000,7 +4003,7 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
         // Shows the current plan only; changing plans happens in Settings → Plan & Billing.
         <button onClick={() => setScreen("settings")} title={t("Change plan in Settings")} style={{
           display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0", width: "100%",
-          borderRadius: 9, border: "none", background: "rgba(255,255,255,0.08)", margin: "0 0 14px", fontSize: 11.5, fontWeight: 700, color: "#EFEAE0",
+          borderRadius: 9, border: "none", background: "#fff", margin: "0 0 14px", fontSize: 11.5, fontWeight: 700, color: C.ink,
         }}>
           {tier === "extended" ? t("Extended plan") : t("Simple plan")} <ChevronRight size={12} style={{ opacity: 0.7 }} />
         </button>
@@ -4009,11 +4012,11 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
       {isEmpty && (
         <div style={{ margin: "0 10px 14px", padding: "8px 10px", borderRadius: 9, background: "rgba(224,169,80,0.18)", border: "1px solid rgba(224,169,80,0.35)" }}>
           <div style={{ fontSize: 10.5, fontWeight: 700, color: C.amber, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("New workspace")}</div>
-          <div style={{ fontSize: 11, color: "#EFEAE0", marginTop: 2, lineHeight: 1.4 }}>{t("Empty preview — nothing here is real data yet.")}</div>
+          <div style={{ fontSize: 11, color: C.ink, marginTop: 2, lineHeight: 1.4 }}>{t("Empty preview — nothing here is real data yet.")}</div>
         </div>
       )}
 
-      <div style={{ fontSize: 10.5, letterSpacing: "0.08em", textTransform: "uppercase", color: "#7FA096", padding: "0 10px 6px" }}>{t("Workspace")}</div>
+      <div style={{ fontSize: 10.5, letterSpacing: "0.08em", textTransform: "uppercase", color: C.inkSoft, padding: "0 10px 6px" }}>{t("Workspace")}</div>
       <nav style={{ display: "flex", flexDirection: "column", gap: 2 }}>
         {(() => {
           const renderedGroups = new Set();
@@ -4033,8 +4036,8 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
                 <div key={owningGroup.id}>
                   <button onClick={() => setExpandedGroups((g) => ({ ...g, [owningGroup.id]: !isExpanded }))} style={{
                     width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "9px 10px", borderRadius: 9,
-                    border: "none", background: groupActive && !isExpanded ? "rgba(255,255,255,0.12)" : "transparent",
-                    color: groupActive ? "#fff" : "#CBDAD2", fontSize: 13.5, fontWeight: groupActive ? 600 : 500, textAlign: "left",
+                    border: "none", background: groupActive && !isExpanded ? C.tealTint : "transparent",
+                    color: groupActive ? C.tealDark : C.inkSoft, fontSize: 13.5, fontWeight: groupActive ? 600 : 500, textAlign: "left",
                   }}>
                     <owningGroup.icon size={16} strokeWidth={2} />
                     <span style={{ flex: 1 }}>{t(owningGroup.label)}</span>
@@ -4042,15 +4045,15 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
                     <ChevronDown size={13} style={{ transform: isExpanded ? "none" : "rotate(-90deg)", transition: "transform 0.12s", flexShrink: 0, opacity: 0.7 }} />
                   </button>
                   {isExpanded && (
-                    <div style={{ display: "flex", flexDirection: "column", gap: 1, margin: "2px 0 4px", marginLeft: 15, paddingLeft: 11, borderLeft: "1px solid rgba(255,255,255,0.14)" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 1, margin: "2px 0 4px", marginLeft: 15, paddingLeft: 11, borderLeft: `1px solid ${C.line}` }}>
                       {visibleChildren.map((c) => {
                         const childOn = screen === c.id && (!c.tab || financesTab === c.tab);
                         const src = navItems.find((x) => x.id === c.id);
                         return (
                           <button key={c.id + (c.tab || "")} onClick={() => { setScreen(c.id); if (c.tab && setFinancesTab) setFinancesTab(c.tab); }} style={{
                             display: "flex", alignItems: "center", gap: 8, padding: "7px 9px", borderRadius: 8,
-                            border: "none", background: childOn ? "rgba(255,255,255,0.12)" : "transparent",
-                            color: childOn ? "#fff" : "#B9CFC6", fontSize: 12.5, fontWeight: childOn ? 600 : 500, textAlign: "left",
+                            border: "none", background: childOn ? C.tealTint : "transparent",
+                            color: childOn ? C.tealDark : C.inkSoft, fontSize: 12.5, fontWeight: childOn ? 600 : 500, textAlign: "left",
                           }}>
                             <span style={{ flex: 1 }}>{t(c.label)}</span>
                             {src?.badge && (!c.tab) && <span style={{ background: C.coral, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "1px 5px" }}>{src.badge}</span>}
@@ -4066,8 +4069,8 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
             return (
               <button key={n.id} onClick={() => setScreen(n.id)} style={{
                 display: "flex", alignItems: "center", gap: 10, padding: "9px 10px", borderRadius: 9,
-                border: "none", background: on ? "rgba(255,255,255,0.12)" : "transparent",
-                color: on ? "#fff" : "#CBDAD2", fontSize: 13.5, fontWeight: on ? 600 : 500, textAlign: "left",
+                border: "none", background: on ? C.tealTint : "transparent",
+                color: on ? C.tealDark : C.inkSoft, fontSize: 13.5, fontWeight: on ? 600 : 500, textAlign: "left",
               }}>
                 <n.icon size={16} strokeWidth={2} />
                 <span style={{ flex: 1 }}>{t(n.label)}</span>
@@ -4081,7 +4084,7 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
       {false && setMode && (
         <button onClick={() => setMode("parent")} style={{
           display: "flex", alignItems: "center", gap: 10, padding: "9px 10px", borderRadius: 9, marginTop: 10,
-          border: "1px solid rgba(255,255,255,0.18)", background: "transparent", color: "#CBDAD2", fontSize: 13, fontWeight: 600, textAlign: "left",
+          border: `1px solid ${C.line}`, background: "transparent", color: C.inkSoft, fontSize: 13, fontWeight: 600, textAlign: "left",
         }}>
           <Users size={15} strokeWidth={2} />
           <span style={{ flex: 1 }}>{t("View as parent")}</span>
@@ -4089,11 +4092,11 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
         </button>
       )}
 
-      <div style={{ marginTop: "auto", paddingTop: 14, borderTop: "1px solid rgba(255,255,255,0.12)" }}>
+      <div style={{ marginTop: "auto", paddingTop: 14, borderTop: `1px solid ${C.line}` }}>
         <div style={{ fontSize: 12 }}>
-          <div style={{ fontWeight: 600, color: "#fff" }}>{provider.name}</div>
-          <div style={{ color: "#9DB5AA", marginTop: 2 }}>{provider.city}</div>
-          <div style={{ color: "#7FA096", marginTop: 1, fontSize: 11 }}>{provider.lic}</div>
+          <div style={{ fontWeight: 600, color: C.ink }}>{provider.name}</div>
+          <div style={{ color: C.inkSoft, marginTop: 2 }}>{provider.city}</div>
+          <div style={{ color: C.inkSoft, marginTop: 1, fontSize: 11 }}>{provider.lic}</div>
         </div>
       </div>
     </aside>
@@ -4395,111 +4398,111 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
       <div style={{
-        background: C.tealDark, borderRadius: 16, padding: "24px 28px", color: "#fff", position: "relative", overflow: "hidden",
-        backgroundImage: BANIG_PATTERN("#FFFFFF", 0.05), backgroundSize: "16px 16px",
+        background: C.paper, border: `1px solid ${C.line}`, borderLeft: `4px solid ${C.teal}`, borderRadius: 16, padding: "24px 28px", color: C.ink, position: "relative", overflow: "hidden",
+        
       }}>
-        <div style={{ position: "absolute", top: -18, right: -10, opacity: 0.14 }}>
-          <AlagaMark size={130} color="#fff" arch={false} backdrop={false} />
+        <div style={{ position: "absolute", top: -18, right: -10, opacity: 0.07 }}>
+          <AlagaMark size={130} color={C.teal} arch={false} backdrop={false} />
         </div>
         <div style={{ position: "relative", maxWidth: 560 }}>
-          <div style={{ fontSize: 11.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>{t("Today's briefing")}</div>
+          <div style={{ fontSize: 11.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>{t("Today's briefing")}</div>
           <div style={{ fontFamily: "'Fraunces', serif", fontSize: 21, fontWeight: 500, lineHeight: 1.45 }}>
             {families.length === 0 ? (
               t("No children enrolled yet — once families join, this is where you'll see how your business is doing at a glance.")
             ) : (
               <>
                 <b>{families.length}</b> {t(families.length === 1 ? "child in your care" : "children in your care")} — {t("bringing in")} <b>{money(monthlySubsidy + monthlyCopay)}</b> {t("this month across")} {subsidizedFams.length} {t("subsidized")} {t("and")} {privateFams.length} {t("private-pay")}.
-                {totalAttention > 0 && <> <span style={{ color: "#F2C88A" }}>{totalAttention} {t(totalAttention === 1 ? "item needs" : "items need")} {t("your attention")}</span>.</>}
+                {totalAttention > 0 && <> <span style={{ color: C.teal }}>{totalAttention} {t(totalAttention === 1 ? "item needs" : "items need")} {t("your attention")}</span>.</>}
               </>
             )}
           </div>
           {totalAttention > 0 && (
-            <button onClick={() => setShowAttention(!showAttention)} style={{ marginTop: 14, display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: "1px solid rgba(255,255,255,0.3)", background: "rgba(255,255,255,0.1)", color: "#fff", fontWeight: 600, fontSize: 12.5 }}>
+            <button onClick={() => setShowAttention(!showAttention)} style={{ marginTop: 14, display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: `1px solid ${C.line}`, background: "#fff", color: C.ink, fontWeight: 600, fontSize: 12.5 }}>
               {showAttention ? t("Hide") : t("Review now")} <ChevronRight size={13} style={{ transform: showAttention ? "rotate(90deg)" : "none", transition: "transform 0.15s" }} />
             </button>
           )}
           {showAttention && totalAttention > 0 && (
-            <div style={{ marginTop: 12, borderRadius: 10, overflow: "hidden", background: "rgba(255,255,255,0.08)" }}>
+            <div style={{ marginTop: 12, borderRadius: 10, overflow: "hidden", background: C.cream }}>
               {dueSoon.length > 0 && (
-                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Today & this week")}</div>
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Today & this week")}</div>
               )}
               {dueSoon.map((it, i) => (
-                <div key={`due${i}`} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
-                  <button onClick={it.onClick} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
-                    <Dot c={it.n <= 0 ? "#F2A28A" : "#F2C88A"} /><b style={{ fontSize: 13 }}>{it.title}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {it.detail} · {whenLabel(it.n)}</span>
+                <div key={`due${i}`} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
+                  <button onClick={it.onClick} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
+                    <Dot c={it.n <= 0 ? C.danger : C.amber} /><b style={{ fontSize: 13 }}>{it.title}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {it.detail} · {whenLabel(it.n)}</span>
                   </button>
-                  <button onClick={it.onClick} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                  <button onClick={it.onClick} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "none", fontSize: 11, fontWeight: 600, color: C.ink, flexShrink: 0 }}>
                     {t("Review")}
                   </button>
                 </div>
               ))}
               {expiring.length > 0 && (
-                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Subsidy")}</div>
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Subsidy")}</div>
               )}
               {expiring.map((f) => (
-                <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
-                  <button onClick={() => goToSubsidyFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
-                    <Dot c="#F2C88A" /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {programOf(f.programId)?.label}</span>
+                <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
+                  <button onClick={() => goToSubsidyFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
+                    <Dot c={C.amber} /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {programOf(f.programId)?.label}</span>
                   </button>
-                  <button onClick={() => resolveNotice(f.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                  <button onClick={() => resolveNotice(f.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "none", fontSize: 11, fontWeight: 600, color: C.ink, flexShrink: 0 }}>
                     <CheckCircle2 size={11} /> {t("Resolve")}
                   </button>
                 </div>
               ))}
               {flexNeedingAttention.length > 0 && (
-                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Flex care")}</div>
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Flex care")}</div>
               )}
               {flexNeedingAttention.map((r) => (
-                <div key={r.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
-                  <button onClick={() => goToFlexRequest(r.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
-                    <Dot c={r.status === "pending" ? "#F2C88A" : "#8FBFAE"} /><b style={{ fontSize: 13 }}>{r.child}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {t(r.type)}, {r.date} · {r.status === "pending" ? t("awaiting approval") : t("payment unconfirmed")}</span>
+                <div key={r.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
+                  <button onClick={() => goToFlexRequest(r.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
+                    <Dot c={r.status === "pending" ? C.amber : C.teal} /><b style={{ fontSize: 13 }}>{r.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {t(r.type)}, {r.date} · {r.status === "pending" ? t("awaiting approval") : t("payment unconfirmed")}</span>
                   </button>
                   {r.status === "pending" ? (
-                    <button onClick={() => approveFlexInline(r.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                    <button onClick={() => approveFlexInline(r.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "none", fontSize: 11, fontWeight: 600, color: C.ink, flexShrink: 0 }}>
                       <CheckCircle2 size={11} /> {t("Approve")}
                     </button>
                   ) : (
-                    <button onClick={() => goToFlexRequest(r.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                    <button onClick={() => goToFlexRequest(r.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "none", fontSize: 11, fontWeight: 600, color: C.ink, flexShrink: 0 }}>
                       {t("Review")}
                     </button>
                   )}
                 </div>
               ))}
               {overdueTuition.length > 0 && (
-                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Tuition")} · {billingNow.label}</div>
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Tuition")} · {billingNow.label}</div>
               )}
               {overdueTuition.map((f) => (
-                <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
-                  <button onClick={openTuition} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
-                    <Dot c="#F2A28A" /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {meetingMode ? "••••" : money(f.copay)} {partlyPaidFor(f, billingNow.key) ? t("partly paid") : t("unpaid")} · {t("due")} {billingNow.dueDate}</span>
+                <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
+                  <button onClick={openTuition} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
+                    <Dot c={C.danger} /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {meetingMode ? "••••" : money(f.copay)} {partlyPaidFor(f, billingNow.key) ? t("partly paid") : t("unpaid")} · {t("due")} {billingNow.dueDate}</span>
                   </button>
-                  <button onClick={openTuition} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                  <button onClick={openTuition} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "none", fontSize: 11, fontWeight: 600, color: C.ink, flexShrink: 0 }}>
                     {t("Review")}
                   </button>
                 </div>
               ))}
               {docsNeedingAttention.length > 0 && (
-                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Documents")}</div>
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Documents")}</div>
               )}
               {docsNeedingAttention.map((d) => (
-                <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
-                  <button onClick={() => setScreen("compliance")} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
-                    <Dot c={["missing", "expired"].includes(d.displayStatus) ? "#F2A28A" : "#F2C88A"} /><b style={{ fontSize: 13 }}>{t(d.name)}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {trForm(t, d.displayStatus || d.status).label}{d.expiresOn && ["expired", "expiring"].includes(d.displayStatus) ? ` · ${d.expiresOn}` : ""}</span>
+                <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
+                  <button onClick={() => setScreen("compliance")} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
+                    <Dot c={["missing", "expired"].includes(d.displayStatus) ? C.danger : C.amber} /><b style={{ fontSize: 13 }}>{t(d.name)}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {trForm(t, d.displayStatus || d.status).label}{d.expiresOn && ["expired", "expiring"].includes(d.displayStatus) ? ` · ${d.expiresOn}` : ""}</span>
                   </button>
-                  <button onClick={() => setScreen("compliance")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                  <button onClick={() => setScreen("compliance")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "none", fontSize: 11, fontWeight: 600, color: C.ink, flexShrink: 0 }}>
                     {t("Review")}
                   </button>
                 </div>
               ))}
               {childrenMissingDocs.length > 0 && (
-                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Child records")}</div>
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Child records")}</div>
               )}
               {childrenMissingDocs.map(({ f, missing }) => (
-                <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
-                  <button onClick={() => goToFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
-                    <Dot c="#F2A28A" /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {missing} {t(missing === 1 ? "document to update" : "documents to update")}</span>
+                <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
+                  <button onClick={() => goToFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
+                    <Dot c={C.danger} /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {missing} {t(missing === 1 ? "document to update" : "documents to update")}</span>
                   </button>
-                  <button onClick={() => goToFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                  <button onClick={() => goToFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "none", fontSize: 11, fontWeight: 600, color: C.ink, flexShrink: 0 }}>
                     {t("Review")}
                   </button>
                 </div>
@@ -8980,12 +8983,12 @@ function Compliance({ licensing = {}, saveLicensing, docs, onSave, families, pro
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: C.tealDark, borderRadius: 14, padding: "16px 20px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: C.paper, border: `1px solid ${C.line}`, borderLeft: `4px solid ${C.teal}`, borderRadius: 14, padding: "16px 20px" }}>
         <div>
-          <div style={{ color: "#fff", fontWeight: 700, fontSize: 14.5 }}>{t("Ready for a licensing visit?")}</div>
-          <div style={{ color: "#B9CFC6", fontSize: 12, marginTop: 2 }}>{t("Audit Mode compiles a single printable packet — license, ratios, documents, and every child's file status.")}</div>
+          <div style={{ color: C.ink, fontWeight: 700, fontSize: 14.5 }}>{t("Ready for a licensing visit?")}</div>
+          <div style={{ color: C.tealDark, fontSize: 12, marginTop: 2 }}>{t("Audit Mode compiles a single printable packet — license, ratios, documents, and every child's file status.")}</div>
         </div>
-        <button onClick={() => setAuditMode(true)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", borderRadius: 9, border: "none", background: C.amber, color: "#fff", fontWeight: 700, fontSize: 13, flexShrink: 0 }}>
+        <button onClick={() => setAuditMode(true)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 13, flexShrink: 0 }}>
           <ClipboardCheck size={15} /> {t("Enter Audit Mode")}
         </button>
       </div>
@@ -10200,12 +10203,12 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
   if (step === "overview") {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        <div style={{ background: C.tealDark, borderRadius: 16, padding: "22px 26px", color: "#fff" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8 }}>
+        <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderLeft: `4px solid ${C.teal}`, borderRadius: 16, padding: "22px 26px", color: C.ink }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8 }}>
             <TrendingUp size={14} /> {t("Phase 2 · Growth")}
           </div>
           <div style={{ fontFamily: "'Fraunces', serif", fontSize: 22, fontWeight: 600, marginBottom: 8 }}>{t("Ready to grow your business?")}</div>
-          <div style={{ fontSize: 13, color: "#CBDAD2", lineHeight: 1.6, maxWidth: 560 }}>
+          <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.6, maxWidth: 560 }}>
             {t("If you're consistently full, growth usually means more paperwork before it means more revenue — a license capacity change, updated facility documents, possibly new staff, and letting every subsidy agency know your details changed. This assistant builds a checklist tailored to your situation and tracks it to done.")}
           </div>
         </div>
@@ -10262,14 +10265,14 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: C.tealDark, borderRadius: 16, padding: "16px 20px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: C.paper, border: `1px solid ${C.line}`, borderLeft: `4px solid ${C.teal}`, borderRadius: 16, padding: "16px 20px" }}>
         <div>
-          <div style={{ color: "#B9CFC6", fontSize: 11.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>{t("Growth assessment in progress")}</div>
-          <div style={{ color: "#fff", fontWeight: 700, fontSize: 15.5, marginTop: 2 }}>
+          <div style={{ color: C.tealDark, fontSize: 11.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>{t("Growth assessment in progress")}</div>
+          <div style={{ color: C.ink, fontWeight: 700, fontSize: 15.5, marginTop: 2 }}>
             {t("Target capacity")} {growth.targetCapacity} · {growth.timeline}
           </div>
         </div>
-        <button onClick={restart} style={{ fontSize: 12, fontWeight: 600, color: "#CBDAD2", background: "none", border: "1px solid rgba(255,255,255,0.25)", borderRadius: 8, padding: "7px 12px" }}>
+        <button onClick={restart} style={{ fontSize: 12, fontWeight: 600, color: C.inkSoft, background: "none", border: `1px solid ${C.line}`, borderRadius: 8, padding: "7px 12px" }}>
           {t("Start over")}
         </button>
       </div>
@@ -11570,24 +11573,24 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, statu
   return (
     <div style={{ flex: 1, minHeight: "100vh", display: "flex", flexDirection: "column", background: C.cream }}>
       {/* header */}
-      <div style={{ background: C.tealDark, color: "#fff", padding: "18px 26px" }}>
+      <div style={{ background: C.side, color: C.ink, padding: "18px 26px", borderBottom: `1px solid ${C.line}` }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <AlagaMark size={28} color="#fff" arch={false} />
+            <AlagaMark size={28} color={C.teal} arch={false} />
             <div>
               <div style={{ fontFamily: "'Fraunces', serif", fontSize: 18, fontWeight: 900 }}>alaga</div>
-              <div style={{ fontSize: 10.5, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.06em" }}>{t("Family app")}</div>
+              <div style={{ fontSize: 10.5, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.06em" }}>{t("Family app")}</div>
             </div>
           </div>
-          <button onClick={onExit} style={{ fontSize: 12, color: "#CBDAD2", background: "none", border: "1px solid rgba(255,255,255,0.25)", borderRadius: 8, padding: "7px 12px", fontWeight: 600 }}>
+          <button onClick={onExit} style={{ fontSize: 12, color: C.inkSoft, background: "none", border: `1px solid ${C.line}`, borderRadius: 8, padding: "7px 12px", fontWeight: 600 }}>
             {showBackToProvider ? t("Exit parent view") : t("Exit demo")}
           </button>
         </div>
         <div style={{ marginTop: 16, display: "flex", gap: 14, flexWrap: "wrap" }}>
           <div>
-            <div style={{ fontSize: 11.5, color: "#9DB5AA", fontWeight: 600, marginBottom: 5 }}>{t("Viewing as")}</div>
+            <div style={{ fontSize: 11.5, color: C.inkSoft, fontWeight: 600, marginBottom: 5 }}>{t("Viewing as")}</div>
             <select value={famId} onChange={(e) => setFamId(Number(e.target.value))} style={{
-              background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.25)",
+              background: "#fff", color: C.ink, border: `1px solid ${C.line}`,
               borderRadius: 9, padding: "8px 12px", fontSize: 13.5, fontFamily: "inherit",
             }}>
               {families.map((f) => <option key={f.id} value={f.id} style={{ color: C.ink }}>{f.parent} — {t("parent of")} {f.child}</option>)}
@@ -11595,9 +11598,9 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, statu
           </div>
           {setLanguage && (
             <div>
-              <div style={{ fontSize: 11.5, color: "#9DB5AA", fontWeight: 600, marginBottom: 5 }}>{t("Language")}</div>
+              <div style={{ fontSize: 11.5, color: C.inkSoft, fontWeight: 600, marginBottom: 5 }}>{t("Language")}</div>
               <select value={language} onChange={(e) => setLanguage(e.target.value)} style={{
-                background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.25)",
+                background: "#fff", color: C.ink, border: `1px solid ${C.line}`,
                 borderRadius: 9, padding: "8px 12px", fontSize: 13.5, fontFamily: "inherit",
               }}>
                 {PARENT_LANGS.map((l) => <option key={l} value={l} style={{ color: C.ink }}>{l}</option>)}
