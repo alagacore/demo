@@ -149,7 +149,7 @@ const shiftDemoMonth = (str) => str.replace(/(?<![\d/])(\d{2})\/(\d{2})\/(\d{4})
   if (dt > startOfToday()) dt = startOfToday(); // never log a sample expense in the future
   return `${pad2(dt.getMonth() + 1)}/${pad2(dt.getDate())}/${dt.getFullYear()}`;
 });
-const PROVIDER = { name: "Tita's Family Child Care", city: "Culver City, CA", lic: "FCC License #198-402-3211" };
+const PROVIDER = { name: "Tita's Family Child Care", city: "Culver City, CA", lic: "FCC License #198-402-3211", providerType: "Family Child Care Home — Large (9–14 children)", capacity: 14 };
 
 /* --------------------------- platform admin (10 providers) --------------------------- */
 const ADMIN_PROVIDERS_DEFAULT = demoDates([
@@ -333,10 +333,19 @@ const MESSAGE_THREADS = [
 ];
 
 const WEEK_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+// Weekends are available to every provider; they start closed.
+const ALL_DAYS = [...WEEK_DAYS, "Saturday", "Sunday"];
+const DAY_BY_INDEX = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+// Older saved schedules only had weekdays — fill in any missing days as closed.
+function fullWeek(schedule) {
+  const list = schedule || [];
+  return ALL_DAYS.map((d) => list.find((x) => x.day === d) || { day: d, open: false, hours: "", careType: "Full-day", capacity: list[0]?.capacity || 8, ages: "", ageClassrooms: [] });
+}
 const WEEKLY_SCHEDULE_DEFAULT = WEEK_DAYS.map((d) => ({
   day: d, open: true, hours: "7:00 AM – 6:00 PM", careType: "Full-day", capacity: 8, ages: "Infants–Pre-K (0–5y)",
   ageClassrooms: CLASSROOMS.map((c) => c.id),
 }));
+// Sample daycare's closures already listed in its enrollment packet (demo only).
 const PACKET_CLOSURES = [
   { name: "Labor Day", dates: "09/07/2026" },
   { name: "Thanksgiving Break", dates: "11/26/2026 – 11/27/2026" },
@@ -839,6 +848,36 @@ const T = {
   "Print": { es: "Imprimir", tl: "I-print", zh: "打印", vi: "In", ko: "인쇄" },
   "Print an information sheet for each child": { es: "Imprimir una hoja de información por niño", tl: "Mag-print ng information sheet para sa bawat bata", zh: "为每个孩子打印信息表", vi: "In phiếu thông tin cho từng trẻ", ko: "아이별 정보지 인쇄" },
   "Print this child's information sheet": { es: "Imprimir la hoja de información de este niño", tl: "I-print ang information sheet ng batang ito", zh: "打印此孩子的信息表", vi: "In phiếu thông tin của trẻ này", ko: "이 아이의 정보지 인쇄" },
+  "Saturday": { es: "Sábado", tl: "Sabado", zh: "星期六", vi: "Thứ Bảy", ko: "토요일" },
+  "Sunday": { es: "Domingo", tl: "Linggo", zh: "星期日", vi: "Chủ Nhật", ko: "일요일" },
+  "children enrolled, out of your license": { es: "niños inscritos, según su licencia", tl: "batang naka-enroll, mula sa lisensya mo", zh: "已入托儿童 / 许可名额", vi: "trẻ đã ghi danh trên mức giấy phép", ko: "인가 정원 대비 등록 아동" },
+  "Here today": { es: "Presentes hoy", tl: "Narito ngayon", zh: "今日到园", vi: "Có mặt hôm nay", ko: "오늘 출석" },
+  "absent": { es: "ausentes", tl: "absent", zh: "缺勤", vi: "vắng", ko: "결석" },
+  "Absent": { es: "Ausente", tl: "Absent", zh: "缺勤", vi: "Vắng", ko: "결석" },
+  "is not one of your open days": { es: "no es uno de sus días abiertos", tl: "ay hindi isa sa mga bukas na araw mo", zh: "不是您的开放日", vi: "không phải ngày mở cửa của bạn", ko: "운영일이 아닙니다" },
+  "only approved flex care is shown": { es: "solo se muestra el cuidado flexible aprobado", tl: "approved flex care lang ang ipinapakita", zh: "仅显示已批准的弹性托育", vi: "chỉ hiển thị chăm sóc linh hoạt đã duyệt", ko: "승인된 유연 돌봄만 표시" },
+  "Check in": { es: "Registrar entrada", tl: "Check in", zh: "签到", vi: "Điểm danh vào", ko: "등원" },
+  "Check out": { es: "Registrar salida", tl: "Check out", zh: "签退", vi: "Điểm danh ra", ko: "하원" },
+  "In": { es: "Entrada", tl: "Pasok", zh: "到园", vi: "Vào", ko: "등원" },
+  "Undo check-out": { es: "Deshacer salida", tl: "I-undo ang check-out", zh: "撤销签退", vi: "Hoàn tác điểm danh ra", ko: "하원 취소" },
+  "Fees are estimated from your hourly rates in Finances → Tuition. Confirm you have staff coverage before approving.": { es: "Las tarifas se estiman con sus tarifas por hora en Finanzas → Colegiatura. Confirme que tiene personal antes de aprobar.", tl: "Tinantiya ang bayad mula sa hourly rates mo sa Finances → Tuition. Siguraduhing may staff bago mag-approve.", zh: "费用按“财务 → 学费”中的小时费率估算。批准前请确认人手充足。", vi: "Phí được ước tính theo giá theo giờ trong Tài chính → Học phí. Hãy xác nhận đủ nhân sự trước khi duyệt.", ko: "요금은 재무 → 수업료의 시간당 요금으로 계산됩니다. 승인 전 인력을 확인하세요." },
+  "Care type": { es: "Tipo de cuidado", tl: "Uri ng pag-aalaga", zh: "托育类型", vi: "Loại chăm sóc", ko: "돌봄 유형" },
+  "e.g. Full-day": { es: "ej. Día completo", tl: "hal. Buong araw", zh: "例如：全日", vi: "vd: Cả ngày", ko: "예: 종일" },
+  "Children that day": { es: "Niños ese día", tl: "Mga bata sa araw na iyon", zh: "当日人数", vi: "Số trẻ ngày đó", ko: "당일 인원" },
+  "Add a closure": { es: "Agregar un cierre", tl: "Magdagdag ng pagsasara", zh: "添加停托日", vi: "Thêm ngày nghỉ", ko: "휴원일 추가" },
+  "First day closed": { es: "Primer día cerrado", tl: "Unang araw na sarado", zh: "停托首日", vi: "Ngày nghỉ đầu tiên", ko: "휴원 시작일" },
+  "Last day closed (optional)": { es: "Último día cerrado (opcional)", tl: "Huling araw na sarado (opsyonal)", zh: "停托最后一天（可选）", vi: "Ngày nghỉ cuối (tùy chọn)", ko: "휴원 종료일 (선택)" },
+  "Same day": { es: "El mismo día", tl: "Parehong araw", zh: "同一天", vi: "Cùng ngày", ko: "당일" },
+  "e.g. Thanksgiving, provider training, sick day": { es: "ej. Acción de Gracias, capacitación, día de enfermedad", tl: "hal. Thanksgiving, training, sick day", zh: "例如：感恩节、培训、病假", vi: "vd: Lễ Tạ ơn, tập huấn, nghỉ ốm", ko: "예: 추수감사절, 연수, 병가" },
+  "Message all families about it now": { es: "Avisar a todas las familias ahora", tl: "Ipaalam sa lahat ng pamilya ngayon", zh: "现在通知所有家庭", vi: "Nhắn cho tất cả gia đình ngay", ko: "지금 모든 가족에게 알리기" },
+  "Closed days are taken off the attendance roster automatically.": { es: "Los días cerrados se quitan automáticamente de la lista de asistencia.", tl: "Awtomatikong inaalis sa attendance roster ang mga saradong araw.", zh: "停托日会自动从出勤名单中移除。", vi: "Ngày nghỉ được tự động bỏ khỏi danh sách điểm danh.", ko: "휴원일은 출석부에서 자동으로 빠집니다." },
+  "Upcoming closures": { es: "Próximos cierres", tl: "Mga paparating na pagsasara", zh: "即将到来的停托日", vi: "Ngày nghỉ sắp tới", ko: "예정된 휴원일" },
+  "No closures coming up.": { es: "No hay cierres próximos.", tl: "Walang paparating na pagsasara.", zh: "近期没有停托日。", vi: "Không có ngày nghỉ sắp tới.", ko: "예정된 휴원일이 없습니다." },
+  "In enrollment packet": { es: "En el paquete de inscripción", tl: "Nasa enrollment packet", zh: "已列入入托资料", vi: "Có trong hồ sơ ghi danh", ko: "입소 안내문에 포함" },
+  "Families notified": { es: "Familias avisadas", tl: "Naabisuhan ang mga pamilya", zh: "已通知家庭", vi: "Đã báo gia đình", ko: "가족에게 알림 완료" },
+  "Past": { es: "Pasados", tl: "Nakaraan", zh: "已过", vi: "Đã qua", ko: "지난 휴원" },
+  "Days they attend": { es: "Días que asiste", tl: "Mga araw na pumapasok", zh: "入托日", vi: "Những ngày đi học", ko: "등원 요일" },
+  "More days than the subsidy approves — extra days may need to be billed privately.": { es: "Más días de los que aprueba el subsidio; los días extra pueden cobrarse de forma privada.", tl: "Mas maraming araw kaysa aprubado ng subsidy — maaaring singilin nang pribado ang dagdag na araw.", zh: "天数超过补助批准范围——额外天数可能需自费。", vi: "Nhiều ngày hơn mức trợ cấp duyệt — ngày thêm có thể phải tự trả.", ko: "보조금 승인 일수보다 많습니다 — 추가 일수는 개인 부담일 수 있습니다." },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -1666,8 +1705,6 @@ const SESSION_TIMES = {
 };
 const sessionTime = (sl) => SESSION_TIMES[sl] || sl;
 
-const CLASSROOM_CAPACITY = { infants: 4, toddlers: 6, preschool: 8, prek: 8 };
-const TOTAL_PROGRAM_CAPACITY = Object.values(CLASSROOM_CAPACITY).reduce((a, b) => a + b, 0);
 
 // Which days a child actually attends — falls back to a sensible default derived from
 // their approved session count when not explicitly set, so this works without requiring
@@ -2339,7 +2376,7 @@ function OnboardingWizard({ onComplete, onBack, initialEmail = "" }) {
               <Field label="Typical daily hours"><input value={form.hours} onChange={(e) => set("hours", e.target.value)} style={inputStyle} /></Field>
               <Field label="Days open">
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                  {WEEK_DAYS.map((d) => (
+                  {ALL_DAYS.map((d) => (
                     <button key={d} onClick={() => toggleDay(d)} type="button" style={{
                       padding: "8px 12px", borderRadius: 8, fontSize: 12.5, fontWeight: 600,
                       border: `1px solid ${form.days.includes(d) ? C.teal : C.line}`, background: form.days.includes(d) ? C.tealTint : "#fff", color: form.days.includes(d) ? C.tealDark : C.inkSoft,
@@ -3085,14 +3122,17 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const [checkLog, setCheckLog] = useState([]);
   const [accessLog, setAccessLog] = useState([]);
   const initialSchedule = isEmpty && onboardingData
-    ? WEEK_DAYS.map((d) => ({
+    ? ALL_DAYS.map((d) => ({
         day: d, open: onboardingData.days.includes(d), hours: onboardingData.hours, careType: "Full-day",
         capacity: onboardingData.capacity || 8, ages: onboardingData.classrooms?.map((c) => classroomOf(c)?.label).filter(Boolean).join(", ") || "",
         ageClassrooms: onboardingData.classrooms || [],
       }))
     : WEEKLY_SCHEDULE_DEFAULT;
   const [weeklySchedule, saveWeeklySchedule] = usePersistentState(`calendar-weekly${sfx}`, initialSchedule);
-  const [closures, saveClosures] = usePersistentState(`calendar-closures${sfx}`, []);
+  const [closures, saveClosures] = usePersistentState(`calendar-closures${sfx}`, isEmpty ? [] : PACKET_CLOSURES.map((c, i) => {
+    const [start, end] = c.dates.split(" – ");
+    return { id: `pc${i}`, name: c.name, dates: c.dates, start, end: end || start, fromPacket: true, notified: true };
+  }));
   const [events, saveEvents] = usePersistentState(`calendar-events${sfx}`, isEmpty ? [] : CALENDAR_EVENTS_DEFAULT);
   const [prospects, saveProspects] = usePersistentState(`tours-pipeline${sfx}`, baseProspects);
   const [compOverrides, saveCompOverrides] = usePersistentState(`compliance-docs${sfx}`, {});
@@ -3275,9 +3315,9 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
               {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
               {screen === "families" && <Families families={families} provider={providerInfo} onWithdraw={withdrawChild} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
-              {screen === "bookings" && <Bookings families={families} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
+              {screen === "bookings" && <Bookings families={families} schedule={fullWeek(weeklySchedule)} closures={closures} provider={providerInfo} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
               {screen === "staff" && <StaffScreen staff={staff} families={families} updateStaffMember={updateStaffMember} addStaffMember={addStaffMember} removeStaffMember={removeStaffMember} />}
-              {screen === "calendar" && <CalendarScreen schedule={weeklySchedule} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} families={families} threads={threads} saveThreads={saveThreads} />}
+              {screen === "calendar" && <CalendarScreen schedule={fullWeek(weeklySchedule)} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} families={families} threads={threads} saveThreads={saveThreads} />}
               {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} startEnroll={(p) => setEnrollingProspectId(p.id)} />}
               {screen === "waitlist" && <WaitlistScreen prospects={prospects} updateProspect={updateProspect} removeProspect={removeProspect} logAccess={logAccess} families={families} providerInfo={providerInfo} startEnroll={(p) => setEnrollingProspectId(p.id)} />}
               {screen === "subsidy" && <Subsidy families={families} openFamId={openFamId} setOpenFamId={setOpenFamId} loaded={loaded} meetingMode={meetingMode} />}
@@ -4350,6 +4390,7 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
   const [editingSession, setEditingSession] = useState(false);
   const [sessionsApproved, setSessionsApproved] = useState(child.sessionsApproved);
   const [sessionLength, setSessionLength] = useState(child.sessionLength);
+  const [days, setDays] = useState(childDays(child));
   const [editingTuition, setEditingTuition] = useState(false);
   const [tuition, setTuition] = useState(child.copay);
   const [notes, setNotes] = useState(child.notes);
@@ -4466,16 +4507,32 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
             right={!editingSession && <button onClick={() => setEditingSession(true)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 700 }}><Pencil size={12} /> {t("Edit")}</button>}>
             {!editingSession ? (
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                <StatBlock label={t("Schedule")} value={sessionsApproved} />
+                <StatBlock label={t("Schedule")} value={`${sessionsApproved} · ${days.map((d) => t(d).slice(0, 3)).join(", ")}`} />
                 <StatBlock label={t("Session length")} value={`${sessionLength} · ${sessionTime(sessionLength)}`} />
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 <Field label={t("Sessions approved")}><Select value={sessionsApproved} onChange={setSessionsApproved} options={SESSIONS_APPROVED} /></Field>
+                <Field label={t("Days they attend")}>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                    {ALL_DAYS.map((d) => {
+                      const on = days.includes(d);
+                      return <button key={d} type="button" onClick={() => setDays((ds) => (on ? ds.filter((x) => x !== d) : ALL_DAYS.filter((x) => ds.includes(x) || x === d)))} style={{
+                        padding: "6px 10px", borderRadius: 8, fontSize: 12, fontWeight: 600,
+                        border: `1px solid ${on ? C.teal : C.line}`, background: on ? C.tealTint : "#fff", color: on ? C.tealDark : C.inkSoft,
+                      }}>{t(d).slice(0, 3)}</button>;
+                    })}
+                  </div>
+                  {child.subsidized && /^\d+ \/ week$/.test(sessionsApproved || "") && days.length > Number(sessionsApproved.split(" ")[0]) && (
+                    <div style={{ marginTop: 6, fontSize: 11.5, color: "#7A5620", display: "flex", alignItems: "center", gap: 5 }}>
+                      <AlertTriangle size={11} /> {t("More days than the subsidy approves — extra days may need to be billed privately.")}
+                    </div>
+                  )}
+                </Field>
                 <Field label={t("Session length")}><Select value={sessionLength} onChange={setSessionLength} options={SESSION_LENGTHS} /></Field>
                 <div style={{ display: "flex", gap: 8 }}>
-                  <button onClick={() => { setEditingSession(false); setSessionsApproved(child.sessionsApproved); setSessionLength(child.sessionLength); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Cancel")}</button>
-                  <button onClick={() => { saveField("session", { sessionsApproved, sessionLength }); setEditingSession(false); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Save changes")}</button>
+                  <button onClick={() => { setEditingSession(false); setSessionsApproved(child.sessionsApproved); setSessionLength(child.sessionLength); setDays(childDays(child)); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Cancel")}</button>
+                  <button onClick={() => { saveField("session", { sessionsApproved, sessionLength, daysOfWeek: days }); setEditingSession(false); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Save changes")}</button>
                 </div>
               </div>
             )}
@@ -4732,7 +4789,7 @@ function StatBlock({ label, value }) {
 
 
 /* --------------------------------- bookings ------------------------------------ */
-function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCare, attendanceLog, saveAttendanceLog, onSave, highlightId }) {
+function Bookings({ families, schedule = [], closures = [], provider, staff, tuitionRates, flexCareRequests, saveFlexCare, attendanceLog, saveAttendanceLog, onSave, highlightId }) {
   const t = useT();
   const highlightRef = React.useRef(null);
   useEffect(() => {
@@ -4741,7 +4798,7 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
     }
   }, [highlightId]);
   const TODAY = startOfToday();
-  const WEEKDAY_BY_INDEX = { 1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday" };
+
   const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   const [selectedDate, setSelectedDate] = useState(TODAY);
@@ -4756,7 +4813,7 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
   const [moveReason, setMoveReason] = useState("");
   const [denyReason, setDenyReason] = useState(DENY_REASONS[0]);
   const isToday = selectedDate.toDateString() === TODAY.toDateString();
-  const selectedWeekday = WEEKDAY_BY_INDEX[selectedDate.getDay()] || null;
+  const selectedWeekday = DAY_BY_INDEX[selectedDate.getDay()];
   const dateShort = `${MONTH_NAMES[selectedDate.getMonth()]} ${selectedDate.getDate()}`;
   const dateISO = selectedDate.toISOString().slice(0, 10);
   const dateFull = `${String(selectedDate.getMonth() + 1).padStart(2, "0")}/${String(selectedDate.getDate()).padStart(2, "0")}/${selectedDate.getFullYear()}`;
@@ -4766,7 +4823,7 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
 
   const flexFee = (classroom, hours) => Math.round((tuitionRates[classroom]?.hourly || 0) * hours);
   const submitFlexRequest = () => {
-    const child = families.find((f) => f.id === Number(flexForm.childId));
+    const child = families.find((f) => String(f.id) === String(flexForm.childId));
     if (!child || !flexForm.date) return;
     flexSeq += 1;
     saveFlexCare([{ id: `fc${flexSeq}`, child: child.child, classroom: child.classroom, type: flexForm.type, date: flexForm.date, hours: Number(flexForm.hours), notes: flexForm.notes, status: "pending" }, ...flexCareRequests]);
@@ -4796,17 +4853,36 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
   const activeFlexByChild = (childName) => flexCareRequests.filter((r) => r.child === childName && r.status !== "denied");
 
   const totalEnrolled = families.length;
-  const dayFamilies = selectedWeekday ? families.filter((f) => childDays(f).includes(selectedWeekday)) : [];
+  const licensedCapacity = provider?.capacity || 8;
+  const daySchedule = schedule.find((d) => d.day === selectedWeekday);
+  const closure = closureOn(closures, dateFull);
+  const closedToday = !!closure || (daySchedule && !daySchedule.open);
+  // Approved flex care for an extra day or weekend puts a child on that day's
+  // roster even though it isn't one of their regular days.
+  const sameDay = (a, b) => { const x = parseAnyDate(a), y = parseAnyDate(b); return x && y && x.toDateString() === y.toDateString(); };
+  const flexAddsChild = (f) => flexCareRequests.some((r) => r.child === f.child && r.status === "approved" && ["Extra day", "Weekend care"].includes(r.type) && sameDay(r.date, dateFull));
+  const dayFamilies = families.filter((f) => (childDays(f).includes(selectedWeekday) && !closedToday) || flexAddsChild(f));
   const dayRoster = groupByClassroom(dayFamilies);
 
+  // Each child's day: arrival and departure times, or marked absent.
+  // (Older entries were a simple true/false for "present".)
   const dayAttendance = attendanceLog[dateFull] || {};
-  const toggleAttendance = (childId) => {
+  const recordOf = (id) => { const v = dayAttendance[id]; return v === true ? { in: "—" } : v || {}; };
+  const nowTime = () => new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  const setRecord = (childId, next) => {
     const dayLog = attendanceLog[dateFull] || {};
-    saveAttendanceLog({ ...attendanceLog, [dateFull]: { ...dayLog, [childId]: !dayLog[childId] } });
+    const copy = { ...dayLog };
+    if (next) copy[childId] = next; else delete copy[childId];
+    saveAttendanceLog({ ...attendanceLog, [dateFull]: copy });
   };
-  const presentCount = dayFamilies.filter((f) => dayAttendance[f.id]).length;
+  const checkIn = (id) => setRecord(id, { in: nowTime() });
+  const checkOut = (id) => setRecord(id, { ...recordOf(id), out: nowTime() });
+  const markAbsent = (id) => setRecord(id, { absent: true });
+  const clearRecord = (id) => setRecord(id, null);
+  const presentCount = dayFamilies.filter((f) => recordOf(f.id).in).length;
+  const absentCount = dayFamilies.filter((f) => recordOf(f.id).absent).length;
 
-  const CURRENT_TIME = "10:15 AM";
+  const CURRENT_TIME = nowTime();
   const nowDateFull = `${String(TODAY.getMonth() + 1).padStart(2, "0")}/${String(TODAY.getDate()).padStart(2, "0")}/${TODAY.getFullYear()}`;
   const startMove = (f) => { setMovingId(f.id); setMoveTarget(CLASSROOMS.find((c) => c.id !== f.classroom)?.id || ""); setMoveReason(""); };
   const confirmMove = (f) => {
@@ -4815,11 +4891,7 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
     onSave(f.id, { classroom: moveTarget, classroomHistory: [entry, ...(f.classroomHistory || [])] });
     setMovingId(null);
   };
-  const targetCapacity = (id) => {
-    const cap = CLASSROOM_CAPACITY[id] || 8;
-    const enrolled = families.filter((fam) => fam.classroom === id).length;
-    return { cap, enrolled };
-  };
+
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -4870,17 +4942,20 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-        <Kpi label={t("Program capacity")} value={`${totalEnrolled} / ${TOTAL_PROGRAM_CAPACITY}`} sub={t("enrolled across all classrooms")} accent={totalEnrolled >= TOTAL_PROGRAM_CAPACITY ? C.danger : C.teal} />
-        <Kpi label={isToday ? t("Present today") : t("Booked that day")} value={`${presentCount} / ${dayFamilies.length}`} sub={`${dayFamilies.length} ${t(dayFamilies.length === 1 ? "child booked" : "children booked")} ${isToday ? t("today") : `— ${dateShort}`}`} accent={C.sky} />
+        <Kpi label={t("Licensed capacity")} value={`${totalEnrolled} / ${licensedCapacity}`} sub={t("children enrolled, out of your license")} accent={totalEnrolled > licensedCapacity ? C.danger : C.teal} />
+        <Kpi label={isToday ? t("Here today") : t("Booked that day")} value={`${presentCount} / ${dayFamilies.length}`} sub={`${dayFamilies.length} ${t(dayFamilies.length === 1 ? "child booked" : "children booked")}${absentCount ? ` · ${absentCount} ${t("absent")}` : ""}`} accent={C.sky} />
       </div>
 
       <Card title={isToday ? t("Today's bookings") : `${t(selectedWeekday || "Weekend")}'s ${t("bookings")}`} icon={CalendarClock}
         right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{dateShort}, {selectedDate.getFullYear()}</span>}>
-        {!selectedWeekday && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No regular bookings on weekends — check Flex Care for any weekend requests.")}</div>}
-        {selectedWeekday && dayRoster.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No one is booked this day.")}</div>}
+        {closedToday && (
+          <div style={{ margin: "12px 18px 4px", padding: "10px 12px", borderRadius: 10, background: "#F1EEE5", fontSize: 12.5, color: C.ink, display: "flex", alignItems: "center", gap: 7 }}>
+            <CalendarDays size={13} color={C.inkSoft} /> <b>{t("Closed")}</b> — {closure ? closure.name : `${t(selectedWeekday)} ${t("is not one of your open days")}`}
+            {dayRoster.length > 0 && <span style={{ color: C.inkSoft }}>· {t("only approved flex care is shown")}</span>}
+          </div>
+        )}
+        {!closedToday && dayRoster.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No one is booked this day.")}</div>}
         {dayRoster.map((g) => {
-          const cap = CLASSROOM_CAPACITY[g.classroom.id] || 8;
-          const enrolled = g.families.length;
           const assigned = staff.filter((s) => s.status === "active" && (s.classroom === g.classroom.id || s.classroom === "all"));
           return (
             <div key={g.classroom.id}>
@@ -4895,11 +4970,11 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
                     </div>
                   )}
                 </div>
-                <Pill label={`${t("Enrolled")} ${enrolled} / ${t("Capacity")} ${cap}`} fg={enrolled >= cap ? C.danger : C.teal} bg={enrolled >= cap ? C.dangerTint : C.tealTint} />
+                <Pill label={`${g.families.length} ${t(g.families.length === 1 ? "child booked" : "children booked")}`} fg={C.teal} bg={C.tealTint} />
               </div>
               {g.families.map((f) => {
                 const flex = activeFlexByChild(f.child);
-                const present = !!dayAttendance[f.id];
+                const rec = recordOf(f.id);
                 const isMoving = movingId === f.id;
                 return (
                   <div key={f.id}>
@@ -4921,17 +4996,33 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
                         }}>
                           <ArrowLeftRight size={12} />
                         </button>
-                        <button onClick={() => toggleAttendance(f.id)} style={{
-                          display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "none",
-                          background: present ? C.tealTint : "#F1EEE5", color: present ? C.tealDark : C.inkSoft, fontSize: 11, fontWeight: 700,
-                        }}>
-                          {present ? <CheckCircle2 size={12} /> : <Circle size={12} />} {present ? t("Present") : t("Mark present")}
-                        </button>
+                        {rec.absent ? (
+                          <>
+                            <Pill label={t("Absent")} fg={C.inkSoft} bg="#F1EEE5" />
+                            <button onClick={() => clearRecord(f.id)} title={t("Undo")} style={{ background: "none", border: "none", color: C.inkSoft, padding: 2 }}><X size={12} /></button>
+                          </>
+                        ) : !rec.in ? (
+                          <>
+                            <button onClick={() => markAbsent(f.id)} style={{ padding: "5px 9px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", color: C.inkSoft, fontSize: 11, fontWeight: 700 }}>{t("Absent")}</button>
+                            <button onClick={() => checkIn(f.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "none", background: C.teal, color: "#fff", fontSize: 11, fontWeight: 700 }}>
+                              <CheckCircle2 size={12} /> {t("Check in")}
+                            </button>
+                          </>
+                        ) : !rec.out ? (
+                          <>
+                            <span style={{ fontSize: 11.5, color: C.tealDark, fontWeight: 700 }}>{t("In")} {rec.in}</span>
+                            <button onClick={() => checkOut(f.id)} style={{ padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.teal}`, background: C.tealTint, color: C.tealDark, fontSize: 11, fontWeight: 700 }}>{t("Check out")}</button>
+                            <button onClick={() => clearRecord(f.id)} title={t("Undo")} style={{ background: "none", border: "none", color: C.inkSoft, padding: 2 }}><X size={12} /></button>
+                          </>
+                        ) : (
+                          <>
+                            <span style={{ fontSize: 11.5, color: C.inkSoft, fontWeight: 600 }}>{rec.in} – {rec.out}</span>
+                            <button onClick={() => setRecord(f.id, { in: rec.in })} title={t("Undo check-out")} style={{ background: "none", border: "none", color: C.inkSoft, padding: 2 }}><X size={12} /></button>
+                          </>
+                        )}
                       </div>
                     </div>
                     {isMoving && (() => {
-                      const targetInfo = moveTarget ? targetCapacity(moveTarget) : null;
-                      const overCapacity = targetInfo && targetInfo.enrolled >= targetInfo.cap;
                       return (
                         <div style={{ padding: "10px 18px 14px 34px", borderBottom: `1px solid ${C.line}`, background: C.cream, display: "flex", flexDirection: "column", gap: 8 }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
@@ -4939,11 +5030,6 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
                             <Select value={moveTarget} onChange={setMoveTarget} options={CLASSROOMS.filter((c) => c.id !== f.classroom).map((c) => c.id)} labels={CLASSROOMS.filter((c) => c.id !== f.classroom).map((c) => `${c.label} (${c.range})`)} />
                             <input value={moveReason} onChange={(e) => setMoveReason(e.target.value)} placeholder={t("Reason (optional)")} style={{ ...inputStyle, flex: 1, minWidth: 140 }} />
                           </div>
-                          {overCapacity && (
-                            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#7A5620" }}>
-                              <AlertTriangle size={12} /> {t("Target classroom is at or over capacity")} ({targetInfo.enrolled}/{targetInfo.cap}).
-                            </div>
-                          )}
                           <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
                             <button onClick={() => setMovingId(null)} style={{ padding: "6px 12px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 700, color: C.inkSoft }}>{t("Cancel")}</button>
                             <button onClick={() => confirmMove(f)} style={{ padding: "6px 12px", borderRadius: 7, border: "none", background: C.teal, color: "#fff", fontSize: 11.5, fontWeight: 700 }}>{t("Confirm move")}</button>
@@ -4980,13 +5066,13 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
                   <Field label={t("Type")}>
                     <Select value={flexForm.type} onChange={(v) => setFlexForm({ ...flexForm, type: v })} options={FLEX_CARE_TYPES} labels={FLEX_CARE_TYPES.map((x) => t(x))} />
                   </Field>
-                  <Field label={t("Date")}><input type="date" value={flexForm.date} onChange={(e) => setFlexForm({ ...flexForm, date: e.target.value })} style={inputStyle} /></Field>
+                  <Field label={t("Date")}><DateField value={flexForm.date} onChange={(v) => setFlexForm({ ...flexForm, date: v || "" })} /></Field>
                 </div>
                 <Field label={t("Extra hours")}><input type="number" step="0.5" value={flexForm.hours} onChange={(e) => setFlexForm({ ...flexForm, hours: e.target.value })} style={{ ...inputStyle, maxWidth: 100 }} /></Field>
                 <Field label={t("Notes (optional)")}><input value={flexForm.notes} onChange={(e) => setFlexForm({ ...flexForm, notes: e.target.value })} style={inputStyle} /></Field>
                 {flexForm.childId && (
                   <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 5 }}>
-                    <DollarSign size={12} /> {t("Estimated fee")}: <b style={{ color: C.ink }}>{money(flexFee(families.find((f) => f.id === Number(flexForm.childId))?.classroom, Number(flexForm.hours) || 0))}</b> {t("at that classroom's hourly rate")}
+                    <DollarSign size={12} /> {t("Estimated fee")}: <b style={{ color: C.ink }}>{money(flexFee(families.find((f) => String(f.id) === String(flexForm.childId))?.classroom, Number(flexForm.hours) || 0))}</b> {t("at that classroom's hourly rate")}
                   </div>
                 )}
                 <button onClick={submitFlexRequest} style={{ padding: "10px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Submit request")}</button>
@@ -5087,7 +5173,7 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
             );
           })}
           <div style={{ padding: "10px 18px", fontSize: 10.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
-            <Info size={10} /> {t("Fees are estimated from your classroom hourly rates on the Dashboard — confirm actual staff coverage before approving.")}
+            <Info size={10} /> {t("Fees are estimated from your hourly rates in Finances → Tuition. Confirm you have staff coverage before approving.")}
           </div>
         </Card>
       </div>
@@ -5432,7 +5518,7 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
   const t = useT();
   const [editing, setEditing] = useState(false);
   const [local, setLocal] = useState(schedule);
-  const [form, setForm] = useState({ start: "", end: "", name: "Additional provider closure", notify: false });
+  const [form, setForm] = useState({ start: "", end: "", name: "", notify: false });
   const [tab, setTab] = useState("hours");
   const [eventForm, setEventForm] = useState({ start: "", end: "", name: "", type: EVENT_TYPES[0], notify: false, notes: "", bringItems: "" });
 
@@ -5460,10 +5546,19 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
   const saveSchedNow = async () => { await saveSchedule(local); setEditing(false); };
 
   const addClosure = () => {
-    if (!form.start || !form.end) return;
-    saveClosures([{ id: Date.now(), name: form.name, dates: `${form.start} – ${form.end}`, notified: form.notify }, ...closures]);
-    setForm({ start: "", end: "", name: "Additional provider closure", notify: false });
+    if (!form.start) return;
+    const end = form.end || form.start;
+    const dates = end === form.start ? form.start : `${form.start} – ${end}`;
+    saveClosures([{ id: Date.now(), name: form.name.trim() || "Closed", dates, start: form.start, end, notified: form.notify }, ...closures]);
+    if (form.notify && families && threads && saveThreads) {
+      const names = [...new Set(families.map((f) => f.householdName))];
+      broadcastToFamilies(threads, saveThreads, names, `📅 We'll be closed ${dates}${form.name.trim() ? ` (${form.name.trim()})` : ""}. Please plan care accordingly.`, "announcement");
+    }
+    setForm({ start: "", end: "", name: "", notify: false });
   };
+  const sortedClosures = [...closures].sort((a, b) => (parseAnyDate(a.start || a.dates)?.getTime() || 0) - (parseAnyDate(b.start || b.dates)?.getTime() || 0));
+  const upcomingClosures = sortedClosures.filter((c) => !isPastDate(c.end || String(c.dates).split(" – ").pop()));
+  const pastClosures = sortedClosures.filter((c) => isPastDate(c.end || String(c.dates).split(" – ").pop()));
   const removeClosure = (id) => saveClosures(closures.filter((c) => c.id !== id));
 
   const addEvent = () => {
@@ -5531,9 +5626,13 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
                           border: `1px dashed ${C.teal}`, background: "none", color: C.teal, fontSize: 11.5, fontWeight: 600,
                         }}><Plus size={11} /> {t("Add time slot")}</button>
                       </div>
-                      <div style={{ display: "flex", gap: 6 }}>
-                        <input value={d.careType} onChange={(e) => updateDay(i, "careType", e.target.value)} style={{ ...inputStyle, maxWidth: 110 }} />
-                        <input type="number" value={d.capacity} onChange={(e) => updateDay(i, "capacity", Number(e.target.value))} style={{ ...inputStyle, maxWidth: 70 }} />
+                      <div style={{ display: "flex", gap: 10, alignItems: "flex-end" }}>
+                        <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: C.inkSoft, fontWeight: 600 }}>{t("Care type")}
+                          <input value={d.careType} onChange={(e) => updateDay(i, "careType", e.target.value)} placeholder={t("e.g. Full-day")} style={{ ...inputStyle, width: 130 }} />
+                        </label>
+                        <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: C.inkSoft, fontWeight: 600 }}>{t("Children that day")}
+                          <input type="number" min={0} value={d.capacity} onChange={(e) => updateDay(i, "capacity", Number(e.target.value))} style={{ ...inputStyle, width: 80 }} />
+                        </label>
                       </div>
                       <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                         {CLASSROOMS.map((c) => {
@@ -5574,40 +5673,41 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
       )}
 
       {tab === "closures" && (
-        <>
-          <Card title={t("Closures from enrollment packet")} icon={CalendarDays} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Already disclosed to families")}</span>}>
-            {PACKET_CLOSURES.map((c) => (
-              <Row key={c.name} left={<b>{c.name}</b>} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{c.dates}</span>} />
-            ))}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <Card title={t("Add a closure")} icon={Plus}>
+            <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <Field label={t("First day closed")}><DateField value={form.start} onChange={(v) => setForm({ ...form, start: v || "" })} /></Field>
+                <Field label={t("Last day closed (optional)")}><DateField value={form.end} onChange={(v) => setForm({ ...form, end: v || "" })} placeholder={t("Same day")} /></Field>
+              </div>
+              <Field label={t("Reason")}><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t("e.g. Thanksgiving, provider training, sick day")} style={{ ...inputStyle, width: "100%" }} /></Field>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: C.inkSoft }}>
+                <input type="checkbox" checked={form.notify} onChange={(e) => setForm({ ...form, notify: e.target.checked })} /> {t("Message all families about it now")}
+              </label>
+              <button onClick={addClosure} disabled={!form.start} style={{ padding: "10px 0", borderRadius: 9, border: "none", background: form.start ? C.teal : "#C9C4B4", color: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Add closure")}</button>
+              <div style={{ fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
+                <Info size={11} /> {t("Closed days are taken off the attendance roster automatically.")}
+              </div>
+            </div>
           </Card>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-            <Card title={t("Add an additional closure")} icon={Plus}>
-              <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                  <Field label={t("Start date")}><input type="date" value={form.start} onChange={(e) => setForm({ ...form, start: e.target.value })} style={inputStyle} /></Field>
-                  <Field label={t("End date")}><input type="date" value={form.end} onChange={(e) => setForm({ ...form, end: e.target.value })} style={inputStyle} /></Field>
-                </div>
-                <Field label={t("Description")}><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={inputStyle} /></Field>
-                <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: C.inkSoft }}>
-                  <input type="checkbox" checked={form.notify} onChange={(e) => setForm({ ...form, notify: e.target.checked })} /> {t("Notify parents immediately")}
-                </label>
-                <button onClick={addClosure} style={{ padding: "10px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Add closure")}</button>
+          <Card title={t("Upcoming closures")} icon={CalendarDays} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{upcomingClosures.length}</span>}>
+            {upcomingClosures.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No closures coming up.")}</div>}
+            {upcomingClosures.map((c) => (
+              <Row key={c.id} left={<><b>{c.name}</b><span style={{ color: C.inkSoft }}>{c.dates}</span></>}
+                right={<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  {c.fromPacket && <Pill label={t("In enrollment packet")} fg={C.sky} bg={C.skyTint} />}
+                  {c.notified && !c.fromPacket && <Pill label={t("Families notified")} fg={C.teal} bg={C.tealTint} />}
+                  <button onClick={() => removeClosure(c.id)} title={t("Remove")} style={{ background: "none", border: "none", color: C.danger }}><Trash2 size={14} /></button>
+                </div>} />
+            ))}
+            {pastClosures.length > 0 && (
+              <div style={{ padding: "10px 18px", fontSize: 11.5, color: C.inkSoft }}>
+                {t("Past")}: {pastClosures.map((c) => `${c.name} (${c.dates})`).join(" · ")}
               </div>
-            </Card>
-
-            <Card title={t("Additional closures and exceptions")} icon={CalendarDays}>
-              {closures.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("None added yet.")}</div>}
-              {closures.map((c) => (
-                <Row key={c.id} left={<><b>{c.name}</b><span style={{ color: C.inkSoft }}>{c.dates}</span></>}
-                  right={<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                    {c.notified && <Pill label={t("Parents notified")} fg={C.teal} bg={C.tealTint} />}
-                    <button onClick={() => removeClosure(c.id)} style={{ background: "none", border: "none", color: C.danger }}><Trash2 size={14} /></button>
-                  </div>} />
-              ))}
-            </Card>
-          </div>
-        </>
+            )}
+          </Card>
+        </div>
       )}
 
       {tab === "events" && (
@@ -5619,8 +5719,8 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
                 <Select value={eventForm.type} onChange={(v) => setEventForm({ ...eventForm, type: v })} options={EVENT_TYPES} labels={EVENT_TYPES.map((ty) => t(ty))} />
               </Field>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                <Field label={t("Start date")}><input type="date" value={eventForm.start} onChange={(e) => setEventForm({ ...eventForm, start: e.target.value })} style={inputStyle} /></Field>
-                <Field label={t("End date (optional)")}><input type="date" value={eventForm.end} onChange={(e) => setEventForm({ ...eventForm, end: e.target.value })} style={inputStyle} /></Field>
+                <Field label={t("Start date")}><DateField value={eventForm.start} onChange={(v) => setEventForm({ ...eventForm, start: v || "" })} /></Field>
+                <Field label={t("End date (optional)")}><DateField value={eventForm.end} onChange={(v) => setEventForm({ ...eventForm, end: v || "" })} /></Field>
               </div>
               <Field label={t("Notes (optional)")}><input value={eventForm.notes} onChange={(e) => setEventForm({ ...eventForm, notes: e.target.value })} style={inputStyle} /></Field>
               <Field label={t("Ask families to bring (optional)")}><input value={eventForm.bringItems} onChange={(e) => setEventForm({ ...eventForm, bringItems: e.target.value })} placeholder={t("e.g. swimsuit, sunscreen, $5 for the trip")} style={inputStyle} /></Field>
@@ -7279,11 +7379,24 @@ function RefundsCard({ families, refunds, saveRefunds, onExport }) {
 function parseAnyDate(str) {
   if (!str) return null;
   if (str.includes("/")) { const [m, d, y] = str.split("/"); return new Date(Number(y), Number(m) - 1, Number(d)); }
+  const iso = String(str).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (iso) return new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]));
   return new Date(str);
 }
 // A date with no year in it (e.g. a flex-care request stored as "MM/DD") is
 // effectively an unresolvable date — never treat it as past just because parsing
 // failed. Only compares by calendar day, so "today" is never considered past.
+// Which closure (if any) covers a given MM/DD/YYYY date.
+function closureOn(closures, mdy) {
+  const day = parseAnyDate(mdy);
+  if (!day) return null;
+  return (closures || []).find((c) => {
+    const parts = String(c.dates || "").split(" – ");
+    const start = parseAnyDate(c.start || parts[0]);
+    const end = parseAnyDate(c.end || parts[parts.length - 1]);
+    return start && end && day >= start && day <= end;
+  }) || null;
+}
 function isPastDate(str) {
   const d = parseAnyDate(str);
   if (!d || isNaN(d.getTime())) return false;
