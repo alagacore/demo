@@ -1861,8 +1861,8 @@ function usePersistentState(key, initial) {
 // Real Firebase Authentication — this is a genuine account, not a demo mock. Once the
 // backend + Cloud SQL wiring exists, a successful sign-in here will load that specific
 // provider's real data instead of dropping into the shared demo dataset.
-function LoginScreen({ onAuthenticated, onBack }) {
-  const [mode, setMode] = useState("signin"); // "signin" | "signup"
+function LoginScreen({ onAuthenticated, onBack, initialMode = "signin" }) {
+  const [mode, setMode] = useState(initialMode); // "signin" | "signup"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -1906,7 +1906,7 @@ function LoginScreen({ onAuthenticated, onBack }) {
       const cred = mode === "signin"
         ? await signInWithEmailAndPassword(auth, email, password)
         : await createUserWithEmailAndPassword(auth, email, password);
-      onAuthenticated(cred.user);
+      onAuthenticated(cred.user, mode);
     } catch (err) {
       setError(friendlyError(err.code));
     } finally {
@@ -1973,6 +1973,9 @@ function LoginScreen({ onAuthenticated, onBack }) {
 }
 
 function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
+  // The cross-account admin view stays off the public page; open the site with
+  // ?admin=1 at the end of the URL to see it.
+  const showAdmin = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("admin");
   return (
     <div style={{
       minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "56px 32px",
@@ -2042,14 +2045,14 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.inkSoft, marginBottom: 12 }}>
           Other ways in
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 18 }}>
+        <div style={{ display: "grid", gridTemplateColumns: showAdmin ? "1fr 1fr 1fr" : "1fr 1fr", gap: 18 }}>
           <button onClick={onSignUp} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
             <div style={{ width: 46, height: 46, borderRadius: 12, background: C.skyTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <Rocket size={22} color={C.sky} />
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>I'm a new provider signing up</div>
-              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>Real sign-up flow into your own empty workspace.</div>
+              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>Create your account, then set up your own empty workspace.</div>
             </div>
             <ArrowRight size={16} color={C.sky} />
           </button>
@@ -2065,7 +2068,7 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
             <ArrowRight size={16} color={C.coral} />
           </button>
 
-          <button onClick={onAdmin} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
+          {showAdmin && <button onClick={onAdmin} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
             <div style={{ width: 46, height: 46, borderRadius: 12, background: "#F1EEE5", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <Building2 size={22} color={C.inkSoft} />
             </div>
@@ -2074,7 +2077,7 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
               <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>Cross-account view, for the Alaga team only.</div>
             </div>
             <ArrowRight size={16} color={C.inkSoft} />
-          </button>
+          </button>}
         </div>
       </div>
 
@@ -2094,15 +2097,16 @@ const CAPACITY_LIMITS = {
   [PROVIDER_TYPES[1]]: 14,
 };
 
-function OnboardingWizard({ onComplete, onBack }) {
+function OnboardingWizard({ onComplete, onBack, initialEmail = "" }) {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
-    businessName: "", contactName: "", email: "", city: "",
+    businessName: "", contactName: "", email: initialEmail, city: "",
     providerType: PROVIDER_TYPES[0], licenseNumber: "", capacity: 8,
     classrooms: [], hours: "7:00 AM – 6:00 PM", days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-    language: "English", languagesOffered: ["English"],
+    language: "English", languagesOffered: ["English"], subsidyPrograms: [],
   });
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const toggleProgram = (id) => setForm((f) => ({ ...f, subsidyPrograms: f.subsidyPrograms.includes(id) ? f.subsidyPrograms.filter((p) => p !== id) : [...f.subsidyPrograms, id] }));
   const toggleClassroom = (id) => setForm((f) => ({ ...f, classrooms: f.classrooms.includes(id) ? f.classrooms.filter((c) => c !== id) : [...f.classrooms, id] }));
   const toggleLanguageOffered = (lang) => setForm((f) => ({
     ...f,
@@ -2130,6 +2134,7 @@ function OnboardingWizard({ onComplete, onBack }) {
       languagesOffered: form.languagesOffered,
       contactName: form.contactName,
       email: form.email,
+      subsidyPrograms: form.subsidyPrograms,
     });
   };
 
@@ -2158,7 +2163,13 @@ function OnboardingWizard({ onComplete, onBack }) {
             <>
               <Field label="Business / provider name"><input value={form.businessName} onChange={(e) => set("businessName", e.target.value)} placeholder="e.g. Tita's Family Child Care" style={inputStyle} /></Field>
               <Field label="Your name"><input value={form.contactName} onChange={(e) => set("contactName", e.target.value)} placeholder="Your full name" style={inputStyle} /></Field>
-              <Field label="Email"><input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@example.com" style={inputStyle} /></Field>
+              {initialEmail ? (
+                <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
+                  <CheckCircle2 size={13} color={C.teal} /> Account created for <b style={{ color: C.ink }}>{initialEmail}</b>
+                </div>
+              ) : (
+                <Field label="Email"><input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@example.com" style={inputStyle} /></Field>
+              )}
               <Field label="City"><input value={form.city} onChange={(e) => set("city", e.target.value)} placeholder="e.g. Culver City, CA" style={inputStyle} /></Field>
             </>
           )}
@@ -2190,6 +2201,18 @@ function OnboardingWizard({ onComplete, onBack }) {
                       <input type="checkbox" checked={form.classrooms.includes(c.id)} onChange={() => toggleClassroom(c.id)} />
                       <b>{c.label}</b> <span style={{ color: C.inkSoft }}>· {c.range}</span>
                     </label>
+                  ))}
+                </div>
+              </Field>
+              <Field label="Subsidy programs you accept (skip if private-pay only)">
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {PROGRAMS.map((p) => (
+                    <button key={p.id} type="button" onClick={() => toggleProgram(p.id)} style={{
+                      padding: "7px 11px", borderRadius: 999, fontSize: 12.5, fontWeight: 600,
+                      border: `1px solid ${form.subsidyPrograms.includes(p.id) ? C.teal : C.line}`,
+                      background: form.subsidyPrograms.includes(p.id) ? C.tealTint : "#fff",
+                      color: form.subsidyPrograms.includes(p.id) ? C.tealDark : C.inkSoft,
+                    }}>{p.label}</button>
                   ))}
                 </div>
               </Field>
@@ -2257,6 +2280,7 @@ function OnboardingWizard({ onComplete, onBack }) {
                 <StatBlock label="Hours" value={`${form.hours} · ${form.days.length} days/week`} />
                 <StatBlock label="Languages offered" value={form.languagesOffered.join(", ") || "—"} />
               </div>
+              <StatBlock label="Subsidy programs" value={form.subsidyPrograms.map((id) => PROGRAMS.find((p) => p.id === id)?.label).join(", ") || "Private-pay only"} />
               <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
                 <CheckCircle2 size={13} color={C.teal} /> Everything here can be changed later in Settings and Calendar.
               </div>
@@ -2868,6 +2892,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
     providerType: initialProviderInfo.providerType || PROVIDER_TYPES[0], capacity: initialProviderInfo.capacity || 8,
     contactName: initialProviderInfo.contactName || "", email: initialProviderInfo.email || "",
     languagesOffered: initialProviderInfo.languagesOffered || ["English"],
+    subsidyPrograms: initialProviderInfo.subsidyPrograms || [],
   });
   const baseFamilies = isEmpty ? [] : FAMILIES;
   const baseProspects = isEmpty ? [] : PROSPECTIVE_FAMILIES_DEFAULT;
@@ -3140,6 +3165,8 @@ export default function AlagaMockup() {
   const [startInParent, setStartInParent] = useState(false);
   const [providerInfo, setProviderInfo] = useState(PROVIDER);
   const [onboardingData, setOnboardingData] = useState(null);
+  const [authMode, setAuthMode] = useState("signin");
+  const [signupEmail, setSignupEmail] = useState("");
 
   const registerWithAdmin = async (info) => {
     try {
@@ -3173,18 +3200,23 @@ export default function AlagaMockup() {
   if (entry === "landing") {
     return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><LandingChooser
       onDemo={(demoTier, isMeeting) => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier(demoTier); setMeetingMode(!!isMeeting); setStartInParent(false); setEntry("workspace"); }}
-      onSignUp={() => setEntry("wizard")}
+      onSignUp={() => { setAuthMode("signup"); setEntry("auth"); }}
       onAdmin={() => setEntry("admin")}
-      onSignIn={() => setEntry("auth")}
+      onSignIn={() => { setAuthMode("signin"); setEntry("auth"); }}
       onParentDemo={() => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier("extended"); setMeetingMode(false); setStartInParent(true); setEntry("workspace"); }}
     /></LanguageContext.Provider>;
   }
   if (entry === "auth") {
-    // Real Firebase-authenticated sign-in. Until the backend + Cloud SQL wiring exists,
-    // a successful login drops into the same populated demo workspace as "Explore the
-    // demo" — the account itself is real, the data behind it isn't wired up yet.
+    // Real Firebase accounts. A brand-new account goes straight into the setup
+    // wizard. Signing in to an existing account drops into the populated demo
+    // workspace until the backend + Cloud SQL wiring can load each provider's own data.
     return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><LoginScreen
-      onAuthenticated={() => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier(null); setMeetingMode(false); setEntry("workspace"); }}
+      key={authMode}
+      initialMode={authMode}
+      onAuthenticated={(user, mode) => {
+        if (mode === "signup") { setSignupEmail(user?.email || ""); setEntry("wizard"); return; }
+        setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier(null); setMeetingMode(false); setEntry("workspace");
+      }}
       onBack={() => setEntry("landing")}
     /></LanguageContext.Provider>;
   }
@@ -3193,6 +3225,7 @@ export default function AlagaMockup() {
   }
   if (entry === "wizard") {
     return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><OnboardingWizard
+      initialEmail={signupEmail}
       onComplete={(info) => { setProviderInfo(info); setOnboardingData(info); registerWithAdmin(info); setIsEmptyWorkspace(true); setForcedTier(null); setMeetingMode(false); setEntry("workspace"); }}
       onBack={() => setEntry("landing")}
     /></LanguageContext.Provider>;
