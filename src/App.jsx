@@ -822,6 +822,15 @@ const T = {
   "Tour": { es: "Visita", tl: "Tour", zh: "参观", vi: "Tham quan", ko: "견학" },
   "waiting since": { es: "esperando desde", tl: "naghihintay mula", zh: "等待自", vi: "chờ từ", ko: "대기 시작일" },
   "To add a family, open them in Tours and set their stage to Waitlist. Families are listed in the order they joined.": { es: "Para agregar una familia, ábrala en Visitas y cambie su etapa a Lista de espera. Las familias aparecen en el orden en que se unieron.", tl: "Para magdagdag ng pamilya, buksan sila sa Tours at itakda ang stage sa Waitlist. Nakalista ang mga pamilya ayon sa pagkakasunod ng pagsali.", zh: "要添加家庭，请在参观中打开该家庭并将阶段设为候补名单。家庭按加入顺序排列。", vi: "Để thêm gia đình, mở gia đình trong Tham quan và đặt giai đoạn là Danh sách chờ. Các gia đình được xếp theo thứ tự tham gia.", ko: "가족을 추가하려면 견학에서 해당 가족을 열고 단계를 대기자 명단으로 설정하세요. 가족은 등록 순서대로 표시됩니다." },
+  "Last day of care": { es: "Último día de cuidado", tl: "Huling araw ng pag-aalaga", zh: "最后托育日", vi: "Ngày chăm sóc cuối cùng", ko: "마지막 돌봄일" },
+  "Undo": { es: "Deshacer", tl: "I-undo", zh: "撤销", vi: "Hoàn tác", ko: "실행 취소" },
+  "Change how tuition is split": { es: "Cambiar cómo se divide la colegiatura", tl: "Baguhin kung paano hinahati ang tuition", zh: "更改学费分摊方式", vi: "Thay đổi cách chia học phí", ko: "수업료 분할 방식 변경" },
+  "Split tuition between guardians": { es: "Dividir la colegiatura entre tutores", tl: "Hatiin ang tuition sa mga tagapag-alaga", zh: "在监护人之间分摊学费", vi: "Chia học phí giữa những người giám hộ", ko: "보호자 간 수업료 분할" },
+  "Paper copy on file": { es: "Copia en papel archivada", tl: "May papel na kopya sa file", zh: "已存纸质副本", vi: "Đã có bản giấy lưu trữ", ko: "종이 사본 보관 중" },
+  "Mark on file": { es: "Marcar como archivado", tl: "Markahan na nasa file", zh: "标记为已存档", vi: "Đánh dấu đã có", ko: "보관됨으로 표시" },
+  "Deenroll": { es: "Dar de baja", tl: "I-deenroll", zh: "退托", vi: "Rút khỏi", ko: "퇴소" },
+  "They stay on your roster through their last day, then move to Deenrolled. Their record is kept.": { es: "Permanecen en su lista hasta su último día y luego pasan a Dados de baja. Su expediente se conserva.", tl: "Mananatili sila sa roster hanggang sa huling araw, saka lilipat sa Deenrolled. Itinatago ang kanilang rekord.", zh: "孩子会保留在名单上直到最后一天，之后移至已退托。其档案会被保留。", vi: "Trẻ vẫn ở trong danh sách đến ngày cuối, sau đó chuyển sang Đã rút. Hồ sơ được giữ lại.", ko: "마지막 날까지 명단에 남은 후 퇴소 목록으로 이동합니다. 기록은 보관됩니다." },
+  "Confirm deenrollment": { es: "Confirmar baja", tl: "Kumpirmahin ang deenrollment", zh: "确认退托", vi: "Xác nhận rút", ko: "퇴소 확인" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -3143,6 +3152,15 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
       return false;
     }
   }, [overrides, addedFamilies, saveAddedFamilies]);
+  // leftDate = null undoes a withdrawal and removes its departure entry.
+  const withdrawChild = useCallback(async (child, leftDate, reason) => {
+    if (!leftDate) {
+      saveAlumni(alumni.filter((a) => a.familyId !== child.id));
+      return saveOverride(child.id, { departedOn: null, departureReason: null });
+    }
+    addDeparture({ name: child.child, classroom: child.classroom, enrollDate: child.enrollDate, leftDate, reason, familyId: child.id });
+    return saveOverride(child.id, { departedOn: leftDate, departureReason: reason });
+  }, [alumni, saveAlumni, addDeparture, saveOverride]);
 
   const saveCompDoc = useCallback(async (docId, fields) => {
     const merged = { ...(compOverrides[docId] || {}), ...fields };
@@ -3185,7 +3203,9 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
     saveStaff(staff.filter((s) => s.id !== id));
   }, [staff, saveStaff]);
 
-  const families = [...baseFamilies, ...addedFamilies].map((f) => mergeFam(f, overrides));
+  // A withdrawn child stays on the roster through their last day, then moves to Deenrolled.
+  const families = [...baseFamilies, ...addedFamilies].map((f) => mergeFam(f, overrides))
+    .filter((f) => !(f.departedOn && daysUntil(f.departedOn) < 0));
   const subsidizedFamsForBadge = families.filter((f) => f.subsidized);
   const expiringCount = subsidizedFamsForBadge.filter((f) => f.status !== "active" && !dismissedNotices.includes(f.id)).length;
   const unreadMessagesCount = threads.filter((th) => th.unread).length;
@@ -3246,7 +3266,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
             <div style={{ flex: 1, overflowY: "auto", padding: "28px 32px 60px" }}>
               {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
-              {screen === "families" && <Families families={families} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
+              {screen === "families" && <Families families={families} onWithdraw={withdrawChild} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
               {screen === "bookings" && <Bookings families={families} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
               {screen === "staff" && <StaffScreen staff={staff} families={families} updateStaffMember={updateStaffMember} addStaffMember={addStaffMember} removeStaffMember={removeStaffMember} />}
               {screen === "calendar" && <CalendarScreen schedule={weeklySchedule} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} families={families} threads={threads} saveThreads={saveThreads} />}
@@ -3962,7 +3982,7 @@ function CheckIn({ families, status, log, setChildStatus }) {
 }
 
 /* --------------------------------- families ------------------------------------ */
-function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHousehold: openHouseholdProp, setOpenHousehold: setOpenHouseholdProp, tuitionRates, alumni = [] }) {
+function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHousehold: openHouseholdProp, setOpenHousehold: setOpenHouseholdProp, tuitionRates, alumni = [], onWithdraw, openTuition }) {
   const t = useT();
   const [openHouseholdLocal, setOpenHouseholdLocal] = useState(null);
   // Support both a parent-controlled open household (used when the search bar or
@@ -4083,7 +4103,7 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
           </div>
         )}
         {households.map((h) => {
-          const anyAttention = h.children.some((c) => c.subsidized && c.status !== "active");
+          const anyAttention = h.children.some((c) => (c.subsidized && c.status !== "active") || defaultChildDocs(c).some((d) => d.status === "missing"));
           const anySplit = h.children.some((c) => c.copaySplit);
           const anySiblingDiscount = h.children.some((c) => effectiveTuition(c, h.children, tuitionRates).discountApplied);
           return (
@@ -4104,12 +4124,12 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
         })}
       </Card>
       )}
-      {open && <HouseholdDrawer household={open} onClose={() => setOpenHousehold(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} tuitionRates={tuitionRates} />}
+      {open && <HouseholdDrawer household={open} onClose={() => setOpenHousehold(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} tuitionRates={tuitionRates} onWithdraw={onWithdraw} openTuition={openTuition} />}
     </>
   );
 }
 
-function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, tuitionRates }) {
+function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, tuitionRates, onWithdraw, openTuition }) {
   const t = useT();
   const [openChildId, setOpenChildId] = useState(null);
   const [editing, setEditing] = useState(false);
@@ -4212,7 +4232,7 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
               <>
                 {parents.map((p, i) => (
                   <div key={i} style={{ padding: "9px 0", borderBottom: i < parents.length - 1 ? `1px solid ${C.line}` : "none" }}>
-                    <div style={{ fontSize: 13, fontWeight: 600 }}>{p.name} <span style={{ fontWeight: 400, color: C.inkSoft }}>· {p.relationship}</span></div>
+                    <div style={{ fontSize: 13, fontWeight: 600 }}>{p.name}{p.relationship && <span style={{ fontWeight: 400, color: C.inkSoft }}> · {t(p.relationship)}</span>}</div>
                     <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 3, display: "flex", flexDirection: "column", gap: 2 }}>
                       {p.phone && <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Phone size={12} /> {p.phone}</span>}
                       {p.email && <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Mail size={12} /> {p.email}</span>}
@@ -4226,7 +4246,11 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
                   <div key={i} style={{ border: `1px solid ${C.line}`, borderRadius: 10, padding: 10, display: "flex", flexDirection: "column", gap: 6 }}>
                     <div style={{ display: "flex", gap: 6 }}>
                       <input value={p.name} onChange={(e) => updateParent(i, "name", e.target.value)} placeholder={t("Name")} style={inputStyle} />
-                      <input value={p.relationship} onChange={(e) => updateParent(i, "relationship", e.target.value)} placeholder={t("Relationship")} style={{ ...inputStyle, maxWidth: 120 }} />
+                      <div style={{ maxWidth: 150, flex: 1 }}>
+                        <Select value={p.relationship || ""} onChange={(v) => updateParent(i, "relationship", v)}
+                          options={["", ...Array.from(new Set([...GUARDIAN_RELATIONSHIPS, p.relationship].filter(Boolean)))]}
+                          labels={[t("Relationship"), ...Array.from(new Set([...GUARDIAN_RELATIONSHIPS, p.relationship].filter(Boolean))).map((r) => t(r))]} />
+                      </div>
                     </div>
                     <div style={{ display: "flex", gap: 6 }}>
                       <input value={p.phone} onChange={(e) => updateParent(i, "phone", e.target.value)} placeholder={t("Phone")} style={inputStyle} />
@@ -4250,7 +4274,7 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
             {!editing ? (
               <div style={{ fontSize: 13 }}>
                 <div style={{ fontWeight: 600 }}>{ec.name}{ec.relationship && <span style={{ fontWeight: 400, color: C.inkSoft }}> · {ec.relationship}</span>}</div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3, color: C.inkSoft, fontSize: 12 }}><Phone size={12} /> {ec.phone}</div>
+                {ec.phone && <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3, color: C.inkSoft, fontSize: 12 }}><Phone size={12} /> {ec.phone}</div>}
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -4277,13 +4301,39 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
           )}
         </div>
       </div>
-      {openChild && <ChildDrawer child={openChild} onClose={() => setOpenChildId(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} tuitionRates={tuitionRates} families={household.children} />}
+      {openChild && <ChildDrawer child={openChild} onClose={() => setOpenChildId(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} tuitionRates={tuitionRates} families={household.children} onWithdraw={onWithdraw} openTuition={openTuition} parents={household.parents} />}
     </div>
   );
 }
 
-function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRates, families }) {
+function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRates, families, onWithdraw, openTuition, parents = [] }) {
   const t = useT();
+  const [editingBasics, setEditingBasics] = useState(false);
+  const [basics, setBasics] = useState({ child: child.child, age: child.age, classroom: child.classroom, enrollDate: child.enrollDate });
+  const [withdrawing, setWithdrawing] = useState(false);
+  const [withdrawForm, setWithdrawForm] = useState({ leftDate: todayMDY(), reason: DEPARTURE_REASONS[0].id });
+  const saveBasics = async () => {
+    const fields = { child: basics.child.trim() || child.child, age: basics.age, enrollDate: basics.enrollDate || child.enrollDate };
+    if (basics.classroom !== child.classroom) {
+      fields.classroom = basics.classroom;
+      fields.classroomHistory = [{ from: child.classroom, to: basics.classroom, date: todayMDY(), time: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }), reason: "Updated in family record" }, ...(child.classroomHistory || [])];
+    }
+    await onSave(child.id, fields);
+    setEditingBasics(false);
+  };
+  const confirmWithdraw = async () => {
+    if (!onWithdraw || !withdrawForm.leftDate) return;
+    await onWithdraw(child, withdrawForm.leftDate, withdrawForm.reason);
+    setWithdrawing(false);
+    if (daysUntil(withdrawForm.leftDate) < 0) onClose();
+  };
+  // Many home providers keep paper copies; this records that a document is on
+  // file without requiring a scan.
+  const markOnFile = (docId) => {
+    const next = docs.map((d) => (d.id === docId ? { ...d, status: "submitted", date: todayMDY(), fileName: d.fileName || "Paper copy on file" } : d));
+    setDocs(next);
+    onSave(child.id, { documents: next });
+  };
   const [editingSession, setEditingSession] = useState(false);
   const [sessionsApproved, setSessionsApproved] = useState(child.sessionsApproved);
   const [sessionLength, setSessionLength] = useState(child.sessionLength);
@@ -4365,6 +4415,35 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
         </div>
 
         <div style={{ flex: 1, overflowY: "auto", padding: "18px 22px 26px", display: "flex", flexDirection: "column", gap: 20 }}>
+          {child.departedOn && (
+            <div style={{ padding: "10px 12px", borderRadius: 10, background: C.amberTint, color: C.tealDark, fontSize: 12.5, display: "flex", alignItems: "center", gap: 7 }}>
+              <CalendarDays size={13} /> {t("Last day of care")}: <b>{child.departedOn}</b>
+              <button onClick={() => (onWithdraw ? onWithdraw(child, null) : onSave(child.id, { departedOn: null, departureReason: null }))} style={{ marginLeft: "auto", background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 700 }}>{t("Undo")}</button>
+            </div>
+          )}
+          <Section title={t("Details")} icon={Users}
+            right={!editingBasics && <button onClick={() => setEditingBasics(true)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 700 }}><Pencil size={12} /> {t("Edit")}</button>}>
+            {!editingBasics ? (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <StatBlock label={t("Age group")} value={classroomLabelWithRange(child.classroom)} />
+                <StatBlock label={t("Start date")} value={child.enrollDate} />
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <Field label={t("Child's name")}><input value={basics.child} onChange={(e) => setBasics({ ...basics, child: e.target.value })} style={inputStyle} /></Field>
+                <div style={{ display: "grid", gridTemplateColumns: "0.6fr 1.4fr", gap: 10 }}>
+                  <Field label={t("Age")}><input value={basics.age} onChange={(e) => setBasics({ ...basics, age: e.target.value })} style={inputStyle} /></Field>
+                  <Field label={t("Age group")}><Select value={basics.classroom} onChange={(v) => setBasics({ ...basics, classroom: v })} options={CLASSROOMS.map((c) => c.id)} labels={CLASSROOMS.map((c) => classroomLabelWithRange(c.id))} /></Field>
+                </div>
+                <Field label={t("Start date")}><DateField value={basics.enrollDate} onChange={(v) => setBasics({ ...basics, enrollDate: v || "" })} allowClear={false} /></Field>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button onClick={() => { setEditingBasics(false); setBasics({ child: child.child, age: child.age, classroom: child.classroom, enrollDate: child.enrollDate }); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Cancel")}</button>
+                  <button onClick={saveBasics} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Save changes")}</button>
+                </div>
+              </div>
+            )}
+          </Section>
+
           <Section title={t("Session")} icon={CalendarClock}
             right={!editingSession && <button onClick={() => setEditingSession(true)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 700 }}><Pencil size={12} /> {t("Edit")}</button>}>
             {!editingSession ? (
@@ -4438,6 +4517,11 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
                     ))}
                   </div>
                 )}
+                {openTuition && (
+                  <button onClick={openTuition} style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", padding: 0, color: C.teal, fontSize: 12, fontWeight: 700 }}>
+                    <Split size={12} /> {child.copaySplit ? t("Change how tuition is split") : t("Split tuition between guardians")} <ChevronRight size={12} />
+                  </button>
+                )}
               </>
             )}
           </Section>
@@ -4494,7 +4578,8 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
                     (missing.length ? `\n\nStill needed: ${missing.join(", ")}.` : "\n\nEverything is on file — thank you!") +
                     `\n\nPlease reply to this email with any outstanding documents attached.\n\nThank you,`
                   );
-                  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+                  const to = parents.map((p) => p.email).filter(Boolean).join(",");
+                  window.location.href = `mailto:${encodeURIComponent(to)}?subject=${subject}&body=${body}`;
                 }} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 11.5, fontWeight: 700 }}>
                   <Send size={12} /> {t("Email packet")}
                 </button>
@@ -4520,7 +4605,10 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
                       {d.status === "submitted" ? (
                         <IconBtn icon={Eye} title={t("View")} onClick={() => setExpandedDocs((e) => ({ ...e, [d.id]: !e[d.id] }))} />
                       ) : (
-                        <IconBtn icon={Upload} title={t("Upload")} accent onClick={() => triggerDocUpload(d.id)} />
+                        <>
+                          <button onClick={() => markOnFile(d.id)} title={t("Paper copy on file")} style={{ padding: "4px 8px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11, fontWeight: 600, color: C.inkSoft }}>{t("Mark on file")}</button>
+                          <IconBtn icon={Upload} title={t("Upload")} accent onClick={() => triggerDocUpload(d.id)} />
+                        </>
                       )}
                     </div>
                   </div>
@@ -4588,7 +4676,27 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
         </div>
 
         <div style={{ padding: "14px 22px", borderTop: `1px solid ${C.line}` }}>
-          <button onClick={onClose} style={{ width: "100%", padding: "11px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13.5 }}>{t("Close")}</button>
+          {withdrawing ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ fontSize: 12.5, fontWeight: 700, color: C.ink }}>{t("Deenroll")} {child.child}</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                <Field label={t("Last day of care")}><DateField value={withdrawForm.leftDate} onChange={(v) => setWithdrawForm({ ...withdrawForm, leftDate: v || "" })} allowClear={false} /></Field>
+                <Field label={t("Reason")}><Select value={withdrawForm.reason} onChange={(v) => setWithdrawForm({ ...withdrawForm, reason: v })} options={DEPARTURE_REASONS.map((r) => r.id)} labels={DEPARTURE_REASONS.map((r) => t(r.label))} /></Field>
+              </div>
+              <div style={{ fontSize: 11.5, color: C.inkSoft }}>{t("They stay on your roster through their last day, then move to Deenrolled. Their record is kept.")}</div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={() => setWithdrawing(false)} style={{ flex: 1, padding: "10px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Cancel")}</button>
+                <button onClick={confirmWithdraw} style={{ flex: 1, padding: "10px 0", borderRadius: 10, border: "none", background: C.danger, color: "#fff", fontWeight: 700, fontSize: 13 }}>{t("Confirm deenrollment")}</button>
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={onClose} style={{ flex: 2, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13.5 }}>{t("Close")}</button>
+              {onWithdraw && !child.departedOn && (
+                <button onClick={() => setWithdrawing(true)} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.dangerTint}`, background: C.dangerTint, color: C.danger, fontWeight: 600, fontSize: 13 }}>{t("Deenroll")}</button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
