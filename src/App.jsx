@@ -748,7 +748,26 @@ const FORM_META = {
   pending: { label: "Pending", icon: Clock, color: C.amber },
   missing: { label: "Missing", icon: XCircle, color: C.danger },
   "not-due": { label: "Not yet due", icon: Circle, color: C.inkSoft },
+  expiring: { label: "Renew soon", icon: Clock, color: C.amber },
+  expired: { label: "Expired", icon: XCircle, color: C.danger },
 };
+// A document that's on file can still need renewing: within the warning
+// window it shows "Renew soon", past its date "Expired".
+function docEffectiveStatus(d, warnDays = 60) {
+  if (d.status !== "submitted" || !d.expiresOn) return d.status;
+  const left = daysUntil(d.expiresOn);
+  if (left < 0) return "expired";
+  if (left <= warnDays) return "expiring";
+  return "submitted";
+}
+// Older sample entries say "renews 03/2027" — read that as the end of that month.
+function expiryFromText(text) {
+  const m = String(text || "").match(/renews (\d{2})\/(\d{4})/i);
+  if (!m) return "";
+  const last = new Date(Number(m[2]), Number(m[1]), 0);
+  return `${m[1]}/${pad2(last.getDate())}/${m[2]}`;
+}
+const CDSS_FORMS_URL = "https://cdss.ca.gov/inforesources/forms-brochures/forms-alphabetic-list/i-l";
 function groupByClassroom(families) {
   return CLASSROOMS.map((c) => ({ classroom: c, families: families.filter((f) => f.classroom === c.id) }))
     .filter((g) => g.families.length > 0);
@@ -1004,6 +1023,41 @@ const T = {
   "Scheduled days": { es: "Días programados", tl: "Mga naka-schedule na araw", zh: "排定日", vi: "Ngày theo lịch", ko: "예정일" },
   "Whole month": { es: "Todo el mes", tl: "Buong buwan", zh: "整月", vi: "Cả tháng", ko: "한 달 전체" },
   "Save and print": { es: "Guardar e imprimir", tl: "I-save at i-print", zh: "保存并打印", vi: "Lưu và in", ko: "저장 후 인쇄" },
+  "Add your renewal date": { es: "Agrega tu fecha de renovación", tl: "Idagdag ang petsa ng renewal", zh: "添加续期日期", vi: "Thêm ngày gia hạn", ko: "갱신 날짜 추가" },
+  "Renews in": { es: "Se renueva en", tl: "Magre-renew sa loob ng", zh: "续期剩余", vi: "Gia hạn sau", ko: "갱신까지" },
+  "days": { es: "días", tl: "araw", zh: "天", vi: "ngày", ko: "일" },
+  "Current — renews": { es: "Vigente — se renueva", tl: "Kasalukuyan — magre-renew", zh: "有效 — 续期日", vi: "Còn hiệu lực — gia hạn", ko: "유효 — 갱신일" },
+  "License renewal date": { es: "Fecha de renovación de licencia", tl: "Petsa ng renewal ng lisensya", zh: "执照续期日期", vi: "Ngày gia hạn giấy phép", ko: "면허 갱신 날짜" },
+  "Last inspection date": { es: "Fecha de la última inspección", tl: "Petsa ng huling inspeksyon", zh: "上次检查日期", vi: "Ngày kiểm tra gần nhất", ko: "최근 점검 날짜" },
+  "Inspection result": { es: "Resultado de la inspección", tl: "Resulta ng inspeksyon", zh: "检查结果", vi: "Kết quả kiểm tra", ko: "점검 결과" },
+  "e.g. No citations": { es: "p. ej. Sin citaciones", tl: "hal. Walang citation", zh: "例如：无违规", vi: "vd: Không có vi phạm", ko: "예: 지적 사항 없음" },
+  "Citations / corrections": { es: "Citaciones / correcciones", tl: "Mga citation / pagwawasto", zh: "违规 / 整改", vi: "Vi phạm / khắc phục", ko: "지적 / 시정" },
+  "Citations / corrections (optional)": { es: "Citaciones / correcciones (opcional)", tl: "Mga citation / pagwawasto (opsyonal)", zh: "违规 / 整改（可选）", vi: "Vi phạm / khắc phục (tùy chọn)", ko: "지적 / 시정 (선택)" },
+  "What was cited and when it was corrected": { es: "Qué se citó y cuándo se corrigió", tl: "Ano ang na-cite at kailan naitama", zh: "违规内容及整改时间", vi: "Vi phạm gì và khắc phục khi nào", ko: "지적 내용과 시정 날짜" },
+  "Not recorded yet": { es: "Aún no registrado", tl: "Hindi pa naitala", zh: "尚未记录", vi: "Chưa ghi nhận", ko: "아직 기록 없음" },
+  "Renewal reminders start 60 days before": { es: "Los recordatorios empiezan 60 días antes", tl: "Nagsisimula ang paalala 60 araw bago", zh: "提前60天开始提醒", vi: "Nhắc trước 60 ngày", ko: "60일 전부터 알림" },
+  "renews / expires": { es: "se renueva / vence", tl: "magre-renew / mag-e-expire", zh: "续期 / 到期", vi: "gia hạn / hết hạn", ko: "갱신 / 만료" },
+  "Renews / expires on": { es: "Se renueva / vence el", tl: "Magre-renew / mag-e-expire sa", zh: "续期 / 到期日", vi: "Gia hạn / hết hạn ngày", ko: "갱신 / 만료일" },
+  "Edit dates and status": { es: "Editar fechas y estado", tl: "I-edit ang petsa at status", zh: "编辑日期和状态", vi: "Sửa ngày và trạng thái", ko: "날짜 및 상태 편집" },
+  "Official CDSS forms": { es: "Formularios oficiales de CDSS", tl: "Opisyal na CDSS forms", zh: "CDSS官方表格", vi: "Biểu mẫu chính thức CDSS", ko: "CDSS 공식 양식" },
+  "Open CDSS forms": { es: "Abrir formularios de CDSS", tl: "Buksan ang CDSS forms", zh: "打开CDSS表格", vi: "Mở biểu mẫu CDSS", ko: "CDSS 양식 열기" },
+  "Download the current version from the CDSS forms list, then upload the signed copy to the child's or staff member's record.": { es: "Descarga la versión actual de la lista de formularios de CDSS y luego sube la copia firmada al expediente del niño o del personal.", tl: "I-download ang kasalukuyang bersyon mula sa listahan ng CDSS forms, pagkatapos i-upload ang pinirmahang kopya sa record ng bata o staff.", zh: "从CDSS表格列表下载最新版本，然后将签署后的副本上传到儿童或员工记录中。", vi: "Tải phiên bản hiện hành từ danh sách biểu mẫu CDSS, sau đó tải bản đã ký lên hồ sơ của trẻ hoặc nhân viên.", ko: "CDSS 양식 목록에서 최신 버전을 내려받은 후, 서명된 사본을 아동 또는 직원 기록에 업로드하세요." },
+  "Use your own version of this form, then upload the signed copy to the child's record.": { es: "Usa tu propia versión de este formulario y luego sube la copia firmada al expediente del niño.", tl: "Gamitin ang sarili mong bersyon ng form na ito, pagkatapos i-upload ang pinirmahang kopya sa record ng bata.", zh: "使用您自己的表格版本，然后将签署后的副本上传到儿童记录中。", vi: "Dùng mẫu của riêng bạn, sau đó tải bản đã ký lên hồ sơ của trẻ.", ko: "자체 양식을 사용한 후, 서명된 사본을 아동 기록에 업로드하세요." },
+  "Time": { es: "Hora", tl: "Oras", zh: "时间", vi: "Giờ", ko: "시간" },
+  "Reported by": { es: "Reportado por", tl: "Iniulat ni", zh: "报告人", vi: "Người báo cáo", ko: "보고자" },
+  "Staff name": { es: "Nombre del personal", tl: "Pangalan ng staff", zh: "员工姓名", vi: "Tên nhân viên", ko: "직원 이름" },
+  "How — e.g. phone call at pickup, text": { es: "Cómo — p. ej. llamada, en la recogida, mensaje", tl: "Paano — hal. tawag, sa pagsundo, text", zh: "方式 — 例如：电话、接孩子时、短信", vi: "Cách — vd: gọi điện, lúc đón, nhắn tin", ko: "방법 — 예: 전화, 픽업 시, 문자" },
+  "Mark notified": { es: "Marcar como notificado", tl: "Markahan bilang naabisuhan", zh: "标记为已通知", vi: "Đánh dấu đã báo", ko: "통지 완료 표시" },
+  "No expiration": { es: "Sin vencimiento", tl: "Walang expiration", zh: "无到期日", vi: "Không hết hạn", ko: "만료 없음" },
+  "e.g. renewal filed, policy number": { es: "p. ej. renovación enviada, número de póliza", tl: "hal. naisumite ang renewal, policy number", zh: "例如：已提交续期、保单号", vi: "vd: đã nộp gia hạn, số hợp đồng", ko: "예: 갱신 제출, 보험 번호" },
+  "Alaga reminds you 60 days before the renewal date.": { es: "Alaga te recuerda 60 días antes de la fecha de renovación.", tl: "Paaalalahanan ka ng Alaga 60 araw bago ang renewal.", zh: "Alaga会在续期日前60天提醒您。", vi: "Alaga nhắc bạn 60 ngày trước ngày gia hạn.", ko: "Alaga가 갱신일 60일 전에 알려드립니다." },
+  "No file uploaded yet.": { es: "Aún no se ha subido ningún archivo.", tl: "Wala pang na-upload na file.", zh: "尚未上传文件。", vi: "Chưa tải tệp lên.", ko: "아직 업로드된 파일이 없습니다." },
+  "Renew by (optional)": { es: "Renovar antes de (opcional)", tl: "I-renew bago (opsyonal)", zh: "续期截止（可选）", vi: "Gia hạn trước (tùy chọn)", ko: "갱신 기한 (선택)" },
+  "renew by": { es: "renovar antes de", tl: "i-renew bago", zh: "续期截止", vi: "gia hạn trước", ko: "갱신 기한" },
+  "Others involved": { es: "Otras personas involucradas", tl: "Iba pang kasangkot", zh: "其他相关人员", vi: "Người liên quan khác", ko: "기타 관련자" },
+  "Parent not yet notified": { es: "Padre aún no notificado", tl: "Hindi pa naabisuhan ang magulang", zh: "尚未通知家长", vi: "Chưa báo phụ huynh", ko: "부모 미통지" },
+  "Parent notified": { es: "Padre notificado", tl: "Naabisuhan ang magulang", zh: "已通知家长", vi: "Đã báo phụ huynh", ko: "부모 통지 완료" },
+  "Incident history": { es: "Historial de incidentes", tl: "Kasaysayan ng insidente", zh: "事件记录", vi: "Lịch sử sự cố", ko: "사고 기록" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -3271,6 +3325,10 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const [prospects, saveProspects] = usePersistentState(`tours-pipeline${sfx}`, baseProspects);
   const [compOverrides, saveCompOverrides] = usePersistentState(`compliance-docs${sfx}`, {});
   const [incidents, saveIncidents] = usePersistentState(`incident-reports${sfx}`, []);
+  // The provider's own licensing record (renewal, last inspection). Sample values in the demo only.
+  const [licensing, saveLicensing] = usePersistentState(`licensing${sfx}`, isEmpty
+    ? { renewalDate: "", inspectionDate: "", inspectionResult: "", citations: "" }
+    : demoDates({ renewalDate: "03/31/2027", inspectionDate: "04/12/2026", inspectionResult: "No citations", citations: "" }));
   const [mandatedNotes, saveMandatedNotes] = usePersistentState(`mandated-reporting-notes${sfx}`, []);
   const [expenses, saveExpenses] = usePersistentState(`business-expenses${sfx}`, baseExpenses);
   const [budgetPlan, saveBudgetPlan] = usePersistentState(`budget-plan${sfx}`, BUDGET_PLAN_DEFAULT);
@@ -3400,7 +3458,11 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
     if (n.id === "waitlist") { const wc = prospects.filter((p) => p.stage === "Waitlist").length; return { ...n, badge: wc > 0 ? wc : undefined }; }
     return n;
   });
-  const compDocs = baseCompDocsRaw.map((d) => ({ ...d, ...(compOverrides[d.id] || {}) }));
+  const compDocs = baseCompDocsRaw.map((d) => {
+    const merged = { ...d, ...(compOverrides[d.id] || {}) };
+    const withExpiry = { ...merged, expiresOn: merged.expiresOn ?? expiryFromText(merged.date) };
+    return { ...withExpiry, displayStatus: docEffectiveStatus(withExpiry) };
+  });
   const openFam = families.find((f) => f.id === openFamId) || null;
   const langCode = LANG_CODES[language] || "en";
   const t = useCallback((s) => (langCode === "en" ? s : (T[s] && T[s][langCode]) || s), [langCode]);
@@ -3457,7 +3519,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
               {screen === "waitlist" && <WaitlistScreen prospects={prospects} updateProspect={updateProspect} removeProspect={removeProspect} logAccess={logAccess} families={families} providerInfo={providerInfo} startEnroll={(p) => setEnrollingProspectId(p.id)} />}
               {screen === "subsidy" && <Subsidy families={families} openFamId={openFamId} setOpenFamId={setOpenFamId} loaded={loaded} meetingMode={meetingMode} />}
               {screen === "payments" && <Finances careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} activeTab={financesTab} setActiveTab={setFinancesTab} />}
-              {screen === "compliance" && <Compliance docs={compDocs} onSave={saveCompDoc} families={families} provider={providerInfo} staff={staff} setScreen={setScreen} incidents={incidents} saveIncidents={saveIncidents} mandatedNotes={mandatedNotes} saveMandatedNotes={saveMandatedNotes} />}
+              {screen === "compliance" && <Compliance licensing={licensing} saveLicensing={saveLicensing} docs={compDocs} onSave={saveCompDoc} families={families} provider={providerInfo} staff={staff} setScreen={setScreen} incidents={incidents} saveIncidents={saveIncidents} mandatedNotes={mandatedNotes} saveMandatedNotes={saveMandatedNotes} />}
               {screen === "security" && <SecurityScreen accessLog={accessLog} isEmpty={isEmpty} />}
               {screen === "messages" && <Messages threads={threads} saveThreads={saveThreads} families={families} staff={staff} />}
               {screen === "analytics" && <Analytics families={families} expenses={expenses} prospects={prospects} staff={staff} alumni={alumni} addDeparture={addDeparture} refunds={refunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={setScreen} />}
@@ -3828,9 +3890,10 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
   const flexNeedingAttention = [...pendingFlex, ...unpaidFlex];
   // Paperwork that's pending or missing — the licensing documents for the
   // business, and each child's own file (immunizations, enrollment forms, etc.).
-  const docsNeedingAttention = compDocs.filter((d) => d.status !== "submitted");
+  const docsNeedingAttention = compDocs.filter((d) => (d.displayStatus || d.status) !== "submitted");
+  // Missing documents, plus ones on file that have expired or are due for renewal within 30 days.
   const childrenMissingDocs = families
-    .map((f) => ({ f, missing: defaultChildDocs(f).filter((d) => d.status === "missing").length }))
+    .map((f) => ({ f, missing: defaultChildDocs(f).filter((d) => d.status === "missing" || ["expired", "expiring"].includes(docEffectiveStatus(d, 30))).length }))
     .filter((x) => x.missing > 0);
   // Tuition still unpaid after this period's due date.
   const billingNow = reminderSettings ? currentBilling(reminderSettings) : null;
@@ -3937,7 +4000,7 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
               {docsNeedingAttention.map((d) => (
                 <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
                   <button onClick={() => setScreen("compliance")} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
-                    <Dot c={d.status === "missing" ? "#F2A28A" : "#F2C88A"} /><b style={{ fontSize: 13 }}>{t(d.name)}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {d.date || t(d.status)}</span>
+                    <Dot c={["missing", "expired"].includes(d.displayStatus) ? "#F2A28A" : "#F2C88A"} /><b style={{ fontSize: 13 }}>{t(d.name)}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {trForm(t, d.displayStatus || d.status).label}{d.expiresOn && ["expired", "expiring"].includes(d.displayStatus) ? ` · ${d.expiresOn}` : ""}</span>
                   </button>
                   <button onClick={() => setScreen("compliance")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
                     {t("Review")}
@@ -3950,7 +4013,7 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
               {childrenMissingDocs.map(({ f, missing }) => (
                 <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
                   <button onClick={() => goToFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
-                    <Dot c="#F2A28A" /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {missing} {t(missing === 1 ? "missing document" : "missing documents")}</span>
+                    <Dot c="#F2A28A" /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {missing} {t(missing === 1 ? "document to update" : "documents to update")}</span>
                   </button>
                   <button onClick={() => goToFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
                     {t("Review")}
@@ -4302,7 +4365,7 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
           </div>
         )}
         {households.map((h) => {
-          const anyAttention = h.children.some((c) => (c.subsidized && c.status !== "active") || defaultChildDocs(c).some((d) => d.status === "missing"));
+          const anyAttention = h.children.some((c) => (c.subsidized && c.status !== "active") || defaultChildDocs(c).some((d) => d.status === "missing" || ["expired", "expiring"].includes(docEffectiveStatus(d, 30))));
           const anySplit = h.children.some((c) => c.copaySplit);
           const anySiblingDiscount = h.children.some((c) => effectiveTuition(c, h.children, tuitionRates).discountApplied);
           return (
@@ -4816,7 +4879,7 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
             }>
             <input ref={docFileInputRef} type="file" accept="image/*,.pdf,.doc,.docx" onChange={handleDocFilePicked} style={{ display: "none" }} />
             {docs.map((d) => {
-              const meta = trForm(t, d.status);
+              const meta = trForm(t, docEffectiveStatus(d, 30));
               const name = CHILD_DOC_TEMPLATES.find((tpl) => tpl.id === d.id).name;
               const isOpen = expandedDocs[d.id];
               return (
@@ -4826,7 +4889,7 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
                       <meta.icon size={14} color={meta.color} style={{ flexShrink: 0 }} />
                       <div style={{ minWidth: 0 }}>
                         <div style={{ fontSize: 12.5, fontWeight: 500 }}>{name}</div>
-                        {d.date && <div style={{ fontSize: 10.5, color: C.inkSoft }}>{d.fileName ? `${d.fileName} · ` : ""}{d.date}</div>}
+                        {d.date && <div style={{ fontSize: 10.5, color: C.inkSoft }}>{d.fileName ? `${d.fileName} · ` : ""}{d.date}{d.expiresOn ? ` · ${t("renew by")} ${d.expiresOn}` : ""}</div>}
                       </div>
                     </button>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -4850,6 +4913,9 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
                         <FileText size={22} color={C.inkSoft} />
                         <div style={{ fontSize: 11.5, fontWeight: 600, textAlign: "center", maxWidth: 220 }}>{d.fileName || name}</div>
                       </div>
+                      <Field label={t("Renew by (optional)")}>
+                        <DateField value={d.expiresOn || ""} onChange={(v) => { const next = docs.map((x) => (x.id === d.id ? { ...x, expiresOn: v || "" } : x)); setDocs(next); onSave(child.id, { documents: next }); }} placeholder={t("e.g. when immunizations are next due")} />
+                      </Field>
                       <div style={{ display: "flex", gap: 8 }}>
                         {d.status === "submitted" && <IconBtn icon={Download} title={t("Download")} onClick={() => downloadCSV(`${(d.fileName || name).replace(/\s+/g, "-").toLowerCase()}-record.csv`, ["Document", "Status", "File on record", "Date"], [[name, trForm(t, d.status).label, d.fileName || "", d.date || ""]])} />}
                         <IconBtn icon={Upload} title={t("Replace file")} onClick={() => triggerDocUpload(d.id)} />
@@ -6313,7 +6379,8 @@ function printChildSheets(children, { parents = [], provider = {}, t = (x) => x,
           ${docs.map((d) => {
             const name = CHILD_DOC_TEMPLATES.find((tpl) => tpl.id === d.id)?.name || d.id;
             const on = d.status === "submitted";
-            return `<tr><td><span class="box">${on ? "&#10003;" : ""}</span>${escapeHTML(t(name))}</td><td>${escapeHTML(on ? t("On file") : t("Missing"))}</td><td>${escapeHTML(d.date || "")}</td></tr>`;
+            const st = docEffectiveStatus(d, 30);
+            return `<tr><td><span class="box">${on ? "&#10003;" : ""}</span>${escapeHTML(t(name))}</td><td>${escapeHTML(trForm(t, st).label)}</td><td>${escapeHTML(d.date || "")}${d.expiresOn ? ` · ${escapeHTML(t("renew by"))} ${escapeHTML(d.expiresOn)}` : ""}</td></tr>`;
           }).join("")}
         </table>
         <footer>${escapeHTML(t("Confidential — contains a child's personal information. Store securely."))}</footer>
@@ -6481,6 +6548,79 @@ function ReceiptDatesDialog({ family, payments, ctx, provider, title, onSave, on
       </div>
     </div>
   );
+}
+
+const PRINT_BASE_CSS = `
+  @page { size: letter; margin: 0.6in; }
+  body { font-family: Georgia, "Times New Roman", serif; color: #111; font-size: 10.5pt; margin: 0; }
+  header { display: flex; justify-content: space-between; border-bottom: 2px solid #111; padding-bottom: 8px; margin-bottom: 14px; }
+  .provider { font-weight: bold; font-size: 12pt; } .muted { color: #444; font-size: 9.5pt; } .right { text-align: right; }
+  .title { font-weight: bold; text-transform: uppercase; letter-spacing: 0.06em; font-size: 10pt; }
+  h2 { font-size: 10.5pt; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid #999; padding-bottom: 3px; margin: 16px 0 6px; }
+  table { width: 100%; border-collapse: collapse; } th, td { text-align: left; vertical-align: top; padding: 4px 6px; }
+  table.kv th { width: 32%; color: #444; font-weight: normal; }
+  table.grid th { font-size: 9pt; color: #444; border-bottom: 1px solid #999; } table.grid td { border-bottom: 1px solid #ddd; }
+  .flag { font-weight: bold; } .box { border: 1px solid #999; padding: 8px 10px; min-height: 40px; white-space: pre-wrap; }
+  .sign { display: flex; gap: 24px; margin-top: 28px; font-size: 9pt; color: #444; } .sign div { flex: 1; }
+  .line { display: block; border-bottom: 1px solid #111; height: 24px; margin-bottom: 3px; }
+  footer { margin-top: 18px; font-size: 8.5pt; color: #444; }`;
+const printHeader = (provider, title, sub) => `<header><div><div class="provider">${escapeHTML(provider.name || "")}</div><div class="muted">${escapeHTML([provider.lic, provider.city].filter(Boolean).join(" · "))}</div></div><div class="right"><div class="title">${escapeHTML(title)}</div><div class="muted">${escapeHTML(sub || "")}</div></div></header>`;
+
+// Printable incident report for the provider's file (and to share with the parent).
+function printIncidentReport(inc, { provider = {}, t = (x) => x } = {}) {
+  const kv = (k, v) => `<tr><th>${escapeHTML(k)}</th><td>${escapeHTML(v || "—")}</td></tr>`;
+  printHTML(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHTML(t("Incident report"))} — ${escapeHTML(inc.child)}</title><style>${PRINT_BASE_CSS}</style></head><body>
+    ${printHeader(provider, t("Incident report"), `${t("Printed")} ${todayMDY()}`)}
+    <table class="kv">
+      ${kv(t("Child"), inc.child)}
+      ${kv(t("Date and time"), `${inc.date} · ${inc.time}`)}
+      ${kv(t("Severity"), t(inc.severity))}
+      ${kv(t("Others involved"), inc.others)}
+      ${kv(t("Reported by"), inc.reportedBy)}
+    </table>
+    <h2>${escapeHTML(t("What happened"))}</h2><div class="box">${escapeHTML(inc.description)}</div>
+    <h2>${escapeHTML(t("Action taken"))}</h2><div class="box">${escapeHTML(inc.actionTaken)}</div>
+    <h2>${escapeHTML(t("Parent / guardian notified"))}</h2>
+    <table class="kv">${kv(t("Notified"), inc.parentNotified ? `${t("Yes")}${inc.notifiedAt ? ` — ${inc.notifiedAt}` : ""}${inc.notifiedHow ? ` (${inc.notifiedHow})` : ""}` : t("Not yet"))}</table>
+    <div class="sign"><div><span class="line"></span>${escapeHTML(t("Provider signature"))}</div><div><span class="line"></span>${escapeHTML(t("Parent / guardian signature"))}</div><div style="flex:0.5"><span class="line"></span>${escapeHTML(t("Date"))}</div></div>
+    <footer>${escapeHTML(t("This is the provider's own record. Incidents that meet CCLD's reporting threshold must also be reported on the official LIC 624."))}</footer>
+  </body></html>`);
+}
+
+// The licensing-visit packet: license and inspection, ratios, staff, facility
+// documents (with renewal dates) and each child's file, flagging what's missing.
+function printAuditPacket({ provider = {}, licensing = {}, docs = [], families = [], staff = [], ratio, t = (x) => x }) {
+  const kv = (k, v) => `<tr><th>${escapeHTML(k)}</th><td>${v}</td></tr>`;
+  const childRows = families.map((f) => {
+    const cdocs = defaultChildDocs(f);
+    const issues = cdocs.filter((d) => d.status !== "submitted" || ["expired", "expiring"].includes(docEffectiveStatus(d, 30)))
+      .map((d) => `${t(CHILD_DOC_TEMPLATES.find((x) => x.id === d.id)?.name || d.id)} (${trForm(t, docEffectiveStatus(d, 30)).label})`);
+    return `<tr><td>${escapeHTML(f.child)}</td><td>${escapeHTML(classroomOf(f.classroom)?.label || "")}</td><td>${escapeHTML(f.enrollDate)}</td><td class="${issues.length ? "flag" : ""}">${escapeHTML(issues.length ? issues.join("; ") : t("Complete"))}</td></tr>`;
+  }).join("");
+  printHTML(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHTML(t("Licensing visit packet"))}</title><style>${PRINT_BASE_CSS}</style></head><body>
+    ${printHeader(provider, t("Licensing visit packet"), `${t("Packet generated")}: ${todayMDY()}`)}
+    <h2>${escapeHTML(t("License & inspection"))}</h2>
+    <table class="kv">
+      ${kv(t("License"), escapeHTML(provider.lic || "—"))}
+      ${kv(t("Provider type"), escapeHTML(provider.providerType || "—"))}
+      ${kv(t("Licensed capacity"), escapeHTML(String(provider.capacity || "—")))}
+      ${kv(t("License renewal"), escapeHTML(licensing.renewalDate || "—"))}
+      ${kv(t("Last inspection"), escapeHTML([licensing.inspectionDate, licensing.inspectionResult].filter(Boolean).join(" — ") || "—"))}
+      ${licensing.citations ? kv(t("Citations / corrections"), escapeHTML(licensing.citations)) : ""}
+      ${kv(t("Children enrolled / qualified adults"), escapeHTML(`${families.length} / ${ratio.qualified} (${t("guidance suggests")} ${ratio.required})`))}
+    </table>
+    <h2>${escapeHTML(t("Staff"))}</h2>
+    <table class="grid"><tr><th>${escapeHTML(t("Name"))}</th><th>${escapeHTML(t("Role"))}</th><th>${escapeHTML(t("Certifications"))}</th></tr>
+      ${staff.filter((x) => x.status === "active").map((x) => { const miss = CERT_TEMPLATES.filter((c) => x.certs[c.id] !== "complete"); return `<tr><td>${escapeHTML(x.name)}</td><td>${escapeHTML(t(x.role))}</td><td class="${miss.length ? "flag" : ""}">${escapeHTML(miss.length ? `${t("Needed")}: ${miss.map((c) => t(c.name)).join(", ")}` : t("All current"))}</td></tr>`; }).join("") || `<tr><td colspan="3">—</td></tr>`}
+    </table>
+    <h2>${escapeHTML(t("Facility documents"))}</h2>
+    <table class="grid"><tr><th>${escapeHTML(t("Document"))}</th><th>${escapeHTML(t("Status"))}</th><th>${escapeHTML(t("Renews / expires"))}</th></tr>
+      ${docs.map((d) => `<tr><td>${escapeHTML(t(d.name))}</td><td class="${d.displayStatus !== "submitted" ? "flag" : ""}">${escapeHTML(trForm(t, d.displayStatus || d.status).label)}</td><td>${escapeHTML(d.expiresOn || d.date || "")}</td></tr>`).join("")}
+    </table>
+    <h2>${escapeHTML(t("Children's files"))}</h2>
+    <table class="grid"><tr><th>${escapeHTML(t("Child"))}</th><th>${escapeHTML(t("Age group"))}</th><th>${escapeHTML(t("Start date"))}</th><th>${escapeHTML(t("File status"))}</th></tr>${childRows}</table>
+    <footer>${escapeHTML(t("Confidential — contains children's personal information."))}</footer>
+  </body></html>`);
 }
 
 // Monthly sign-in / sign-out sheets, one page per child, for subsidy
@@ -8004,14 +8144,33 @@ function BusinessExpenses({ expenses, saveExpenses, incomeTotal, expenseTotal, o
 
 /* -------------------------------- compliance ------------------------------------ */
 const INCIDENT_SEVERITIES = ["Minor", "Moderate", "Serious — required CCLD notice"];
-function Compliance({ docs, onSave, families, provider, staff, setScreen, incidents, saveIncidents, mandatedNotes, saveMandatedNotes }) {
+function Compliance({ licensing = {}, saveLicensing, docs, onSave, families, provider, staff, setScreen, incidents, saveIncidents, mandatedNotes, saveMandatedNotes }) {
   const t = useT();
+  const [editingLic, setEditingLic] = useState(false);
+  const [lic, setLic] = useState(licensing);
+  const renewLeft = licensing.renewalDate ? daysUntil(licensing.renewalDate) : null;
+  const renewPill = renewLeft === null
+    ? { label: t("Add your renewal date"), fg: C.inkSoft, bg: "#F1EEE5" }
+    : renewLeft < 0 ? { label: `${t("Expired")} ${licensing.renewalDate}`, fg: C.danger, bg: C.dangerTint }
+    : renewLeft <= 60 ? { label: `${t("Renews in")} ${renewLeft} ${t("days")} · ${licensing.renewalDate}`, fg: C.amber, bg: C.amberTint }
+    : { label: `${t("Current — renews")} ${licensing.renewalDate}`, fg: C.teal, bg: C.tealTint };
+  // Facility documents: upload a scan, or mark a paper copy on file.
+  const facilityFileRef = React.useRef(null);
+  const [uploadingFacilityId, setUploadingFacilityId] = useState(null);
+  const pickFacilityFile = (id) => { setUploadingFacilityId(id); facilityFileRef.current && facilityFileRef.current.click(); };
+  const onFacilityFile = (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = "";
+    if (file && uploadingFacilityId) onSave(uploadingFacilityId, { status: "submitted", fileName: file.name, uploadedOn: todayMDY() });
+    setUploadingFacilityId(null);
+  };
   const [tab, setTab] = useState("licensing");
   const [openDoc, setOpenDoc] = useState(null);
   const [auditMode, setAuditMode] = useState(false);
   const [expandedForms, setExpandedForms] = useState({});
   const [openIncidentId, setOpenIncidentId] = useState(null);
-  const [incidentForm, setIncidentForm] = useState({ childId: families[0]?.id || "", others: "", description: "", severity: INCIDENT_SEVERITIES[0], actionTaken: "", parentNotified: false });
+  const blankIncident = () => ({ childId: families[0]?.id || "", others: "", description: "", severity: INCIDENT_SEVERITIES[0], actionTaken: "", parentNotified: false, notifiedHow: "", reportedBy: "", date: todayMDY(), time: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) });
+  const [incidentForm, setIncidentForm] = useState(blankIncident);
   const [noteText, setNoteText] = useState("");
   const required = requiredQualifiedAdults(families.length);
   const qualified = qualifiedStaffCount(staff);
@@ -8027,20 +8186,20 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
   ];
 
   const logIncident = () => {
-    const child = families.find((f) => f.id === Number(incidentForm.childId));
+    const child = families.find((f) => String(f.id) === String(incidentForm.childId));
     if (!child || !incidentForm.description.trim()) return;
-    const now = new Date();
     incidentSeq += 1;
+    const now = new Date().toLocaleString("en-US", { month: "2-digit", day: "2-digit", year: "numeric", hour: "numeric", minute: "2-digit" });
     saveIncidents([{
-      id: `inc${incidentSeq}`, child: child.child, others: incidentForm.others, description: incidentForm.description,
+      id: `inc${Date.now()}`, child: child.child, childId: child.id, others: incidentForm.others, description: incidentForm.description,
       severity: incidentForm.severity, actionTaken: incidentForm.actionTaken, parentNotified: incidentForm.parentNotified,
-      date: now.toLocaleDateString("en-US"), time: now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+      notifiedHow: incidentForm.notifiedHow, notifiedAt: incidentForm.parentNotified ? now : "", reportedBy: incidentForm.reportedBy,
+      date: incidentForm.date || todayMDY(), time: incidentForm.time,
     }, ...incidents]);
-    setIncidentForm({ childId: families[0]?.id || "", others: "", description: "", severity: INCIDENT_SEVERITIES[0], actionTaken: "", parentNotified: false });
+    setIncidentForm(blankIncident());
   };
-  const exportIncident = (inc) => downloadCSV(`alaga-incident-${inc.child.replace(/\s+/g, "-").toLowerCase()}-${inc.date.replace(/\//g, "-")}.csv`,
-    ["Child", "Date", "Time", "Severity", "Description", "Action taken", "Others involved", "Parent notified"],
-    [[inc.child, inc.date, inc.time, inc.severity, inc.description, inc.actionTaken, inc.others, inc.parentNotified ? "Yes" : "No"]]);
+  const markNotified = (inc) => saveIncidents(incidents.map((x) => (x.id === inc.id ? { ...x, parentNotified: true, notifiedAt: new Date().toLocaleString("en-US", { month: "2-digit", day: "2-digit", year: "numeric", hour: "numeric", minute: "2-digit" }) } : x)));
+  const exportIncident = (inc) => printIncidentReport(inc, { provider, t });
 
   const addNote = () => {
     if (!noteText.trim()) return;
@@ -8071,9 +8230,22 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
       </div>
 
       {tab === "licensing" && (
-        <Card title={t("CCLD licensing status")} icon={ClipboardCheck}>
-          <Row left={<b>{t("License renewal")}</b>} right={<Pill label={t("Current — renews 03/2027")} fg={C.teal} bg={C.tealTint} />} />
-          <Row left={<b>{t("Last inspection")}</b>} right={<span style={{ fontSize: 13, color: C.inkSoft }}>04/12/2026 — {t("no citations")}</span>} />
+        <Card title={t("CCLD licensing status")} icon={ClipboardCheck}
+          right={saveLicensing && <button onClick={async () => { if (editingLic) { await saveLicensing(lic); setEditingLic(false); } else { setLic(licensing); setEditingLic(true); } }} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{editingLic ? t("Save changes") : <><Pencil size={12} /> {t("Edit")}</>}</button>}>
+          {editingLic ? (
+            <div style={{ padding: "12px 18px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <Field label={t("License renewal date")}><DateField value={lic.renewalDate || ""} onChange={(v) => setLic({ ...lic, renewalDate: v || "" })} /></Field>
+              <Field label={t("Last inspection date")}><DateField value={lic.inspectionDate || ""} onChange={(v) => setLic({ ...lic, inspectionDate: v || "" })} /></Field>
+              <Field label={t("Inspection result")}><input value={lic.inspectionResult || ""} onChange={(e) => setLic({ ...lic, inspectionResult: e.target.value })} placeholder={t("e.g. No citations")} style={{ ...inputStyle, width: "100%" }} /></Field>
+              <Field label={t("Citations / corrections (optional)")}><input value={lic.citations || ""} onChange={(e) => setLic({ ...lic, citations: e.target.value })} placeholder={t("What was cited and when it was corrected")} style={{ ...inputStyle, width: "100%" }} /></Field>
+            </div>
+          ) : (
+            <>
+              <Row left={<b>{t("License renewal")}</b>} right={<Pill {...renewPill} />} />
+              <Row left={<b>{t("Last inspection")}</b>} right={<span style={{ fontSize: 13, color: C.inkSoft }}>{[licensing.inspectionDate, licensing.inspectionResult].filter(Boolean).join(" — ") || t("Not recorded yet")}</span>} />
+              {licensing.citations && <Row left={<b>{t("Citations / corrections")}</b>} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{licensing.citations}</span>} />}
+            </>
+          )}
           <Row left={<b>{t("Ratio compliance today")}</b>} right={<Pill label={withinRatio ? t("Within ratio") : t("Understaffed for current enrollment")} fg={withinRatio ? C.teal : C.danger} bg={withinRatio ? C.tealTint : C.dangerTint} />} />
           <Row left={<b>{t("Staff certifications")}</b>}
             right={<div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -8087,21 +8259,24 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
       )}
 
       {tab === "documents" && (
-        <Card title={t("Documents on file")} icon={FileText} right={<span style={{ fontSize: 12, color: C.inkSoft }}>{t("Copies stored for inspection & recert")}</span>}>
+        <Card title={t("Documents on file")} icon={FileText} right={<span style={{ fontSize: 12, color: C.inkSoft }}>{t("Renewal reminders start 60 days before")}</span>}>
+          <input ref={facilityFileRef} type="file" accept="image/*,.pdf,.doc,.docx" onChange={onFacilityFile} style={{ display: "none" }} />
           {docs.map((d) => {
-            const meta = trForm(t, d.status);
+            const meta = trForm(t, d.displayStatus || d.status);
             return (
               <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 18px", borderBottom: `1px solid ${C.line}` }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <d.icon size={16} color={C.teal} />
                   <div>
                     <div style={{ fontSize: 13.5, fontWeight: 500 }}>{d.name}</div>
-                    <div style={{ fontSize: 11.5, color: meta.color, fontWeight: 600 }}>{meta.label} · {d.date}</div>
+                    <div style={{ fontSize: 11.5, color: meta.color, fontWeight: 600 }}>{meta.label}{d.expiresOn ? ` · ${t("renews / expires")} ${d.expiresOn}` : d.date ? ` · ${d.date}` : ""}</div>
+                    {d.fileName && <div style={{ fontSize: 10.5, color: C.inkSoft }}>{d.fileName}{d.uploadedOn ? ` · ${d.uploadedOn}` : ""}</div>}
                   </div>
                 </div>
-                <div style={{ display: "flex", gap: 6 }}>
-                  <IconBtn icon={Eye} title={t("View")} onClick={() => setOpenDoc(d)} />
-                  <IconBtn icon={Download} title={t("Download")} />
+                <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                  {d.status !== "submitted" && <button onClick={() => onSave(d.id, { status: "submitted", fileName: d.fileName || "Paper copy on file", uploadedOn: todayMDY() })} style={{ padding: "4px 8px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11, fontWeight: 600, color: C.inkSoft }}>{t("Mark on file")}</button>}
+                  <IconBtn icon={Upload} title={t("Upload")} accent={d.status !== "submitted"} onClick={() => pickFacilityFile(d.id)} />
+                  <IconBtn icon={Pencil} title={t("Edit dates and status")} onClick={() => setOpenDoc(d)} />
                 </div>
               </div>
             );
@@ -8110,7 +8285,7 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
       )}
 
       {tab === "forms" && (
-        <Card title={t("Blank forms & templates")} icon={FileCheck} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Get the current official version from CDSS/CCLD before filing")}</span>}>
+        <Card title={t("Blank forms & templates")} icon={FileCheck} right={<a href={CDSS_FORMS_URL} target="_blank" rel="noreferrer" style={{ fontSize: 12, fontWeight: 700, color: C.teal }}>{t("Official CDSS forms")} ↗</a>}>
           {BLANK_FORMS.map((f) => {
             const isOpen = expandedForms[f.id];
             return (
@@ -8126,16 +8301,10 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
                 </button>
                 {isOpen && (
                   <div style={{ padding: "14px 18px", background: C.cream, borderBottom: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 10 }}>
-                    <div style={{
-                      minHeight: 160, background: "#fff", border: `1px dashed ${C.line}`, borderRadius: 10,
-                      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, color: C.inkSoft,
-                    }}>
-                      <FileText size={28} color={C.inkSoft} />
-                      <div style={{ fontSize: 12, fontWeight: 600, textAlign: "center", maxWidth: 240 }}>{f.name}</div>
-                    </div>
-                    <div style={{ display: "flex", gap: 8 }}>
-                      <IconBtn icon={Download} title={t("Download")} />
-                      <span style={{ fontSize: 11, color: C.inkSoft, alignSelf: "center" }}>{t("Blank template — confirm against the current CDSS/CCLD version before use.")}</span>
+                    <div style={{ fontSize: 11.5, color: C.inkSoft, lineHeight: 1.5 }}>
+                      {/LIC \d+/.test(f.name)
+                        ? <>{t("Download the current version from the CDSS forms list, then upload the signed copy to the child's or staff member's record.")} <a href={CDSS_FORMS_URL} target="_blank" rel="noreferrer" style={{ color: C.teal, fontWeight: 700 }}>{t("Open CDSS forms")} ↗</a></>
+                        : t("Use your own version of this form, then upload the signed copy to the child's record.")}
                     </div>
                   </div>
                 )}
@@ -8157,6 +8326,11 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
                   <Select value={incidentForm.severity} onChange={(v) => setIncidentForm({ ...incidentForm, severity: v })} options={INCIDENT_SEVERITIES} labels={INCIDENT_SEVERITIES.map((s) => t(s))} />
                 </Field>
               </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+                <Field label={t("Date")}><DateField value={incidentForm.date} onChange={(v) => setIncidentForm({ ...incidentForm, date: v || "" })} allowClear={false} /></Field>
+                <Field label={t("Time")}><input value={incidentForm.time} onChange={(e) => setIncidentForm({ ...incidentForm, time: e.target.value })} placeholder="10:15 AM" style={{ ...inputStyle, width: "100%" }} /></Field>
+                <Field label={t("Reported by")}><input value={incidentForm.reportedBy} onChange={(e) => setIncidentForm({ ...incidentForm, reportedBy: e.target.value })} placeholder={t("Staff name")} style={{ ...inputStyle, width: "100%" }} /></Field>
+              </div>
               <Field label={t("Others involved (optional)")}>
                 <input value={incidentForm.others} onChange={(e) => setIncidentForm({ ...incidentForm, others: e.target.value })} placeholder={t("Other children or staff present")} style={inputStyle} />
               </Field>
@@ -8171,6 +8345,9 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
               <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: C.inkSoft }}>
                 <input type="checkbox" checked={incidentForm.parentNotified} onChange={(e) => setIncidentForm({ ...incidentForm, parentNotified: e.target.checked })} /> {t("Parent/guardian has been notified")}
               </label>
+              {incidentForm.parentNotified && (
+                <input value={incidentForm.notifiedHow} onChange={(e) => setIncidentForm({ ...incidentForm, notifiedHow: e.target.value })} placeholder={t("How — e.g. phone call at pickup, text")} style={inputStyle} />
+              )}
               <button onClick={logIncident} style={{ padding: "10px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Log incident")}</button>
               <div style={{ fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "flex-start", gap: 6 }}>
                 <Info size={11} style={{ marginTop: 1, flexShrink: 0 }} />
@@ -8188,7 +8365,7 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
                 <div key={inc.id}>
                   <button onClick={() => setOpenIncidentId(isOpen ? null : inc.id)} style={{ width: "100%", textAlign: "left", background: "none", border: "none", borderRadius: 0, padding: 0 }}>
                     <Row
-                      left={<><Dot c={severityColor} /><b>{inc.child}</b><span style={{ color: C.inkSoft }}>{inc.severity}</span></>}
+                      left={<><Dot c={severityColor} /><b>{inc.child}</b><span style={{ color: C.inkSoft }}>{t(inc.severity)}</span></>}
                       right={<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <span style={{ fontSize: 11.5, color: C.inkSoft }}>{inc.date} · {inc.time}</span>
                         <ChevronRight size={14} color={C.inkSoft} style={{ transform: isOpen ? "rotate(90deg)" : "none", transition: "transform 0.15s" }} />
@@ -8199,10 +8376,12 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
                       <div><b>{t("What happened")}:</b> {inc.description}</div>
                       {inc.actionTaken && <div><b>{t("Action taken")}:</b> {inc.actionTaken}</div>}
                       {inc.others && <div><b>{t("Others involved")}:</b> {inc.others}</div>}
+                      {inc.reportedBy && <div><b>{t("Reported by")}:</b> {inc.reportedBy}</div>}
                       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        <Pill label={inc.parentNotified ? t("Parent notified") : t("Parent not yet notified")} fg={inc.parentNotified ? C.teal : C.amber} bg={inc.parentNotified ? C.tealTint : C.amberTint} />
+                        <Pill label={inc.parentNotified ? `${t("Parent notified")}${inc.notifiedAt ? ` · ${inc.notifiedAt}` : ""}` : t("Parent not yet notified")} fg={inc.parentNotified ? C.teal : C.amber} bg={inc.parentNotified ? C.tealTint : C.amberTint} />
+                        {!inc.parentNotified && <button onClick={() => markNotified(inc)} style={{ fontSize: 11.5, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("Mark notified")}</button>}
                         <button onClick={() => exportIncident(inc)} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>
-                          <Download size={12} /> {t("Export")}
+                          <Printer size={12} /> {t("Print")}
                         </button>
                       </div>
                     </div>
@@ -8248,12 +8427,12 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
       )}
 
       {openDoc && <DocPreview doc={docs.find((d) => d.id === openDoc.id) || openDoc} onClose={() => setOpenDoc(null)} onSave={onSave} t={t} />}
-      {auditMode && <AuditMode docs={docs} families={families} onClose={() => setAuditMode(false)} provider={provider} staff={staff} />}
+      {auditMode && <AuditMode licensing={licensing} docs={docs} families={families} onClose={() => setAuditMode(false)} provider={provider} staff={staff} />}
     </div>
   );
 }
 
-function AuditMode({ docs, families, onClose, provider, staff }) {
+function AuditMode({ licensing = {}, docs, families, onClose, provider, staff }) {
   const t = useT();
   const required = requiredQualifiedAdults(families.length);
   const qualified = qualifiedStaffCount(staff);
@@ -8265,7 +8444,7 @@ function AuditMode({ docs, families, onClose, provider, staff }) {
           <ClipboardCheck size={16} /> {t("Audit Mode")}
         </div>
         <div style={{ display: "flex", gap: 10 }}>
-          <button onClick={() => window.print()} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: "none", background: C.amber, color: "#fff", fontWeight: 700, fontSize: 12.5 }}>
+          <button onClick={() => printAuditPacket({ provider, licensing, docs, families, staff, ratio: { required, qualified }, t })} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: "none", background: C.amber, color: "#fff", fontWeight: 700, fontSize: 12.5 }}>
             <Printer size={13} /> {t("Print packet")}
           </button>
           <button onClick={onClose} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.3)", background: "none", color: "#fff", fontWeight: 600, fontSize: 12.5 }}>
@@ -8280,8 +8459,8 @@ function AuditMode({ docs, families, onClose, provider, staff }) {
         <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{t("Packet generated")}: {todayMDY()}</div>
 
         <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: C.tealDark, marginTop: 26, marginBottom: 10 }}>{t("License & ratio status")}</h3>
-        <Row left={<b>{t("License renewal")}</b>} right={<Pill label={t("Current — renews 03/2027")} fg={C.teal} bg={C.tealTint} />} />
-        <Row left={<b>{t("Last inspection")}</b>} right={<span style={{ fontSize: 13, color: C.inkSoft }}>04/12/2026 — {t("no citations")}</span>} />
+        <Row left={<b>{t("License renewal")}</b>} right={<span style={{ fontSize: 13, color: C.inkSoft }}>{licensing.renewalDate || t("Not recorded yet")}</span>} />
+        <Row left={<b>{t("Last inspection")}</b>} right={<span style={{ fontSize: 13, color: C.inkSoft }}>{[licensing.inspectionDate, licensing.inspectionResult].filter(Boolean).join(" — ") || t("Not recorded yet")}</span>} />
         <Row left={<b>{t("Ratio compliance today")}</b>} right={<Pill label={withinRatio ? t("Within ratio") : t("Understaffed for current enrollment")} fg={withinRatio ? C.teal : C.danger} bg={withinRatio ? C.tealTint : C.dangerTint} />} />
         <Row left={<b>{t("Children enrolled / qualified adults on staff")}</b>} right={<span style={{ fontSize: 13 }}>{families.length} / {qualified} ({t("guidance suggests")} {required})</span>} />
 
@@ -8293,14 +8472,14 @@ function AuditMode({ docs, families, onClose, provider, staff }) {
 
         <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: C.tealDark, marginTop: 26, marginBottom: 10 }}>{t("Facility documents")}</h3>
         {docs.map((d) => {
-          const meta = trForm(t, d.status);
-          return <Row key={d.id} left={<b style={{ fontSize: 13 }}>{d.name}</b>} right={<span style={{ fontSize: 12, color: meta.color, fontWeight: 700 }}>{meta.label} · {d.date}</span>} />;
+          const meta = trForm(t, d.displayStatus || d.status);
+          return <Row key={d.id} left={<b style={{ fontSize: 13 }}>{d.name}</b>} right={<span style={{ fontSize: 12, color: meta.color, fontWeight: 700 }}>{meta.label}{d.expiresOn ? ` · ${d.expiresOn}` : d.date ? ` · ${d.date}` : ""}</span>} />;
         })}
 
         <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: C.tealDark, marginTop: 26, marginBottom: 10 }}>{t("Children's file status")}</h3>
         {families.map((f) => {
           const cdocs = defaultChildDocs(f);
-          const missingCount = cdocs.filter((d) => d.status !== "submitted").length;
+          const missingCount = cdocs.filter((d) => d.status !== "submitted" || ["expired", "expiring"].includes(docEffectiveStatus(d, 30))).length;
           return (
             <Row key={f.id} left={<><Dot c={f.color} /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>{classroomOf(f.classroom)?.label}</span></>}
               right={missingCount === 0
@@ -8315,77 +8494,53 @@ function AuditMode({ docs, families, onClose, provider, staff }) {
 }
 
 function DocPreview({ doc, onClose, onSave, t }) {
-  const [editing, setEditing] = useState(false);
   const [status, setStatus] = useState(doc.status);
-  const [date, setDate] = useState(doc.date);
+  const [expiresOn, setExpiresOn] = useState(doc.expiresOn || "");
+  const [note, setNote] = useState(doc.date || "");
   const [saveState, setSaveState] = useState("idle");
-  const meta = trForm(t, status);
   const STATUS_OPTIONS = ["submitted", "pending", "missing", "not-due"];
-  const STATUS_LABELS = STATUS_OPTIONS.map((s) => trForm(t, s).label);
+  const STATUS_LABELS = STATUS_OPTIONS.map((x) => trForm(t, x).label);
+  const meta = trForm(t, docEffectiveStatus({ status, expiresOn }));
 
   const handleSave = async () => {
     setSaveState("saving");
-    const ok = await onSave(doc.id, { status, date });
+    const ok = await onSave(doc.id, { status, expiresOn, date: note });
     setSaveState(ok ? "saved" : "error");
-    if (ok) { setTimeout(() => setSaveState("idle"), 1200); setEditing(false); }
+    if (ok) setTimeout(onClose, 500);
   };
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 40, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.35)" }} />
-      <div style={{ position: "relative", width: 560, maxWidth: "94vw", maxHeight: "88vh", background: C.paper, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column" }}>
+      <div style={{ position: "relative", width: 520, maxWidth: "94vw", maxHeight: "88vh", background: C.paper, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column" }}>
         <div style={{ padding: "20px 22px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
             <div style={{ width: 40, height: 40, borderRadius: 10, background: C.tealTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <doc.icon size={19} color={C.tealDark} />
             </div>
             <div>
-              <div style={{ fontFamily: "'Fraunces', serif", fontSize: 17, fontWeight: 600 }}>{doc.name}</div>
-              <div style={{ fontSize: 12, color: meta.color, fontWeight: 600, marginTop: 2 }}>{meta.label} · {date}</div>
+              <div style={{ fontFamily: "'Fraunces', serif", fontSize: 17, fontWeight: 600 }}>{t(doc.name)}</div>
+              <div style={{ fontSize: 12, color: meta.color, fontWeight: 600, marginTop: 2 }}>{meta.label}{expiresOn ? ` · ${expiresOn}` : ""}</div>
             </div>
           </div>
           <button onClick={onClose} style={{ background: "none", border: "none", color: C.inkSoft, padding: 4 }}><X size={19} /></button>
         </div>
-
-        <div style={{ flex: 1, overflowY: "auto", padding: 22, display: "flex", flexDirection: "column", gap: 14 }}>
-          <div style={{
-            minHeight: 260, background: C.cream, border: `1px dashed ${C.line}`, borderRadius: 12,
-            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, color: C.inkSoft,
-          }}>
-            <FileText size={40} color={C.inkSoft} />
-            <div style={{ fontSize: 13, fontWeight: 600, textAlign: "center", maxWidth: 260 }}>{doc.name}</div>
-            <div style={{ fontSize: 11.5, textAlign: "center", maxWidth: 260 }}>{t("Copies stored for inspection & recert")}</div>
+        <div style={{ flex: 1, overflowY: "auto", padding: 22, display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
+            <FileText size={13} /> {doc.fileName ? `${doc.fileName}${doc.uploadedOn ? ` · ${doc.uploadedOn}` : ""}` : t("No file uploaded yet.")}
           </div>
-
-          {editing ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <Field label={t("Status")}>
-                <Select value={status} onChange={setStatus} options={STATUS_OPTIONS} labels={STATUS_LABELS} />
-              </Field>
-              <Field label={t("Notes / renewal date")}>
-                <input value={date} onChange={(e) => setDate(e.target.value)} style={inputStyle} />
-              </Field>
-            </div>
-          ) : (
-            <button onClick={() => setEditing(true)} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "10px 0", borderRadius: 9, border: `1px solid ${C.line}`, background: "#fff", color: C.tealDark, fontWeight: 600, fontSize: 13 }}>
-              <Pencil size={13} /> {t("Edit")}
-            </button>
-          )}
+          <Field label={t("Status")}><Select value={status} onChange={setStatus} options={STATUS_OPTIONS} labels={STATUS_LABELS} /></Field>
+          <Field label={t("Renews / expires on")}><DateField value={expiresOn} onChange={(v) => setExpiresOn(v || "")} placeholder={t("No expiration")} /></Field>
+          <Field label={t("Notes (optional)")}><input value={note} onChange={(e) => setNote(e.target.value)} placeholder={t("e.g. renewal filed, policy number")} style={{ ...inputStyle, width: "100%" }} /></Field>
+          <div style={{ fontSize: 11, color: C.inkSoft }}>{t("Alaga reminds you 60 days before the renewal date.")}</div>
         </div>
-
         <div style={{ padding: "14px 22px", borderTop: `1px solid ${C.line}`, display: "flex", gap: 10 }}>
-          <button onClick={onClose} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13.5 }}>{t("Close")}</button>
-          {editing ? (
-            <button onClick={handleSave} disabled={saveState === "saving"} style={{ flex: 2, padding: "11px 0", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13.5 }}>
-              {saveState === "saving" ? t("Saving…") : saveState === "saved" ? t("Saved") : t("Save changes")}
-            </button>
-          ) : (
-            <button style={{ flex: 2, padding: "11px 0", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
-              <Download size={15} /> {t("Download")}
-            </button>
-          )}
+          <button onClick={onClose} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13.5 }}>{t("Cancel")}</button>
+          <button onClick={handleSave} disabled={saveState === "saving"} style={{ flex: 2, padding: "11px 0", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13.5 }}>
+            {saveState === "saving" ? t("Saving…") : saveState === "saved" ? t("Saved") : t("Save changes")}
+          </button>
+        </div>
       </div>
-    </div>
     </div>
   );
 }
