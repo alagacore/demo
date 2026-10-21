@@ -8,7 +8,7 @@ import {
   Pencil, Plus, Trash2, Split, ArrowLeft, Shield, FileCheck, HeartPulse, Flame, Eye,
   Moon, Contrast, Type, ZapOff, Lock, ListChecks, UserPlus, Settings as Gear, LifeBuoy, Paperclip, Image as ImageIcon,
   ArrowRight, Building2, Rocket, PlayCircle, UploadCloud, TrendingUp, Wand2, UserCog, Scale, ArrowLeftRight, Volume2, Square, Hourglass,
-  Wallet, Baby, Cookie, Puzzle, SprayCan, Palette,
+  Wallet, Baby, Cookie, Puzzle, SprayCan, Palette, LogOut, Check,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell,
@@ -108,10 +108,51 @@ function EmptyIllustration({ size = 76 }) {
 }
 
 /* ---------------------------------- data ------------------------------------ */
-const PROVIDER = { name: "Tita's Family Child Care", city: "Culver City, CA", lic: "FCC License #198-402-3211" };
+// The sample daycare's data was written as of July 26, 2026. Rather than freeze
+// the whole app on that day, every sample date is moved forward by however long
+// it's been since then — so a subsidy that "expires in 7 days" in the sample
+// still expires in 7 days, and real providers' dates are measured from today.
+const startOfToday = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+const DEMO_WRITTEN_ON = new Date(2026, 6, 26);
+const DEMO_SHIFT_DAYS = Math.round((startOfToday() - DEMO_WRITTEN_ON) / 86400000);
+const DEMO_SHIFT_MONTHS = Math.round(DEMO_SHIFT_DAYS / 30.44);
+const MONTH_FULL = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const pad2 = (n) => String(n).padStart(2, "0");
+function shiftDemoString(str) {
+  if (!DEMO_SHIFT_DAYS) return str;
+  return str
+    .replace(/(?<![\d/])(\d{2})\/(\d{2})\/(\d{4})(?![\d/])/g, (_, m, d, y) => {
+      const dt = new Date(+y, +m - 1, +d + DEMO_SHIFT_DAYS);
+      return `${pad2(dt.getMonth() + 1)}/${pad2(dt.getDate())}/${dt.getFullYear()}`;
+    })
+    .replace(/(?<![\d/])(\d{2})\/(20\d{2})(?![\d/])/g, (_, m, y) => {
+      const dt = new Date(+y, +m - 1 + DEMO_SHIFT_MONTHS, 1);
+      return `${pad2(dt.getMonth() + 1)}/${dt.getFullYear()}`;
+    })
+    .replace(new RegExp(`\\b(${MONTH_FULL.join("|")}) (20\\d{2})\\b`, "g"), (_, mName, y) => {
+      const dt = new Date(+y, MONTH_FULL.indexOf(mName) + DEMO_SHIFT_MONTHS, 1);
+      return `${MONTH_FULL[dt.getMonth()]} ${dt.getFullYear()}`;
+    });
+}
+// Walks plain sample-data objects and arrays; leaves icons and other components alone.
+function demoDates(value, shift = shiftDemoString) {
+  if (typeof value === "string") return shift(value);
+  if (Array.isArray(value)) return value.map((v) => demoDates(v, shift));
+  if (value && Object.getPrototypeOf(value) === Object.prototype) {
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, demoDates(v, shift)]));
+  }
+  return value;
+}
+// Sample expenses move by whole months instead, so they stay grouped in one month.
+const shiftDemoMonth = (str) => str.replace(/(?<![\d/])(\d{2})\/(\d{2})\/(\d{4})(?![\d/])/g, (_, m, d, y) => {
+  let dt = new Date(+y, +m - 1 + DEMO_SHIFT_MONTHS, Math.min(+d, 28));
+  if (dt > startOfToday()) dt = startOfToday(); // never log a sample expense in the future
+  return `${pad2(dt.getMonth() + 1)}/${pad2(dt.getDate())}/${dt.getFullYear()}`;
+});
+const PROVIDER = { name: "Tita's Family Child Care", city: "Culver City, CA", lic: "FCC License #198-402-3211", providerType: "Family Child Care Home — Large (9–14 children)", capacity: 14 };
 
 /* --------------------------- platform admin (10 providers) --------------------------- */
-const ADMIN_PROVIDERS_DEFAULT = [
+const ADMIN_PROVIDERS_DEFAULT = demoDates([
   { id: 1, name: "Tita's Family Child Care", contact: "Maria Reyes", city: "Culver City, CA", tier: "extended", status: "active", cycle: "monthly", children: 9, capacity: 8, signupDate: "01/08/2026", convertedDate: "01/22/2026", lastActive: "07/30/2026", founding: true },
   { id: 2, name: "Sunshine Steps FCC", contact: "Denise Coleman", city: "Inglewood, CA", tier: "extended", status: "active", cycle: "annual", children: 12, capacity: 14, signupDate: "01/22/2026", convertedDate: "02/05/2026", lastActive: "07/29/2026", founding: true },
   { id: 3, name: "Little Sprouts Home Daycare", contact: "Priya Nair", city: "Torrance, CA", tier: "simple", status: "active", cycle: "monthly", children: 5, capacity: 6, signupDate: "02/14/2026", convertedDate: "02/28/2026", lastActive: "07/28/2026", founding: true },
@@ -122,7 +163,7 @@ const ADMIN_PROVIDERS_DEFAULT = [
   { id: 8, name: "Rainbow Bridge FCC", contact: "Yolanda Perez", city: "Downey, CA", tier: "simple", status: "canceled", cycle: "monthly", children: 0, capacity: 6, signupDate: "02/05/2026", convertedDate: "02/19/2026", canceledDate: "06/12/2026", cancelReason: "price", lastActive: "06/12/2026", founding: true },
   { id: 9, name: "Growing Roots Childcare", contact: "Fatima Haidari", city: "Anaheim, CA", tier: "extended", status: "active", cycle: "annual", children: 13, capacity: 14, signupDate: "04/16/2026", convertedDate: "04/30/2026", lastActive: "07/29/2026", founding: false },
   { id: 10, name: "Little Explorers Home Daycare", contact: "Grace Kim", city: "Glendale, CA", tier: "simple", status: "trial", cycle: "monthly", children: 3, capacity: 6, signupDate: "07/24/2026", convertedDate: null, lastActive: "07/30/2026", founding: false },
-];
+]);
 
 // Trials that started but never converted to a paid plan — kept separately so trial
 // conversion and paid-customer churn can be computed as two distinct, correct metrics
@@ -134,11 +175,11 @@ const ADMIN_CANCEL_REASONS = [
   { id: "competitor", label: "Chose a different platform" },
   { id: "no-response", label: "Went quiet — no reason given" },
 ];
-const ADMIN_LOST_TRIALS = [
+const ADMIN_LOST_TRIALS = demoDates([
   { id: "lt1", name: "Cozy Corner FCC", city: "Whittier, CA", trialStartDate: "02/10/2026", lostDate: "02/24/2026", reason: "features" },
   { id: "lt2", name: "Happy Hearts Daycare", city: "Norwalk, CA", trialStartDate: "04/02/2026", lostDate: "04/16/2026", reason: "competitor" },
   { id: "lt3", name: "Sunny Days Home Care", city: "El Monte, CA", trialStartDate: "05/20/2026", lostDate: "06/03/2026", reason: "no-response" },
-];
+]);
 
 // Consent-gated support access — same storage record read from both the Admin provider
 // drawer and that provider's own Privacy & Security screen, so a request/grant/revoke
@@ -153,20 +194,22 @@ const ACCESS_DURATIONS = [
 // feature flags — check-in is deferred until B2B/B2C check-in processes are finalized
 const FEATURES = { checkin: false };
 
+// Ordered by how a provider's day runs: today's work first, then the people,
+// then the money, then paperwork, then the planning tools.
 const NAV = [
   { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
   { id: "checkin", label: "Check-in", icon: ScanLine },
-  { id: "families", label: "Families", icon: Users },
   { id: "bookings", label: "Bookings", icon: CalendarClock },
-  { id: "staff", label: "Staff & Ratios", icon: UserCog, extended: true },
   { id: "calendar", label: "Calendar", icon: CalendarDays },
+  { id: "messages", label: "Messages", icon: MessageSquare },
+  { id: "families", label: "Families", icon: Users },
   { id: "tours", label: "Tours", icon: ListChecks },
   { id: "waitlist", label: "Waitlist", icon: Hourglass },
   { id: "subsidy", label: "Subsidy", icon: ShieldCheck },
   { id: "payments", label: "Finances", icon: CreditCard },
   { id: "compliance", label: "Compliance", icon: ClipboardCheck },
   { id: "security", label: "Privacy & Security", icon: Lock, extended: true },
-  { id: "messages", label: "Messages", icon: MessageSquare },
+  { id: "staff", label: "Staff & Ratios", icon: UserCog, extended: true },
   { id: "analytics", label: "Analytics", icon: BarChart3, extended: true },
   { id: "growth", label: "Growth", icon: TrendingUp, badge: "New", extended: true },
   { id: "support", label: "Support", icon: LifeBuoy },
@@ -248,7 +291,7 @@ const FORM_TEMPLATES = [
   { id: "provider", name: "Provider Payment Agreement" },
 ];
 
-const COMPLIANCE_DOCS = [
+const COMPLIANCE_DOCS = demoDates([
   { id: "license", name: "CCLD Facility License", icon: Shield, status: "submitted", date: "renews 03/2027" },
   { id: "inspection", name: "Most Recent Inspection Report", icon: FileCheck, status: "submitted", date: "04/12/2026 — no citations" },
   { id: "insurance", name: "General Liability Insurance", icon: ShieldCheck, status: "submitted", date: "renews 01/2027" },
@@ -256,11 +299,11 @@ const COMPLIANCE_DOCS = [
   { id: "fire", name: "Fire & Safety Clearance", icon: Flame, status: "submitted", date: "renews 05/2027" },
   { id: "background", name: "Staff Background Check Clearances", icon: FileCheck, status: "submitted", date: "current — all staff" },
   { id: "handbook", name: "Provider Policies & Parent Handbook", icon: FileText, status: "submitted", date: "updated 01/2026" },
-];
+]);
 
 const MESSAGE_THREADS = [
   {
-    id: 1, name: "Maria Reyes (Sofia)", unread: true,
+    id: 1, name: "Maria Reyes (Sofia)", household: "reyes", unread: true,
     messages: [
       { from: "them", text: "Hi! Sofia's recert paperwork mentioned an attendance sheet — could I get a copy?", time: "Yesterday, 6:40 PM" },
       { from: "me", text: "Of course — I'll have it ready at drop-off tomorrow.", time: "Yesterday, 7:02 PM" },
@@ -268,20 +311,20 @@ const MESSAGE_THREADS = [
     ],
   },
   {
-    id: 2, name: "Crystal Stairs — Denise T.", unread: true,
+    id: 2, name: "Crystal Stairs — Denise T.", kind: "agency", unread: true,
     messages: [
       { from: "them", text: "Recert packet for Villanueva bridge case attached — please review and confirm receipt.", time: "Yesterday" },
     ],
   },
   {
-    id: 3, name: "Mark Cruz (Leo)", unread: false,
+    id: 3, name: "Mark Cruz (Leo)", household: "cruz", unread: false,
     messages: [
       { from: "me", text: "Just confirming — Leo's schedule moves to part-day starting in September?", time: "Mon, 8:15 AM" },
       { from: "them", text: "Confirmed — moving to part-day starting September.", time: "Mon, 9:02 AM" },
     ],
   },
   {
-    id: 4, name: "Divine Bautista (Amara)", unread: false,
+    id: 4, name: "Divine Bautista (Amara)", household: "bautista", unread: false,
     messages: [
       { from: "them", text: "Amara did great at pickup today, thank you for the patience this week!", time: "Fri" },
       { from: "me", text: "She's doing wonderfully — see you Monday!", time: "Fri" },
@@ -290,10 +333,19 @@ const MESSAGE_THREADS = [
 ];
 
 const WEEK_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+// Weekends are available to every provider; they start closed.
+const ALL_DAYS = [...WEEK_DAYS, "Saturday", "Sunday"];
+const DAY_BY_INDEX = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+// Older saved schedules only had weekdays — fill in any missing days as closed.
+function fullWeek(schedule) {
+  const list = schedule || [];
+  return ALL_DAYS.map((d) => list.find((x) => x.day === d) || { day: d, open: false, hours: "", careType: "Full-day", capacity: list[0]?.capacity || 8, ages: "", ageClassrooms: [] });
+}
 const WEEKLY_SCHEDULE_DEFAULT = WEEK_DAYS.map((d) => ({
   day: d, open: true, hours: "7:00 AM – 6:00 PM", careType: "Full-day", capacity: 8, ages: "Infants–Pre-K (0–5y)",
   ageClassrooms: CLASSROOMS.map((c) => c.id),
 }));
+// Sample daycare's closures already listed in its enrollment packet (demo only).
 const PACKET_CLOSURES = [
   { name: "Labor Day", dates: "09/07/2026" },
   { name: "Thanksgiving Break", dates: "11/26/2026 – 11/27/2026" },
@@ -306,16 +358,16 @@ const PACKET_CLOSURES = [
 // photo day). Kept as a distinct category from closures for that reason.
 const EVENT_TYPES = ["Activity Day", "Field Trip", "Parent-Teacher Conferences", "Staff Meeting", "Photo Day", "Family Event", "Announcement", "Other"];
 let eventSeq = 0;
-const CALENDAR_EVENTS_DEFAULT = [
+const CALENDAR_EVENTS_DEFAULT = demoDates([
   { id: "ev1", name: "Parent-Teacher Conference Week", type: "Parent-Teacher Conferences", dates: "09/14/2026 – 09/18/2026", notify: true, notes: "Sign-up sheet posted at drop-off; 15-minute slots per family." },
   { id: "ev2", name: "Fall Photo Day", type: "Photo Day", dates: "10/09/2026", notify: true, notes: "" },
   { id: "ev3", name: "Staff In-Service Meeting", type: "Staff Meeting", dates: "08/28/2026", notify: false, notes: "After close, 6:00 PM — no impact to families." },
-];
+]);
 
 const TOUR_STAGES = ["Inquiry", "Tour Scheduled", "Toured", "Follow-up", "Waitlist", "Enrolled", "Declined"];
 let tourSeq = 0;
 function tourFam(o) { tourSeq += 1; return { id: `t${tourSeq}`, ...o }; }
-const PROSPECTIVE_FAMILIES_DEFAULT = [
+const PROSPECTIVE_FAMILIES_DEFAULT = demoDates([
   tourFam({ name: "Ramirez Family", stage: "Inquiry", tourDate: "Not scheduled", careType: "Full-time", children: "1 (age 2)", start: "September 2026", language: "Español", contact: "(310) 555-0711", notes: "Found us via Facebook group for Culver City parents.", followup: "Call to schedule a tour." }),
   tourFam({ name: "Nguyen Family", stage: "Tour Scheduled", tourDate: "08/03/2026", careType: "Part-time", children: "1 (age 4)", start: "August 2026", language: "Tiếng Việt", contact: "(310) 555-0733", notes: "Currently at a center-based program, looking for smaller ratio.", followup: "Confirm tour 24 hrs prior." }),
   tourFam({ name: "Kim Family", stage: "Toured", tourDate: "07/20/2026", careType: "Full-time", children: "2 (ages 1, 3)", start: "October 2026", language: "한국어", contact: "(310) 555-0759", notes: "Toured well — asked detailed questions about subsidy eligibility.", followup: "Send CalWORKs info packet." }),
@@ -323,7 +375,7 @@ const PROSPECTIVE_FAMILIES_DEFAULT = [
   tourFam({ name: "Brown Family", stage: "Waitlist", tourDate: "06/28/2026", careType: "Full-time", children: "1 (age 2)", start: "January 2027", language: "English", contact: "(310) 555-0804", notes: "No infant/toddler openings until January.", followup: "Check back in November." }),
   tourFam({ name: "Torres Family", stage: "Enrolled", tourDate: "05/12/2026", careType: "Full-time", children: "1 (age 4)", start: "06/01/2026", language: "Español", contact: "(310) 555-0829", notes: "Enrolled — see Families tab for full record.", followup: "" }),
   tourFam({ name: "Patel Family", stage: "Declined", tourDate: "06/02/2026", careType: "Part-time", children: "1 (age 3)", start: "—", language: "English", contact: "(310) 555-0861", notes: "Chose a center closer to their workplace.", followup: "" }),
-];
+]);
 
 // self-contained QR code (no network dependency) encoding a parent self-check-in link
 const QR_CHECKIN_URL = "https://alaga.app/checkin/tita-fcc";
@@ -336,7 +388,7 @@ function fam(o) {
   return { id: famSeq, ...o };
 }
 
-const FAMILIES = [
+const FAMILIES = demoDates([
   fam({
     child: "Sofia Reyes", enrollDate: "02/06/2023", household: "reyes", householdName: "Reyes Family", subsidized: true, age: "4y", parent: "Maria Reyes", color: C.teal, classroom: "preschool",
     parents: [
@@ -558,10 +610,15 @@ const FAMILIES = [
     forms: [],
     notes: "Ella's younger brother — both private-pay, so this is the demo's example of the default sibling-discount rule actually applying.",
   }),
-];
+]);
 
 /* --------------------------------- helpers ----------------------------------- */
-const money = (n) => `$${n.toLocaleString()}`;
+// Whole dollars show as "$1,450"; anything with cents always shows two places ("$186.40").
+const money = (n) => {
+  const v = Number(n) || 0;
+  const cents = Math.round(v * 100) % 100 !== 0;
+  return `${v < 0 ? "-" : ""}$${Math.abs(v).toLocaleString("en-US", cents ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : { maximumFractionDigits: 0 })}`;
+};
 const programOf = (id) => PROGRAMS.find((p) => p.id === id);
 // Shared date helpers: the app stores dates as "MM/DD/YYYY" strings for display,
 // but the native calendar popup needs ISO ("YYYY-MM-DD"). These convert between
@@ -578,36 +635,90 @@ function isoToMDY(iso) {
   if (!y || !m || !d) return "";
   return `${String(m).padStart(2, "0")}/${String(d).padStart(2, "0")}/${y}`;
 }
-const todayMDY = () => isoToMDY(new Date().toISOString().slice(0, 10));
+// Local calendar date (toISOString would give tomorrow's date in the evening, Pacific time).
+const todayMDY = () => { const d = new Date(); return `${pad2(d.getMonth() + 1)}/${pad2(d.getDate())}/${d.getFullYear()}`; };
+const initialsOf = (name) => (name || "").split(/\s+/).filter((w) => /^[A-Za-z]/.test(w)).slice(0, 2).map((w) => w[0].toUpperCase()).join("") || "?";
 const daysUntil = (mmddyyyy) => {
   if (!mmddyyyy || !mmddyyyy.includes("/")) return 9999;
   const [m, d, y] = mmddyyyy.split("/").map(Number);
-  const diff = Math.round((new Date(y, m - 1, d) - new Date(2026, 6, 26)) / 86400000);
+  const diff = Math.round((new Date(y, m - 1, d) - startOfToday()) / 86400000);
   return diff;
 };
-// One universal billing due date applies to every family — either a
-// recurring day of the month (most common, e.g. "due on the 1st") or a
-// specific one-time date. Defaults to the 1st of the month if unset.
-function nextDueDateFrom(billing) {
-  if (billing && billing.mode === "date" && billing.date) return billing.date;
-  const day = Math.min(28, Math.max(1, (billing && billing.mode === "recurring" && billing.day) || 1));
-  const anchor = { y: 2026, m: 6, d: 26 }; // same fixed "today" as daysUntil, above
-  let y = anchor.y, m = anchor.m;
-  if (day <= anchor.d) { m += 1; if (m > 11) { m = 0; y += 1; } }
-  return `${String(m + 1).padStart(2, "0")}/${String(day).padStart(2, "0")}/${y}`;
+// Billing runs month by month. A family's payment is recorded against a
+// billing period ("2026-10"), so marking October paid doesn't mark November
+// paid too. One due date applies to every family: a recurring day of the
+// month (most common, "due on the 1st") or one specific date.
+const periodKeyOf = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}`;
+const periodLabel = (key) => { const [y, m] = key.split("-").map(Number); return new Date(y, m - 1, 1).toLocaleDateString("en-US", { month: "long", year: "numeric" }); };
+function billingDueDate(settings, ref = startOfToday()) {
+  const mode = settings?.dueDateMode || settings?.mode || "recurring";
+  const fixed = settings?.dueDate || settings?.date;
+  if (mode === "date" && fixed) return fixed;
+  const day = Math.min(28, Math.max(1, Number(settings?.dueDay || settings?.day) || 1));
+  return `${pad2(ref.getMonth() + 1)}/${pad2(day)}/${ref.getFullYear()}`;
 }
-// A configured late fee doesn't mean anything until it's actually enforced.
-// "Force" makes it real: once a family is past the universal due date and
-// still hasn't paid, this computes what's actually owed, including the fee.
+// The period being billed right now, its due date, and whether that date has passed.
+function currentBilling(settings) {
+  const due = billingDueDate(settings);
+  const key = periodKeyOf(parseAnyDate(due));
+  return { key, label: periodLabel(key), dueDate: due, overdue: daysUntil(due) < 0 };
+}
+// The next due date still ahead (this month's, or next month's once it has passed).
+function nextDueDateFrom(settings) {
+  const cur = billingDueDate(settings);
+  if (daysUntil(cur) >= 0) return cur;
+  const now = startOfToday();
+  return billingDueDate(settings, new Date(now.getFullYear(), now.getMonth() + 1, 1));
+}
+// Paid for a period: single payer, or every guardian in a split.
+const paidFor = (f, key) => (f.copaySplit ? f.copaySplit.length > 0 && f.copaySplit.every((s) => s.paidPeriods?.[key]) : !!f.paidPeriods?.[key]);
+const partlyPaidFor = (f, key) => !!(f.copaySplit && f.copaySplit.some((s) => s.paidPeriods?.[key]));
+// Every month this family has paid, newest first, combining split payers.
+function paymentsOf(f) {
+  const out = {};
+  const add = (pp, who) => Object.entries(pp || {}).forEach(([k, v]) => { (out[k] = out[k] || []).push({ ...v, who }); });
+  if (f.copaySplit) f.copaySplit.forEach((s) => add(s.paidPeriods, s.parent)); else add(f.paidPeriods, f.parents?.[0]?.name || f.parent);
+  return Object.entries(out).sort((a, b) => (a[0] < b[0] ? 1 : -1)).map(([key, entries]) => ({ key, entries, total: entries.reduce((s, e) => s + (Number(e.amount) || 0), 0) }));
+}
+// A configured late fee applies once this period's due date has passed and the
+// family still hasn't paid (only when "automatically apply" is on).
 function computeLateFee(f, reminderSettings, isPaidFn) {
   if (!reminderSettings.lateFeeEnabled || !reminderSettings.forceLateFee) return 0;
   if (!f.copay || f.copay <= 0) return 0;
-  const dueDate = nextDueDateFrom(reminderSettings);
-  const overdue = daysUntil(dueDate) < 0;
-  if (!overdue || isPaidFn(f)) return 0;
+  if (!currentBilling(reminderSettings).overdue || isPaidFn(f)) return 0;
   return reminderSettings.lateFeeType === "percent"
     ? Math.round(f.copay * (reminderSettings.lateFeePercent / 100) * 100) / 100
     : reminderSettings.lateFeeAmount;
+}
+// Sample daycare only: gives each family a payment history (last three months
+// paid, this month per its sample "received" flag) so billing and receipts
+// have something real to show.
+function withDemoPayments(f) {
+  if (f.paidPeriods || !f.copay || f.copay <= 0) return f;
+  const now = startOfToday();
+  const keys = [3, 2, 1, 0].map((back) => periodKeyOf(new Date(now.getFullYear(), now.getMonth() - back, 1)));
+  const history = (amount, method, paidNow) => Object.fromEntries(keys.filter((k, i) => i < 3 || paidNow).map((k) => {
+    const [y, m] = k.split("-").map(Number);
+    return [k, { date: `${pad2(m)}/03/${y}`, method, amount }];
+  }));
+  if (f.copaySplit) {
+    return { ...f, copaySplit: f.copaySplit.map((sp) => ({ ...sp, paidPeriods: history(sp.amount, sp.method || "Zelle", sp.received === true) })) };
+  }
+  return { ...f, paidPeriods: history(f.copay, f.paymentMethod || "Zelle", f.paymentReceived !== false) };
+}
+// A subsidized child's status comes from their record: any required form
+// missing (the recertification form only near renewal) → Docs needed;
+// authorization ends within 30 days → Expiring soon;
+// already ended → Expired; otherwise Active.
+function subsidyStatus(f) {
+  if (!f.subsidized) return f.status;
+  const left = daysUntil(f.authEnd);
+  // The recertification application only matters once renewal is coming up
+  // (within 30 days), and that window already shows as Expiring soon.
+  if ((f.forms || []).some((x) => x.status !== "submitted" && x.id !== "recert")) return "docs-needed";
+  if (left < 0) return "expired";
+  if (left <= 30) return "expiring";
+  return "active";
 }
 function groupByHousehold(families) {
   const map = new Map();
@@ -623,11 +734,12 @@ function defaultChildDocs(child) {
   return CHILD_DOC_TEMPLATES.map((d) => ({
     id: d.id,
     status: missing.includes(d.id) ? "missing" : "submitted",
-    date: missing.includes(d.id) ? undefined : child.authStart !== "Ongoing" ? child.authStart : "06/01/2026",
+    date: missing.includes(d.id) ? undefined : child.authStart !== "Ongoing" ? child.authStart : shiftDemoString("06/01/2026"),
   }));
 }
 const STATUS_META = {
   active: { label: "Active", fg: C.teal, bg: C.tealTint },
+  expired: { label: "Expired", fg: C.danger, bg: C.dangerTint },
   expiring: { label: "Expiring soon", fg: C.amber, bg: C.amberTint },
   "docs-needed": { label: "Docs needed", fg: C.danger, bg: C.dangerTint },
 };
@@ -636,7 +748,26 @@ const FORM_META = {
   pending: { label: "Pending", icon: Clock, color: C.amber },
   missing: { label: "Missing", icon: XCircle, color: C.danger },
   "not-due": { label: "Not yet due", icon: Circle, color: C.inkSoft },
+  expiring: { label: "Renew soon", icon: Clock, color: C.amber },
+  expired: { label: "Expired", icon: XCircle, color: C.danger },
 };
+// A document that's on file can still need renewing: within the warning
+// window it shows "Renew soon", past its date "Expired".
+function docEffectiveStatus(d, warnDays = 60) {
+  if (d.status !== "submitted" || !d.expiresOn) return d.status;
+  const left = daysUntil(d.expiresOn);
+  if (left < 0) return "expired";
+  if (left <= warnDays) return "expiring";
+  return "submitted";
+}
+// Older sample entries say "renews 03/2027" — read that as the end of that month.
+function expiryFromText(text) {
+  const m = String(text || "").match(/renews (\d{2})\/(\d{4})/i);
+  if (!m) return "";
+  const last = new Date(Number(m[2]), Number(m[1]), 0);
+  return `${m[1]}/${pad2(last.getDate())}/${m[2]}`;
+}
+const CDSS_FORMS_URL = "https://cdss.ca.gov/inforesources/forms-brochures/forms-alphabetic-list/i-l";
 function groupByClassroom(families) {
   return CLASSROOMS.map((c) => ({ classroom: c, families: families.filter((f) => f.classroom === c.id) }))
     .filter((g) => g.families.length > 0);
@@ -668,6 +799,8 @@ const T = {
   "License number": { es: "Número de licencia", tl: "Numero ng lisensya", zh: "许可证号码", vi: "Số giấy phép", ko: "면허 번호" },
   "Licensed capacity": { es: "Capacidad con licencia", tl: "Lisensyadong kapasidad", zh: "许可容量", vi: "Sức chứa được cấp phép", ko: "허가 정원" },
   "Extended plan": { es: "Plan Extendido", tl: "Extended plan", zh: "扩展版套餐", vi: "Gói Mở rộng", ko: "확장 요금제" },
+  "Simple plan": { es: "Plan Simple", tl: "Simple plan", zh: "简易版套餐", vi: "Gói Đơn giản", ko: "심플 요금제" },
+  "Change plan in Settings": { es: "Cambie de plan en Configuración", tl: "Palitan ang plan sa Settings", zh: "在设置中更改套餐", vi: "Đổi gói trong Cài đặt", ko: "설정에서 요금제 변경" },
   "Pay frequency": { es: "Frecuencia de pago", tl: "Dalas ng bayad", zh: "发薪频率", vi: "Tần suất trả lương", ko: "급여 지급 주기" },
   "Next pay date": { es: "Próxima fecha de pago", tl: "Susunod na petsa ng bayad", zh: "下次发薪日期", vi: "Ngày trả lương tiếp theo", ko: "다음 급여일" },
   "Weekly": { es: "Semanal", tl: "Lingguhan", zh: "每周", vi: "Hàng tuần", ko: "매주" },
@@ -729,6 +862,291 @@ const T = {
   "Large": { es: "Grande", tl: "Malaki", zh: "大", vi: "Lớn", ko: "크게" },
   "Extra large": { es: "Muy grande", tl: "Sobrang laki", zh: "特大", vi: "Rất lớn", ko: "매우 크게" },
   "Provider OS": { es: "Sistema del Proveedor", tl: "Provider OS", zh: "服务商系统", vi: "Hệ thống nhà cung cấp", ko: "제공자 시스템" },
+  "Enroll": { es: "Inscribir", tl: "I-enroll", zh: "登记入托", vi: "Ghi danh", ko: "등록" },
+  "Just what's needed to start care. Documents and details can be finished in their family record.": { es: "Solo lo necesario para empezar el cuidado. Los documentos y detalles se completan en el expediente de la familia.", tl: "Ang kailangan lang para makapagsimula. Matatapos ang mga dokumento at detalye sa rekord ng pamilya.", zh: "仅填写开始托育所需的信息。文件和其他细节可在家庭档案中补全。", vi: "Chỉ những thông tin cần để bắt đầu chăm sóc. Giấy tờ và chi tiết có thể hoàn tất trong hồ sơ gia đình.", ko: "돌봄 시작에 꼭 필요한 정보만 입력합니다. 서류와 세부 사항은 가족 기록에서 마무리할 수 있습니다." },
+  "First name": { es: "Nombre", tl: "Pangalan", zh: "名", vi: "Tên", ko: "이름" },
+  "Last name": { es: "Apellido", tl: "Apelyido", zh: "姓", vi: "Họ", ko: "성" },
+  "Age": { es: "Edad", tl: "Edad", zh: "年龄", vi: "Tuổi", ko: "나이" },
+  "Age group": { es: "Grupo de edad", tl: "Age group", zh: "年龄组", vi: "Nhóm tuổi", ko: "연령 그룹" },
+  "Add a sibling": { es: "Agregar un hermano", tl: "Magdagdag ng kapatid", zh: "添加兄弟姐妹", vi: "Thêm anh chị em", ko: "형제자매 추가" },
+  "Care and start date": { es: "Cuidado y fecha de inicio", tl: "Pag-aalaga at petsa ng simula", zh: "托育安排与开始日期", vi: "Chăm sóc và ngày bắt đầu", ko: "돌봄 및 시작일" },
+  "Full-time": { es: "Tiempo completo", tl: "Full-time", zh: "全日制", vi: "Toàn thời gian", ko: "종일" },
+  "Part-time": { es: "Medio tiempo", tl: "Part-time", zh: "半日制", vi: "Bán thời gian", ko: "시간제" },
+  "Drop-in / hourly": { es: "Por hora / ocasional", tl: "Drop-in / kada oras", zh: "临时 / 按小时", vi: "Theo giờ / thỉnh thoảng", ko: "단시간 / 시간당" },
+  "How care is paid for": { es: "Cómo se paga el cuidado", tl: "Paano binabayaran ang pag-aalaga", zh: "托育费用支付方式", vi: "Cách thanh toán chi phí chăm sóc", ko: "돌봄 비용 지불 방법" },
+  "hour": { es: "hora", tl: "oras", zh: "小时", vi: "giờ", ko: "시간" },
+  "From your tuition rates. Sibling discounts apply automatically.": { es: "Según sus tarifas. Los descuentos por hermanos se aplican automáticamente.", tl: "Mula sa tuition rates mo. Awtomatikong nalalapat ang sibling discount.", zh: "根据您的收费标准。兄弟姐妹折扣会自动应用。", vi: "Theo mức học phí của bạn. Giảm giá anh chị em được áp dụng tự động.", ko: "설정한 수업료 기준입니다. 형제자매 할인은 자동 적용됩니다." },
+  "Program": { es: "Programa", tl: "Programa", zh: "项目", vi: "Chương trình", ko: "프로그램" },
+  "Covered by the program, per month": { es: "Cubierto por el programa, al mes", tl: "Sagot ng programa, kada buwan", zh: "项目每月承担", vi: "Chương trình chi trả mỗi tháng", ko: "프로그램 월 지원액" },
+  "Family copay, per month": { es: "Copago de la familia, al mes", tl: "Copay ng pamilya, kada buwan", zh: "家庭每月自付", vi: "Phần gia đình trả mỗi tháng", ko: "가족 월 본인부담금" },
+  "Authorization ends": { es: "La autorización termina", tl: "Matatapos ang awtorisasyon", zh: "授权截止日期", vi: "Ủy quyền kết thúc", ko: "승인 종료일" },
+  "From the authorization letter": { es: "Según la carta de autorización", tl: "Mula sa authorization letter", zh: "见授权信", vi: "Theo thư ủy quyền", ko: "승인 통지서 기준" },
+  "Parents and guardians": { es: "Padres y tutores", tl: "Mga magulang at tagapag-alaga", zh: "父母与监护人", vi: "Cha mẹ và người giám hộ", ko: "부모 및 보호자" },
+  "Full name": { es: "Nombre completo", tl: "Buong pangalan", zh: "全名", vi: "Họ và tên", ko: "성명" },
+  "Add a second parent or guardian": { es: "Agregar otro padre o tutor", tl: "Magdagdag ng isa pang magulang o tagapag-alaga", zh: "添加另一位父母或监护人", vi: "Thêm cha/mẹ hoặc người giám hộ thứ hai", ko: "두 번째 부모 또는 보호자 추가" },
+  "Remove second parent": { es: "Quitar segundo padre", tl: "Alisin ang ikalawang magulang", zh: "移除第二位父母", vi: "Xóa cha/mẹ thứ hai", ko: "두 번째 부모 삭제" },
+  "To split tuition between households, set it up in their family record after enrolling.": { es: "Para dividir la colegiatura entre hogares, configúrelo en el expediente de la familia después de inscribir.", tl: "Para hatiin ang tuition sa dalawang bahay, i-set up ito sa rekord ng pamilya pagkatapos mag-enroll.", zh: "如需在两个家庭间分摊学费，请在登记后于家庭档案中设置。", vi: "Để chia học phí giữa hai hộ, hãy thiết lập trong hồ sơ gia đình sau khi ghi danh.", ko: "두 가정 간 수업료 분할은 등록 후 가족 기록에서 설정하세요." },
+  "Each child needs a first name.": { es: "Cada niño necesita un nombre.", tl: "Kailangan ng pangalan ng bawat bata.", zh: "每个孩子都需要填写名字。", vi: "Mỗi trẻ cần có tên.", ko: "아이마다 이름을 입력하세요." },
+  "Choose an age group for each child.": { es: "Elija un grupo de edad para cada niño.", tl: "Pumili ng age group para sa bawat bata.", zh: "请为每个孩子选择年龄组。", vi: "Chọn nhóm tuổi cho mỗi trẻ.", ko: "아이마다 연령 그룹을 선택하세요." },
+  "Add a start date.": { es: "Agregue una fecha de inicio.", tl: "Maglagay ng petsa ng simula.", zh: "请添加开始日期。", vi: "Thêm ngày bắt đầu.", ko: "시작일을 입력하세요." },
+  "Add a parent or guardian with a phone or email.": { es: "Agregue un padre o tutor con teléfono o correo.", tl: "Maglagay ng magulang o tagapag-alaga na may phone o email.", zh: "请添加一位有电话或邮箱的父母或监护人。", vi: "Thêm cha mẹ hoặc người giám hộ có số điện thoại hoặc email.", ko: "전화번호나 이메일이 있는 부모 또는 보호자를 추가하세요." },
+  "Add an emergency contact with a phone number.": { es: "Agregue un contacto de emergencia con teléfono.", tl: "Maglagay ng emergency contact na may phone number.", zh: "请添加一位有电话的紧急联系人。", vi: "Thêm liên hệ khẩn cấp có số điện thoại.", ko: "전화번호가 있는 비상 연락처를 추가하세요." },
+  "Add the subsidy program and monthly amount it covers.": { es: "Agregue el programa de subsidio y el monto mensual que cubre.", tl: "Ilagay ang subsidy program at buwanang halagang sagot nito.", zh: "请添加补助项目及其每月承担金额。", vi: "Thêm chương trình trợ cấp và số tiền chi trả hằng tháng.", ko: "보조금 프로그램과 월 지원액을 입력하세요." },
+  "Enroll children": { es: "Inscribir niños", tl: "I-enroll ang mga bata", zh: "为孩子们登记入托", vi: "Ghi danh các trẻ", ko: "아이들 등록" },
+  "Enroll child": { es: "Inscribir niño", tl: "I-enroll ang bata", zh: "为孩子登记入托", vi: "Ghi danh trẻ", ko: "아이 등록" },
+  "Mother": { es: "Madre", tl: "Ina", zh: "母亲", vi: "Mẹ", ko: "어머니" },
+  "Father": { es: "Padre", tl: "Ama", zh: "父亲", vi: "Cha", ko: "아버지" },
+  "Guardian": { es: "Tutor", tl: "Tagapag-alaga", zh: "监护人", vi: "Người giám hộ", ko: "보호자" },
+  "Grandparent": { es: "Abuelo/a", tl: "Lolo/Lola", zh: "祖父母", vi: "Ông/Bà", ko: "조부모" },
+  "Foster parent": { es: "Padre de acogida", tl: "Foster parent", zh: "寄养父母", vi: "Cha mẹ nuôi tạm", ko: "위탁 부모" },
+  "Enroll family": { es: "Inscribir familia", tl: "I-enroll ang pamilya", zh: "为家庭登记入托", vi: "Ghi danh gia đình", ko: "가족 등록" },
+  "Family name": { es: "Apellido de la familia", tl: "Pangalan ng pamilya", zh: "家庭名称", vi: "Tên gia đình", ko: "가족 이름" },
+  "e.g. Ramirez Family": { es: "ej. Familia Ramirez", tl: "hal. Ramirez Family", zh: "例如：Ramirez 家庭", vi: "vd: Gia đình Ramirez", ko: "예: Ramirez 가족" },
+  "Care needed": { es: "Cuidado necesario", tl: "Kailangang pag-aalaga", zh: "所需托育", vi: "Nhu cầu chăm sóc", ko: "필요한 돌봄" },
+  "Tour date": { es: "Fecha de visita", tl: "Petsa ng tour", zh: "参观日期", vi: "Ngày tham quan", ko: "견학 날짜" },
+  "Tour": { es: "Visita", tl: "Tour", zh: "参观", vi: "Tham quan", ko: "견학" },
+  "waiting since": { es: "esperando desde", tl: "naghihintay mula", zh: "等待自", vi: "chờ từ", ko: "대기 시작일" },
+  "To add a family, open them in Tours and set their stage to Waitlist. Families are listed in the order they joined.": { es: "Para agregar una familia, ábrala en Visitas y cambie su etapa a Lista de espera. Las familias aparecen en el orden en que se unieron.", tl: "Para magdagdag ng pamilya, buksan sila sa Tours at itakda ang stage sa Waitlist. Nakalista ang mga pamilya ayon sa pagkakasunod ng pagsali.", zh: "要添加家庭，请在参观中打开该家庭并将阶段设为候补名单。家庭按加入顺序排列。", vi: "Để thêm gia đình, mở gia đình trong Tham quan và đặt giai đoạn là Danh sách chờ. Các gia đình được xếp theo thứ tự tham gia.", ko: "가족을 추가하려면 견학에서 해당 가족을 열고 단계를 대기자 명단으로 설정하세요. 가족은 등록 순서대로 표시됩니다." },
+  "Last day of care": { es: "Último día de cuidado", tl: "Huling araw ng pag-aalaga", zh: "最后托育日", vi: "Ngày chăm sóc cuối cùng", ko: "마지막 돌봄일" },
+  "Undo": { es: "Deshacer", tl: "I-undo", zh: "撤销", vi: "Hoàn tác", ko: "실행 취소" },
+  "Change how tuition is split": { es: "Cambiar cómo se divide la colegiatura", tl: "Baguhin kung paano hinahati ang tuition", zh: "更改学费分摊方式", vi: "Thay đổi cách chia học phí", ko: "수업료 분할 방식 변경" },
+  "Split tuition between guardians": { es: "Dividir la colegiatura entre tutores", tl: "Hatiin ang tuition sa mga tagapag-alaga", zh: "在监护人之间分摊学费", vi: "Chia học phí giữa những người giám hộ", ko: "보호자 간 수업료 분할" },
+  "Paper copy on file": { es: "Copia en papel archivada", tl: "May papel na kopya sa file", zh: "已存纸质副本", vi: "Đã có bản giấy lưu trữ", ko: "종이 사본 보관 중" },
+  "Mark on file": { es: "Marcar como archivado", tl: "Markahan na nasa file", zh: "标记为已存档", vi: "Đánh dấu đã có", ko: "보관됨으로 표시" },
+  "Deenroll": { es: "Dar de baja", tl: "I-deenroll", zh: "退托", vi: "Rút khỏi", ko: "퇴소" },
+  "They stay on your roster through their last day, then move to Deenrolled. Their record is kept.": { es: "Permanecen en su lista hasta su último día y luego pasan a Dados de baja. Su expediente se conserva.", tl: "Mananatili sila sa roster hanggang sa huling araw, saka lilipat sa Deenrolled. Itinatago ang kanilang rekord.", zh: "孩子会保留在名单上直到最后一天，之后移至已退托。其档案会被保留。", vi: "Trẻ vẫn ở trong danh sách đến ngày cuối, sau đó chuyển sang Đã rút. Hồ sơ được giữ lại.", ko: "마지막 날까지 명단에 남은 후 퇴소 목록으로 이동합니다. 기록은 보관됩니다." },
+  "Confirm deenrollment": { es: "Confirmar baja", tl: "Kumpirmahin ang deenrollment", zh: "确认退托", vi: "Xác nhận rút", ko: "퇴소 확인" },
+  "Child information sheet": { es: "Hoja de información del niño", tl: "Information sheet ng bata", zh: "儿童信息表", vi: "Phiếu thông tin trẻ", ko: "아동 정보지" },
+  "Printed": { es: "Impreso", tl: "Na-print", zh: "打印于", vi: "Đã in", ko: "인쇄일" },
+  "Allergies, medical & special needs": { es: "Alergias, necesidades médicas y especiales", tl: "Allergy, medikal at espesyal na pangangailangan", zh: "过敏、医疗及特殊需求", vi: "Dị ứng, nhu cầu y tế và đặc biệt", ko: "알레르기, 의료 및 특별 지원" },
+  "Document": { es: "Documento", tl: "Dokumento", zh: "文件", vi: "Tài liệu", ko: "서류" },
+  "Confidential — contains a child's personal information. Store securely.": { es: "Confidencial: contiene información personal de un niño. Guárdelo de forma segura.", tl: "Kumpidensyal — may personal na impormasyon ng bata. Itago nang ligtas.", zh: "机密——包含儿童个人信息，请妥善保管。", vi: "Bảo mật — có thông tin cá nhân của trẻ. Hãy cất giữ an toàn.", ko: "기밀 — 아동 개인정보가 포함되어 있습니다. 안전하게 보관하세요." },
+  "Print": { es: "Imprimir", tl: "I-print", zh: "打印", vi: "In", ko: "인쇄" },
+  "Print an information sheet for each child": { es: "Imprimir una hoja de información por niño", tl: "Mag-print ng information sheet para sa bawat bata", zh: "为每个孩子打印信息表", vi: "In phiếu thông tin cho từng trẻ", ko: "아이별 정보지 인쇄" },
+  "Print this child's information sheet": { es: "Imprimir la hoja de información de este niño", tl: "I-print ang information sheet ng batang ito", zh: "打印此孩子的信息表", vi: "In phiếu thông tin của trẻ này", ko: "이 아이의 정보지 인쇄" },
+  "Saturday": { es: "Sábado", tl: "Sabado", zh: "星期六", vi: "Thứ Bảy", ko: "토요일" },
+  "Sunday": { es: "Domingo", tl: "Linggo", zh: "星期日", vi: "Chủ Nhật", ko: "일요일" },
+  "children enrolled, out of your license": { es: "niños inscritos, según su licencia", tl: "batang naka-enroll, mula sa lisensya mo", zh: "已入托儿童 / 许可名额", vi: "trẻ đã ghi danh trên mức giấy phép", ko: "인가 정원 대비 등록 아동" },
+  "Here today": { es: "Presentes hoy", tl: "Narito ngayon", zh: "今日到园", vi: "Có mặt hôm nay", ko: "오늘 출석" },
+  "absent": { es: "ausentes", tl: "absent", zh: "缺勤", vi: "vắng", ko: "결석" },
+  "Absent": { es: "Ausente", tl: "Absent", zh: "缺勤", vi: "Vắng", ko: "결석" },
+  "is not one of your open days": { es: "no es uno de sus días abiertos", tl: "ay hindi isa sa mga bukas na araw mo", zh: "不是您的开放日", vi: "không phải ngày mở cửa của bạn", ko: "운영일이 아닙니다" },
+  "only approved flex care is shown": { es: "solo se muestra el cuidado flexible aprobado", tl: "approved flex care lang ang ipinapakita", zh: "仅显示已批准的弹性托育", vi: "chỉ hiển thị chăm sóc linh hoạt đã duyệt", ko: "승인된 유연 돌봄만 표시" },
+  "Check in": { es: "Registrar entrada", tl: "Check in", zh: "签到", vi: "Điểm danh vào", ko: "등원" },
+  "Check out": { es: "Registrar salida", tl: "Check out", zh: "签退", vi: "Điểm danh ra", ko: "하원" },
+  "In": { es: "Entrada", tl: "Pasok", zh: "到园", vi: "Vào", ko: "등원" },
+  "Undo check-out": { es: "Deshacer salida", tl: "I-undo ang check-out", zh: "撤销签退", vi: "Hoàn tác điểm danh ra", ko: "하원 취소" },
+  "Fees are estimated from your hourly rates in Finances → Tuition. Confirm you have staff coverage before approving.": { es: "Las tarifas se estiman con sus tarifas por hora en Finanzas → Colegiatura. Confirme que tiene personal antes de aprobar.", tl: "Tinantiya ang bayad mula sa hourly rates mo sa Finances → Tuition. Siguraduhing may staff bago mag-approve.", zh: "费用按“财务 → 学费”中的小时费率估算。批准前请确认人手充足。", vi: "Phí được ước tính theo giá theo giờ trong Tài chính → Học phí. Hãy xác nhận đủ nhân sự trước khi duyệt.", ko: "요금은 재무 → 수업료의 시간당 요금으로 계산됩니다. 승인 전 인력을 확인하세요." },
+  "Care type": { es: "Tipo de cuidado", tl: "Uri ng pag-aalaga", zh: "托育类型", vi: "Loại chăm sóc", ko: "돌봄 유형" },
+  "e.g. Full-day": { es: "ej. Día completo", tl: "hal. Buong araw", zh: "例如：全日", vi: "vd: Cả ngày", ko: "예: 종일" },
+  "Children that day": { es: "Niños ese día", tl: "Mga bata sa araw na iyon", zh: "当日人数", vi: "Số trẻ ngày đó", ko: "당일 인원" },
+  "Add a closure": { es: "Agregar un cierre", tl: "Magdagdag ng pagsasara", zh: "添加停托日", vi: "Thêm ngày nghỉ", ko: "휴원일 추가" },
+  "First day closed": { es: "Primer día cerrado", tl: "Unang araw na sarado", zh: "停托首日", vi: "Ngày nghỉ đầu tiên", ko: "휴원 시작일" },
+  "Last day closed (optional)": { es: "Último día cerrado (opcional)", tl: "Huling araw na sarado (opsyonal)", zh: "停托最后一天（可选）", vi: "Ngày nghỉ cuối (tùy chọn)", ko: "휴원 종료일 (선택)" },
+  "Same day": { es: "El mismo día", tl: "Parehong araw", zh: "同一天", vi: "Cùng ngày", ko: "당일" },
+  "e.g. Thanksgiving, provider training, sick day": { es: "ej. Acción de Gracias, capacitación, día de enfermedad", tl: "hal. Thanksgiving, training, sick day", zh: "例如：感恩节、培训、病假", vi: "vd: Lễ Tạ ơn, tập huấn, nghỉ ốm", ko: "예: 추수감사절, 연수, 병가" },
+  "Message all families about it now": { es: "Avisar a todas las familias ahora", tl: "Ipaalam sa lahat ng pamilya ngayon", zh: "现在通知所有家庭", vi: "Nhắn cho tất cả gia đình ngay", ko: "지금 모든 가족에게 알리기" },
+  "Closed days are taken off the attendance roster automatically.": { es: "Los días cerrados se quitan automáticamente de la lista de asistencia.", tl: "Awtomatikong inaalis sa attendance roster ang mga saradong araw.", zh: "停托日会自动从出勤名单中移除。", vi: "Ngày nghỉ được tự động bỏ khỏi danh sách điểm danh.", ko: "휴원일은 출석부에서 자동으로 빠집니다." },
+  "Upcoming closures": { es: "Próximos cierres", tl: "Mga paparating na pagsasara", zh: "即将到来的停托日", vi: "Ngày nghỉ sắp tới", ko: "예정된 휴원일" },
+  "No closures coming up.": { es: "No hay cierres próximos.", tl: "Walang paparating na pagsasara.", zh: "近期没有停托日。", vi: "Không có ngày nghỉ sắp tới.", ko: "예정된 휴원일이 없습니다." },
+  "In enrollment packet": { es: "En el paquete de inscripción", tl: "Nasa enrollment packet", zh: "已列入入托资料", vi: "Có trong hồ sơ ghi danh", ko: "입소 안내문에 포함" },
+  "Families notified": { es: "Familias avisadas", tl: "Naabisuhan ang mga pamilya", zh: "已通知家庭", vi: "Đã báo gia đình", ko: "가족에게 알림 완료" },
+  "Past": { es: "Pasados", tl: "Nakaraan", zh: "已过", vi: "Đã qua", ko: "지난 휴원" },
+  "Days they attend": { es: "Días que asiste", tl: "Mga araw na pumapasok", zh: "入托日", vi: "Những ngày đi học", ko: "등원 요일" },
+  "More days than the subsidy approves — extra days may need to be billed privately.": { es: "Más días de los que aprueba el subsidio; los días extra pueden cobrarse de forma privada.", tl: "Mas maraming araw kaysa aprubado ng subsidy — maaaring singilin nang pribado ang dagdag na araw.", zh: "天数超过补助批准范围——额外天数可能需自费。", vi: "Nhiều ngày hơn mức trợ cấp duyệt — ngày thêm có thể phải tự trả.", ko: "보조금 승인 일수보다 많습니다 — 추가 일수는 개인 부담일 수 있습니다." },
+  "Monthly sign-in / sign-out sheet": { es: "Hoja mensual de entrada y salida", tl: "Buwanang sign-in / sign-out sheet", zh: "每月签到/签退表", vi: "Bảng ký vào / ký ra hằng tháng", ko: "월간 등·하원 서명부" },
+  "Parent / guardian": { es: "Padre / tutor", tl: "Magulang / tagapag-alaga", zh: "父母 / 监护人", vi: "Cha mẹ / người giám hộ", ko: "부모 / 보호자" },
+  "Day": { es: "Día", tl: "Araw", zh: "星期", vi: "Thứ", ko: "요일" },
+  "Time in": { es: "Hora de entrada", tl: "Oras ng pasok", zh: "到园时间", vi: "Giờ vào", ko: "등원 시간" },
+  "Time out": { es: "Hora de salida", tl: "Oras ng labas", zh: "离园时间", vi: "Giờ ra", ko: "하원 시간" },
+  "Parent signature": { es: "Firma del padre", tl: "Pirma ng magulang", zh: "家长签名", vi: "Chữ ký phụ huynh", ko: "보호자 서명" },
+  "No scheduled days this month.": { es: "No hay días programados este mes.", tl: "Walang naka-schedule na araw ngayong buwan.", zh: "本月没有排定的入托日。", vi: "Không có ngày theo lịch trong tháng này.", ko: "이번 달 예정된 등원일이 없습니다." },
+  "Parent / guardian signature": { es: "Firma del padre / tutor", tl: "Pirma ng magulang / tagapag-alaga", zh: "父母/监护人签名", vi: "Chữ ký cha mẹ / người giám hộ", ko: "부모/보호자 서명" },
+  "Provider signature": { es: "Firma del proveedor", tl: "Pirma ng provider", zh: "托育者签名", vi: "Chữ ký người giữ trẻ", ko: "운영자 서명" },
+  "If your agency requires its own attendance form, copy these times onto it.": { es: "Si su agencia exige su propio formulario de asistencia, copie estas horas en él.", tl: "Kung may sariling attendance form ang agency mo, kopyahin doon ang mga oras na ito.", zh: "如机构要求使用其官方出勤表，请将这些时间抄录到该表上。", vi: "Nếu cơ quan yêu cầu mẫu điểm danh riêng, hãy chép các giờ này sang mẫu đó.", ko: "기관 전용 출석 양식이 필요하면 이 시간을 옮겨 적으세요." },
+  "Sign-in sheets": { es: "Hojas de entrada", tl: "Sign-in sheets", zh: "签到表", vi: "Bảng ký tên", ko: "등·하원 서명부" },
+  "Subsidized children": { es: "Niños con subsidio", tl: "Mga batang may subsidy", zh: "受补助儿童", vi: "Trẻ có trợ cấp", ko: "보조금 아동" },
+  "All children": { es: "Todos los niños", tl: "Lahat ng bata", zh: "所有儿童", vi: "Tất cả trẻ", ko: "모든 아동" },
+  "page": { es: "página", tl: "pahina", zh: "页", vi: "trang", ko: "페이지" },
+  "pages": { es: "páginas", tl: "pahina", zh: "页", vi: "trang", ko: "페이지" },
+  "One page per child with each scheduled day, times already recorded here, and lines for parent signatures.": { es: "Una página por niño con cada día programado, las horas ya registradas aquí y líneas para la firma de los padres.", tl: "Isang pahina bawat bata: bawat naka-schedule na araw, mga oras na naitala na rito, at linya para sa pirma ng magulang.", zh: "每个孩子一页：列出每个排定日、此处已记录的时间以及家长签名栏。", vi: "Mỗi trẻ một trang: các ngày theo lịch, giờ đã ghi ở đây và dòng chữ ký phụ huynh.", ko: "아이별 한 장: 예정된 날짜, 여기 기록된 시간, 보호자 서명란." },
+  "Care schedules you offer": { es: "Horarios de cuidado que ofrece", tl: "Mga iskedyul na inaalok mo", zh: "您提供的托育时段", vi: "Các khung giờ chăm sóc bạn cung cấp", ko: "제공하는 돌봄 일정" },
+  "e.g. Before & after school": { es: "ej. Antes y después de la escuela", tl: "hal. Bago at pagkatapos ng klase", zh: "例如：课前课后", vi: "vd: Trước và sau giờ học", ko: "예: 방과 전후" },
+  "e.g. 7:00 AM – 8:30 AM, 2:30 PM – 6:00 PM": { es: "ej. 7:00 AM – 8:30 AM, 2:30 PM – 6:00 PM", tl: "hal. 7:00 AM – 8:30 AM, 2:30 PM – 6:00 PM", zh: "例如：7:00 AM – 8:30 AM, 2:30 PM – 6:00 PM", vi: "vd: 7:00 AM – 8:30 AM, 2:30 PM – 6:00 PM", ko: "예: 7:00 AM – 8:30 AM, 2:30 PM – 6:00 PM" },
+  "In use by enrolled children": { es: "En uso por niños inscritos", tl: "Ginagamit ng mga naka-enroll na bata", zh: "已有在托儿童使用", vi: "Đang được trẻ ghi danh sử dụng", ko: "등록 아동이 사용 중" },
+  "Add a schedule": { es: "Agregar un horario", tl: "Magdagdag ng iskedyul", zh: "添加时段", vi: "Thêm khung giờ", ko: "일정 추가" },
+  "These appear when you set a child's schedule. A child can also have their own drop-off and pick-up times.": { es: "Aparecen al configurar el horario de un niño. Un niño también puede tener sus propias horas de entrega y recogida.", tl: "Lumalabas ang mga ito kapag nagse-set ng iskedyul ng bata. Puwede ring may sariling oras ng hatid at sundo ang bata.", zh: "设置孩子时段时会显示这些选项。孩子也可以有自己的接送时间。", vi: "Các mục này hiện khi bạn đặt lịch cho trẻ. Trẻ cũng có thể có giờ đưa đón riêng.", ko: "아이 일정을 설정할 때 표시됩니다. 아이별 등·하원 시간도 따로 정할 수 있습니다." },
+  "Their own drop-off and pick-up times (optional)": { es: "Sus propias horas de entrega y recogida (opcional)", tl: "Sariling oras ng hatid at sundo (opsyonal)", zh: "其专属接送时间（可选）", vi: "Giờ đưa đón riêng (tùy chọn)", ko: "아이별 등·하원 시간 (선택)" },
+  "Hours": { es: "Horario", tl: "Oras", zh: "时间", vi: "Giờ", ko: "시간" },
+  "Expired": { es: "Vencido", tl: "Expired", zh: "已过期", vi: "Đã hết hạn", ko: "만료됨" },
+  "billed monthly": { es: "se cobra mensualmente", tl: "sinisingil buwan-buwan", zh: "按月收费", vi: "tính theo tháng", ko: "월별 청구" },
+  "past due since": { es: "vencido desde", tl: "lampas na mula", zh: "逾期自", vi: "quá hạn từ", ko: "연체 시작일" },
+  "Overdue": { es: "Vencido", tl: "Overdue", zh: "逾期", vi: "Quá hạn", ko: "연체" },
+  "undo": { es: "deshacer", tl: "i-undo", zh: "撤销", vi: "hoàn tác", ko: "취소" },
+  "Record": { es: "Registrar", tl: "Itala ang", zh: "记录", vi: "Ghi nhận", ko: "기록:" },
+  "payment": { es: "pago", tl: "bayad", zh: "付款", vi: "thanh toán", ko: "납부" },
+  "Record payment": { es: "Registrar pago", tl: "Itala ang bayad", zh: "记录付款", vi: "Ghi nhận thanh toán", ko: "납부 기록" },
+  "Payment history": { es: "Historial de pagos", tl: "Kasaysayan ng bayad", zh: "付款记录", vi: "Lịch sử thanh toán", ko: "납부 내역" },
+  "Childcare payment receipt": { es: "Recibo de pago de cuidado infantil", tl: "Resibo ng bayad sa childcare", zh: "托育付款收据", vi: "Biên lai thanh toán giữ trẻ", ko: "보육료 납부 영수증" },
+  "Issued": { es: "Emitido", tl: "Inisyu", zh: "开具于", vi: "Ngày lập", ko: "발행일" },
+  "Paid by": { es: "Pagado por", tl: "Binayaran ni", zh: "付款人", vi: "Người trả", ko: "납부자" },
+  "Service": { es: "Servicio", tl: "Serbisyo", zh: "服务", vi: "Dịch vụ", ko: "서비스" },
+  "Licensed family child care": { es: "Cuidado infantil familiar con licencia", tl: "Lisensyadong family child care", zh: "持证家庭托育", vi: "Giữ trẻ gia đình có giấy phép", ko: "인가 가정 보육" },
+  "Month of care": { es: "Mes de cuidado", tl: "Buwan ng pag-aalaga", zh: "托育月份", vi: "Tháng chăm sóc", ko: "보육 월" },
+  "Date paid": { es: "Fecha de pago", tl: "Petsa ng bayad", zh: "付款日期", vi: "Ngày trả", ko: "납부일" },
+  "Method": { es: "Método", tl: "Paraan", zh: "方式", vi: "Hình thức", ko: "방법" },
+  "Total paid": { es: "Total pagado", tl: "Kabuuang binayaran", zh: "合计已付", vi: "Tổng đã trả", ko: "납부 합계" },
+  "Provider tax ID (EIN or SSN)": { es: "Número fiscal del proveedor (EIN o SSN)", tl: "Tax ID ng provider (EIN o SSN)", zh: "托育者税号（EIN 或 SSN）", vi: "Mã số thuế người giữ trẻ (EIN hoặc SSN)", ko: "운영자 납세번호 (EIN 또는 SSN)" },
+  "Amounts are what the family paid out of pocket. Subsidy payments from agencies are not included.": { es: "Los montos son lo que la familia pagó de su bolsillo. No incluye pagos de subsidio de agencias.", tl: "Ang mga halaga ay binayaran mismo ng pamilya. Hindi kasama ang bayad ng subsidy mula sa agency.", zh: "金额为家庭自付部分，不含机构的补助款。", vi: "Số tiền là phần gia đình tự trả, không gồm khoản trợ cấp từ cơ quan.", ko: "금액은 가족 본인 부담분이며 기관 보조금은 포함되지 않습니다." },
+  "Annual childcare payment summary": { es: "Resumen anual de pagos de cuidado infantil", tl: "Taunang buod ng bayad sa childcare", zh: "年度托育付款汇总", vi: "Tổng kết thanh toán giữ trẻ hằng năm", ko: "연간 보육료 납부 요약" },
+  "No payments recorded yet — record them in Tuition.": { es: "Aún no hay pagos registrados; regístrelos en Colegiatura.", tl: "Wala pang naitalang bayad — itala sa Tuition.", zh: "尚无付款记录——请在学费中记录。", vi: "Chưa ghi nhận thanh toán — hãy ghi trong Học phí.", ko: "납부 기록이 없습니다 — 수업료에서 기록하세요." },
+  "No out-of-pocket payments for this child.": { es: "Sin pagos de bolsillo para este niño.", tl: "Walang out-of-pocket na bayad para sa batang ito.", zh: "该孩子没有自付款项。", vi: "Trẻ này không có khoản tự trả.", ko: "이 아이는 본인 부담금이 없습니다." },
+  "No payments recorded yet.": { es: "Aún no hay pagos registrados.", tl: "Wala pang naitalang bayad.", zh: "尚无付款记录。", vi: "Chưa ghi nhận thanh toán.", ko: "납부 기록이 없습니다." },
+  "Year summary": { es: "Resumen del año", tl: "Buod ng taon", zh: "年度汇总", vi: "Tổng kết năm", ko: "연간 요약" },
+  "Tuition": { es: "Colegiatura", tl: "Tuition", zh: "学费", vi: "Học phí", ko: "수업료" },
+  "partly paid": { es: "pagado en parte", tl: "bahagyang bayad", zh: "部分已付", vi: "trả một phần", ko: "일부 납부" },
+  "program": { es: "programa", tl: "programa", zh: "个项目", vi: "chương trình", ko: "개 프로그램" },
+  "programs": { es: "programas", tl: "programa", zh: "个项目", vi: "chương trình", ko: "개 프로그램" },
+  "No subsidized families yet. Choose Subsidy when you enroll a family and they'll appear here.": { es: "Aún no hay familias con subsidio. Elija Subsidio al inscribir una familia y aparecerá aquí.", tl: "Wala pang pamilyang may subsidy. Piliin ang Subsidy kapag nag-enroll ka ng pamilya at lalabas sila rito.", zh: "尚无受补助家庭。登记家庭时选择“补助”，即会显示在这里。", vi: "Chưa có gia đình nhận trợ cấp. Chọn Trợ cấp khi ghi danh, gia đình sẽ hiện ở đây.", ko: "아직 보조금 가족이 없습니다. 등록 시 보조금을 선택하면 여기에 표시됩니다." },
+  "No end date": { es: "Sin fecha de fin", tl: "Walang petsa ng pagtatapos", zh: "无截止日期", vi: "Không có ngày kết thúc", ko: "종료일 없음" },
+  "Updates from forms and authorization dates": { es: "Se actualiza según formularios y fechas de autorización", tl: "Nag-a-update batay sa forms at petsa ng awtorisasyon", zh: "根据表格和授权日期自动更新", vi: "Tự cập nhật theo giấy tờ và ngày ủy quyền", ko: "서류와 승인 날짜에 따라 갱신" },
+  "Add the end date so Alaga can remind you before it expires.": { es: "Agregue la fecha de fin para que Alaga le avise antes de que venza.", tl: "Ilagay ang petsa ng pagtatapos para mapaalalahanan ka ng Alaga bago ito mag-expire.", zh: "请添加截止日期，Alaga 会在到期前提醒您。", vi: "Thêm ngày kết thúc để Alaga nhắc bạn trước khi hết hạn.", ko: "만료 전에 알림을 받으려면 종료일을 입력하세요." },
+  "No forms tracked for this family.": { es: "No se rastrean formularios para esta familia.", tl: "Walang forms na sinusubaybayan para sa pamilyang ito.", zh: "该家庭没有跟踪的表格。", vi: "Không theo dõi giấy tờ nào cho gia đình này.", ko: "이 가족은 추적 중인 서류가 없습니다." },
+  "Mark missing": { es: "Marcar como faltante", tl: "Markahan na kulang", zh: "标记为缺失", vi: "Đánh dấu còn thiếu", ko: "누락으로 표시" },
+  "Email the family for missing forms": { es: "Pedir a la familia los formularios faltantes", tl: "I-email ang pamilya para sa kulang na forms", zh: "邮件请家庭补交表格", vi: "Email gia đình xin giấy tờ còn thiếu", ko: "누락 서류 요청 이메일" },
+  "Caseworker": { es: "Trabajador social", tl: "Caseworker", zh: "个案工作者", vi: "Nhân viên phụ trách", ko: "담당 사례관리자" },
+  "Caseworker name": { es: "Nombre del trabajador social", tl: "Pangalan ng caseworker", zh: "个案工作者姓名", vi: "Tên nhân viên phụ trách", ko: "담당자 이름" },
+  "Email caseworker": { es: "Escribir al trabajador social", tl: "I-email ang caseworker", zh: "邮件联系个案工作者", vi: "Email nhân viên phụ trách", ko: "담당자에게 이메일" },
+  "Dates of care": { es: "Fechas de cuidado", tl: "Mga petsa ng pag-aalaga", zh: "托育日期", vi: "Ngày chăm sóc", ko: "보육 날짜" },
+  "Check or edit the dates before printing. Some FSA and dependent-care administrators require exact dates.": { es: "Revise o edite las fechas antes de imprimir. Algunos administradores de FSA y cuidado de dependientes exigen fechas exactas.", tl: "Suriin o i-edit ang mga petsa bago mag-print. May mga FSA at dependent-care administrator na humihingi ng eksaktong petsa.", zh: "打印前请核对或编辑日期。部分 FSA 及受抚养人照护管理机构要求列出确切日期。", vi: "Kiểm tra hoặc sửa ngày trước khi in. Một số đơn vị quản lý FSA và chăm sóc người phụ thuộc yêu cầu ngày chính xác.", ko: "인쇄 전에 날짜를 확인하거나 수정하세요. 일부 FSA 및 부양가족 돌봄 관리기관은 정확한 날짜를 요구합니다." },
+  "Days attended": { es: "Días asistidos", tl: "Mga araw na pumasok", zh: "实际出勤日", vi: "Ngày đã đi học", ko: "출석일" },
+  "Scheduled days": { es: "Días programados", tl: "Mga naka-schedule na araw", zh: "排定日", vi: "Ngày theo lịch", ko: "예정일" },
+  "Whole month": { es: "Todo el mes", tl: "Buong buwan", zh: "整月", vi: "Cả tháng", ko: "한 달 전체" },
+  "Save and print": { es: "Guardar e imprimir", tl: "I-save at i-print", zh: "保存并打印", vi: "Lưu và in", ko: "저장 후 인쇄" },
+  "Add your renewal date": { es: "Agrega tu fecha de renovación", tl: "Idagdag ang petsa ng renewal", zh: "添加续期日期", vi: "Thêm ngày gia hạn", ko: "갱신 날짜 추가" },
+  "Renews in": { es: "Se renueva en", tl: "Magre-renew sa loob ng", zh: "续期剩余", vi: "Gia hạn sau", ko: "갱신까지" },
+  "days": { es: "días", tl: "araw", zh: "天", vi: "ngày", ko: "일" },
+  "Current — renews": { es: "Vigente — se renueva", tl: "Kasalukuyan — magre-renew", zh: "有效 — 续期日", vi: "Còn hiệu lực — gia hạn", ko: "유효 — 갱신일" },
+  "License renewal date": { es: "Fecha de renovación de licencia", tl: "Petsa ng renewal ng lisensya", zh: "执照续期日期", vi: "Ngày gia hạn giấy phép", ko: "면허 갱신 날짜" },
+  "Last inspection date": { es: "Fecha de la última inspección", tl: "Petsa ng huling inspeksyon", zh: "上次检查日期", vi: "Ngày kiểm tra gần nhất", ko: "최근 점검 날짜" },
+  "Inspection result": { es: "Resultado de la inspección", tl: "Resulta ng inspeksyon", zh: "检查结果", vi: "Kết quả kiểm tra", ko: "점검 결과" },
+  "e.g. No citations": { es: "p. ej. Sin citaciones", tl: "hal. Walang citation", zh: "例如：无违规", vi: "vd: Không có vi phạm", ko: "예: 지적 사항 없음" },
+  "Citations / corrections": { es: "Citaciones / correcciones", tl: "Mga citation / pagwawasto", zh: "违规 / 整改", vi: "Vi phạm / khắc phục", ko: "지적 / 시정" },
+  "Citations / corrections (optional)": { es: "Citaciones / correcciones (opcional)", tl: "Mga citation / pagwawasto (opsyonal)", zh: "违规 / 整改（可选）", vi: "Vi phạm / khắc phục (tùy chọn)", ko: "지적 / 시정 (선택)" },
+  "What was cited and when it was corrected": { es: "Qué se citó y cuándo se corrigió", tl: "Ano ang na-cite at kailan naitama", zh: "违规内容及整改时间", vi: "Vi phạm gì và khắc phục khi nào", ko: "지적 내용과 시정 날짜" },
+  "Not recorded yet": { es: "Aún no registrado", tl: "Hindi pa naitala", zh: "尚未记录", vi: "Chưa ghi nhận", ko: "아직 기록 없음" },
+  "Renewal reminders start 60 days before": { es: "Los recordatorios empiezan 60 días antes", tl: "Nagsisimula ang paalala 60 araw bago", zh: "提前60天开始提醒", vi: "Nhắc trước 60 ngày", ko: "60일 전부터 알림" },
+  "renews / expires": { es: "se renueva / vence", tl: "magre-renew / mag-e-expire", zh: "续期 / 到期", vi: "gia hạn / hết hạn", ko: "갱신 / 만료" },
+  "Renews / expires on": { es: "Se renueva / vence el", tl: "Magre-renew / mag-e-expire sa", zh: "续期 / 到期日", vi: "Gia hạn / hết hạn ngày", ko: "갱신 / 만료일" },
+  "Edit dates and status": { es: "Editar fechas y estado", tl: "I-edit ang petsa at status", zh: "编辑日期和状态", vi: "Sửa ngày và trạng thái", ko: "날짜 및 상태 편집" },
+  "Official CDSS forms": { es: "Formularios oficiales de CDSS", tl: "Opisyal na CDSS forms", zh: "CDSS官方表格", vi: "Biểu mẫu chính thức CDSS", ko: "CDSS 공식 양식" },
+  "Open CDSS forms": { es: "Abrir formularios de CDSS", tl: "Buksan ang CDSS forms", zh: "打开CDSS表格", vi: "Mở biểu mẫu CDSS", ko: "CDSS 양식 열기" },
+  "Download the current version from the CDSS forms list, then upload the signed copy to the child's or staff member's record.": { es: "Descarga la versión actual de la lista de formularios de CDSS y luego sube la copia firmada al expediente del niño o del personal.", tl: "I-download ang kasalukuyang bersyon mula sa listahan ng CDSS forms, pagkatapos i-upload ang pinirmahang kopya sa record ng bata o staff.", zh: "从CDSS表格列表下载最新版本，然后将签署后的副本上传到儿童或员工记录中。", vi: "Tải phiên bản hiện hành từ danh sách biểu mẫu CDSS, sau đó tải bản đã ký lên hồ sơ của trẻ hoặc nhân viên.", ko: "CDSS 양식 목록에서 최신 버전을 내려받은 후, 서명된 사본을 아동 또는 직원 기록에 업로드하세요." },
+  "Use your own version of this form, then upload the signed copy to the child's record.": { es: "Usa tu propia versión de este formulario y luego sube la copia firmada al expediente del niño.", tl: "Gamitin ang sarili mong bersyon ng form na ito, pagkatapos i-upload ang pinirmahang kopya sa record ng bata.", zh: "使用您自己的表格版本，然后将签署后的副本上传到儿童记录中。", vi: "Dùng mẫu của riêng bạn, sau đó tải bản đã ký lên hồ sơ của trẻ.", ko: "자체 양식을 사용한 후, 서명된 사본을 아동 기록에 업로드하세요." },
+  "Time": { es: "Hora", tl: "Oras", zh: "时间", vi: "Giờ", ko: "시간" },
+  "Reported by": { es: "Reportado por", tl: "Iniulat ni", zh: "报告人", vi: "Người báo cáo", ko: "보고자" },
+  "Staff name": { es: "Nombre del personal", tl: "Pangalan ng staff", zh: "员工姓名", vi: "Tên nhân viên", ko: "직원 이름" },
+  "How — e.g. phone call at pickup, text": { es: "Cómo — p. ej. llamada, en la recogida, mensaje", tl: "Paano — hal. tawag, sa pagsundo, text", zh: "方式 — 例如：电话、接孩子时、短信", vi: "Cách — vd: gọi điện, lúc đón, nhắn tin", ko: "방법 — 예: 전화, 픽업 시, 문자" },
+  "Mark notified": { es: "Marcar como notificado", tl: "Markahan bilang naabisuhan", zh: "标记为已通知", vi: "Đánh dấu đã báo", ko: "통지 완료 표시" },
+  "No expiration": { es: "Sin vencimiento", tl: "Walang expiration", zh: "无到期日", vi: "Không hết hạn", ko: "만료 없음" },
+  "e.g. renewal filed, policy number": { es: "p. ej. renovación enviada, número de póliza", tl: "hal. naisumite ang renewal, policy number", zh: "例如：已提交续期、保单号", vi: "vd: đã nộp gia hạn, số hợp đồng", ko: "예: 갱신 제출, 보험 번호" },
+  "Alaga reminds you 60 days before the renewal date.": { es: "Alaga te recuerda 60 días antes de la fecha de renovación.", tl: "Paaalalahanan ka ng Alaga 60 araw bago ang renewal.", zh: "Alaga会在续期日前60天提醒您。", vi: "Alaga nhắc bạn 60 ngày trước ngày gia hạn.", ko: "Alaga가 갱신일 60일 전에 알려드립니다." },
+  "No file uploaded yet.": { es: "Aún no se ha subido ningún archivo.", tl: "Wala pang na-upload na file.", zh: "尚未上传文件。", vi: "Chưa tải tệp lên.", ko: "아직 업로드된 파일이 없습니다." },
+  "Renew by (optional)": { es: "Renovar antes de (opcional)", tl: "I-renew bago (opsyonal)", zh: "续期截止（可选）", vi: "Gia hạn trước (tùy chọn)", ko: "갱신 기한 (선택)" },
+  "renew by": { es: "renovar antes de", tl: "i-renew bago", zh: "续期截止", vi: "gia hạn trước", ko: "갱신 기한" },
+  "Others involved": { es: "Otras personas involucradas", tl: "Iba pang kasangkot", zh: "其他相关人员", vi: "Người liên quan khác", ko: "기타 관련자" },
+  "Parent not yet notified": { es: "Padre aún no notificado", tl: "Hindi pa naabisuhan ang magulang", zh: "尚未通知家长", vi: "Chưa báo phụ huynh", ko: "부모 미통지" },
+  "Parent notified": { es: "Padre notificado", tl: "Naabisuhan ang magulang", zh: "已通知家长", vi: "Đã báo phụ huynh", ko: "부모 통지 완료" },
+  "Incident history": { es: "Historial de incidentes", tl: "Kasaysayan ng insidente", zh: "事件记录", vi: "Lịch sử sự cố", ko: "사고 기록" },
+  "Account": { es: "Cuenta", tl: "Account", zh: "账户", vi: "Tài khoản", ko: "계정" },
+  "Add a family who left before you used Alaga": { es: "Agregar una familia que se fue antes de usar Alaga", tl: "Magdagdag ng pamilyang umalis bago mo ginamit ang Alaga", zh: "添加在使用Alaga之前离开的家庭", vi: "Thêm gia đình đã rời đi trước khi bạn dùng Alaga", ko: "Alaga 사용 전에 떠난 가족 추가" },
+  "Add a past family": { es: "Agregar una familia anterior", tl: "Magdagdag ng dating pamilya", zh: "添加过往家庭", vi: "Thêm gia đình cũ", ko: "이전 가족 추가" },
+  "Add it so receipts are complete": { es: "Agrégala para que los recibos estén completos", tl: "Idagdag para kumpleto ang mga resibo", zh: "请添加，以便收据信息完整", vi: "Thêm để biên nhận đầy đủ", ko: "영수증 정보를 완성하려면 추가하세요" },
+  "Add past family": { es: "Agregar familia anterior", tl: "Idagdag ang dating pamilya", zh: "添加过往家庭", vi: "Thêm gia đình cũ", ko: "이전 가족 추가" },
+  "Add your licensed capacity in Settings": { es: "Agrega tu capacidad autorizada en Configuración", tl: "Idagdag ang lisensyadong kapasidad sa Settings", zh: "请在设置中添加许可容量", vi: "Thêm sức chứa được cấp phép trong Cài đặt", ko: "설정에서 허가 정원을 추가하세요" },
+  "Address": { es: "Dirección", tl: "Address", zh: "地址", vi: "Địa chỉ", ko: "주소" },
+  "Agency": { es: "Agencia", tl: "Ahensya", zh: "机构", vi: "Cơ quan", ko: "기관" },
+  "All": { es: "Todos", tl: "Lahat", zh: "全部", vi: "Tất cả", ko: "전체" },
+  "Ask us to delete your account": { es: "Pídenos eliminar tu cuenta", tl: "Hilingin sa amin na burahin ang account mo", zh: "请求我们删除您的账户", vi: "Yêu cầu chúng tôi xóa tài khoản", ko: "계정 삭제 요청" },
+  "Attendance": { es: "Asistencia", tl: "Attendance", zh: "出勤", vi: "Điểm danh", ko: "출석" },
+  "Business email": { es: "Correo del negocio", tl: "Email ng negosyo", zh: "商务邮箱", vi: "Email doanh nghiệp", ko: "사업장 이메일" },
+  "Business phone": { es: "Teléfono del negocio", tl: "Telepono ng negosyo", zh: "商务电话", vi: "Điện thoại doanh nghiệp", ko: "사업장 전화" },
+  "Cancel your subscription": { es: "Cancela tu suscripción", tl: "I-cancel ang subscription", zh: "取消订阅", vi: "Hủy gói đăng ký", ko: "구독 취소" },
+  "Canceled — access continues through": { es: "Cancelada — el acceso continúa hasta", tl: "Na-cancel — tuloy ang access hanggang", zh: "已取消 — 可使用至", vi: "Đã hủy — vẫn truy cập được đến", ko: "취소됨 — 이용 가능 기한" },
+  "Change password": { es: "Cambiar contraseña", tl: "Palitan ang password", zh: "更改密码", vi: "Đổi mật khẩu", ko: "비밀번호 변경" },
+  "Children's documents": { es: "Documentos de los niños", tl: "Mga dokumento ng mga bata", zh: "儿童文件", vi: "Giấy tờ của trẻ", ko: "아동 서류" },
+  "Closure notice": { es: "Aviso de cierre", tl: "Abiso ng pagsasara", zh: "停业通知", vi: "Thông báo nghỉ", ko: "휴원 안내" },
+  "Couldn't send the email. Try again in a moment.": { es: "No se pudo enviar el correo. Inténtalo de nuevo en un momento.", tl: "Hindi naipadala ang email. Subukan ulit mamaya.", zh: "无法发送邮件，请稍后再试。", vi: "Không gửi được email. Vui lòng thử lại sau.", ko: "이메일을 보내지 못했습니다. 잠시 후 다시 시도하세요." },
+  "Current children with guardians, schedules and funding.": { es: "Niños actuales con tutores, horarios y financiamiento.", tl: "Kasalukuyang mga bata kasama ang guardian, iskedyul at pondo.", zh: "当前儿童及其监护人、时间安排和资金来源。", vi: "Trẻ hiện tại cùng người giám hộ, lịch và nguồn chi trả.", ko: "현재 아동과 보호자, 일정, 비용 부담 정보." },
+  "Download .zip": { es: "Descargar .zip", tl: "I-download ang .zip", zh: "下载 .zip", vi: "Tải .zip", ko: "ZIP 다운로드" },
+  "Download a copy of your records": { es: "Descarga una copia de tus registros", tl: "I-download ang kopya ng mga record mo", zh: "下载记录副本", vi: "Tải bản sao hồ sơ", ko: "기록 사본 다운로드" },
+  "Download again": { es: "Descargar de nuevo", tl: "I-download ulit", zh: "再次下载", vi: "Tải lại", ko: "다시 다운로드" },
+  "Download everything": { es: "Descargar todo", tl: "I-download lahat", zh: "全部下载", vi: "Tải tất cả", ko: "전체 다운로드" },
+  "Download reports": { es: "Descargar informes", tl: "I-download ang mga ulat", zh: "下载报告", vi: "Tải báo cáo", ko: "보고서 다운로드" },
+  "Download your records first": { es: "Primero descarga tus registros", tl: "I-download muna ang mga record mo", zh: "请先下载记录", vi: "Hãy tải hồ sơ trước", ko: "먼저 기록을 다운로드하세요" },
+  "Download your records first (step 1).": { es: "Primero descarga tus registros (paso 1).", tl: "I-download muna ang mga record mo (hakbang 1).", zh: "请先下载记录（第1步）。", vi: "Hãy tải hồ sơ trước (bước 1).", ko: "먼저 기록을 다운로드하세요 (1단계)." },
+  "Downloaded": { es: "Descargado", tl: "Na-download", zh: "已下载", vi: "Đã tải", ko: "다운로드 완료" },
+  "Enrollment roster": { es: "Lista de inscripción", tl: "Listahan ng naka-enroll", zh: "在册名单", vi: "Danh sách ghi danh", ko: "등록 명단" },
+  "Enter a number from 1 to": { es: "Ingresa un número del 1 al", tl: "Maglagay ng numero mula 1 hanggang", zh: "请输入1到", vi: "Nhập số từ 1 đến", ko: "1부터 다음 사이의 숫자 입력:" },
+  "for this license type.": { es: "para este tipo de licencia.", tl: "para sa uri ng lisensyang ito.", zh: "之间的数字（此执照类型）。", vi: "cho loại giấy phép này.", ko: "(이 면허 유형 기준)." },
+  "Enter your licensed capacity.": { es: "Ingresa tu capacidad autorizada.", tl: "Ilagay ang lisensyadong kapasidad.", zh: "请输入许可容量。", vi: "Nhập sức chứa được cấp phép.", ko: "허가 정원을 입력하세요." },
+  "Every child's days, times in and out, and absences — for subsidy agencies and your records.": { es: "Días, horas de entrada y salida y ausencias de cada niño — para agencias de subsidio y tus registros.", tl: "Mga araw, oras ng pasok at labas, at absent ng bawat bata — para sa subsidy agency at sa records mo.", zh: "每个孩子的出勤日、入园离园时间和缺勤 — 供补助机构和您存档。", vi: "Ngày, giờ đến/về và vắng mặt của từng trẻ — cho cơ quan trợ cấp và hồ sơ của bạn.", ko: "아동별 출석일, 등·하원 시간, 결석 — 보조금 기관 제출 및 기록용." },
+  "Every expense you've logged, by category.": { es: "Cada gasto registrado, por categoría.", tl: "Lahat ng gastos na naitala mo, ayon sa kategorya.", zh: "您记录的所有支出，按类别。", vi: "Mọi chi phí đã ghi, theo danh mục.", ko: "기록한 모든 지출(분류별)." },
+  "Every incident you've logged, with how parents were notified.": { es: "Cada incidente registrado y cómo se notificó a los padres.", tl: "Lahat ng insidenteng naitala, at paano naabisuhan ang magulang.", zh: "您记录的所有事件及家长通知方式。", vi: "Mọi sự cố đã ghi và cách báo phụ huynh.", ko: "기록한 모든 사고와 부모 통지 방법." },
+  "Every tuition and copay payment, with who paid and how — for your accountant.": { es: "Cada pago de colegiatura y copago, con quién pagó y cómo — para tu contador.", tl: "Lahat ng bayad sa tuition at copay, kung sino at paano nagbayad — para sa accountant mo.", zh: "每笔学费和自付款，包括付款人和方式 — 供会计使用。", vi: "Mọi khoản học phí và đồng chi trả, ai trả và trả thế nào — cho kế toán.", ko: "모든 수업료·본인부담금 결제와 납부자, 결제 방법 — 회계사용." },
+  "Full — no openings": { es: "Lleno — sin vacantes", tl: "Puno — walang bakante", zh: "已满 — 无空位", vi: "Đã đủ — không còn chỗ", ko: "정원 마감 — 자리 없음" },
+  "opening": { es: "vacante", tl: "bakante", zh: "个空位", vi: "chỗ trống", ko: "자리" },
+  "openings": { es: "vacantes", tl: "bakante", zh: "个空位", vi: "chỗ trống", ko: "자리" },
+  "Go step by step — nothing is deleted until the last step": { es: "Paso a paso — nada se elimina hasta el último paso", tl: "Isa-isang hakbang — walang buburahin hanggang sa huling hakbang", zh: "逐步进行 — 最后一步之前不会删除任何内容", vi: "Làm từng bước — không xóa gì cho đến bước cuối", ko: "단계별로 진행 — 마지막 단계 전까지 아무것도 삭제되지 않습니다" },
+  "Go to Plan & Billing": { es: "Ir a Plan y facturación", tl: "Pumunta sa Plan & Billing", zh: "前往套餐与账单", vi: "Đến Gói & Thanh toán", ko: "요금제 및 결제로 이동" },
+  "Incident log": { es: "Registro de incidentes", tl: "Talaan ng insidente", zh: "事件记录", vi: "Nhật ký sự cố", ko: "사고 기록" },
+  "Income & expenses by month": { es: "Ingresos y gastos por mes", tl: "Kita at gastos bawat buwan", zh: "每月收支", vi: "Thu chi theo tháng", ko: "월별 수입 및 지출" },
+  "Last sign-in": { es: "Último inicio de sesión", tl: "Huling pag-sign in", zh: "上次登录", vi: "Lần đăng nhập gần nhất", ko: "마지막 로그인" },
+  "Leaving Alaga": { es: "Dejar Alaga", tl: "Pag-alis sa Alaga", zh: "离开Alaga", vi: "Rời Alaga", ko: "Alaga 떠나기" },
+  "Let families know (optional)": { es: "Avisa a las familias (opcional)", tl: "Ipaalam sa mga pamilya (opsyonal)", zh: "通知家庭（可选）", vi: "Báo cho các gia đình (tùy chọn)", ko: "가족에게 알리기 (선택)" },
+  "Loading…": { es: "Cargando…", tl: "Naglo-load…", zh: "加载中…", vi: "Đang tải…", ko: "불러오는 중…" },
+  "Missing documents": { es: "Documentos faltantes", tl: "Kulang na dokumento", zh: "缺少的文件", vi: "Giấy tờ còn thiếu", ko: "누락 서류" },
+  "No account is signed in on this device.": { es: "No hay ninguna cuenta iniciada en este dispositivo.", tl: "Walang naka-sign in na account sa device na ito.", zh: "此设备上未登录任何账户。", vi: "Chưa có tài khoản nào đăng nhập trên thiết bị này.", ko: "이 기기에 로그인된 계정이 없습니다." },
+  "No conversations match.": { es: "Ninguna conversación coincide.", tl: "Walang tugmang usapan.", zh: "没有匹配的对话。", vi: "Không có cuộc trò chuyện phù hợp.", ko: "일치하는 대화가 없습니다." },
+  "No expenses logged this month.": { es: "No hay gastos registrados este mes.", tl: "Walang naitalang gastos ngayong buwan.", zh: "本月未记录支出。", vi: "Chưa ghi chi phí tháng này.", ko: "이번 달 기록된 지출이 없습니다." },
+  "Opens in Excel, Google Sheets or Numbers": { es: "Se abre en Excel, Google Sheets o Numbers", tl: "Bumubukas sa Excel, Google Sheets o Numbers", zh: "可在Excel、Google表格或Numbers中打开", vi: "Mở bằng Excel, Google Sheets hoặc Numbers", ko: "Excel, Google Sheets, Numbers에서 열 수 있습니다" },
+  "Password reset email sent to": { es: "Correo para restablecer contraseña enviado a", tl: "Naipadala ang email para sa pag-reset ng password sa", zh: "重置密码邮件已发送至", vi: "Đã gửi email đặt lại mật khẩu đến", ko: "비밀번호 재설정 이메일 발송:" },
+  "Payments received": { es: "Pagos recibidos", tl: "Mga natanggap na bayad", zh: "已收款项", vi: "Khoản đã nhận", ko: "받은 결제" },
+  "Payments received, refunds and logged expenses for each month — a starting point for taxes.": { es: "Pagos recibidos, reembolsos y gastos de cada mes — un punto de partida para los impuestos.", tl: "Mga natanggap na bayad, refund at gastos bawat buwan — panimula para sa buwis.", zh: "每月收款、退款和支出 — 报税的起点。", vi: "Khoản nhận, hoàn tiền và chi phí mỗi tháng — điểm khởi đầu để khai thuế.", ko: "월별 받은 결제, 환불, 지출 — 세금 준비의 출발점." },
+  "Pickup reminder": { es: "Recordatorio de recogida", tl: "Paalala sa pagsundo", zh: "接孩子提醒", vi: "Nhắc đón trẻ", ko: "픽업 알림" },
+  "Reports": { es: "Informes", tl: "Mga ulat", zh: "报告", vi: "Báo cáo", ko: "보고서" },
+  "Reports & your data": { es: "Informes y tus datos", tl: "Mga ulat at data mo", zh: "报告与数据", vi: "Báo cáo & dữ liệu", ko: "보고서 및 데이터" },
+  "Request account deletion": { es: "Solicitar eliminación de cuenta", tl: "Humiling ng pagbura ng account", zh: "申请删除账户", vi: "Yêu cầu xóa tài khoản", ko: "계정 삭제 요청" },
+  "Search messages…": { es: "Buscar mensajes…", tl: "Maghanap ng mensahe…", zh: "搜索消息…", vi: "Tìm tin nhắn…", ko: "메시지 검색…" },
+  "Send to all families": { es: "Enviar a todas las familias", tl: "Ipadala sa lahat ng pamilya", zh: "发送给所有家庭", vi: "Gửi cho tất cả gia đình", ko: "모든 가족에게 보내기" },
+  "Sent — see Messages": { es: "Enviado — ver Mensajes", tl: "Naipadala — tingnan ang Messages", zh: "已发送 — 查看消息", vi: "Đã gửi — xem Tin nhắn", ko: "전송됨 — 메시지 확인" },
+  "Sign out": { es: "Cerrar sesión", tl: "Mag-sign out", zh: "退出登录", vi: "Đăng xuất", ko: "로그아웃" },
+  "Signed in as": { es: "Sesión iniciada como", tl: "Naka-sign in bilang", zh: "当前登录", vi: "Đăng nhập với", ko: "로그인 계정" },
+  "Start from a template (optional)": { es: "Empezar con una plantilla (opcional)", tl: "Magsimula sa template (opsyonal)", zh: "从模板开始（可选）", vi: "Bắt đầu từ mẫu (tùy chọn)", ko: "템플릿으로 시작 (선택)" },
+  "Street address (shown on receipts and printouts)": { es: "Dirección (aparece en recibos e impresiones)", tl: "Address (makikita sa resibo at printout)", zh: "街道地址（显示在收据和打印件上）", vi: "Địa chỉ (hiện trên biên nhận và bản in)", ko: "주소 (영수증 및 인쇄물에 표시)" },
+  "This month's costs by category": { es: "Costos de este mes por categoría", tl: "Gastos ngayong buwan ayon sa kategorya", zh: "本月各类成本", vi: "Chi phí tháng này theo danh mục", ko: "이번 달 분류별 비용" },
+  "Unread": { es: "No leídos", tl: "Hindi pa nabasa", zh: "未读", vi: "Chưa đọc", ko: "읽지 않음" },
+  "View family": { es: "Ver familia", tl: "Tingnan ang pamilya", zh: "查看家庭", vi: "Xem gia đình", ko: "가족 보기" },
+  "When you withdraw a child in Families, they're added here automatically.": { es: "Cuando das de baja a un niño en Familias, se agrega aquí automáticamente.", tl: "Kapag nag-withdraw ka ng bata sa Families, awtomatiko siyang nadadagdag dito.", zh: "在“家庭”中办理退园后，会自动添加到这里。", vi: "Khi bạn cho trẻ nghỉ trong mục Gia đình, trẻ sẽ tự động được thêm vào đây.", ko: "가족 화면에서 퇴소 처리하면 자동으로 여기에 추가됩니다." },
+  "Which documents are on file for each child, and when they renew.": { es: "Qué documentos hay de cada niño y cuándo se renuevan.", tl: "Aling dokumento ang nakatala para sa bawat bata, at kailan ito magre-renew.", zh: "每个孩子已存档的文件及续期时间。", vi: "Giấy tờ nào đã có cho từng trẻ và khi nào cần gia hạn.", ko: "아동별 보관 서류와 갱신 시기." },
+  "Write a message": { es: "Escribir un mensaje", tl: "Sumulat ng mensahe", zh: "写消息", vi: "Viết tin nhắn", ko: "메시지 작성" },
+  "Yesterday": { es: "Ayer", tl: "Kahapon", zh: "昨天", vi: "Hôm qua", ko: "어제" },
+  "You're exploring a demo — no account is signed in.": { es: "Estás explorando una demostración — no hay ninguna cuenta iniciada.", tl: "Demo ang tinitingnan mo — walang naka-sign in na account.", zh: "您正在体验演示 — 未登录账户。", vi: "Bạn đang xem bản demo — chưa đăng nhập tài khoản.", ko: "데모를 보고 있습니다 — 로그인된 계정이 없습니다." },
+  "Your export downloaded as one .zip file — every report plus a complete backup.": { es: "Tu exportación se descargó como un archivo .zip — todos los informes y una copia completa.", tl: "Na-download ang export bilang isang .zip — lahat ng ulat at kumpletong backup.", zh: "导出已下载为一个 .zip 文件 — 包含所有报告和完整备份。", vi: "Bản xuất đã tải dưới dạng một tệp .zip — mọi báo cáo và bản sao đầy đủ.", ko: "내보내기가 .zip 파일 하나로 다운로드되었습니다 — 모든 보고서와 전체 백업 포함." },
+  "after payroll & this month's expenses": { es: "después de nómina y gastos del mes", tl: "pagkatapos ng payroll at gastos ngayong buwan", zh: "扣除工资和本月支出后", vi: "sau lương và chi phí tháng này", ko: "급여 및 이번 달 지출 차감 후" },
+  "files": { es: "archivos", tl: "file", zh: "个文件", vi: "tệp", ko: "개 파일" },
+  "Deletion is permanent. Without a request, a canceled account becomes a read-only archive after 90 days.": { es: "La eliminación es permanente. Sin una solicitud, una cuenta cancelada pasa a ser un archivo de solo lectura después de 90 días.", tl: "Permanente ang pagbura. Kung walang hiling, magiging read-only archive ang na-cancel na account pagkalipas ng 90 araw.", zh: "删除是永久性的。如未申请，已取消的账户将在90天后变为只读存档。", vi: "Xóa là vĩnh viễn. Nếu không yêu cầu, tài khoản đã hủy sẽ thành kho lưu trữ chỉ đọc sau 90 ngày.", ko: "삭제는 영구적입니다. 요청하지 않으면 취소된 계정은 90일 후 읽기 전용 보관 상태가 됩니다." },
+  "Request sent. The Alaga team will confirm by email before anything is deleted — you can follow it in Support.": { es: "Solicitud enviada. El equipo de Alaga confirmará por correo antes de eliminar algo — puedes seguirla en Soporte.", tl: "Naipadala ang hiling. Kukumpirmahin ng Alaga team sa email bago burahin ang anuman — masusundan mo ito sa Support.", zh: "申请已发送。Alaga团队会在删除前通过邮件确认 — 您可在“支持”中查看进度。", vi: "Đã gửi yêu cầu. Đội Alaga sẽ xác nhận qua email trước khi xóa — bạn có thể theo dõi trong Hỗ trợ.", ko: "요청이 전송되었습니다. 삭제 전에 Alaga 팀이 이메일로 확인합니다 — 지원에서 진행 상황을 볼 수 있습니다." },
+  "Closing your child care business? Also tell your Licensing Program Analyst and every subsidy agency you work with, and keep children's records for at least 3 years after care ends.": { es: "¿Vas a cerrar tu negocio de cuidado infantil? Avisa también a tu Analista del Programa de Licencias y a cada agencia de subsidio, y conserva los registros de los niños al menos 3 años después de terminar el cuidado.", tl: "Isasara mo ba ang child care business mo? Ipaalam din sa Licensing Program Analyst mo at sa bawat subsidy agency, at itago ang records ng mga bata nang hindi bababa sa 3 taon pagkatapos ng pag-aalaga.", zh: "要关闭托育业务？请同时通知您的执照项目分析员和所有合作的补助机构，并在照护结束后至少保留儿童记录3年。", vi: "Đóng cửa cơ sở giữ trẻ? Hãy báo cho Chuyên viên Cấp phép và mọi cơ quan trợ cấp bạn làm việc cùng, và giữ hồ sơ trẻ ít nhất 3 năm sau khi kết thúc chăm sóc.", ko: "보육 사업을 종료하시나요? 면허 담당관(LPA)과 협력 중인 모든 보조금 기관에도 알리고, 보육 종료 후 최소 3년간 아동 기록을 보관하세요." },
+  "Need a report for an agency, your accountant or taxes? Attendance, payments and year-end summaries download from Settings.": { es: "¿Necesitas un informe para una agencia, tu contador o impuestos? La asistencia, los pagos y los resúmenes anuales se descargan en Configuración.", tl: "Kailangan ng ulat para sa ahensya, accountant o buwis? Ang attendance, bayad at year-end summary ay nada-download sa Settings.", zh: "需要给机构、会计或报税用的报告？出勤、收款和年度汇总可在设置中下载。", vi: "Cần báo cáo cho cơ quan, kế toán hoặc thuế? Tải điểm danh, thanh toán và tổng kết năm trong Cài đặt.", ko: "기관, 회계사, 세금용 보고서가 필요하신가요? 출석, 결제, 연말 요약은 설정에서 다운로드하세요." },
+  "One .zip file with every report above, past families, staff, facility documents, messages, tours, 12 months of attendance, and a complete backup of your records. Uploaded scans and photos are listed by file name.": { es: "Un archivo .zip con todos los informes anteriores, familias anteriores, personal, documentos del centro, mensajes, visitas, 12 meses de asistencia y una copia completa de tus registros. Los escaneos y fotos subidos aparecen por nombre de archivo.", tl: "Isang .zip na may lahat ng ulat sa itaas, dating pamilya, staff, dokumento ng pasilidad, mensahe, tour, 12 buwang attendance, at kumpletong backup ng records mo. Nakalista ayon sa pangalan ang mga na-upload na scan at larawan.", zh: "一个 .zip 文件，包含上述所有报告、过往家庭、员工、机构文件、消息、参观记录、12个月出勤和完整的记录备份。已上传的扫描件和照片按文件名列出。", vi: "Một tệp .zip gồm mọi báo cáo trên, gia đình cũ, nhân viên, giấy tờ cơ sở, tin nhắn, lịch tham quan, 12 tháng điểm danh và bản sao đầy đủ hồ sơ. Bản quét và ảnh đã tải lên được liệt kê theo tên tệp.", ko: "위의 모든 보고서, 이전 가족, 직원, 시설 서류, 메시지, 견학, 12개월 출석, 전체 기록 백업이 담긴 .zip 파일 하나. 업로드한 스캔본과 사진은 파일 이름으로 표시됩니다." },
+  "Printable monthly sign-in sheets are in Bookings. Receipts for families are in Finances → Receipts.": { es: "Las hojas de entrada mensuales imprimibles están en Reservas. Los recibos para las familias están en Finanzas → Recibos.", tl: "Nasa Bookings ang printable na buwanang sign-in sheet. Nasa Finances → Receipts ang mga resibo ng pamilya.", zh: "可打印的月度签到表在“预订”中。家庭收据在“财务 → 收据”中。", vi: "Bảng ký đến/về hàng tháng có trong Đặt chỗ. Biên nhận cho gia đình ở Tài chính → Biên nhận.", ko: "인쇄용 월별 출석부는 예약에, 가족용 영수증은 재무 → 영수증에 있습니다." },
+  "Hi families — a quick update: we're changing how we keep records and messages. Starting [date], please reach us at [phone/email]. Thank you!": { es: "Hola, familias — una breve actualización: estamos cambiando cómo guardamos registros y mensajes. A partir del [fecha], comuníquense con nosotros al [teléfono/correo]. ¡Gracias!", tl: "Hi mga pamilya — maikling update: binabago namin kung paano namin itinatago ang records at mensahe. Simula [petsa], kontakin kami sa [telepono/email]. Salamat!", zh: "各位家长好——简短通知：我们将更改记录和消息的管理方式。自[日期]起，请通过[电话/邮箱]联系我们。谢谢！", vi: "Chào các gia đình — cập nhật nhanh: chúng tôi đang thay đổi cách lưu hồ sơ và tin nhắn. Từ [ngày], vui lòng liên hệ qua [điện thoại/email]. Cảm ơn!", ko: "가족 여러분 안녕하세요 — 기록과 메시지 관리 방식이 바뀝니다. [날짜]부터는 [전화/이메일]로 연락해 주세요. 감사합니다!" },
+  "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
+  "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
+  "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
+  "missing documents": { es: "documentos faltantes", tl: "kulang na dokumento", zh: "份文件缺失", vi: "hồ sơ còn thiếu", ko: "누락 서류" },
+  "missing document": { es: "documento faltante", tl: "kulang na dokumento", zh: "份文件缺失", vi: "hồ sơ còn thiếu", ko: "누락 서류" },
   "The foundation for your childcare business": { es: "La base de su negocio de cuidado infantil", tl: "Ang pundasyon ng negosyo mo sa childcare", zh: "您托育事业的基石", vi: "Nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업을 위한 토대" },
   "Simple": { es: "Simple", tl: "Simple", zh: "简易版", vi: "Đơn giản", ko: "심플" },
   "Extended": { es: "Extendido", tl: "Extended", zh: "扩展版", vi: "Mở rộng", ko: "확장" },
@@ -1462,14 +1880,14 @@ function subcategoriesFor(categoryLabel) {
   const cat = EXPENSE_TAXONOMY.find((c) => c.label === categoryLabel);
   return cat ? cat.subcategories : [];
 }
-const EXPENSES_DEFAULT = [
+const EXPENSES_DEFAULT = demoDates([
   { id: 1, date: "07/02/2026", category: "Food & Snacks", subcategory: "Meal ingredients", description: "Weekly grocery run — snacks & lunch ingredients", amount: 186.40 },
   { id: 2, date: "07/08/2026", category: "Materials & Art Supplies", subcategory: "Paper & craft supplies", description: "Construction paper, glue sticks, paint", amount: 64.12 },
   { id: 3, date: "07/12/2026", category: "Toys & Play Equipment", subcategory: "Indoor toys", description: "Wooden puzzle set, sensory bin fillers", amount: 92.30 },
   { id: 4, date: "07/15/2026", category: "Toys & Play Equipment", subcategory: "Outdoor / playground equipment", description: "Replacement outdoor climbing mat", amount: 210.00 },
   { id: 5, date: "07/19/2026", category: "Food & Snacks", subcategory: "Snacks", description: "Weekly grocery run", amount: 174.85 },
   { id: 6, date: "07/22/2026", category: "Maintenance & Repairs", subcategory: "Plumbing / electrical", description: "Fence gate latch repair", amount: 45.00 },
-];
+], shiftDemoMonth);
 
 /* ------------------------------ budget planner --------------------------------- */
 // Forward-looking spend allocation — distinct from Business Expenses above, which is a
@@ -1532,15 +1950,56 @@ function buildBudgetHistory() {
 }
 const BUDGET_HISTORY = buildBudgetHistory();
 
-function downloadCSV(filename, headers, rows) {
-  const esc = (v) => `"${String(v).replace(/"/g, '""')}"`;
-  const csv = [headers.map(esc).join(","), ...rows.map((r) => r.map(esc).join(","))].join("\r\n");
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+function csvText(headers, rows) {
+  const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  return [headers.map(esc).join(","), ...rows.map((r) => r.map(esc).join(","))].join("\r\n");
+}
+function downloadBlob(filename, blob) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url; a.download = filename;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function downloadCSV(filename, headers, rows) {
+  downloadBlob(filename, new Blob([csvText(headers, rows)], { type: "text/csv;charset=utf-8;" }));
+}
+// A plain .zip (stored, not compressed) so a full export arrives as one file
+// instead of a burst of separate downloads the browser may block.
+function crc32(bytes) {
+  let crc = 0xFFFFFFFF;
+  for (let i = 0; i < bytes.length; i++) {
+    let c = (crc ^ bytes[i]) & 0xFF;
+    for (let k = 0; k < 8; k++) c = c & 1 ? (c >>> 1) ^ 0xEDB88320 : c >>> 1;
+    crc = (crc >>> 8) ^ c;
+  }
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+function makeZip(files) {
+  const enc = new TextEncoder();
+  const now = new Date();
+  const dosTime = (now.getHours() << 11) | (now.getMinutes() << 5) | Math.floor(now.getSeconds() / 2);
+  const dosDate = ((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+  const parts = [], central = [];
+  let offset = 0;
+  files.forEach((f) => {
+    const name = enc.encode(f.name), data = enc.encode(f.text), crc = crc32(data);
+    const h = new DataView(new ArrayBuffer(30));
+    h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+    h.setUint16(10, dosTime, true); h.setUint16(12, dosDate, true); h.setUint32(14, crc, true);
+    h.setUint32(18, data.length, true); h.setUint32(22, data.length, true); h.setUint16(26, name.length, true); h.setUint16(28, 0, true);
+    parts.push(new Uint8Array(h.buffer), name, data);
+    const c = new DataView(new ArrayBuffer(46));
+    c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(10, 0, true);
+    c.setUint16(12, dosTime, true); c.setUint16(14, dosDate, true); c.setUint32(16, crc, true); c.setUint32(20, data.length, true); c.setUint32(24, data.length, true);
+    c.setUint16(28, name.length, true); c.setUint32(42, offset, true);
+    central.push(new Uint8Array(c.buffer), name);
+    offset += 30 + name.length + data.length;
+  });
+  const cdSize = central.reduce((n, a) => n + a.length, 0);
+  const e = new DataView(new ArrayBuffer(22));
+  e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, cdSize, true); e.setUint32(16, offset, true);
+  return new Blob([...parts, ...central, new Uint8Array(e.buffer)], { type: "application/zip" });
 }
 
 const SESSION_TIMES = {
@@ -1549,10 +2008,14 @@ const SESSION_TIMES = {
   "Part-time (3 hrs)": "9:00 AM – 12:00 PM",
   "Drop-in / hourly": "Varies by day",
 };
-const sessionTime = (sl) => SESSION_TIMES[sl] || sl;
+// Each provider defines the schedules they offer (name + hours) in Calendar →
+// Weekly Hours. The workspace keeps this list current; these are the defaults.
+const DEFAULT_CARE_SCHEDULES = Object.entries(SESSION_TIMES).map(([name, hours]) => ({ name, hours }));
+let ACTIVE_CARE_SCHEDULES = DEFAULT_CARE_SCHEDULES;
+const sessionTime = (sl) => ACTIVE_CARE_SCHEDULES.find((x) => x.name === sl)?.hours || SESSION_TIMES[sl] || sl;
+// A child's own drop-off/pick-up times win over their schedule's usual hours.
+const childHours = (f) => (f.customHours && f.customHours.trim()) || sessionTime(f.sessionLength);
 
-const CLASSROOM_CAPACITY = { infants: 4, toddlers: 6, preschool: 8, prek: 8 };
-const TOTAL_PROGRAM_CAPACITY = Object.values(CLASSROOM_CAPACITY).reduce((a, b) => a + b, 0);
 
 // Which days a child actually attends — falls back to a sensible default derived from
 // their approved session count when not explicitly set, so this works without requiring
@@ -1634,18 +2097,18 @@ const PAYMENT_METHODS = ["Cash", "Check", "Zelle", "Venmo", "Bank transfer", "Ot
 const REFUND_REASONS = ["Overpayment", "Withdrawal / early departure", "Closure credit", "Service issue", "Other"];
 let flexSeq = 0;
 function flexReq(o) { flexSeq += 1; return { id: `fc${flexSeq}`, status: "pending", requestedBy: "provider", parentPaymentMethod: null, paymentConfirmed: false, ...o }; }
-const FLEX_CARE_DEFAULT = [
+const FLEX_CARE_DEFAULT = demoDates([
   flexReq({ child: "Sofia Reyes", classroom: "preschool", type: "Early drop-off", date: "08/03/2026", hours: 1.5, notes: "Morning meeting ran early", status: "approved", parentPaymentMethod: "Zelle", paymentConfirmed: true }),
   flexReq({ child: "Leo Cruz", classroom: "prek", type: "Extended pickup", date: "08/04/2026", hours: 2, notes: "Traffic — running late from work", status: "approved", parentPaymentMethod: "Cash", paymentConfirmed: false }),
   flexReq({ child: "Nina Aquino", classroom: "infants", type: "Extra day", date: "08/07/2026", hours: 8, notes: "Needs Friday coverage this week only" }),
-];
+]);
 
 let refundSeq = 0;
 let incidentSeq = 0;
 function refundEntry(o) { refundSeq += 1; return { id: `rf${refundSeq}`, ...o }; }
-const REFUNDS_DEFAULT = [
+const REFUNDS_DEFAULT = demoDates([
   refundEntry({ child: "Kai Villanueva", amount: 85, reason: "Closure credit", date: "07/10/2026", method: "Zelle", notes: "Unplanned closure day — prorated credit issued" }),
-];
+]);
 
 const PLAN_PRICING = {
   simple: { monthly: 29, annual: 290 },
@@ -1671,7 +2134,7 @@ const CERT_TEMPLATES = [
 ];
 let staffSeq = 0;
 function staffMember(o) { staffSeq += 1; return { id: staffSeq, ...o }; }
-const STAFF_DEFAULT = [
+const STAFF_DEFAULT = demoDates([
   staffMember({
     name: "Tita Reyes", role: "Owner / Lead Teacher", classroom: "all", hireDate: "01/2019",
     hoursPerWeek: 45, payType: "salary", payRate: 4200, status: "active",
@@ -1687,7 +2150,7 @@ const STAFF_DEFAULT = [
     hoursPerWeek: 20, payType: "hourly", payRate: 17, status: "active",
     certs: { livescan: "complete", cpr: "missing", health: "complete", ece: "missing", mandated: "complete" },
   }),
-];
+]);
 
 const MONTHLY_WEEKS = 4.33;
 function monthlyPay(s) {
@@ -1743,7 +2206,7 @@ const DEPARTURE_REASONS = [
 function tenureMonths(startStr, endStr) {
   const [sm, sd, sy] = startStr.split("/").map(Number);
   const start = new Date(sy, sm - 1, sd);
-  const end = endStr ? (() => { const [em, ed, ey] = endStr.split("/").map(Number); return new Date(ey, em - 1, ed); })() : new Date(2026, 6, 28);
+  const end = endStr ? (() => { const [em, ed, ey] = endStr.split("/").map(Number); return new Date(ey, em - 1, ed); })() : startOfToday();
   return Math.max(0, Math.round((end - start) / (1000 * 60 * 60 * 24 * 30.44)));
 }
 function formatTenure(months) {
@@ -1754,13 +2217,13 @@ function formatTenure(months) {
 }
 let alumniSeq = 0;
 function alum(o) { alumniSeq += 1; return { id: `a${alumniSeq}`, ...o }; }
-const ALUMNI_DEFAULT = [
+const ALUMNI_DEFAULT = demoDates([
   alum({ name: "Ethan Kim", classroom: "prek", enrollDate: "01/10/2021", leftDate: "06/14/2024", reason: "aged-out" }),
   alum({ name: "Zoe Martinez", classroom: "preschool", enrollDate: "03/02/2023", leftDate: "01/20/2025", reason: "moved" }),
   alum({ name: "Noah Diaz", classroom: "toddlers", enrollDate: "09/11/2024", leftDate: "02/03/2025", reason: "switched" }),
   alum({ name: "Ava Thompson", classroom: "prek", enrollDate: "06/05/2022", leftDate: "08/22/2025", reason: "aged-out" }),
   alum({ name: "Liam Foster", classroom: "infants", enrollDate: "11/14/2024", leftDate: "05/09/2025", reason: "other" }),
-];
+]);
 
 const CHILD_DOC_TEMPLATES = [
   { id: "enroll", name: "Enrollment Agreement" },
@@ -1861,12 +2324,28 @@ function usePersistentState(key, initial) {
 // Real Firebase Authentication — this is a genuine account, not a demo mock. Once the
 // backend + Cloud SQL wiring exists, a successful sign-in here will load that specific
 // provider's real data instead of dropping into the shared demo dataset.
-function LoginScreen({ onAuthenticated, onBack }) {
-  const [mode, setMode] = useState("signin"); // "signin" | "signup"
+function LoginScreen({ onAuthenticated, onBack, initialMode = "signin" }) {
+  const [mode, setMode] = useState(initialMode); // "signin" | "signup"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+
+  const sendReset = async () => {
+    setError(""); setNotice("");
+    if (!email.trim()) { setError("Enter your email above, then tap \"Forgot password?\" again."); return; }
+    try {
+      const { sendPasswordResetEmail } = await import("firebase/auth");
+      const { auth } = await import("./firebase.js");
+      await sendPasswordResetEmail(auth, email.trim());
+    } catch (err) {
+      if (err.code === "auth/invalid-email") { setError(friendlyError(err.code)); return; }
+      // Any other result shows the same message, so the screen never reveals
+      // whether an account exists for that email.
+    }
+    setNotice("If an account exists for that email, a reset link is on its way.");
+  };
 
   const friendlyError = (code) => {
     switch (code) {
@@ -1890,7 +2369,7 @@ function LoginScreen({ onAuthenticated, onBack }) {
       const cred = mode === "signin"
         ? await signInWithEmailAndPassword(auth, email, password)
         : await createUserWithEmailAndPassword(auth, email, password);
-      onAuthenticated(cred.user);
+      onAuthenticated(cred.user, mode);
     } catch (err) {
       setError(friendlyError(err.code));
     } finally {
@@ -1913,7 +2392,7 @@ function LoginScreen({ onAuthenticated, onBack }) {
       <form onSubmit={submit} style={{ width: "100%", maxWidth: 380, background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: 28 }}>
         <div style={{ display: "flex", gap: 4, marginBottom: 20, background: C.cream, borderRadius: 10, padding: 4 }}>
           {["signin", "signup"].map((m) => (
-            <button key={m} type="button" onClick={() => { setMode(m); setError(""); }} style={{
+            <button key={m} type="button" onClick={() => { setMode(m); setError(""); setNotice(""); }} style={{
               flex: 1, padding: "9px 0", borderRadius: 7, border: "none", fontWeight: 700, fontSize: 13,
               background: mode === m ? "#fff" : "transparent", color: mode === m ? C.tealDark : C.inkSoft,
               boxShadow: mode === m ? C.line && "0 1px 2px rgba(0,0,0,0.06)" : "none",
@@ -1933,7 +2412,13 @@ function LoginScreen({ onAuthenticated, onBack }) {
           value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
           style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: `1px solid ${C.line}`, fontSize: 14, marginBottom: 6, fontFamily: "inherit" }} />
 
+        {mode === "signin" && (
+          <button type="button" onClick={sendReset} style={{ background: "none", border: "none", padding: 0, marginTop: 4, color: C.tealDark, fontSize: 12.5, fontWeight: 600 }}>
+            Forgot password?
+          </button>
+        )}
         {error && <div style={{ color: C.danger, fontSize: 12.5, marginTop: 6, marginBottom: 6 }}>{error}</div>}
+        {notice && <div style={{ color: C.tealDark, fontSize: 12.5, marginTop: 6, marginBottom: 6 }}>{notice}</div>}
 
         <button type="submit" disabled={busy} style={{
           width: "100%", marginTop: 14, padding: "12px 0", borderRadius: 10, border: "none",
@@ -1951,6 +2436,9 @@ function LoginScreen({ onAuthenticated, onBack }) {
 }
 
 function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
+  // The cross-account admin view stays off the public page; open the site with
+  // ?admin=1 at the end of the URL to see it.
+  const showAdmin = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("admin");
   return (
     <div style={{
       minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "56px 32px",
@@ -1962,7 +2450,7 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
         <div style={{ fontFamily: "'Fraunces', serif", fontSize: 86, fontWeight: 900, color: C.tealDark }}>alaga</div>
       </div>
       <div style={{ color: C.inkSoft, fontSize: 14.5, fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 30, textAlign: "center", maxWidth: 520, lineHeight: 1.8 }}>
-        The foundation for<br />your childcare business.
+        Nurturing the foundation for<br />your childcare business.
       </div>
 
       <button onClick={onSignIn} style={{
@@ -2020,14 +2508,14 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.inkSoft, marginBottom: 12 }}>
           Other ways in
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 18 }}>
+        <div style={{ display: "grid", gridTemplateColumns: showAdmin ? "1fr 1fr 1fr" : "1fr 1fr", gap: 18 }}>
           <button onClick={onSignUp} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
             <div style={{ width: 46, height: 46, borderRadius: 12, background: C.skyTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <Rocket size={22} color={C.sky} />
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>I'm a new provider signing up</div>
-              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>Real sign-up flow into your own empty workspace.</div>
+              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>Create your account, then set up your own empty workspace.</div>
             </div>
             <ArrowRight size={16} color={C.sky} />
           </button>
@@ -2043,7 +2531,7 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
             <ArrowRight size={16} color={C.coral} />
           </button>
 
-          <button onClick={onAdmin} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
+          {showAdmin && <button onClick={onAdmin} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
             <div style={{ width: 46, height: 46, borderRadius: 12, background: "#F1EEE5", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <Building2 size={22} color={C.inkSoft} />
             </div>
@@ -2052,7 +2540,7 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
               <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>Cross-account view, for the Alaga team only.</div>
             </div>
             <ArrowRight size={16} color={C.inkSoft} />
-          </button>
+          </button>}
         </div>
       </div>
 
@@ -2063,17 +2551,25 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
   );
 }
 
-const WIZARD_STEPS = ["Your business", "License & care type", "Weekly hours", "Preferences", "Import existing records", "Review"];
+const WIZARD_STEPS = ["Your business", "License & care type", "Weekly hours", "Preferences", "Review"];
 
-function OnboardingWizard({ onComplete, onBack }) {
+// California licensed capacity limits by home type — used to pre-fill and cap
+// the capacity field so a provider can't enter a number their license doesn't allow.
+const CAPACITY_LIMITS = {
+  [PROVIDER_TYPES[0]]: 8,
+  [PROVIDER_TYPES[1]]: 14,
+};
+
+function OnboardingWizard({ onComplete, onBack, initialEmail = "" }) {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
-    businessName: "", contactName: "", email: "", city: "",
+    businessName: "", contactName: "", email: initialEmail, city: "",
     providerType: PROVIDER_TYPES[0], licenseNumber: "", capacity: 8,
     classrooms: [], hours: "7:00 AM – 6:00 PM", days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-    language: "English", languagesOffered: ["English"],
+    language: "English", languagesOffered: ["English"], subsidyPrograms: [],
   });
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  const toggleProgram = (id) => setForm((f) => ({ ...f, subsidyPrograms: f.subsidyPrograms.includes(id) ? f.subsidyPrograms.filter((p) => p !== id) : [...f.subsidyPrograms, id] }));
   const toggleClassroom = (id) => setForm((f) => ({ ...f, classrooms: f.classrooms.includes(id) ? f.classrooms.filter((c) => c !== id) : [...f.classrooms, id] }));
   const toggleLanguageOffered = (lang) => setForm((f) => ({
     ...f,
@@ -2101,6 +2597,7 @@ function OnboardingWizard({ onComplete, onBack }) {
       languagesOffered: form.languagesOffered,
       contactName: form.contactName,
       email: form.email,
+      subsidyPrograms: form.subsidyPrograms,
     });
   };
 
@@ -2129,7 +2626,13 @@ function OnboardingWizard({ onComplete, onBack }) {
             <>
               <Field label="Business / provider name"><input value={form.businessName} onChange={(e) => set("businessName", e.target.value)} placeholder="e.g. Tita's Family Child Care" style={inputStyle} /></Field>
               <Field label="Your name"><input value={form.contactName} onChange={(e) => set("contactName", e.target.value)} placeholder="Your full name" style={inputStyle} /></Field>
-              <Field label="Email"><input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@example.com" style={inputStyle} /></Field>
+              {initialEmail ? (
+                <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
+                  <CheckCircle2 size={13} color={C.teal} /> Account created for <b style={{ color: C.ink }}>{initialEmail}</b>
+                </div>
+              ) : (
+                <Field label="Email"><input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@example.com" style={inputStyle} /></Field>
+              )}
               <Field label="City"><input value={form.city} onChange={(e) => set("city", e.target.value)} placeholder="e.g. Culver City, CA" style={inputStyle} /></Field>
             </>
           )}
@@ -2137,10 +2640,23 @@ function OnboardingWizard({ onComplete, onBack }) {
           {step === 1 && (
             <>
               <Field label="Provider type">
-                <Select value={form.providerType} onChange={(v) => set("providerType", v)} options={PROVIDER_TYPES} />
+                <Select value={form.providerType} onChange={(v) => setForm((f) => ({ ...f, providerType: v, capacity: CAPACITY_LIMITS[v] || f.capacity }))} options={PROVIDER_TYPES} />
               </Field>
               <Field label="License number (optional if pending)"><input value={form.licenseNumber} onChange={(e) => set("licenseNumber", e.target.value)} placeholder="e.g. 198-402-3211" style={inputStyle} /></Field>
-              <Field label="Total capacity"><input type="number" value={form.capacity} onChange={(e) => set("capacity", Number(e.target.value))} style={{ ...inputStyle, maxWidth: 100 }} /></Field>
+              <Field label="Total capacity">
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <input type="number" min={1} max={CAPACITY_LIMITS[form.providerType]} value={form.capacity}
+                    onChange={(e) => {
+                      const limit = CAPACITY_LIMITS[form.providerType];
+                      const n = Number(e.target.value);
+                      set("capacity", limit ? Math.min(n, limit) : n);
+                    }}
+                    style={{ ...inputStyle, maxWidth: 100 }} />
+                  {CAPACITY_LIMITS[form.providerType] && (
+                    <span style={{ fontSize: 11.5, color: C.inkSoft }}>Up to {CAPACITY_LIMITS[form.providerType]} for this license type</span>
+                  )}
+                </div>
+              </Field>
               <Field label="Which age groups will you care for?">
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {CLASSROOMS.map((c) => (
@@ -2148,6 +2664,18 @@ function OnboardingWizard({ onComplete, onBack }) {
                       <input type="checkbox" checked={form.classrooms.includes(c.id)} onChange={() => toggleClassroom(c.id)} />
                       <b>{c.label}</b> <span style={{ color: C.inkSoft }}>· {c.range}</span>
                     </label>
+                  ))}
+                </div>
+              </Field>
+              <Field label="Subsidy programs you accept (skip if private-pay only)">
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {PROGRAMS.map((p) => (
+                    <button key={p.id} type="button" onClick={() => toggleProgram(p.id)} style={{
+                      padding: "7px 11px", borderRadius: 999, fontSize: 12.5, fontWeight: 600,
+                      border: `1px solid ${form.subsidyPrograms.includes(p.id) ? C.teal : C.line}`,
+                      background: form.subsidyPrograms.includes(p.id) ? C.tealTint : "#fff",
+                      color: form.subsidyPrograms.includes(p.id) ? C.tealDark : C.inkSoft,
+                    }}>{p.label}</button>
                   ))}
                 </div>
               </Field>
@@ -2159,7 +2687,7 @@ function OnboardingWizard({ onComplete, onBack }) {
               <Field label="Typical daily hours"><input value={form.hours} onChange={(e) => set("hours", e.target.value)} style={inputStyle} /></Field>
               <Field label="Days open">
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                  {WEEK_DAYS.map((d) => (
+                  {ALL_DAYS.map((d) => (
                     <button key={d} onClick={() => toggleDay(d)} type="button" style={{
                       padding: "8px 12px", borderRadius: 8, fontSize: 12.5, fontWeight: 600,
                       border: `1px solid ${form.days.includes(d) ? C.teal : C.line}`, background: form.days.includes(d) ? C.tealTint : "#fff", color: form.days.includes(d) ? C.tealDark : C.inkSoft,
@@ -2204,31 +2732,23 @@ function OnboardingWizard({ onComplete, onBack }) {
           )}
 
           {step === 4 && (
-            <>
-              <div style={{ fontSize: 13, color: C.ink, lineHeight: 1.5 }}>
-                Already running your business on paper or in a spreadsheet? You'll be able to bulk-import existing families, subsidy authorizations, and documents using a CSV template.
-              </div>
-              <div style={{ border: `1px dashed ${C.line}`, borderRadius: 12, padding: 22, textAlign: "center", background: C.cream }}>
-                <UploadCloud size={26} color={C.inkSoft} style={{ marginBottom: 8 }} />
-                <div style={{ fontSize: 12.5, color: C.inkSoft }}>CSV import — coming soon</div>
-              </div>
-              <div style={{ fontSize: 11.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
-                <Info size={12} /> You can skip this and add families one at a time through Tours instead.
-              </div>
-            </>
-          )}
-
-          {step === 5 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <StatBlock label="Business" value={form.businessName || "—"} />
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <StatBlock label="Business" value={form.businessName || "—"} />
+                <StatBlock label="City" value={form.city || "—"} />
                 <StatBlock label="Provider type" value={form.providerType} />
+                <StatBlock label="License #" value={form.licenseNumber || "Pending"} />
                 <StatBlock label="Capacity" value={String(form.capacity)} />
                 <StatBlock label="Age groups" value={form.classrooms.map((c) => classroomOf(c)?.label).join(", ") || "None selected"} />
                 <StatBlock label="Hours" value={`${form.hours} · ${form.days.length} days/week`} />
+                <StatBlock label="Languages offered" value={form.languagesOffered.join(", ") || "—"} />
               </div>
+              <StatBlock label="Subsidy programs" value={form.subsidyPrograms.map((id) => PROGRAMS.find((p) => p.id === id)?.label).join(", ") || "Private-pay only"} />
               <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
-                <CheckCircle2 size={13} color={C.teal} /> Your workspace will be ready — empty and waiting for your first family.
+                <CheckCircle2 size={13} color={C.teal} /> Everything here can be changed later in Settings and Calendar.
+              </div>
+              <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
+                <Info size={12} /> Have families on paper or in a spreadsheet? Add them from Tours once you're in.
               </div>
             </div>
           )}
@@ -2509,13 +3029,13 @@ function AdminScreen({ onBack }) {
 function AdminProviderDrawer({ provider, mrrValue, onClose, statusMeta }) {
   const [access, saveAccess] = usePersistentState(`support-access-provider-${provider.id}`, SUPPORT_ACCESS_DEFAULT);
   const [viewingSummary, setViewingSummary] = useState(false);
-  const isExpired = access.status === "granted" && access.expiresAt && new Date(access.expiresAt) < new Date("2026-07-30");
+  const isExpired = access.status === "granted" && access.expiresAt && new Date(access.expiresAt) < startOfToday();
   const isActive = access.status === "granted" && !isExpired;
 
-  const requestAccess = () => saveAccess({ ...access, status: "requested", requestedAt: "07/30/2026 · 10:00 AM" });
+  const requestAccess = () => saveAccess({ ...access, status: "requested", requestedAt: `${todayMDY()} · ${new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}` });
   const revokeFromAdmin = () => saveAccess({ ...SUPPORT_ACCESS_DEFAULT });
   const viewDashboard = () => {
-    saveAccess({ ...access, log: [{ by: "Alaga Support (you)", at: "07/30/2026 · 10:14 AM", action: "Viewed account summary" }, ...access.log] });
+    saveAccess({ ...access, log: [{ by: "Alaga Support (you)", at: `${todayMDY()} · ${new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}`, action: "Viewed account summary" }, ...access.log] });
     setViewingSummary(true);
   };
 
@@ -2835,13 +3355,18 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
     providerType: initialProviderInfo.providerType || PROVIDER_TYPES[0], capacity: initialProviderInfo.capacity || 8,
     contactName: initialProviderInfo.contactName || "", email: initialProviderInfo.email || "",
     languagesOffered: initialProviderInfo.languagesOffered || ["English"],
+    subsidyPrograms: initialProviderInfo.subsidyPrograms || [],
   });
-  const baseFamilies = isEmpty ? [] : FAMILIES;
+  const baseFamilies = isEmpty ? [] : FAMILIES.map(withDemoPayments);
   const baseProspects = isEmpty ? [] : PROSPECTIVE_FAMILIES_DEFAULT;
   const baseExpenses = isEmpty ? [] : EXPENSES_DEFAULT;
   const baseCompDocsRaw = isEmpty ? COMPLIANCE_DOCS.map((d) => ({ ...d, status: "missing", date: undefined })) : COMPLIANCE_DOCS;
   const baseThreads = isEmpty ? [] : MESSAGE_THREADS;
 
+  // Families enrolled through the app (from Tours or the Waitlist). The sample
+  // daycare's families come from built-in data; these are the provider's own.
+  const [addedFamilies, saveAddedFamilies] = usePersistentState(`added-families${sfx}`, []);
+  const [enrollingProspectId, setEnrollingProspectId] = useState(null);
   const [mode, setMode] = useState(startInParentMode ? "parent" : "provider"); // "provider" | "parent"
   // Providers land on the welcome briefing every time they open the workspace —
   // it's a front porch, not a one-time onboarding step.
@@ -2866,6 +3391,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
     });
   }, []);
   const setScreen = navigateToScreen;
+  const [settingsTab, setSettingsTab] = useState("profile");
   const [openFamId, setOpenFamId] = useState(null);
   const [openHousehold, setOpenHousehold] = useState(null);
   const [flexHighlightId, setFlexHighlightId] = useState(null);
@@ -2883,17 +3409,17 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   // Search results for a specific child/family jump straight to their record in
   // the Families directory rather than dropping the provider into the full list.
   const goToFamily = useCallback((famId) => {
-    const match = (isEmpty ? [] : FAMILIES).find((f) => f.id === famId);
-    if (match) setOpenHousehold(match.householdName);
+    const match = [...(isEmpty ? [] : FAMILIES), ...addedFamilies].find((f) => f.id === famId);
+    if (match) setOpenHousehold(match.household);
     navigateToScreen("families");
-  }, [isEmpty, navigateToScreen]);
+  }, [isEmpty, addedFamilies, navigateToScreen]);
   const [overrides, setOverrides] = useState({});
   const [loaded, setLoaded] = useState(false);
   const [language, setLanguage] = useState(onboardingData?.language || "English");
   const [tier, saveTier] = usePersistentState(forceTier ? `platform-tier-demo-${forceTier}` : "platform-tier", forceTier || "simple");
   const tierLocked = !!forceTier;
-  const [billing, saveBilling] = usePersistentState("plan-billing", { cycle: "monthly", status: "active", canceledAt: null });
-  const [payrollSettings, savePayrollSettings] = usePersistentState(`payroll-settings${sfx}`, { frequency: "Biweekly", nextPayDate: "08/07/2026", providerConnected: false, providerName: "" });
+  const [billing, saveBilling] = usePersistentState(`plan-billing${sfx}`, { cycle: "monthly", status: "active", canceledAt: null, startedOn: todayMDY() });
+  const [payrollSettings, savePayrollSettings] = usePersistentState(`payroll-settings${sfx}`, { frequency: "Biweekly", nextPayDate: shiftDemoString("08/07/2026"), providerConnected: false, providerName: "" });
   const [flexCareRequests, saveFlexCare] = usePersistentState(`flex-care${sfx}`, isEmpty ? [] : FLEX_CARE_DEFAULT);
   const [refunds, saveRefunds] = usePersistentState(`refunds${sfx}`, isEmpty ? [] : REFUNDS_DEFAULT);
   const [attendanceLog, saveAttendanceLog] = usePersistentState(`attendance${sfx}`, {});
@@ -2908,18 +3434,27 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const [checkLog, setCheckLog] = useState([]);
   const [accessLog, setAccessLog] = useState([]);
   const initialSchedule = isEmpty && onboardingData
-    ? WEEK_DAYS.map((d) => ({
+    ? ALL_DAYS.map((d) => ({
         day: d, open: onboardingData.days.includes(d), hours: onboardingData.hours, careType: "Full-day",
         capacity: onboardingData.capacity || 8, ages: onboardingData.classrooms?.map((c) => classroomOf(c)?.label).filter(Boolean).join(", ") || "",
         ageClassrooms: onboardingData.classrooms || [],
       }))
     : WEEKLY_SCHEDULE_DEFAULT;
   const [weeklySchedule, saveWeeklySchedule] = usePersistentState(`calendar-weekly${sfx}`, initialSchedule);
-  const [closures, saveClosures] = usePersistentState(`calendar-closures${sfx}`, []);
+  const [careSchedules, saveCareSchedules] = usePersistentState(`care-schedules${sfx}`, DEFAULT_CARE_SCHEDULES);
+  ACTIVE_CARE_SCHEDULES = careSchedules.length ? careSchedules : DEFAULT_CARE_SCHEDULES;
+  const [closures, saveClosures] = usePersistentState(`calendar-closures${sfx}`, isEmpty ? [] : PACKET_CLOSURES.map((c, i) => {
+    const [start, end] = c.dates.split(" – ");
+    return { id: `pc${i}`, name: c.name, dates: c.dates, start, end: end || start, fromPacket: true, notified: true };
+  }));
   const [events, saveEvents] = usePersistentState(`calendar-events${sfx}`, isEmpty ? [] : CALENDAR_EVENTS_DEFAULT);
   const [prospects, saveProspects] = usePersistentState(`tours-pipeline${sfx}`, baseProspects);
   const [compOverrides, saveCompOverrides] = usePersistentState(`compliance-docs${sfx}`, {});
   const [incidents, saveIncidents] = usePersistentState(`incident-reports${sfx}`, []);
+  // The provider's own licensing record (renewal, last inspection). Sample values in the demo only.
+  const [licensing, saveLicensing] = usePersistentState(`licensing${sfx}`, isEmpty
+    ? { renewalDate: "", inspectionDate: "", inspectionResult: "", citations: "" }
+    : demoDates({ renewalDate: "03/31/2027", inspectionDate: "04/12/2026", inspectionResult: "No citations", citations: "" }));
   const [mandatedNotes, saveMandatedNotes] = usePersistentState(`mandated-reporting-notes${sfx}`, []);
   const [expenses, saveExpenses] = usePersistentState(`business-expenses${sfx}`, baseExpenses);
   const [budgetPlan, saveBudgetPlan] = usePersistentState(`budget-plan${sfx}`, BUDGET_PLAN_DEFAULT);
@@ -2971,6 +3506,9 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   }, []);
 
   const saveOverride = useCallback(async (famId, fields) => {
+    if (addedFamilies.some((f) => f.id === famId)) {
+      return saveAddedFamilies(addedFamilies.map((f) => (f.id === famId ? { ...f, ...fields } : f)));
+    }
     const merged = { ...(overrides[famId] || {}), ...fields };
     setOverrides((o) => ({ ...o, [famId]: merged }));
     try {
@@ -2979,7 +3517,16 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
     } catch (e) {
       return false;
     }
-  }, [overrides]);
+  }, [overrides, addedFamilies, saveAddedFamilies]);
+  // leftDate = null undoes a withdrawal and removes its departure entry.
+  const withdrawChild = useCallback(async (child, leftDate, reason) => {
+    if (!leftDate) {
+      saveAlumni(alumni.filter((a) => a.familyId !== child.id));
+      return saveOverride(child.id, { departedOn: null, departureReason: null });
+    }
+    addDeparture({ name: child.child, classroom: child.classroom, enrollDate: child.enrollDate, leftDate, reason, familyId: child.id });
+    return saveOverride(child.id, { departedOn: leftDate, departureReason: reason });
+  }, [alumni, saveAlumni, addDeparture, saveOverride]);
 
   const saveCompDoc = useCallback(async (docId, fields) => {
     const merged = { ...(compOverrides[docId] || {}), ...fields };
@@ -2988,11 +3535,24 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   }, [compOverrides, saveCompOverrides]);
 
   const updateProspect = useCallback((id, fields) => {
-    saveProspects(prospects.map((p) => (p.id === id ? { ...p, ...fields } : p)));
+    saveProspects(prospects.map((p) => {
+      if (p.id !== id) return p;
+      const joiningWaitlist = fields.stage === "Waitlist" && p.stage !== "Waitlist";
+      return { ...p, ...fields, ...(joiningWaitlist ? { waitlistedOn: todayMDY(), waitlistedAt: Date.now() } : {}) };
+    }));
   }, [prospects, saveProspects]);
+  // Turning a tour family into enrolled children: creates one family record per
+  // child (sharing a household), marks the tour as Enrolled, and opens the record.
+  const enrollProspect = useCallback(async (prospect, records) => {
+    await saveAddedFamilies([...addedFamilies, ...records]);
+    saveProspects(prospects.map((p) => (p.id === prospect.id ? { ...p, stage: "Enrolled", familyIds: records.map((r) => r.id) } : p)));
+    setEnrollingProspectId(null);
+    setOpenHousehold(records[0].household);
+    navigateToScreen("families");
+  }, [addedFamilies, saveAddedFamilies, prospects, saveProspects, navigateToScreen]);
   const addProspect = useCallback(() => {
     tourSeq += 1;
-    saveProspects([{ id: `t${tourSeq}`, name: "New family", stage: "Inquiry", tourDate: "Not scheduled", careType: "Full-time", children: "Not entered", start: "Not entered", language: "English", contact: "", notes: "", followup: "" }, ...prospects]);
+    saveProspects([{ id: `t${tourSeq}`, name: "New family", stage: "Inquiry", tourDate: "Not scheduled", careType: "Full-time", children: "Not entered", start: "Not entered", language: "English", contact: "", email: "", notes: "", followup: "", addedOn: todayMDY() }, ...prospects]);
   }, [prospects, saveProspects]);
   const removeProspect = useCallback((id) => {
     saveProspects(prospects.filter((p) => p.id !== id));
@@ -3003,13 +3563,16 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   }, [staff, saveStaff]);
   const addStaffMember = useCallback(() => {
     staffSeq += 1;
-    saveStaff([{ id: staffSeq, name: "New staff member", role: STAFF_ROLES[1], classroom: "all", hireDate: "07/2026", hoursPerWeek: 20, payType: "hourly", payRate: 18, status: "active", certs: { livescan: "missing", cpr: "missing", health: "missing", ece: "missing", mandated: "missing" } }, ...staff]);
+    saveStaff([{ id: staffSeq, name: "New staff member", role: STAFF_ROLES[1], classroom: "all", hireDate: todayMDY().replace(/\/\d{2}\//, "/"), hoursPerWeek: 20, payType: "hourly", payRate: 18, status: "active", certs: { livescan: "missing", cpr: "missing", health: "missing", ece: "missing", mandated: "missing" } }, ...staff]);
   }, [staff, saveStaff]);
   const removeStaffMember = useCallback((id) => {
     saveStaff(staff.filter((s) => s.id !== id));
   }, [staff, saveStaff]);
 
-  const families = baseFamilies.map((f) => mergeFam(f, overrides));
+  // A withdrawn child stays on the roster through their last day, then moves to Deenrolled.
+  const families = [...baseFamilies, ...addedFamilies].map((f) => mergeFam(f, overrides))
+    .filter((f) => !(f.departedOn && daysUntil(f.departedOn) < 0))
+    .map((f) => (f.subsidized ? { ...f, status: subsidyStatus(f) } : f));
   const subsidizedFamsForBadge = families.filter((f) => f.subsidized);
   const expiringCount = subsidizedFamsForBadge.filter((f) => f.status !== "active" && !dismissedNotices.includes(f.id)).length;
   const unreadMessagesCount = threads.filter((th) => th.unread).length;
@@ -3021,7 +3584,11 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
     if (n.id === "waitlist") { const wc = prospects.filter((p) => p.stage === "Waitlist").length; return { ...n, badge: wc > 0 ? wc : undefined }; }
     return n;
   });
-  const compDocs = baseCompDocsRaw.map((d) => ({ ...d, ...(compOverrides[d.id] || {}) }));
+  const compDocs = baseCompDocsRaw.map((d) => {
+    const merged = { ...d, ...(compOverrides[d.id] || {}) };
+    const withExpiry = { ...merged, expiresOn: merged.expiresOn ?? expiryFromText(merged.date) };
+    return { ...withExpiry, displayStatus: docEffectiveStatus(withExpiry) };
+  });
   const openFam = families.find((f) => f.id === openFamId) || null;
   const langCode = LANG_CODES[language] || "en";
   const t = useCallback((s) => (langCode === "en" ? s : (T[s] && T[s][langCode]) || s), [langCode]);
@@ -3066,33 +3633,44 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
         <>
           <Sidebar screen={screen} setScreen={setScreen} mode={mode} setMode={setMode} provider={providerInfo} onExitToLanding={onExitToLanding} isEmpty={isEmpty} navItems={navItems} tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} financesTab={financesTab} setFinancesTab={setFinancesTab} />
           <main style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
-            <Topbar screen={screen} setScreen={setScreen} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} />
+            <Topbar screen={screen} setScreen={setScreen} provider={providerInfo} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} />
             <div style={{ flex: 1, overflowY: "auto", padding: "28px 32px 60px" }}>
-              {screen === "dashboard" && <Dashboard setScreen={setScreen} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} />}
+              {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} reminderSettings={reminderSettings} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
-              {screen === "families" && <Families families={families} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
-              {screen === "bookings" && <Bookings families={families} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
+              {screen === "families" && <Families families={families} provider={providerInfo} onWithdraw={withdrawChild} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
+              {screen === "bookings" && <Bookings families={families} schedule={fullWeek(weeklySchedule)} closures={closures} provider={providerInfo} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
               {screen === "staff" && <StaffScreen staff={staff} families={families} updateStaffMember={updateStaffMember} addStaffMember={addStaffMember} removeStaffMember={removeStaffMember} />}
-              {screen === "calendar" && <CalendarScreen schedule={weeklySchedule} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} families={families} threads={threads} saveThreads={saveThreads} />}
-              {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} />}
-              {screen === "waitlist" && <WaitlistScreen prospects={prospects} updateProspect={updateProspect} removeProspect={removeProspect} logAccess={logAccess} families={families} providerInfo={providerInfo} />}
+              {screen === "calendar" && <CalendarScreen careSchedules={careSchedules} saveCareSchedules={saveCareSchedules} schedule={fullWeek(weeklySchedule)} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} families={families} threads={threads} saveThreads={saveThreads} />}
+              {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} startEnroll={(p) => setEnrollingProspectId(p.id)} />}
+              {screen === "waitlist" && <WaitlistScreen prospects={prospects} updateProspect={updateProspect} removeProspect={removeProspect} logAccess={logAccess} families={families} providerInfo={providerInfo} startEnroll={(p) => setEnrollingProspectId(p.id)} />}
               {screen === "subsidy" && <Subsidy families={families} openFamId={openFamId} setOpenFamId={setOpenFamId} loaded={loaded} meetingMode={meetingMode} />}
-              {screen === "payments" && <Finances families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} activeTab={financesTab} setActiveTab={setFinancesTab} />}
-              {screen === "compliance" && <Compliance docs={compDocs} onSave={saveCompDoc} families={families} provider={providerInfo} staff={staff} setScreen={setScreen} incidents={incidents} saveIncidents={saveIncidents} mandatedNotes={mandatedNotes} saveMandatedNotes={saveMandatedNotes} />}
+              {screen === "payments" && <Finances careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} activeTab={financesTab} setActiveTab={setFinancesTab} />}
+              {screen === "compliance" && <Compliance licensing={licensing} saveLicensing={saveLicensing} docs={compDocs} onSave={saveCompDoc} families={families} provider={providerInfo} staff={staff} setScreen={setScreen} incidents={incidents} saveIncidents={saveIncidents} mandatedNotes={mandatedNotes} saveMandatedNotes={saveMandatedNotes} />}
               {screen === "security" && <SecurityScreen accessLog={accessLog} isEmpty={isEmpty} />}
-              {screen === "messages" && <Messages threads={threads} saveThreads={saveThreads} families={families} staff={staff} />}
-              {screen === "analytics" && <Analytics families={families} expenses={expenses} prospects={prospects} staff={staff} alumni={alumni} addDeparture={addDeparture} refunds={refunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={setScreen} />}
+              {screen === "messages" && <Messages threads={threads} saveThreads={saveThreads} families={families} staff={staff} goToFamily={goToFamily} />}
+              {screen === "analytics" && <Analytics families={families} expenses={expenses} prospects={prospects} staff={staff} alumni={alumni} addDeparture={addDeparture} refunds={refunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={(id, opts) => { if (opts?.tab) setSettingsTab(opts.tab); setScreen(id); }} provider={providerInfo} />}
               {screen === "growth" && <GrowthScreen families={families} prospects={prospects} weeklySchedule={weeklySchedule} growth={growth} saveGrowth={saveGrowth} provider={providerInfo} staff={staff} />}
               {screen === "support" && <SupportScreen providerInfo={providerInfo} />}
-              {screen === "settings" && <SettingsScreen language={language} setLanguage={setLanguage} a11y={a11y} saveA11y={saveA11y} tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} billing={billing} saveBilling={saveBilling} families={families} staff={staff} expenses={expenses} compDocs={compDocs} provider={providerInfo} saveProviderInfo={saveProviderInfo} refunds={refunds} />}
+              {screen === "settings" && <SettingsScreen tab={settingsTab} setTab={setSettingsTab} language={language} setLanguage={setLanguage} a11y={a11y} saveA11y={saveA11y} tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} billing={billing} saveBilling={saveBilling} families={families} staff={staff} expenses={expenses} compDocs={compDocs} provider={providerInfo} saveProviderInfo={saveProviderInfo} refunds={refunds}
+                exportCtx={{ provider: providerInfo, licensing, families, allFamilies: [...baseFamilies, ...addedFamilies].map((f) => mergeFam(f, overrides)), alumni, staff, attendanceLog, schedule: fullWeek(weeklySchedule), closures, compDocs, incidents, expenses, refunds, threads, prospects }}
+                threads={threads} saveThreads={saveThreads} isDemo={!isEmpty || !!forceTier || meetingMode} onSignOut={onExitToLanding} />}
             </div>
           </main>
           {screen === "subsidy" && openFam && (
             <SubsidyDrawer fam={openFam} onClose={() => setOpenFamId(null)} onSave={saveOverride} logAccess={logAccess} />
           )}
+          {enrollingProspectId && prospects.find((p) => p.id === enrollingProspectId) && (
+            <EnrollModal
+              prospect={prospects.find((p) => p.id === enrollingProspectId)}
+              providerInfo={providerInfo}
+              tuitionRates={tuitionRates}
+              onCancel={() => setEnrollingProspectId(null)}
+              onEnroll={enrollProspect}
+            />
+          )}
         </>
       ) : (
-        <ParentApp families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} events={events} />
+        <ParentApp careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} events={events} />
       )}
     </div>
     </LanguageContext.Provider>
@@ -3107,6 +3685,8 @@ export default function AlagaMockup() {
   const [startInParent, setStartInParent] = useState(false);
   const [providerInfo, setProviderInfo] = useState(PROVIDER);
   const [onboardingData, setOnboardingData] = useState(null);
+  const [authMode, setAuthMode] = useState("signin");
+  const [signupEmail, setSignupEmail] = useState("");
 
   const registerWithAdmin = async (info) => {
     try {
@@ -3117,7 +3697,7 @@ export default function AlagaMockup() {
         if (res && res.value) list = JSON.parse(res.value);
       } catch (e) { /* nothing saved yet — start from the default cohort */ }
       const foundingCount = list.filter((p) => p.founding).length;
-      const today = "08/02/2026";
+      const today = new Date().toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" });
       const newEntry = {
         id: Date.now(),
         name: info.name || "New Provider",
@@ -3140,18 +3720,23 @@ export default function AlagaMockup() {
   if (entry === "landing") {
     return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><LandingChooser
       onDemo={(demoTier, isMeeting) => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier(demoTier); setMeetingMode(!!isMeeting); setStartInParent(false); setEntry("workspace"); }}
-      onSignUp={() => setEntry("wizard")}
+      onSignUp={() => { setAuthMode("signup"); setEntry("auth"); }}
       onAdmin={() => setEntry("admin")}
-      onSignIn={() => setEntry("auth")}
+      onSignIn={() => { setAuthMode("signin"); setEntry("auth"); }}
       onParentDemo={() => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier("extended"); setMeetingMode(false); setStartInParent(true); setEntry("workspace"); }}
     /></LanguageContext.Provider>;
   }
   if (entry === "auth") {
-    // Real Firebase-authenticated sign-in. Until the backend + Cloud SQL wiring exists,
-    // a successful login drops into the same populated demo workspace as "Explore the
-    // demo" — the account itself is real, the data behind it isn't wired up yet.
+    // Real Firebase accounts. A brand-new account goes straight into the setup
+    // wizard. Signing in to an existing account drops into the populated demo
+    // workspace until the backend + Cloud SQL wiring can load each provider's own data.
     return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><LoginScreen
-      onAuthenticated={() => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier(null); setMeetingMode(false); setEntry("workspace"); }}
+      key={authMode}
+      initialMode={authMode}
+      onAuthenticated={(user, mode) => {
+        if (mode === "signup") { setSignupEmail(user?.email || ""); setEntry("wizard"); return; }
+        setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier(null); setMeetingMode(false); setEntry("workspace");
+      }}
       onBack={() => setEntry("landing")}
     /></LanguageContext.Provider>;
   }
@@ -3160,6 +3745,7 @@ export default function AlagaMockup() {
   }
   if (entry === "wizard") {
     return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><OnboardingWizard
+      initialEmail={signupEmail}
       onComplete={(info) => { setProviderInfo(info); setOnboardingData(info); registerWithAdmin(info); setIsEmptyWorkspace(true); setForcedTier(null); setMeetingMode(false); setEntry("workspace"); }}
       onBack={() => setEntry("landing")}
     /></LanguageContext.Provider>;
@@ -3190,7 +3776,7 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
         <AlagaMark size={30} color="#EFEAE0" arch={false} />
         <div>
           <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 900, lineHeight: 1 }}>alaga</div>
-          <div style={{ fontSize: 8.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "#B9CFC6", marginTop: 4 }}>{t("The foundation for your childcare business")}</div>
+          <div style={{ fontSize: 8.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "#B9CFC6", marginTop: 4 }}>{t("Nurturing the foundation for your childcare business")}</div>
         </div>
       </div>
 
@@ -3202,14 +3788,13 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
           {meetingMode ? <><Lock size={11} /> {t("Meeting-safe demo")}</> : (tier === "extended" ? t("Extended plan demo") : t("Simple plan demo"))}
         </div>
       ) : (
-        <div style={{ display: "flex", background: "rgba(255,255,255,0.08)", borderRadius: 9, padding: 3, margin: "0 0 14px" }}>
-          {["simple", "extended"].map((tv) => (
-            <button key={tv} onClick={() => saveTier(tv)} style={{
-              flex: 1, padding: "7px 0", borderRadius: 7, border: "none", fontSize: 11.5, fontWeight: 700,
-              background: tier === tv ? "#fff" : "transparent", color: tier === tv ? C.tealDark : "#CBDAD2",
-            }}>{tv === "simple" ? t("Simple") : t("Extended")}</button>
-          ))}
-        </div>
+        // Shows the current plan only; changing plans happens in Settings → Plan & Billing.
+        <button onClick={() => setScreen("settings")} title={t("Change plan in Settings")} style={{
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0", width: "100%",
+          borderRadius: 9, border: "none", background: "rgba(255,255,255,0.08)", margin: "0 0 14px", fontSize: 11.5, fontWeight: 700, color: "#EFEAE0",
+        }}>
+          {tier === "extended" ? t("Extended plan") : t("Simple plan")} <ChevronRight size={12} style={{ opacity: 0.7 }} />
+        </button>
       )}
 
       {isEmpty && (
@@ -3306,7 +3891,7 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
   );
 }
 
-function Topbar({ screen, setScreen, families, staff, goBack, canGoBack, goToFamily }) {
+function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBack, goToFamily }) {
   const t = useT();
   const title = NAV.find((n) => n.id === screen)?.label || "";
   // Reflects the real current date whenever the page loads/refreshes.
@@ -3320,8 +3905,10 @@ function Topbar({ screen, setScreen, families, staff, goBack, canGoBack, goToFam
   const householdMatches = families.filter((f) => f.householdName.toLowerCase().includes(q) || f.child.toLowerCase().includes(q));
   const exactSingleMatch = q.length >= 3 && householdMatches.length === 1 ? householdMatches[0] : null;
 
+  // Match on the child's name or the family (household) name, so typing "Reyes"
+  // surfaces the Reyes children right in the dropdown instead of only on Enter.
   const results = q.length === 0 ? [] : [
-    ...families.filter((f) => f.child.toLowerCase().includes(q)).slice(0, 5).map((f) => ({ label: f.child, sub: `${f.householdName} · ${t("Families")}`, icon: Users, screen: "families", famId: f.id })),
+    ...householdMatches.slice(0, 5).map((f) => ({ label: f.child, sub: `${f.householdName} · ${t("Families")}`, icon: Users, screen: "families", famId: f.id })),
     ...staff.filter((s) => s.name.toLowerCase().includes(q)).slice(0, 5).map((s) => ({ label: s.name, sub: `${t(s.role)} · ${t("Staff & Ratios")}`, icon: UserCog, screen: "staff" })),
     ...BLANK_FORMS.filter((f) => f.name.toLowerCase().includes(q)).slice(0, 3).map((f) => ({ label: f.name, sub: t("Blank forms & templates"), icon: FileText, screen: "compliance" })),
   ];
@@ -3395,7 +3982,7 @@ function Topbar({ screen, setScreen, families, staff, goBack, canGoBack, goToFam
             </div>
           )}
         </div>
-        <div style={{ width: 34, height: 34, borderRadius: "50%", background: C.tealTint, color: C.tealDark, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 13 }}>TA</div>
+        <div style={{ width: 34, height: 34, borderRadius: "50%", background: C.tealTint, color: C.tealDark, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 13 }} title={provider?.contactName || provider?.name}>{initialsOf(provider?.contactName || provider?.name)}</div>
       </div>
     </div>
   );
@@ -3414,13 +4001,12 @@ function computeSetupItems({ providerInfo, weeklySchedule, staff, families, pros
   ];
 }
 
-function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNotices, saveDismissedNotices, tuitionRates, saveTuitionRates, weeklySchedule, staff, prospects, compDocs, providerInfo, flexCareRequests, saveFlexCare, goToSubsidyFamily, goToFlexRequest, meetingMode = false }) {
+function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, families, checklist, saveChecklist, dismissedNotices, saveDismissedNotices, tuitionRates, saveTuitionRates, weeklySchedule, staff, prospects, compDocs, providerInfo, flexCareRequests, saveFlexCare, goToSubsidyFamily, goToFlexRequest, meetingMode = false }) {
   const t = useT();
   const [newTask, setNewTask] = useState("");
   const [collapsed, setCollapsed] = useState({});
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [showAttention, setShowAttention] = useState(true);
-  const [ratesOpen, setRatesOpen] = useState(false);
   const subsidizedFams = families.filter((f) => f.subsidized);
   const privateFams = families.filter((f) => !f.subsidized);
   const monthlySubsidy = subsidizedFams.reduce((s, f) => s + (f.coverageBasis === "monthly" ? f.coverageAmount : 0), 0);
@@ -3430,25 +4016,38 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
   const pendingFlex = flexCareRequests.filter((r) => r.status === "pending" && !isPastDate(r.date));
   const unpaidFlex = flexCareRequests.filter((r) => r.status === "approved" && !r.paymentConfirmed && !isPastDate(r.date));
   const flexNeedingAttention = [...pendingFlex, ...unpaidFlex];
-  const totalAttention = expiring.length + flexNeedingAttention.length;
+  // Paperwork that's pending or missing — the licensing documents for the
+  // business, and each child's own file (immunizations, enrollment forms, etc.).
+  const docsNeedingAttention = compDocs.filter((d) => (d.displayStatus || d.status) !== "submitted");
+  // Missing documents, plus ones on file that have expired or are due for renewal within 30 days.
+  const childrenMissingDocs = families
+    .map((f) => ({ f, missing: defaultChildDocs(f).filter((d) => d.status === "missing" || ["expired", "expiring"].includes(docEffectiveStatus(d, 30))).length }))
+    .filter((x) => x.missing > 0);
+  // Tuition still unpaid after this period's due date.
+  const billingNow = reminderSettings ? currentBilling(reminderSettings) : null;
+  const overdueTuition = billingNow && billingNow.overdue ? families.filter((f) => f.copay > 0 && !paidFor(f, billingNow.key)) : [];
+  const totalAttention = expiring.length + flexNeedingAttention.length + docsNeedingAttention.length + childrenMissingDocs.length + overdueTuition.length;
   const approveFlexInline = (id) => saveFlexCare(flexCareRequests.map((r) => (r.id === id ? { ...r, status: "approved" } : r)));
 
   const setupItems = computeSetupItems({ providerInfo, weeklySchedule, staff, families, prospects, compDocs });
   const setupDoneCount = setupItems.filter((i) => i.done).length;
   const setupPct = Math.round((setupDoneCount / setupItems.length) * 100);
 
-  const doneCount = checklist.filter((c) => c.done).length;
+  // "Today's" checklist starts fresh each morning: a task only counts as done
+  // if it was ticked off today, so yesterday's checks don't carry over.
+  const today = todayMDY();
+  const isDoneToday = (c) => c.doneOn === today;
+  const doneCount = checklist.filter(isDoneToday).length;
   const pct = checklist.length ? Math.round((doneCount / checklist.length) * 100) : 0;
-  const toggleTask = (id) => saveChecklist(checklist.map((c) => (c.id === id ? { ...c, done: !c.done } : c)));
+  const toggleTask = (id) => saveChecklist(checklist.map((c) => (c.id === id ? { ...c, doneOn: isDoneToday(c) ? null : today } : c)));
   const addTask = () => {
     if (!newTask.trim()) return;
-    saveChecklist([...checklist, { id: Date.now(), text: newTask, done: false }]);
+    saveChecklist([...checklist, { id: Date.now(), text: newTask, doneOn: null }]);
     setNewTask("");
   };
   const removeTask = (id) => saveChecklist(checklist.filter((c) => c.id !== id));
   const resolveNotice = (famId) => saveDismissedNotices([...dismissedNotices, famId]);
   const toggleCollapse = (id) => setCollapsed((c) => ({ ...c, [id]: !c[id] }));
-  const openDays = weeklySchedule.filter((d) => d.open);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
@@ -3510,6 +4109,45 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
                   )}
                 </div>
               ))}
+              {overdueTuition.length > 0 && (
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Tuition")} · {billingNow.label}</div>
+              )}
+              {overdueTuition.map((f) => (
+                <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
+                  <button onClick={openTuition} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
+                    <Dot c="#F2A28A" /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {meetingMode ? "••••" : money(f.copay)} {partlyPaidFor(f, billingNow.key) ? t("partly paid") : t("unpaid")} · {t("due")} {billingNow.dueDate}</span>
+                  </button>
+                  <button onClick={openTuition} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                    {t("Review")}
+                  </button>
+                </div>
+              ))}
+              {docsNeedingAttention.length > 0 && (
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Documents")}</div>
+              )}
+              {docsNeedingAttention.map((d) => (
+                <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
+                  <button onClick={() => setScreen("compliance")} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
+                    <Dot c={["missing", "expired"].includes(d.displayStatus) ? "#F2A28A" : "#F2C88A"} /><b style={{ fontSize: 13 }}>{t(d.name)}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {trForm(t, d.displayStatus || d.status).label}{d.expiresOn && ["expired", "expiring"].includes(d.displayStatus) ? ` · ${d.expiresOn}` : ""}</span>
+                  </button>
+                  <button onClick={() => setScreen("compliance")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                    {t("Review")}
+                  </button>
+                </div>
+              ))}
+              {childrenMissingDocs.length > 0 && (
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Child records")}</div>
+              )}
+              {childrenMissingDocs.map(({ f, missing }) => (
+                <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
+                  <button onClick={() => goToFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
+                    <Dot c="#F2A28A" /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {missing} {t(missing === 1 ? "document to update" : "documents to update")}</span>
+                  </button>
+                  <button onClick={() => goToFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                    {t("Review")}
+                  </button>
+                </div>
+              ))}
             </div>
           )}
         </div>
@@ -3554,8 +4192,8 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
         {checklist.map((c) => (
           <div key={c.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "9px 18px", borderBottom: `1px solid ${C.line}` }}>
             <label style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13.5, cursor: "pointer", flex: 1 }}>
-              <input type="checkbox" checked={c.done} onChange={() => toggleTask(c.id)} style={{ width: 16, height: 16, accentColor: C.teal }} />
-              <span style={{ textDecoration: c.done ? "line-through" : "none", color: c.done ? C.inkSoft : C.ink }}>{c.text}</span>
+              <input type="checkbox" checked={isDoneToday(c)} onChange={() => toggleTask(c.id)} style={{ width: 16, height: 16, accentColor: C.teal }} />
+              <span style={{ textDecoration: isDoneToday(c) ? "line-through" : "none", color: isDoneToday(c) ? C.inkSoft : C.ink }}>{c.text}</span>
             </label>
             <button onClick={() => removeTask(c.id)} style={{ background: "none", border: "none", color: C.inkSoft }}><X size={13} /></button>
           </div>
@@ -3591,39 +4229,13 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
                 <ChevronDown size={15} color={C.inkSoft} style={{ transform: isCollapsed ? "rotate(-90deg)" : "none", transition: "transform 0.15s" }} />
               </button>
               {!isCollapsed && g.families.map((f) => (
-                <Row key={f.id} left={<><Dot c={f.color} /><b>{f.child}</b></>} right={<span style={{ color: C.inkSoft, fontSize: 13 }}>{sessionTime(f.sessionLength)}</span>} />
+                <Row key={f.id} left={<><Dot c={f.color} /><b>{f.child}</b></>} right={<span style={{ color: C.inkSoft, fontSize: 13 }}>{childHours(f)}</span>} />
               ))}
             </div>
           );
         })}
       </div>
 
-      <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, overflow: "hidden" }}>
-        <button onClick={() => setRatesOpen(!ratesOpen)} style={{
-          width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left",
-          padding: "13px 18px", background: "none", border: "none", borderBottom: ratesOpen ? `1px solid ${C.line}` : "none",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 600, fontSize: 14 }}>
-            <Clock size={15} color={C.teal} /> {t("Weekly hours")}
-          </div>
-          <ChevronDown size={16} color={C.inkSoft} style={{ transform: ratesOpen ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />
-        </button>
-        {ratesOpen && (
-          <div style={{ padding: "10px 18px", fontSize: 11.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
-            <Clock size={12} /> {openDays.length > 0 ? `${openDays.map((d) => t(d.day).slice(0, 3)).join(", ")} · ${openDays[0].hours}` : t("No open days set — configure in Calendar.")}
-            <button onClick={() => setScreen("calendar")} style={{ marginLeft: "auto", fontSize: 11, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("Edit in Calendar")}</button>
-          </div>
-        )}
-      </div>
-
-      <button onClick={() => setScreen("payments")} style={{
-        display: "flex", alignItems: "center", gap: 8, padding: "12px 18px", borderRadius: 14, border: `1px solid ${C.line}`,
-        background: "#fff", color: C.tealDark, fontSize: 12.5, fontWeight: 600, textAlign: "left",
-      }}>
-        <DollarSign size={15} color={C.teal} />
-        {t("Tuition rates and sibling discount now live in Finances → Tuition & Subsidies.")}
-        <ArrowRight size={13} style={{ marginLeft: "auto" }} />
-      </button>
     </div>
   );
 }
@@ -3760,7 +4372,7 @@ function CheckIn({ families, status, log, setChildStatus }) {
 }
 
 /* --------------------------------- families ------------------------------------ */
-function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHousehold: openHouseholdProp, setOpenHousehold: setOpenHouseholdProp, tuitionRates, alumni = [] }) {
+function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHousehold: openHouseholdProp, setOpenHousehold: setOpenHouseholdProp, tuitionRates, alumni = [], onWithdraw, openTuition, provider }) {
   const t = useT();
   const [openHouseholdLocal, setOpenHouseholdLocal] = useState(null);
   // Support both a parent-controlled open household (used when the search bar or
@@ -3792,6 +4404,9 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
   const activeCount = families.length - pendingCount;
   if (sortByLastName) households = [...households].sort((a, b) => a.household.localeCompare(b.household));
   const open = householdsRaw.find((h) => h.household === openHousehold) || null;
+  useEffect(() => {
+    if (open && open.children.every((c) => daysUntil(c.enrollDate) > 0)) setStatusFilter("pending");
+  }, [openHousehold]);
 
   const exportEmergencySheet = () => downloadCSV("alaga-emergency-contact-sheet.csv",
     ["Child", "Age", "Classroom", "Household", "Parent/Guardian", "Relationship", "Phone", "Email", "Emergency Contact", "Relationship", "Phone"],
@@ -3878,7 +4493,7 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
           </div>
         )}
         {households.map((h) => {
-          const anyAttention = h.children.some((c) => c.subsidized && c.status !== "active");
+          const anyAttention = h.children.some((c) => (c.subsidized && c.status !== "active") || defaultChildDocs(c).some((d) => d.status === "missing" || ["expired", "expiring"].includes(docEffectiveStatus(d, 30))));
           const anySplit = h.children.some((c) => c.copaySplit);
           const anySiblingDiscount = h.children.some((c) => effectiveTuition(c, h.children, tuitionRates).discountApplied);
           return (
@@ -3899,12 +4514,12 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
         })}
       </Card>
       )}
-      {open && <HouseholdDrawer household={open} onClose={() => setOpenHousehold(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} tuitionRates={tuitionRates} />}
+      {open && <HouseholdDrawer household={open} onClose={() => setOpenHousehold(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} tuitionRates={tuitionRates} onWithdraw={onWithdraw} openTuition={openTuition} provider={provider} />}
     </>
   );
 }
 
-function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, tuitionRates }) {
+function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, tuitionRates, onWithdraw, openTuition, provider }) {
   const t = useT();
   const [openChildId, setOpenChildId] = useState(null);
   const [editing, setEditing] = useState(false);
@@ -3941,7 +4556,12 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
               <div style={{ fontSize: 12.5, color: C.inkSoft }}>{household.children.length} {t(household.children.length === 1 ? "child" : "children")} {t("enrolled")}</div>
             </div>
           </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: C.inkSoft, padding: 4 }}><X size={19} /></button>
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <button onClick={() => printChildSheets(household.children, { parents: household.parents, provider, t })} title={t("Print an information sheet for each child")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 10px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", color: C.tealDark, fontSize: 12, fontWeight: 600 }}>
+              <Printer size={13} /> {t("Print")}
+            </button>
+            <button onClick={onClose} style={{ background: "none", border: "none", color: C.inkSoft, padding: 4 }}><X size={19} /></button>
+          </div>
         </div>
 
         <div style={{ flex: 1, overflowY: "auto", padding: "18px 22px 26px", display: "flex", flexDirection: "column", gap: 20 }}>
@@ -4007,10 +4627,10 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
               <>
                 {parents.map((p, i) => (
                   <div key={i} style={{ padding: "9px 0", borderBottom: i < parents.length - 1 ? `1px solid ${C.line}` : "none" }}>
-                    <div style={{ fontSize: 13, fontWeight: 600 }}>{p.name} <span style={{ fontWeight: 400, color: C.inkSoft }}>· {p.relationship}</span></div>
+                    <div style={{ fontSize: 13, fontWeight: 600 }}>{p.name}{p.relationship && <span style={{ fontWeight: 400, color: C.inkSoft }}> · {t(p.relationship)}</span>}</div>
                     <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 3, display: "flex", flexDirection: "column", gap: 2 }}>
-                      <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Phone size={12} /> {p.phone}</span>
-                      <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Mail size={12} /> {p.email}</span>
+                      {p.phone && <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Phone size={12} /> {p.phone}</span>}
+                      {p.email && <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Mail size={12} /> {p.email}</span>}
                     </div>
                   </div>
                 ))}
@@ -4021,7 +4641,11 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
                   <div key={i} style={{ border: `1px solid ${C.line}`, borderRadius: 10, padding: 10, display: "flex", flexDirection: "column", gap: 6 }}>
                     <div style={{ display: "flex", gap: 6 }}>
                       <input value={p.name} onChange={(e) => updateParent(i, "name", e.target.value)} placeholder={t("Name")} style={inputStyle} />
-                      <input value={p.relationship} onChange={(e) => updateParent(i, "relationship", e.target.value)} placeholder={t("Relationship")} style={{ ...inputStyle, maxWidth: 120 }} />
+                      <div style={{ maxWidth: 150, flex: 1 }}>
+                        <Select value={p.relationship || ""} onChange={(v) => updateParent(i, "relationship", v)}
+                          options={["", ...Array.from(new Set([...GUARDIAN_RELATIONSHIPS, p.relationship].filter(Boolean)))]}
+                          labels={[t("Relationship"), ...Array.from(new Set([...GUARDIAN_RELATIONSHIPS, p.relationship].filter(Boolean))).map((r) => t(r))]} />
+                      </div>
                     </div>
                     <div style={{ display: "flex", gap: 6 }}>
                       <input value={p.phone} onChange={(e) => updateParent(i, "phone", e.target.value)} placeholder={t("Phone")} style={inputStyle} />
@@ -4044,8 +4668,8 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
           <Section title={t("Emergency contact")} icon={AlertTriangle}>
             {!editing ? (
               <div style={{ fontSize: 13 }}>
-                <div style={{ fontWeight: 600 }}>{ec.name} <span style={{ fontWeight: 400, color: C.inkSoft }}>· {ec.relationship}</span></div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3, color: C.inkSoft, fontSize: 12 }}><Phone size={12} /> {ec.phone}</div>
+                <div style={{ fontWeight: 600 }}>{ec.name}{ec.relationship && <span style={{ fontWeight: 400, color: C.inkSoft }}> · {ec.relationship}</span>}</div>
+                {ec.phone && <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3, color: C.inkSoft, fontSize: 12 }}><Phone size={12} /> {ec.phone}</div>}
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -4072,16 +4696,45 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
           )}
         </div>
       </div>
-      {openChild && <ChildDrawer child={openChild} onClose={() => setOpenChildId(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} tuitionRates={tuitionRates} families={household.children} />}
+      {openChild && <ChildDrawer child={openChild} onClose={() => setOpenChildId(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} tuitionRates={tuitionRates} families={household.children} onWithdraw={onWithdraw} openTuition={openTuition} parents={household.parents} provider={provider} />}
     </div>
   );
 }
 
-function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRates, families }) {
+function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRates, families, onWithdraw, openTuition, parents = [], provider }) {
   const t = useT();
+  const [editingBasics, setEditingBasics] = useState(false);
+  const [basics, setBasics] = useState({ child: child.child, age: child.age, classroom: child.classroom, enrollDate: child.enrollDate });
+  const [withdrawing, setWithdrawing] = useState(false);
+  const [withdrawForm, setWithdrawForm] = useState({ leftDate: todayMDY(), reason: DEPARTURE_REASONS[0].id });
+  const saveBasics = async () => {
+    const fields = { child: basics.child.trim() || child.child, age: basics.age, enrollDate: basics.enrollDate || child.enrollDate };
+    if (basics.classroom !== child.classroom) {
+      fields.classroom = basics.classroom;
+      fields.classroomHistory = [{ from: child.classroom, to: basics.classroom, date: todayMDY(), time: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }), reason: "Updated in family record" }, ...(child.classroomHistory || [])];
+    }
+    await onSave(child.id, fields);
+    setEditingBasics(false);
+  };
+  const confirmWithdraw = async () => {
+    if (!onWithdraw || !withdrawForm.leftDate) return;
+    await onWithdraw(child, withdrawForm.leftDate, withdrawForm.reason);
+    setWithdrawing(false);
+    if (daysUntil(withdrawForm.leftDate) < 0) onClose();
+  };
+  // Many home providers keep paper copies; this records that a document is on
+  // file without requiring a scan.
+  const markOnFile = (docId) => {
+    const next = docs.map((d) => (d.id === docId ? { ...d, status: "submitted", date: todayMDY(), fileName: d.fileName || "Paper copy on file" } : d));
+    setDocs(next);
+    onSave(child.id, { documents: next });
+  };
   const [editingSession, setEditingSession] = useState(false);
   const [sessionsApproved, setSessionsApproved] = useState(child.sessionsApproved);
   const [sessionLength, setSessionLength] = useState(child.sessionLength);
+  const [days, setDays] = useState(childDays(child));
+  const [customHours, setCustomHours] = useState(child.customHours || "");
+  const scheduleNames = Array.from(new Set([...ACTIVE_CARE_SCHEDULES.map((o) => o.name), child.sessionLength].filter(Boolean)));
   const [editingTuition, setEditingTuition] = useState(false);
   const [tuition, setTuition] = useState(child.copay);
   const [notes, setNotes] = useState(child.notes);
@@ -4111,7 +4764,7 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
     const file = e.target.files && e.target.files[0];
     e.target.value = "";
     if (!file || !uploadingDocId) return;
-    const next = docs.map((d) => d.id === uploadingDocId ? { ...d, status: "submitted", date: "07/30/2026", fileName: file.name } : d);
+    const next = docs.map((d) => d.id === uploadingDocId ? { ...d, status: "submitted", date: todayMDY(), fileName: file.name } : d);
     setDocs(next);
     onSave(child.id, { documents: next });
     setUploadingDocId(null);
@@ -4156,24 +4809,75 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
               </div>
             </div>
           </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: C.inkSoft, padding: 4 }}><X size={19} /></button>
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <button onClick={() => printChildSheets([{ ...child, accommodations }], { parents, provider, t, docsById: { [child.id]: docs } })} title={t("Print this child's information sheet")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 10px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", color: C.tealDark, fontSize: 12, fontWeight: 600 }}>
+              <Printer size={13} /> {t("Print")}
+            </button>
+            <button onClick={onClose} style={{ background: "none", border: "none", color: C.inkSoft, padding: 4 }}><X size={19} /></button>
+          </div>
         </div>
 
         <div style={{ flex: 1, overflowY: "auto", padding: "18px 22px 26px", display: "flex", flexDirection: "column", gap: 20 }}>
+          {child.departedOn && (
+            <div style={{ padding: "10px 12px", borderRadius: 10, background: C.amberTint, color: C.tealDark, fontSize: 12.5, display: "flex", alignItems: "center", gap: 7 }}>
+              <CalendarDays size={13} /> {t("Last day of care")}: <b>{child.departedOn}</b>
+              <button onClick={() => (onWithdraw ? onWithdraw(child, null) : onSave(child.id, { departedOn: null, departureReason: null }))} style={{ marginLeft: "auto", background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 700 }}>{t("Undo")}</button>
+            </div>
+          )}
+          <Section title={t("Details")} icon={Users}
+            right={!editingBasics && <button onClick={() => setEditingBasics(true)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 700 }}><Pencil size={12} /> {t("Edit")}</button>}>
+            {!editingBasics ? (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <StatBlock label={t("Age group")} value={classroomLabelWithRange(child.classroom)} />
+                <StatBlock label={t("Start date")} value={child.enrollDate} />
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <Field label={t("Child's name")}><input value={basics.child} onChange={(e) => setBasics({ ...basics, child: e.target.value })} style={inputStyle} /></Field>
+                <div style={{ display: "grid", gridTemplateColumns: "0.6fr 1.4fr", gap: 10 }}>
+                  <Field label={t("Age")}><input value={basics.age} onChange={(e) => setBasics({ ...basics, age: e.target.value })} style={inputStyle} /></Field>
+                  <Field label={t("Age group")}><Select value={basics.classroom} onChange={(v) => setBasics({ ...basics, classroom: v })} options={CLASSROOMS.map((c) => c.id)} labels={CLASSROOMS.map((c) => classroomLabelWithRange(c.id))} /></Field>
+                </div>
+                <Field label={t("Start date")}><DateField value={basics.enrollDate} onChange={(v) => setBasics({ ...basics, enrollDate: v || "" })} allowClear={false} /></Field>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button onClick={() => { setEditingBasics(false); setBasics({ child: child.child, age: child.age, classroom: child.classroom, enrollDate: child.enrollDate }); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Cancel")}</button>
+                  <button onClick={saveBasics} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Save changes")}</button>
+                </div>
+              </div>
+            )}
+          </Section>
+
           <Section title={t("Session")} icon={CalendarClock}
             right={!editingSession && <button onClick={() => setEditingSession(true)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 700 }}><Pencil size={12} /> {t("Edit")}</button>}>
             {!editingSession ? (
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                <StatBlock label={t("Schedule")} value={sessionsApproved} />
-                <StatBlock label={t("Session length")} value={`${sessionLength} · ${sessionTime(sessionLength)}`} />
+                <StatBlock label={t("Schedule")} value={`${sessionsApproved} · ${days.map((d) => t(d).slice(0, 3)).join(", ")}`} />
+                <StatBlock label={t("Session length")} value={`${t(sessionLength)} · ${(customHours && customHours.trim()) || sessionTime(sessionLength)}`} />
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 <Field label={t("Sessions approved")}><Select value={sessionsApproved} onChange={setSessionsApproved} options={SESSIONS_APPROVED} /></Field>
-                <Field label={t("Session length")}><Select value={sessionLength} onChange={setSessionLength} options={SESSION_LENGTHS} /></Field>
+                <Field label={t("Days they attend")}>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                    {ALL_DAYS.map((d) => {
+                      const on = days.includes(d);
+                      return <button key={d} type="button" onClick={() => setDays((ds) => (on ? ds.filter((x) => x !== d) : ALL_DAYS.filter((x) => ds.includes(x) || x === d)))} style={{
+                        padding: "6px 10px", borderRadius: 8, fontSize: 12, fontWeight: 600,
+                        border: `1px solid ${on ? C.teal : C.line}`, background: on ? C.tealTint : "#fff", color: on ? C.tealDark : C.inkSoft,
+                      }}>{t(d).slice(0, 3)}</button>;
+                    })}
+                  </div>
+                  {child.subsidized && /^\d+ \/ week$/.test(sessionsApproved || "") && days.length > Number(sessionsApproved.split(" ")[0]) && (
+                    <div style={{ marginTop: 6, fontSize: 11.5, color: "#7A5620", display: "flex", alignItems: "center", gap: 5 }}>
+                      <AlertTriangle size={11} /> {t("More days than the subsidy approves — extra days may need to be billed privately.")}
+                    </div>
+                  )}
+                </Field>
+                <Field label={t("Session length")}><Select value={sessionLength} onChange={setSessionLength} options={scheduleNames} labels={scheduleNames.map((n) => `${t(n)} · ${sessionTime(n)}`)} /></Field>
+                <Field label={t("Their own drop-off and pick-up times (optional)")}><input value={customHours} onChange={(e) => setCustomHours(e.target.value)} placeholder={sessionTime(sessionLength)} style={inputStyle} /></Field>
                 <div style={{ display: "flex", gap: 8 }}>
-                  <button onClick={() => { setEditingSession(false); setSessionsApproved(child.sessionsApproved); setSessionLength(child.sessionLength); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Cancel")}</button>
-                  <button onClick={() => { saveField("session", { sessionsApproved, sessionLength }); setEditingSession(false); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Save changes")}</button>
+                  <button onClick={() => { setEditingSession(false); setSessionsApproved(child.sessionsApproved); setSessionLength(child.sessionLength); setDays(childDays(child)); setCustomHours(child.customHours || ""); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Cancel")}</button>
+                  <button onClick={() => { saveField("session", { sessionsApproved, sessionLength, daysOfWeek: days, customHours: customHours.trim() }); setEditingSession(false); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Save changes")}</button>
                 </div>
               </div>
             )}
@@ -4233,6 +4937,11 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
                     ))}
                   </div>
                 )}
+                {openTuition && (
+                  <button onClick={openTuition} style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", padding: 0, color: C.teal, fontSize: 12, fontWeight: 700 }}>
+                    <Split size={12} /> {child.copaySplit ? t("Change how tuition is split") : t("Split tuition between guardians")} <ChevronRight size={12} />
+                  </button>
+                )}
               </>
             )}
           </Section>
@@ -4289,7 +4998,8 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
                     (missing.length ? `\n\nStill needed: ${missing.join(", ")}.` : "\n\nEverything is on file — thank you!") +
                     `\n\nPlease reply to this email with any outstanding documents attached.\n\nThank you,`
                   );
-                  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+                  const to = parents.map((p) => p.email).filter(Boolean).join(",");
+                  window.location.href = `mailto:${encodeURIComponent(to)}?subject=${subject}&body=${body}`;
                 }} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 11.5, fontWeight: 700 }}>
                   <Send size={12} /> {t("Email packet")}
                 </button>
@@ -4297,7 +5007,7 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
             }>
             <input ref={docFileInputRef} type="file" accept="image/*,.pdf,.doc,.docx" onChange={handleDocFilePicked} style={{ display: "none" }} />
             {docs.map((d) => {
-              const meta = trForm(t, d.status);
+              const meta = trForm(t, docEffectiveStatus(d, 30));
               const name = CHILD_DOC_TEMPLATES.find((tpl) => tpl.id === d.id).name;
               const isOpen = expandedDocs[d.id];
               return (
@@ -4307,7 +5017,7 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
                       <meta.icon size={14} color={meta.color} style={{ flexShrink: 0 }} />
                       <div style={{ minWidth: 0 }}>
                         <div style={{ fontSize: 12.5, fontWeight: 500 }}>{name}</div>
-                        {d.date && <div style={{ fontSize: 10.5, color: C.inkSoft }}>{d.fileName ? `${d.fileName} · ` : ""}{d.date}</div>}
+                        {d.date && <div style={{ fontSize: 10.5, color: C.inkSoft }}>{d.fileName ? `${d.fileName} · ` : ""}{d.date}{d.expiresOn ? ` · ${t("renew by")} ${d.expiresOn}` : ""}</div>}
                       </div>
                     </button>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -4315,7 +5025,10 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
                       {d.status === "submitted" ? (
                         <IconBtn icon={Eye} title={t("View")} onClick={() => setExpandedDocs((e) => ({ ...e, [d.id]: !e[d.id] }))} />
                       ) : (
-                        <IconBtn icon={Upload} title={t("Upload")} accent onClick={() => triggerDocUpload(d.id)} />
+                        <>
+                          <button onClick={() => markOnFile(d.id)} title={t("Paper copy on file")} style={{ padding: "4px 8px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11, fontWeight: 600, color: C.inkSoft }}>{t("Mark on file")}</button>
+                          <IconBtn icon={Upload} title={t("Upload")} accent onClick={() => triggerDocUpload(d.id)} />
+                        </>
                       )}
                     </div>
                   </div>
@@ -4328,6 +5041,9 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
                         <FileText size={22} color={C.inkSoft} />
                         <div style={{ fontSize: 11.5, fontWeight: 600, textAlign: "center", maxWidth: 220 }}>{d.fileName || name}</div>
                       </div>
+                      <Field label={t("Renew by (optional)")}>
+                        <DateField value={d.expiresOn || ""} onChange={(v) => { const next = docs.map((x) => (x.id === d.id ? { ...x, expiresOn: v || "" } : x)); setDocs(next); onSave(child.id, { documents: next }); }} placeholder={t("e.g. when immunizations are next due")} />
+                      </Field>
                       <div style={{ display: "flex", gap: 8 }}>
                         {d.status === "submitted" && <IconBtn icon={Download} title={t("Download")} onClick={() => downloadCSV(`${(d.fileName || name).replace(/\s+/g, "-").toLowerCase()}-record.csv`, ["Document", "Status", "File on record", "Date"], [[name, trForm(t, d.status).label, d.fileName || "", d.date || ""]])} />}
                         <IconBtn icon={Upload} title={t("Replace file")} onClick={() => triggerDocUpload(d.id)} />
@@ -4383,7 +5099,27 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
         </div>
 
         <div style={{ padding: "14px 22px", borderTop: `1px solid ${C.line}` }}>
-          <button onClick={onClose} style={{ width: "100%", padding: "11px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13.5 }}>{t("Close")}</button>
+          {withdrawing ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ fontSize: 12.5, fontWeight: 700, color: C.ink }}>{t("Deenroll")} {child.child}</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                <Field label={t("Last day of care")}><DateField value={withdrawForm.leftDate} onChange={(v) => setWithdrawForm({ ...withdrawForm, leftDate: v || "" })} allowClear={false} /></Field>
+                <Field label={t("Reason")}><Select value={withdrawForm.reason} onChange={(v) => setWithdrawForm({ ...withdrawForm, reason: v })} options={DEPARTURE_REASONS.map((r) => r.id)} labels={DEPARTURE_REASONS.map((r) => t(r.label))} /></Field>
+              </div>
+              <div style={{ fontSize: 11.5, color: C.inkSoft }}>{t("They stay on your roster through their last day, then move to Deenrolled. Their record is kept.")}</div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={() => setWithdrawing(false)} style={{ flex: 1, padding: "10px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Cancel")}</button>
+                <button onClick={confirmWithdraw} style={{ flex: 1, padding: "10px 0", borderRadius: 10, border: "none", background: C.danger, color: "#fff", fontWeight: 700, fontSize: 13 }}>{t("Confirm deenrollment")}</button>
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={onClose} style={{ flex: 2, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13.5 }}>{t("Close")}</button>
+              {onWithdraw && !child.departedOn && (
+                <button onClick={() => setWithdrawing(true)} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.dangerTint}`, background: C.dangerTint, color: C.danger, fontWeight: 600, fontSize: 13 }}>{t("Deenroll")}</button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -4401,7 +5137,7 @@ function StatBlock({ label, value }) {
 
 
 /* --------------------------------- bookings ------------------------------------ */
-function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCare, attendanceLog, saveAttendanceLog, onSave, highlightId }) {
+function Bookings({ families, schedule = [], closures = [], provider, staff, tuitionRates, flexCareRequests, saveFlexCare, attendanceLog, saveAttendanceLog, onSave, highlightId }) {
   const t = useT();
   const highlightRef = React.useRef(null);
   useEffect(() => {
@@ -4409,12 +5145,15 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
       highlightRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, [highlightId]);
-  const TODAY = new Date(2026, 6, 27); // Monday, July 27, 2026 — this screen's fixed "today"
-  const WEEKDAY_BY_INDEX = { 1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday" };
+  const TODAY = startOfToday();
+
   const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   const [selectedDate, setSelectedDate] = useState(TODAY);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [sheetsOpen, setSheetsOpen] = useState(false);
+  const [sheetMonth, setSheetMonth] = useState(0); // 0 = this month, -1 = last month
+  const [sheetWho, setSheetWho] = useState("subsidized");
   const [bookingsTab, setBookingsTab] = useState(highlightId ? "flex" : "roster");
   useEffect(() => { if (highlightId) setBookingsTab("flex"); }, [highlightId]);
   const [denyingId, setDenyingId] = useState(null);
@@ -4425,7 +5164,7 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
   const [moveReason, setMoveReason] = useState("");
   const [denyReason, setDenyReason] = useState(DENY_REASONS[0]);
   const isToday = selectedDate.toDateString() === TODAY.toDateString();
-  const selectedWeekday = WEEKDAY_BY_INDEX[selectedDate.getDay()] || null;
+  const selectedWeekday = DAY_BY_INDEX[selectedDate.getDay()];
   const dateShort = `${MONTH_NAMES[selectedDate.getMonth()]} ${selectedDate.getDate()}`;
   const dateISO = selectedDate.toISOString().slice(0, 10);
   const dateFull = `${String(selectedDate.getMonth() + 1).padStart(2, "0")}/${String(selectedDate.getDate()).padStart(2, "0")}/${selectedDate.getFullYear()}`;
@@ -4435,7 +5174,7 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
 
   const flexFee = (classroom, hours) => Math.round((tuitionRates[classroom]?.hourly || 0) * hours);
   const submitFlexRequest = () => {
-    const child = families.find((f) => f.id === Number(flexForm.childId));
+    const child = families.find((f) => String(f.id) === String(flexForm.childId));
     if (!child || !flexForm.date) return;
     flexSeq += 1;
     saveFlexCare([{ id: `fc${flexSeq}`, child: child.child, classroom: child.classroom, type: flexForm.type, date: flexForm.date, hours: Number(flexForm.hours), notes: flexForm.notes, status: "pending" }, ...flexCareRequests]);
@@ -4465,17 +5204,36 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
   const activeFlexByChild = (childName) => flexCareRequests.filter((r) => r.child === childName && r.status !== "denied");
 
   const totalEnrolled = families.length;
-  const dayFamilies = selectedWeekday ? families.filter((f) => childDays(f).includes(selectedWeekday)) : [];
+  const licensedCapacity = provider?.capacity || 8;
+  const daySchedule = schedule.find((d) => d.day === selectedWeekday);
+  const closure = closureOn(closures, dateFull);
+  const closedToday = !!closure || (daySchedule && !daySchedule.open);
+  // Approved flex care for an extra day or weekend puts a child on that day's
+  // roster even though it isn't one of their regular days.
+  const sameDay = (a, b) => { const x = parseAnyDate(a), y = parseAnyDate(b); return x && y && x.toDateString() === y.toDateString(); };
+  const flexAddsChild = (f) => flexCareRequests.some((r) => r.child === f.child && r.status === "approved" && ["Extra day", "Weekend care"].includes(r.type) && sameDay(r.date, dateFull));
+  const dayFamilies = families.filter((f) => (childDays(f).includes(selectedWeekday) && !closedToday) || flexAddsChild(f));
   const dayRoster = groupByClassroom(dayFamilies);
 
+  // Each child's day: arrival and departure times, or marked absent.
+  // (Older entries were a simple true/false for "present".)
   const dayAttendance = attendanceLog[dateFull] || {};
-  const toggleAttendance = (childId) => {
+  const recordOf = (id) => { const v = dayAttendance[id]; return v === true ? { in: "—" } : v || {}; };
+  const nowTime = () => new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  const setRecord = (childId, next) => {
     const dayLog = attendanceLog[dateFull] || {};
-    saveAttendanceLog({ ...attendanceLog, [dateFull]: { ...dayLog, [childId]: !dayLog[childId] } });
+    const copy = { ...dayLog };
+    if (next) copy[childId] = next; else delete copy[childId];
+    saveAttendanceLog({ ...attendanceLog, [dateFull]: copy });
   };
-  const presentCount = dayFamilies.filter((f) => dayAttendance[f.id]).length;
+  const checkIn = (id) => setRecord(id, { in: nowTime() });
+  const checkOut = (id) => setRecord(id, { ...recordOf(id), out: nowTime() });
+  const markAbsent = (id) => setRecord(id, { absent: true });
+  const clearRecord = (id) => setRecord(id, null);
+  const presentCount = dayFamilies.filter((f) => recordOf(f.id).in).length;
+  const absentCount = dayFamilies.filter((f) => recordOf(f.id).absent).length;
 
-  const CURRENT_TIME = "10:15 AM";
+  const CURRENT_TIME = nowTime();
   const nowDateFull = `${String(TODAY.getMonth() + 1).padStart(2, "0")}/${String(TODAY.getDate()).padStart(2, "0")}/${TODAY.getFullYear()}`;
   const startMove = (f) => { setMovingId(f.id); setMoveTarget(CLASSROOMS.find((c) => c.id !== f.classroom)?.id || ""); setMoveReason(""); };
   const confirmMove = (f) => {
@@ -4484,11 +5242,7 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
     onSave(f.id, { classroom: moveTarget, classroomHistory: [entry, ...(f.classroomHistory || [])] });
     setMovingId(null);
   };
-  const targetCapacity = (id) => {
-    const cap = CLASSROOM_CAPACITY[id] || 8;
-    const enrolled = families.filter((fam) => fam.classroom === id).length;
-    return { cap, enrolled };
-  };
+
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -4523,10 +5277,32 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
               <div style={{ fontSize: 11.5, color: C.inkSoft }}>{dateShort}, {selectedDate.getFullYear()} {isToday && `· ${t("today")}`}</div>
             </div>
           </div>
-          <button onClick={() => setPickerOpen(!pickerOpen)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: `1px solid ${C.line}`, background: pickerOpen ? C.tealTint : "#fff", color: C.tealDark, fontWeight: 700, fontSize: 12.5 }}>
-            <CalendarDays size={14} /> {t("Change date")}
-          </button>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={() => { setSheetsOpen(!sheetsOpen); setPickerOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: `1px solid ${C.line}`, background: sheetsOpen ? C.tealTint : "#fff", color: C.tealDark, fontWeight: 700, fontSize: 12.5 }}>
+              <Printer size={14} /> {t("Sign-in sheets")}
+            </button>
+            <button onClick={() => { setPickerOpen(!pickerOpen); setSheetsOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: `1px solid ${C.line}`, background: pickerOpen ? C.tealTint : "#fff", color: C.tealDark, fontWeight: 700, fontSize: 12.5 }}>
+              <CalendarDays size={14} /> {t("Change date")}
+            </button>
+          </div>
         </div>
+        {sheetsOpen && (() => {
+          const base = new Date(TODAY.getFullYear(), TODAY.getMonth() + sheetMonth, 1);
+          const who = sheetWho === "subsidized" ? families.filter((f) => f.subsidized) : families;
+          const label = (off) => new Date(TODAY.getFullYear(), TODAY.getMonth() + off, 1).toLocaleDateString("en-US", { month: "long", year: "numeric" });
+          return (
+            <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.line}`, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+              <Select value={String(sheetMonth)} onChange={(v) => setSheetMonth(Number(v))} options={["0", "-1", "1"]} labels={[label(0), label(-1), label(1)]} />
+              <Select value={sheetWho} onChange={setSheetWho} options={["subsidized", "all"]} labels={[t("Subsidized children"), t("All children")]} />
+              <span style={{ fontSize: 11.5, color: C.inkSoft }}>{who.length} {t(who.length === 1 ? "page" : "pages")}</span>
+              <button disabled={!who.length} onClick={() => printSignInSheets(who, { year: base.getFullYear(), month: base.getMonth(), attendanceLog, schedule, closures, provider, t })}
+                style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 6, padding: "7px 14px", borderRadius: 8, border: "none", background: who.length ? C.teal : "#C9C4B4", color: "#fff", fontSize: 12, fontWeight: 700 }}>
+                <Printer size={13} /> {t("Print")}
+              </button>
+              <div style={{ width: "100%", fontSize: 11, color: C.inkSoft }}>{t("One page per child with each scheduled day, times already recorded here, and lines for parent signatures.")}</div>
+            </div>
+          );
+        })()}
         {pickerOpen && (
           <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.line}`, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
             <input type="date" value={dateISO} onChange={(e) => { if (e.target.value) { const [y, m, d] = e.target.value.split("-").map(Number); setSelectedDate(new Date(y, m - 1, d)); } }} style={inputStyle} />
@@ -4539,17 +5315,20 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-        <Kpi label={t("Program capacity")} value={`${totalEnrolled} / ${TOTAL_PROGRAM_CAPACITY}`} sub={t("enrolled across all classrooms")} accent={totalEnrolled >= TOTAL_PROGRAM_CAPACITY ? C.danger : C.teal} />
-        <Kpi label={isToday ? t("Present today") : t("Booked that day")} value={`${presentCount} / ${dayFamilies.length}`} sub={`${dayFamilies.length} ${t(dayFamilies.length === 1 ? "child booked" : "children booked")} ${isToday ? t("today") : `— ${dateShort}`}`} accent={C.sky} />
+        <Kpi label={t("Licensed capacity")} value={`${totalEnrolled} / ${licensedCapacity}`} sub={t("children enrolled, out of your license")} accent={totalEnrolled > licensedCapacity ? C.danger : C.teal} />
+        <Kpi label={isToday ? t("Here today") : t("Booked that day")} value={`${presentCount} / ${dayFamilies.length}`} sub={`${dayFamilies.length} ${t(dayFamilies.length === 1 ? "child booked" : "children booked")}${absentCount ? ` · ${absentCount} ${t("absent")}` : ""}`} accent={C.sky} />
       </div>
 
       <Card title={isToday ? t("Today's bookings") : `${t(selectedWeekday || "Weekend")}'s ${t("bookings")}`} icon={CalendarClock}
         right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{dateShort}, {selectedDate.getFullYear()}</span>}>
-        {!selectedWeekday && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No regular bookings on weekends — check Flex Care for any weekend requests.")}</div>}
-        {selectedWeekday && dayRoster.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No one is booked this day.")}</div>}
+        {closedToday && (
+          <div style={{ margin: "12px 18px 4px", padding: "10px 12px", borderRadius: 10, background: "#F1EEE5", fontSize: 12.5, color: C.ink, display: "flex", alignItems: "center", gap: 7 }}>
+            <CalendarDays size={13} color={C.inkSoft} /> <b>{t("Closed")}</b> — {closure ? closure.name : `${t(selectedWeekday)} ${t("is not one of your open days")}`}
+            {dayRoster.length > 0 && <span style={{ color: C.inkSoft }}>· {t("only approved flex care is shown")}</span>}
+          </div>
+        )}
+        {!closedToday && dayRoster.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No one is booked this day.")}</div>}
         {dayRoster.map((g) => {
-          const cap = CLASSROOM_CAPACITY[g.classroom.id] || 8;
-          const enrolled = g.families.length;
           const assigned = staff.filter((s) => s.status === "active" && (s.classroom === g.classroom.id || s.classroom === "all"));
           return (
             <div key={g.classroom.id}>
@@ -4564,11 +5343,11 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
                     </div>
                   )}
                 </div>
-                <Pill label={`${t("Enrolled")} ${enrolled} / ${t("Capacity")} ${cap}`} fg={enrolled >= cap ? C.danger : C.teal} bg={enrolled >= cap ? C.dangerTint : C.tealTint} />
+                <Pill label={`${g.families.length} ${t(g.families.length === 1 ? "child booked" : "children booked")}`} fg={C.teal} bg={C.tealTint} />
               </div>
               {g.families.map((f) => {
                 const flex = activeFlexByChild(f.child);
-                const present = !!dayAttendance[f.id];
+                const rec = recordOf(f.id);
                 const isMoving = movingId === f.id;
                 return (
                   <div key={f.id}>
@@ -4584,23 +5363,39 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
                         )}
                       </div>
                       <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                        <span style={{ fontSize: 12.5, color: C.inkSoft }}>{sessionTime(f.sessionLength)}</span>
+                        <span style={{ fontSize: 12.5, color: C.inkSoft }}>{childHours(f)}</span>
                         <button onClick={() => (isMoving ? setMovingId(null) : startMove(f))} title={t("Move classroom")} style={{
                           display: "flex", alignItems: "center", gap: 5, padding: "5px 8px", borderRadius: 7, border: `1px solid ${C.line}`, background: isMoving ? C.tealTint : "#fff", fontSize: 11, fontWeight: 700, color: C.tealDark,
                         }}>
                           <ArrowLeftRight size={12} />
                         </button>
-                        <button onClick={() => toggleAttendance(f.id)} style={{
-                          display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "none",
-                          background: present ? C.tealTint : "#F1EEE5", color: present ? C.tealDark : C.inkSoft, fontSize: 11, fontWeight: 700,
-                        }}>
-                          {present ? <CheckCircle2 size={12} /> : <Circle size={12} />} {present ? t("Present") : t("Mark present")}
-                        </button>
+                        {rec.absent ? (
+                          <>
+                            <Pill label={t("Absent")} fg={C.inkSoft} bg="#F1EEE5" />
+                            <button onClick={() => clearRecord(f.id)} title={t("Undo")} style={{ background: "none", border: "none", color: C.inkSoft, padding: 2 }}><X size={12} /></button>
+                          </>
+                        ) : !rec.in ? (
+                          <>
+                            <button onClick={() => markAbsent(f.id)} style={{ padding: "5px 9px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", color: C.inkSoft, fontSize: 11, fontWeight: 700 }}>{t("Absent")}</button>
+                            <button onClick={() => checkIn(f.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "none", background: C.teal, color: "#fff", fontSize: 11, fontWeight: 700 }}>
+                              <CheckCircle2 size={12} /> {t("Check in")}
+                            </button>
+                          </>
+                        ) : !rec.out ? (
+                          <>
+                            <span style={{ fontSize: 11.5, color: C.tealDark, fontWeight: 700 }}>{t("In")} {rec.in}</span>
+                            <button onClick={() => checkOut(f.id)} style={{ padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.teal}`, background: C.tealTint, color: C.tealDark, fontSize: 11, fontWeight: 700 }}>{t("Check out")}</button>
+                            <button onClick={() => clearRecord(f.id)} title={t("Undo")} style={{ background: "none", border: "none", color: C.inkSoft, padding: 2 }}><X size={12} /></button>
+                          </>
+                        ) : (
+                          <>
+                            <span style={{ fontSize: 11.5, color: C.inkSoft, fontWeight: 600 }}>{rec.in} – {rec.out}</span>
+                            <button onClick={() => setRecord(f.id, { in: rec.in })} title={t("Undo check-out")} style={{ background: "none", border: "none", color: C.inkSoft, padding: 2 }}><X size={12} /></button>
+                          </>
+                        )}
                       </div>
                     </div>
                     {isMoving && (() => {
-                      const targetInfo = moveTarget ? targetCapacity(moveTarget) : null;
-                      const overCapacity = targetInfo && targetInfo.enrolled >= targetInfo.cap;
                       return (
                         <div style={{ padding: "10px 18px 14px 34px", borderBottom: `1px solid ${C.line}`, background: C.cream, display: "flex", flexDirection: "column", gap: 8 }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
@@ -4608,11 +5403,6 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
                             <Select value={moveTarget} onChange={setMoveTarget} options={CLASSROOMS.filter((c) => c.id !== f.classroom).map((c) => c.id)} labels={CLASSROOMS.filter((c) => c.id !== f.classroom).map((c) => `${c.label} (${c.range})`)} />
                             <input value={moveReason} onChange={(e) => setMoveReason(e.target.value)} placeholder={t("Reason (optional)")} style={{ ...inputStyle, flex: 1, minWidth: 140 }} />
                           </div>
-                          {overCapacity && (
-                            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#7A5620" }}>
-                              <AlertTriangle size={12} /> {t("Target classroom is at or over capacity")} ({targetInfo.enrolled}/{targetInfo.cap}).
-                            </div>
-                          )}
                           <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
                             <button onClick={() => setMovingId(null)} style={{ padding: "6px 12px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 700, color: C.inkSoft }}>{t("Cancel")}</button>
                             <button onClick={() => confirmMove(f)} style={{ padding: "6px 12px", borderRadius: 7, border: "none", background: C.teal, color: "#fff", fontSize: 11.5, fontWeight: 700 }}>{t("Confirm move")}</button>
@@ -4649,13 +5439,13 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
                   <Field label={t("Type")}>
                     <Select value={flexForm.type} onChange={(v) => setFlexForm({ ...flexForm, type: v })} options={FLEX_CARE_TYPES} labels={FLEX_CARE_TYPES.map((x) => t(x))} />
                   </Field>
-                  <Field label={t("Date")}><input type="date" value={flexForm.date} onChange={(e) => setFlexForm({ ...flexForm, date: e.target.value })} style={inputStyle} /></Field>
+                  <Field label={t("Date")}><DateField value={flexForm.date} onChange={(v) => setFlexForm({ ...flexForm, date: v || "" })} /></Field>
                 </div>
                 <Field label={t("Extra hours")}><input type="number" step="0.5" value={flexForm.hours} onChange={(e) => setFlexForm({ ...flexForm, hours: e.target.value })} style={{ ...inputStyle, maxWidth: 100 }} /></Field>
                 <Field label={t("Notes (optional)")}><input value={flexForm.notes} onChange={(e) => setFlexForm({ ...flexForm, notes: e.target.value })} style={inputStyle} /></Field>
                 {flexForm.childId && (
                   <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 5 }}>
-                    <DollarSign size={12} /> {t("Estimated fee")}: <b style={{ color: C.ink }}>{money(flexFee(families.find((f) => f.id === Number(flexForm.childId))?.classroom, Number(flexForm.hours) || 0))}</b> {t("at that classroom's hourly rate")}
+                    <DollarSign size={12} /> {t("Estimated fee")}: <b style={{ color: C.ink }}>{money(flexFee(families.find((f) => String(f.id) === String(flexForm.childId))?.classroom, Number(flexForm.hours) || 0))}</b> {t("at that classroom's hourly rate")}
                   </div>
                 )}
                 <button onClick={submitFlexRequest} style={{ padding: "10px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Submit request")}</button>
@@ -4756,7 +5546,7 @@ function Bookings({ families, staff, tuitionRates, flexCareRequests, saveFlexCar
             );
           })}
           <div style={{ padding: "10px 18px", fontSize: 10.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
-            <Info size={10} /> {t("Fees are estimated from your classroom hourly rates on the Dashboard — confirm actual staff coverage before approving.")}
+            <Info size={10} /> {t("Fees are estimated from your hourly rates in Finances → Tuition. Confirm you have staff coverage before approving.")}
           </div>
         </Card>
       </div>
@@ -4936,7 +5726,7 @@ function StaffDrawer({ member, onClose, update, remove }) {
     const file = e.target.files && e.target.files[0];
     e.target.value = "";
     if (!file || !uploadingDocId) return;
-    const next = docs.map((d) => d.id === uploadingDocId ? { ...d, status: "submitted", date: "07/30/2026", fileName: file.name } : d);
+    const next = docs.map((d) => d.id === uploadingDocId ? { ...d, status: "submitted", date: todayMDY(), fileName: file.name } : d);
     setDocs(next);
     update(member.id, { documents: next });
     setUploadingDocId(null);
@@ -5097,11 +5887,19 @@ function StaffDrawer({ member, onClose, update, remove }) {
 }
 
 /* --------------------------------- calendar ------------------------------------ */
-function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events, saveEvents, families, threads, saveThreads }) {
+function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events, saveEvents, families, threads, saveThreads, careSchedules = DEFAULT_CARE_SCHEDULES, saveCareSchedules }) {
   const t = useT();
+  const [editingOffers, setEditingOffers] = useState(false);
+  const [offers, setOffers] = useState(careSchedules);
+  const inUse = (name) => (families || []).filter((f) => f.sessionLength === name).length;
+  const saveOffers = async () => {
+    const clean = offers.map((o) => ({ name: o.name.trim(), hours: o.hours.trim() })).filter((o) => o.name);
+    if (saveCareSchedules) await saveCareSchedules(clean.length ? clean : DEFAULT_CARE_SCHEDULES);
+    setEditingOffers(false);
+  };
   const [editing, setEditing] = useState(false);
   const [local, setLocal] = useState(schedule);
-  const [form, setForm] = useState({ start: "", end: "", name: "Additional provider closure", notify: false });
+  const [form, setForm] = useState({ start: "", end: "", name: "", notify: false });
   const [tab, setTab] = useState("hours");
   const [eventForm, setEventForm] = useState({ start: "", end: "", name: "", type: EVENT_TYPES[0], notify: false, notes: "", bringItems: "" });
 
@@ -5129,10 +5927,19 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
   const saveSchedNow = async () => { await saveSchedule(local); setEditing(false); };
 
   const addClosure = () => {
-    if (!form.start || !form.end) return;
-    saveClosures([{ id: Date.now(), name: form.name, dates: `${form.start} – ${form.end}`, notified: form.notify }, ...closures]);
-    setForm({ start: "", end: "", name: "Additional provider closure", notify: false });
+    if (!form.start) return;
+    const end = form.end || form.start;
+    const dates = end === form.start ? form.start : `${form.start} – ${end}`;
+    saveClosures([{ id: Date.now(), name: form.name.trim() || "Closed", dates, start: form.start, end, notified: form.notify }, ...closures]);
+    if (form.notify && families && threads && saveThreads) {
+      const names = [...new Set(families.map((f) => f.householdName))];
+      broadcastToFamilies(threads, saveThreads, names, `📅 We'll be closed ${dates}${form.name.trim() ? ` (${form.name.trim()})` : ""}. Please plan care accordingly.`, "announcement", families);
+    }
+    setForm({ start: "", end: "", name: "", notify: false });
   };
+  const sortedClosures = [...closures].sort((a, b) => (parseAnyDate(a.start || a.dates)?.getTime() || 0) - (parseAnyDate(b.start || b.dates)?.getTime() || 0));
+  const upcomingClosures = sortedClosures.filter((c) => !isPastDate(c.end || String(c.dates).split(" – ").pop()));
+  const pastClosures = sortedClosures.filter((c) => isPastDate(c.end || String(c.dates).split(" – ").pop()));
   const removeClosure = (id) => saveClosures(closures.filter((c) => c.id !== id));
 
   const addEvent = () => {
@@ -5146,7 +5953,7 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
       const messageText = `${emoji} ${lead ? `${lead} ` : ""}${eventForm.name} — ${dates}.` +
         (eventForm.bringItems ? ` 🎒 Please bring: ${eventForm.bringItems}.` : "") +
         (eventForm.notes ? ` ${eventForm.notes}` : "");
-      broadcastToFamilies(threads, saveThreads, names, messageText, "announcement");
+      broadcastToFamilies(threads, saveThreads, names, messageText, "announcement", families);
       tryBrowserNotify(`Sent to ${names.length} ${names.length === 1 ? "family" : "families"}`, `${emoji} ${eventForm.name}`);
     }
     setEventForm({ start: "", end: "", name: "", type: EVENT_TYPES[0], notify: false, notes: "", bringItems: "" });
@@ -5169,6 +5976,29 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
           }}>{label}</button>
         ))}
       </div>
+
+      {tab === "hours" && (
+        <Card title={t("Care schedules you offer")} icon={Clock}
+          right={<button onClick={() => (editingOffers ? saveOffers() : (setOffers(careSchedules), setEditingOffers(true)))} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{editingOffers ? t("Save changes") : t("Edit")}</button>}>
+          {!editingOffers ? (
+            careSchedules.map((o) => (
+              <Row key={o.name} left={<b>{t(o.name)}</b>} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{o.hours || "—"}{inUse(o.name) ? ` · ${inUse(o.name)} ${t(inUse(o.name) === 1 ? "child" : "children")}` : ""}</span>} />
+            ))
+          ) : (
+            <div style={{ padding: "12px 18px", display: "flex", flexDirection: "column", gap: 8 }}>
+              {offers.map((o, i) => (
+                <div key={i} style={{ display: "flex", gap: 8 }}>
+                  <input value={o.name} onChange={(e) => setOffers((os) => os.map((x, xi) => (xi === i ? { ...x, name: e.target.value } : x)))} placeholder={t("e.g. Before & after school")} style={{ ...inputStyle, flex: 1.2 }} />
+                  <input value={o.hours} onChange={(e) => setOffers((os) => os.map((x, xi) => (xi === i ? { ...x, hours: e.target.value } : x)))} placeholder={t("e.g. 7:00 AM – 8:30 AM, 2:30 PM – 6:00 PM")} style={{ ...inputStyle, flex: 1.6 }} />
+                  <button type="button" onClick={() => setOffers((os) => os.filter((_, xi) => xi !== i))} disabled={inUse(o.name) > 0} title={inUse(o.name) > 0 ? t("In use by enrolled children") : t("Remove")} style={{ width: 30, borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", color: inUse(o.name) > 0 ? "#C9C4B4" : C.danger, display: "flex", alignItems: "center", justifyContent: "center" }}><Trash2 size={12} /></button>
+                </div>
+              ))}
+              <button type="button" onClick={() => setOffers((os) => [...os, { name: "", hours: "" }])} style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 5, padding: "5px 9px", borderRadius: 7, border: `1px dashed ${C.teal}`, background: "none", color: C.teal, fontSize: 11.5, fontWeight: 600 }}><Plus size={11} /> {t("Add a schedule")}</button>
+              <div style={{ fontSize: 11, color: C.inkSoft }}>{t("These appear when you set a child's schedule. A child can also have their own drop-off and pick-up times.")}</div>
+            </div>
+          )}
+        </Card>
+      )}
 
       {tab === "hours" && (
         <Card title={t("Weekly availability")} icon={CalendarDays}
@@ -5200,9 +6030,13 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
                           border: `1px dashed ${C.teal}`, background: "none", color: C.teal, fontSize: 11.5, fontWeight: 600,
                         }}><Plus size={11} /> {t("Add time slot")}</button>
                       </div>
-                      <div style={{ display: "flex", gap: 6 }}>
-                        <input value={d.careType} onChange={(e) => updateDay(i, "careType", e.target.value)} style={{ ...inputStyle, maxWidth: 110 }} />
-                        <input type="number" value={d.capacity} onChange={(e) => updateDay(i, "capacity", Number(e.target.value))} style={{ ...inputStyle, maxWidth: 70 }} />
+                      <div style={{ display: "flex", gap: 10, alignItems: "flex-end" }}>
+                        <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: C.inkSoft, fontWeight: 600 }}>{t("Care type")}
+                          <input value={d.careType} onChange={(e) => updateDay(i, "careType", e.target.value)} placeholder={t("e.g. Full-day")} style={{ ...inputStyle, width: 130 }} />
+                        </label>
+                        <label style={{ display: "flex", flexDirection: "column", gap: 3, fontSize: 11, color: C.inkSoft, fontWeight: 600 }}>{t("Children that day")}
+                          <input type="number" min={0} value={d.capacity} onChange={(e) => updateDay(i, "capacity", Number(e.target.value))} style={{ ...inputStyle, width: 80 }} />
+                        </label>
                       </div>
                       <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                         {CLASSROOMS.map((c) => {
@@ -5243,40 +6077,41 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
       )}
 
       {tab === "closures" && (
-        <>
-          <Card title={t("Closures from enrollment packet")} icon={CalendarDays} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Already disclosed to families")}</span>}>
-            {PACKET_CLOSURES.map((c) => (
-              <Row key={c.name} left={<b>{c.name}</b>} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{c.dates}</span>} />
-            ))}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <Card title={t("Add a closure")} icon={Plus}>
+            <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <Field label={t("First day closed")}><DateField value={form.start} onChange={(v) => setForm({ ...form, start: v || "" })} /></Field>
+                <Field label={t("Last day closed (optional)")}><DateField value={form.end} onChange={(v) => setForm({ ...form, end: v || "" })} placeholder={t("Same day")} /></Field>
+              </div>
+              <Field label={t("Reason")}><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t("e.g. Thanksgiving, provider training, sick day")} style={{ ...inputStyle, width: "100%" }} /></Field>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: C.inkSoft }}>
+                <input type="checkbox" checked={form.notify} onChange={(e) => setForm({ ...form, notify: e.target.checked })} /> {t("Message all families about it now")}
+              </label>
+              <button onClick={addClosure} disabled={!form.start} style={{ padding: "10px 0", borderRadius: 9, border: "none", background: form.start ? C.teal : "#C9C4B4", color: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Add closure")}</button>
+              <div style={{ fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
+                <Info size={11} /> {t("Closed days are taken off the attendance roster automatically.")}
+              </div>
+            </div>
           </Card>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-            <Card title={t("Add an additional closure")} icon={Plus}>
-              <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                  <Field label={t("Start date")}><input type="date" value={form.start} onChange={(e) => setForm({ ...form, start: e.target.value })} style={inputStyle} /></Field>
-                  <Field label={t("End date")}><input type="date" value={form.end} onChange={(e) => setForm({ ...form, end: e.target.value })} style={inputStyle} /></Field>
-                </div>
-                <Field label={t("Description")}><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={inputStyle} /></Field>
-                <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: C.inkSoft }}>
-                  <input type="checkbox" checked={form.notify} onChange={(e) => setForm({ ...form, notify: e.target.checked })} /> {t("Notify parents immediately")}
-                </label>
-                <button onClick={addClosure} style={{ padding: "10px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Add closure")}</button>
+          <Card title={t("Upcoming closures")} icon={CalendarDays} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{upcomingClosures.length}</span>}>
+            {upcomingClosures.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No closures coming up.")}</div>}
+            {upcomingClosures.map((c) => (
+              <Row key={c.id} left={<><b>{c.name}</b><span style={{ color: C.inkSoft }}>{c.dates}</span></>}
+                right={<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  {c.fromPacket && <Pill label={t("In enrollment packet")} fg={C.sky} bg={C.skyTint} />}
+                  {c.notified && !c.fromPacket && <Pill label={t("Families notified")} fg={C.teal} bg={C.tealTint} />}
+                  <button onClick={() => removeClosure(c.id)} title={t("Remove")} style={{ background: "none", border: "none", color: C.danger }}><Trash2 size={14} /></button>
+                </div>} />
+            ))}
+            {pastClosures.length > 0 && (
+              <div style={{ padding: "10px 18px", fontSize: 11.5, color: C.inkSoft }}>
+                {t("Past")}: {pastClosures.map((c) => `${c.name} (${c.dates})`).join(" · ")}
               </div>
-            </Card>
-
-            <Card title={t("Additional closures and exceptions")} icon={CalendarDays}>
-              {closures.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("None added yet.")}</div>}
-              {closures.map((c) => (
-                <Row key={c.id} left={<><b>{c.name}</b><span style={{ color: C.inkSoft }}>{c.dates}</span></>}
-                  right={<div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                    {c.notified && <Pill label={t("Parents notified")} fg={C.teal} bg={C.tealTint} />}
-                    <button onClick={() => removeClosure(c.id)} style={{ background: "none", border: "none", color: C.danger }}><Trash2 size={14} /></button>
-                  </div>} />
-              ))}
-            </Card>
-          </div>
-        </>
+            )}
+          </Card>
+        </div>
       )}
 
       {tab === "events" && (
@@ -5288,8 +6123,8 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
                 <Select value={eventForm.type} onChange={(v) => setEventForm({ ...eventForm, type: v })} options={EVENT_TYPES} labels={EVENT_TYPES.map((ty) => t(ty))} />
               </Field>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                <Field label={t("Start date")}><input type="date" value={eventForm.start} onChange={(e) => setEventForm({ ...eventForm, start: e.target.value })} style={inputStyle} /></Field>
-                <Field label={t("End date (optional)")}><input type="date" value={eventForm.end} onChange={(e) => setEventForm({ ...eventForm, end: e.target.value })} style={inputStyle} /></Field>
+                <Field label={t("Start date")}><DateField value={eventForm.start} onChange={(v) => setEventForm({ ...eventForm, start: v || "" })} /></Field>
+                <Field label={t("End date (optional)")}><DateField value={eventForm.end} onChange={(v) => setEventForm({ ...eventForm, end: v || "" })} /></Field>
               </div>
               <Field label={t("Notes (optional)")}><input value={eventForm.notes} onChange={(e) => setEventForm({ ...eventForm, notes: e.target.value })} style={inputStyle} /></Field>
               <Field label={t("Ask families to bring (optional)")}><input value={eventForm.bringItems} onChange={(e) => setEventForm({ ...eventForm, bringItems: e.target.value })} placeholder={t("e.g. swimsuit, sunscreen, $5 for the trip")} style={inputStyle} /></Field>
@@ -5345,7 +6180,7 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
 }
 
 /* --------------------------------- tours ------------------------------------ */
-function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, logAccess }) {
+function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, logAccess, startEnroll }) {
   const t = useT();
   const [openId, setOpenId] = useState(null);
   const [confirmingId, setConfirmingId] = useState(null);
@@ -5382,6 +6217,7 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
   const moveStage = (p, dir) => {
     const idx = TOUR_STAGES.indexOf(p.stage);
     const next = TOUR_STAGES[idx + dir];
+    if (next === "Enrolled" && !p.familyIds && startEnroll) { startEnroll(p); return; }
     if (next) updateProspect(p.id, { stage: next });
   };
 
@@ -5474,7 +6310,7 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 18px", borderBottom: `1px solid ${C.line}` }}>
                 <div style={{ minWidth: 0 }}>
                   <b style={{ fontSize: 13.5 }}>{p.name}</b>
-                  <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 2 }}>{p.language} · {p.children} · {t("Toured")}: {p.tourDate}</div>
+                  <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 2 }}>{p.language} · {p.children} · {t("Tour")}: {p.tourDate}</div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
                   <span style={{ fontSize: 12, color: C.inkSoft }}>{p.contact}</span>
@@ -5486,7 +6322,7 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
           ))}
         </Card>
       )}
-      {open && <ProspectDrawer prospect={open} onClose={() => { setOpenId(null); setNewlyAddedId(null); }} update={updateProspect} remove={removeProspect} logAccess={logAccess} initialEditing={open.id === newlyAddedId} />}
+      {open && <ProspectDrawer prospect={open} onClose={() => { setOpenId(null); setNewlyAddedId(null); }} update={updateProspect} remove={removeProspect} logAccess={logAccess} initialEditing={open.id === newlyAddedId} startEnroll={(p) => { setOpenId(null); startEnroll(p); }} />}
     </div>
   );
 }
@@ -5494,10 +6330,12 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
 // Dedicated Waitlist view — families whose Tours stage is "Waitlist", shown as
 // an ordered queue with a reason and quick actions, rather than buried inside
 // the general Tours pipeline. Reuses the same prospect data and drawer.
-function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, families, providerInfo }) {
+function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, families, providerInfo, startEnroll }) {
   const t = useT();
   const [openId, setOpenId] = useState(null);
-  const waitlisted = prospects.filter((p) => p.stage === "Waitlist");
+  // First to join is first in line. Families without a join date (older records)
+  // keep their place ahead of anyone added since.
+  const waitlisted = prospects.filter((p) => p.stage === "Waitlist").slice().sort((a, b) => (a.waitlistedAt || 0) - (b.waitlistedAt || 0));
   const open = prospects.find((p) => p.id === openId) || null;
 
   const capacityByClassroom = CLASSROOMS.map((c) => ({
@@ -5509,7 +6347,7 @@ function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, 
   const atCapacity = totalCapacity > 0 && totalEnrolled >= totalCapacity;
 
   const moveToTour = (p) => updateProspect(p.id, { stage: "Tour Scheduled" });
-  const moveToEnrolled = (p) => updateProspect(p.id, { stage: "Enrolled" });
+  const moveToEnrolled = (p) => (startEnroll ? startEnroll(p) : updateProspect(p.id, { stage: "Enrolled" }));
 
   // Two real, tracked steps once a spot opens: first let the family know a
   // spot is available, then — once they've been notified — invite them to
@@ -5523,7 +6361,7 @@ function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, 
       `Please reply within a few days to let us know if you'd still like to move forward — spots are offered in waitlist order, ` +
       `so we'll need to hear back before we can hold it for you.\n\nLooking forward to hearing from you,\n${providerInfo?.name || ""}`
     );
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${encodeURIComponent(p.email || "")}?subject=${subject}&body=${body}`;
     const entry = { date: todayMDY(), type: "availability" };
     updateProspect(p.id, { waitlistNotifications: [entry, ...(p.waitlistNotifications || [])] });
   };
@@ -5534,7 +6372,7 @@ function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, 
       `Next steps:\n- We'll send over the enrollment packet and any required forms\n- Once those are complete, we'll confirm the official start date\n` +
       `- Reach out anytime with questions before then\n\nWelcome to the family,\n${providerInfo?.name || ""}`
     );
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${encodeURIComponent(p.email || "")}?subject=${subject}&body=${body}`;
     const entry = { date: todayMDY(), type: "enrollment_invite" };
     updateProspect(p.id, { waitlistNotifications: [entry, ...(p.waitlistNotifications || [])] });
   };
@@ -5578,7 +6416,7 @@ function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, 
               }}>{i + 1}</div>
               <button onClick={() => setOpenId(p.id)} style={{ flex: 1, textAlign: "left", background: "none", border: "none", display: "flex", flexDirection: "column", gap: 2 }}>
                 <span style={{ fontSize: 13.5, fontWeight: 600 }}>{p.name}</span>
-                <span style={{ fontSize: 12, color: C.inkSoft }}>{p.children} · {t("desired start")}: {p.start}</span>
+                <span style={{ fontSize: 12, color: C.inkSoft }}>{p.children} · {t("desired start")}: {p.start}{p.waitlistedOn ? ` · ${t("waiting since")} ${p.waitlistedOn}` : ""}</span>
                 {p.notes && <span style={{ fontSize: 11.5, color: C.inkSoft, fontStyle: "italic" }}>{p.notes}</span>}
               </button>
               <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
@@ -5608,16 +6446,693 @@ function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, 
           );
         })}
         <div style={{ padding: "10px 18px", fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
-          <Info size={10} /> {t("To add a family to the waitlist, open them from Tours and set their stage to Waitlist.")}
+          <Info size={10} /> {t("To add a family, open them in Tours and set their stage to Waitlist. Families are listed in the order they joined.")}
         </div>
       </Card>
 
-      {open && <ProspectDrawer prospect={open} onClose={() => setOpenId(null)} update={updateProspect} remove={removeProspect} logAccess={logAccess} />}
+      {open && <ProspectDrawer prospect={open} onClose={() => setOpenId(null)} update={updateProspect} remove={removeProspect} logAccess={logAccess} startEnroll={startEnroll && ((p) => { setOpenId(null); startEnroll(p); })} />}
     </div>
   );
 }
 
-function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialEditing = false }) {
+/* ------------------------------ printing ------------------------------------ */
+// Printer-friendly child information sheets. Builds a plain, black-and-white
+// page (one child per page) and opens the browser's print dialog, so it works
+// with any printer or "Save as PDF". Private notes are left off on purpose.
+const escapeHTML = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+function printChildSheets(children, { parents = [], provider = {}, t = (x) => x, docsById = {} } = {}) {
+  const row = (label, value) => `<tr><th>${escapeHTML(label)}</th><td>${escapeHTML(value || "—")}</td></tr>`;
+  const sheet = (c) => {
+    const prog = c.subsidized ? programOf(c.programId) : null;
+    const docs = docsById[c.id] || defaultChildDocs(c);
+    const ec = c.emergencyContact || {};
+    const guardians = (c.parents && c.parents.length ? c.parents : parents);
+    return `
+      <section class="sheet">
+        <header>
+          <div>
+            <div class="provider">${escapeHTML(provider.name || "")}</div>
+            <div class="muted">${escapeHTML([provider.lic, provider.city].filter(Boolean).join(" · "))}</div>${providerContact(provider) ? `<div class="muted">${escapeHTML(providerContact(provider))}</div>` : ""}
+          </div>
+          <div class="right">
+            <div class="title">${escapeHTML(t("Child information sheet"))}</div>
+            <div class="muted">${escapeHTML(t("Printed"))} ${escapeHTML(todayMDY())}</div>
+          </div>
+        </header>
+        <h1>${escapeHTML(c.child)}</h1>
+        ${c.accommodations ? `<div class="alert"><b>${escapeHTML(t("Allergies, medical & special needs"))}:</b> ${escapeHTML(c.accommodations)}</div>` : ""}
+        <h2>${escapeHTML(t("Child"))}</h2>
+        <table>
+          ${row(t("Age"), c.age)}
+          ${row(t("Age group"), classroomLabelWithRange(c.classroom))}
+          ${row(t("Start date"), c.enrollDate)}
+          ${row(t("Schedule"), `${c.sessionsApproved || ""} · ${childDays(c).map((x) => t(x).slice(0, 3)).join(", ")} · ${c.sessionLength || ""} (${childHours(c)})`)}
+          ${row(t("Funding"), c.subsidized ? `${prog?.label || t("Subsidy")} — ${prog?.agency || ""}` : t("Private pay"))}
+          ${c.departedOn ? row(t("Last day of care"), c.departedOn) : ""}
+        </table>
+        <h2>${escapeHTML(t("Parents and guardians"))}</h2>
+        <table class="grid">
+          <tr><th>${escapeHTML(t("Name"))}</th><th>${escapeHTML(t("Relationship"))}</th><th>${escapeHTML(t("Phone"))}</th><th>${escapeHTML(t("Email"))}</th></tr>
+          ${guardians.map((g) => `<tr><td>${escapeHTML(g.name)}</td><td>${escapeHTML(t(g.relationship || ""))}</td><td>${escapeHTML(g.phone)}</td><td>${escapeHTML(g.email)}</td></tr>`).join("")}
+        </table>
+        <h2>${escapeHTML(t("Emergency contact"))}</h2>
+        <table>
+          ${row(t("Name"), ec.name)}
+          ${row(t("Relationship"), t(ec.relationship || ""))}
+          ${row(t("Phone"), ec.phone)}
+        </table>
+        <h2>${escapeHTML(t("Enrollment documents"))}</h2>
+        <table class="grid">
+          <tr><th>${escapeHTML(t("Document"))}</th><th>${escapeHTML(t("Status"))}</th><th>${escapeHTML(t("Date"))}</th></tr>
+          ${docs.map((d) => {
+            const name = CHILD_DOC_TEMPLATES.find((tpl) => tpl.id === d.id)?.name || d.id;
+            const on = d.status === "submitted";
+            const st = docEffectiveStatus(d, 30);
+            return `<tr><td><span class="box">${on ? "&#10003;" : ""}</span>${escapeHTML(t(name))}</td><td>${escapeHTML(trForm(t, st).label)}</td><td>${escapeHTML(d.date || "")}${d.expiresOn ? ` · ${escapeHTML(t("renew by"))} ${escapeHTML(d.expiresOn)}` : ""}</td></tr>`;
+          }).join("")}
+        </table>
+        <footer>${escapeHTML(t("Confidential — contains a child's personal information. Store securely."))}</footer>
+      </section>`;
+  };
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHTML(children.map((c) => c.child).join(", "))}</title>
+    <style>
+      @page { size: letter; margin: 0.6in; }
+      * { box-sizing: border-box; }
+      body { font-family: Georgia, "Times New Roman", serif; color: #111; font-size: 11pt; margin: 0; }
+      .sheet { page-break-after: always; }
+      .sheet:last-child { page-break-after: auto; }
+      header { display: flex; justify-content: space-between; border-bottom: 2px solid #111; padding-bottom: 8px; margin-bottom: 14px; }
+      .provider { font-weight: bold; font-size: 12pt; }
+      .title { font-weight: bold; text-transform: uppercase; letter-spacing: 0.06em; font-size: 10pt; }
+      .right { text-align: right; }
+      .muted { color: #444; font-size: 9.5pt; }
+      h1 { font-size: 20pt; margin: 0 0 10px; }
+      h2 { font-size: 10.5pt; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid #999; padding-bottom: 3px; margin: 16px 0 6px; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { text-align: left; vertical-align: top; padding: 4px 6px; }
+      table:not(.grid) th { width: 32%; font-weight: normal; color: #444; }
+      table.grid th { font-size: 9.5pt; color: #444; border-bottom: 1px solid #999; }
+      table.grid td { border-bottom: 1px solid #ddd; }
+      .alert { border: 2px solid #111; padding: 8px 10px; margin: 6px 0 4px; }
+      .box { display: inline-block; width: 12px; height: 12px; border: 1px solid #111; margin-right: 7px; text-align: center; line-height: 11px; font-size: 10px; }
+      footer { margin-top: 22px; font-size: 8.5pt; color: #444; border-top: 1px solid #999; padding-top: 6px; }
+    </style></head><body>${children.map(sheet).join("")}</body></html>`;
+  printHTML(html);
+}
+// A hidden frame avoids pop-up blockers and leaves the app as it was.
+// Reports a provider can download any time (and that go into the full export).
+// Each returns { file, headers, rows }.
+const slugOf = (x) => String(x || "alaga").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase();
+const monthKeyOfDate = (mdy) => { const d = parseAnyDate(mdy); return d ? periodKeyOf(d) : ""; };
+const REPORTS = {
+  roster: (ctx) => ({
+    file: "enrollment-roster.csv",
+    headers: ["Child", "Household", "Parent / guardian", "Phone", "Email", "Classroom", "Start date", "Days of care", "Hours", "Funding", "Withdrawal date"],
+    rows: ctx.families.map((f) => [f.child, f.householdName, f.parents?.[0]?.name || f.parent, f.parents?.[0]?.phone || "", f.parents?.[0]?.email || "",
+      classroomOf(f.classroom)?.label || "", f.enrollDate, childDays(f).join(" "), childHours(f) || "",
+      f.subsidized ? `${programOf(f.programId)?.label || "Subsidy"} (${programOf(f.programId)?.agency || ""})` : "Private pay", f.departedOn || ""]),
+  }),
+  attendance: (ctx, key) => {
+    const [y, m] = key.split("-").map(Number);
+    const rows = [];
+    ctx.families.forEach((f) => {
+      const d = careDatesFor(f, key, ctx);
+      const startD = parseAnyDate(f.enrollDate), leftD = f.departedOn ? parseAnyDate(f.departedOn) : null;
+      for (let day = 1; day <= new Date(y, m, 0).getDate(); day++) {
+        const mdy = `${pad2(m)}/${pad2(day)}/${y}`;
+        const raw = (ctx.attendanceLog[mdy] || {})[f.id];
+        const rec = raw === true ? { in: "" } : raw;
+        const scheduled = d.scheduled.includes(mdy);
+        if (!rec && !scheduled) continue;
+        const dd = new Date(y, m - 1, day);
+        if (!rec && ((startD && dd < startD) || (leftD && dd > leftD))) continue;
+        rows.push([f.child, mdy, rec?.absent ? "Absent" : rec ? "Present" : "Not recorded", rec?.in && rec.in !== "—" ? rec.in : "", rec?.out || "", scheduled ? "Yes" : "No"]);
+      }
+    });
+    return { file: `attendance-${key}.csv`, headers: ["Child", "Date", "Status", "Time in", "Time out", "Scheduled day"], rows };
+  },
+  payments: (ctx, year) => ({
+    file: `payments-received-${year}.csv`,
+    headers: ["Child", "Billing month", "Date paid", "Paid by", "Method", "Amount"],
+    rows: ctx.allFamilies.flatMap((f) => paymentsOf(f).filter((p) => p.key.startsWith(`${year}-`))
+      .flatMap((p) => p.entries.map((e) => [f.child, periodLabel(p.key), e.date || "", e.who || "", e.method || "", (Number(e.amount) || 0).toFixed(2)]))),
+  }),
+  yearSummary: (ctx, year) => {
+    const rows = Array.from({ length: 12 }, (_, i) => {
+      const key = `${year}-${pad2(i + 1)}`;
+      const received = ctx.allFamilies.reduce((n, f) => n + (paymentsOf(f).find((p) => p.key === key)?.total || 0), 0);
+      const refunds = ctx.refunds.filter((r) => monthKeyOfDate(r.date) === key).reduce((n, r) => n + (Number(r.amount) || 0), 0);
+      const spent = ctx.expenses.filter((e) => monthKeyOfDate(e.date) === key).reduce((n, e) => n + (Number(e.amount) || 0), 0);
+      return [periodLabel(key), received.toFixed(2), refunds.toFixed(2), spent.toFixed(2), (received - refunds - spent).toFixed(2)];
+    });
+    return { file: `income-and-expenses-${year}.csv`, headers: ["Month", "Tuition & copays received", "Refunds", "Expenses logged", "Net (before payroll and subsidy reimbursements)"], rows };
+  },
+  expenses: (ctx) => ({ file: "business-expenses.csv", headers: ["Date", "Category", "Subcategory", "Description", "Amount"], rows: ctx.expenses.map((e) => [e.date, e.category, e.subcategory || "", e.description, (Number(e.amount) || 0).toFixed(2)]) }),
+  refunds: (ctx) => ({ file: "refunds.csv", headers: ["Child", "Amount", "Reason", "Date", "Method", "Notes"], rows: ctx.refunds.map((r) => [r.child, (Number(r.amount) || 0).toFixed(2), r.reason, r.date, r.method, r.notes || ""]) }),
+  staff: (ctx) => ({ file: "staff.csv", headers: ["Name", "Role", "Hire date", "End date", "Status"], rows: ctx.staff.map((m) => [m.name, m.role, m.hireDate || "", m.endDate || "", m.status]) }),
+  compliance: (ctx) => ({ file: "facility-documents.csv", headers: ["Document", "Status", "Renews / expires", "Notes", "File"], rows: ctx.compDocs.map((d) => [d.name, d.displayStatus || d.status, d.expiresOn || "", d.date || "", d.fileName || ""]) }),
+  childDocs: (ctx) => ({ file: "children-documents.csv", headers: ["Child", "Document", "Status", "Date on file", "Renew by"], rows: ctx.families.flatMap((f) => defaultChildDocs(f).map((d) => [f.child, d.name || CHILD_DOC_TEMPLATES.find((x) => x.id === d.id)?.name || d.id, d.status, d.date || "", d.expiresOn || ""])) }),
+  incidents: (ctx) => ({ file: "incident-log.csv", headers: ["Child", "Date", "Time", "Severity", "What happened", "Action taken", "Others involved", "Reported by", "Parent notified", "Notified how / when"], rows: ctx.incidents.map((i) => [i.child, i.date, i.time, i.severity, i.description, i.actionTaken, i.others, i.reportedBy || "", i.parentNotified ? "Yes" : "No", [i.notifiedHow, i.notifiedAt].filter(Boolean).join(" · ")]) }),
+  messages: (ctx) => ({ file: "messages.csv", headers: ["Conversation", "From", "When", "Message", "Attachment"], rows: ctx.threads.flatMap((th) => th.messages.map((m) => [th.name, m.from === "me" ? "You" : th.name, m.at ? new Date(m.at).toLocaleString("en-US") : m.time || "", m.deleted ? "(deleted)" : m.text, m.attachment?.name || ""])) }),
+  pastFamilies: (ctx) => ({ file: "past-families.csv", headers: ["Child", "Classroom", "Start date", "Last day", "Reason"], rows: ctx.alumni.map((a) => [a.name, classroomOf(a.classroom)?.label || "", a.enrollDate, a.leftDate, DEPARTURE_REASONS.find((r) => r.id === a.reason)?.label || a.reason]) }),
+  tours: (ctx) => ({ file: "tours-and-waitlist.csv", headers: ["Family", "Stage", "Contact", "Children", "Care type", "Desired start", "Tour date", "Notes"], rows: ctx.prospects.map((p) => [p.name || p.family || "", p.stage, p.contact || "", p.children || "", p.careType || "", p.start || p.desiredStart || "", p.tourDate || "", p.notes || ""]) }),
+};
+function downloadReport(id, ctx, arg) {
+  const r = REPORTS[id](ctx, arg);
+  downloadCSV(`${slugOf(ctx.provider?.name)}-${r.file}`, r.headers, r.rows);
+}
+// Everything in one .zip: every report, plus backup.json with the raw records.
+function downloadFullExport(ctx) {
+  const year = startOfToday().getFullYear();
+  const months = Array.from({ length: 12 }, (_, i) => periodKeyOf(new Date(year, startOfToday().getMonth() - i, 1)));
+  const reports = [
+    REPORTS.roster(ctx), REPORTS.pastFamilies(ctx), REPORTS.childDocs(ctx), REPORTS.staff(ctx), REPORTS.compliance(ctx),
+    REPORTS.incidents(ctx), REPORTS.payments(ctx, year), REPORTS.payments(ctx, year - 1), REPORTS.yearSummary(ctx, year),
+    REPORTS.expenses(ctx), REPORTS.refunds(ctx), REPORTS.messages(ctx), REPORTS.tours(ctx),
+    ...months.map((k) => REPORTS.attendance(ctx, k)).filter((r) => r.rows.length),
+  ];
+  const backup = {
+    exportedAt: new Date().toISOString(), provider: ctx.provider, licensing: ctx.licensing,
+    families: ctx.allFamilies, pastFamilies: ctx.alumni, staff: ctx.staff, attendance: ctx.attendanceLog,
+    facilityDocuments: ctx.compDocs, incidents: ctx.incidents, expenses: ctx.expenses, refunds: ctx.refunds,
+    messages: ctx.threads, tours: ctx.prospects, closures: ctx.closures,
+  };
+  const readme = `Alaga export for ${ctx.provider?.name || ""}\r\nCreated ${new Date().toLocaleString("en-US")}\r\n\r\n` +
+    `Each .csv file opens in Excel, Google Sheets or Numbers. backup.json is a complete copy of your records.\r\n` +
+    `Uploaded files (scans and photos) are listed by name; download those separately.\r\n` +
+    `Keep this copy: as the licensee, you're responsible for keeping children's records after care ends.\r\n`;
+  const files = [{ name: "README.txt", text: readme }, ...reports.map((r) => ({ name: r.file, text: csvText(r.headers, r.rows) })), { name: "backup.json", text: JSON.stringify(backup, null, 2) }];
+  downloadBlob(`${slugOf(ctx.provider?.name)}-alaga-export-${todayMDY().replace(/\//g, "-")}.zip`, makeZip(files));
+  return files.length;
+}
+
+const providerContact = (p = {}) => [p.address, p.phone, p.email].filter(Boolean).join(" · ");
+function printHTML(html) {
+  const frame = document.createElement("iframe");
+  frame.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;";
+  document.body.appendChild(frame);
+  const doc = frame.contentWindow.document;
+  doc.open(); doc.write(html); doc.close();
+  setTimeout(() => {
+    frame.contentWindow.focus();
+    frame.contentWindow.print();
+    setTimeout(() => frame.remove(), 1000);
+  }, 150);
+}
+
+// Dates of care for a child in a billing month ("2026-10"): days they were
+// checked in, and days they were scheduled (open days, no closures, up to today).
+function careDatesFor(f, key, { attendanceLog = {}, schedule = [], closures = [] } = {}) {
+  const [y, m] = key.split("-").map(Number);
+  const last = new Date(y, m, 0).getDate();
+  const today = startOfToday();
+  const attended = [], scheduled = [];
+  for (let d = 1; d <= last; d++) {
+    const date = new Date(y, m - 1, d);
+    const mdy = `${pad2(m)}/${pad2(d)}/${y}`;
+    const rec = (attendanceLog[mdy] || {})[f.id];
+    if (rec === true || (rec && rec.in)) attended.push(mdy);
+    if (date > today) continue;
+    const weekday = DAY_BY_INDEX[date.getDay()];
+    const open = schedule.length ? schedule.find((x) => x.day === weekday)?.open : WEEK_DAYS.includes(weekday);
+    if (open && !closureOn(closures, mdy) && childDays(f).includes(weekday)) scheduled.push(mdy);
+  }
+  return { attended, scheduled, range: `${pad2(m)}/01/${y} – ${pad2(m)}/${pad2(last)}/${y}` };
+}
+// What a receipt lists for a month: the provider's saved wording if they edited
+// it; otherwise the days attended when attendance was recorded for most of the
+// month; otherwise the scheduled days (so a half-tracked month isn't understated).
+function receiptDatesText(f, key, ctx) {
+  if (f.receiptDates && f.receiptDates[key]) return f.receiptDates[key];
+  const d = careDatesFor(f, key, ctx);
+  const useAttended = d.attended.length > 0 && d.attended.length >= d.scheduled.length / 2;
+  return (useAttended ? d.attended : d.scheduled).join(", ") || d.range;
+}
+
+// Childcare payment receipt for FSA / HSA / dependent-care claims: one or more
+// paid months for one child, with the provider's details and signature line.
+// The provider writes their tax ID by hand rather than storing it here.
+function printReceipt(f, payments, { provider = {}, t = (x) => x, title, datesFor } = {}) {
+  const total = payments.reduce((s, p) => s + p.total, 0);
+  const rows = payments.map((p) => `<tr><td>${escapeHTML(periodLabel(p.key))}${datesFor && datesFor(p.key) ? `<div class="dates">${escapeHTML(t("Dates of care"))}: ${escapeHTML(datesFor(p.key))}</div>` : ""}</td><td>${escapeHTML(p.entries.map((e) => e.date).join(", "))}</td><td>${escapeHTML(p.entries.map((e) => `${f.copaySplit ? `${e.who}: ` : ""}${t(e.method || "")}`).join(", "))}</td><td class="num">${escapeHTML(money(p.total))}</td></tr>`).join("");
+  printHTML(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHTML(title || t("Childcare payment receipt"))} — ${escapeHTML(f.child)}</title>
+    <style>
+      @page { size: letter; margin: 0.7in; }
+      body { font-family: Georgia, "Times New Roman", serif; color: #111; font-size: 11pt; margin: 0; }
+      header { display: flex; justify-content: space-between; border-bottom: 2px solid #111; padding-bottom: 8px; margin-bottom: 18px; }
+      .provider { font-weight: bold; font-size: 13pt; } .muted { color: #444; font-size: 9.5pt; } .right { text-align: right; }
+      .title { font-weight: bold; text-transform: uppercase; letter-spacing: 0.06em; font-size: 10pt; }
+      table { width: 100%; border-collapse: collapse; } th, td { text-align: left; padding: 6px; }
+      .info th { width: 30%; color: #444; font-weight: normal; }
+      .pay { margin-top: 16px; } .pay th { border-bottom: 1.5px solid #111; font-size: 9.5pt; } .pay td { border-bottom: 1px solid #ccc; }
+      .num { text-align: right; } .total td { font-weight: bold; border-top: 2px solid #111; border-bottom: none; }
+      .dates { font-size: 9pt; color: #333; margin-top: 3px; line-height: 1.4; } .pay td { vertical-align: top; }
+      .sign { display: flex; gap: 30px; margin-top: 40px; font-size: 9.5pt; color: #444; } .sign div { flex: 1; }
+      .line { display: block; border-bottom: 1px solid #111; height: 26px; margin-bottom: 4px; }
+      footer { margin-top: 26px; font-size: 8.5pt; color: #444; }
+    </style></head><body>
+      <header>
+        <div><div class="provider">${escapeHTML(provider.name || "")}</div><div class="muted">${escapeHTML([provider.lic, provider.city].filter(Boolean).join(" · "))}</div>${providerContact(provider) ? `<div class="muted">${escapeHTML(providerContact(provider))}</div>` : ""}</div>
+        <div class="right"><div class="title">${escapeHTML(title || t("Childcare payment receipt"))}</div><div class="muted">${escapeHTML(t("Issued"))} ${escapeHTML(todayMDY())}</div></div>
+      </header>
+      <table class="info">
+        <tr><th>${escapeHTML(t("Child"))}</th><td>${escapeHTML(f.child)}</td></tr>
+        <tr><th>${escapeHTML(t("Paid by"))}</th><td>${escapeHTML((f.parents || []).map((p) => p.name).join(", ") || f.parent || "")}</td></tr>
+        <tr><th>${escapeHTML(t("Service"))}</th><td>${escapeHTML(t("Licensed family child care"))}</td></tr>
+      </table>
+      <table class="pay">
+        <tr><th>${escapeHTML(t("Month of care"))}</th><th>${escapeHTML(t("Date paid"))}</th><th>${escapeHTML(t("Method"))}</th><th class="num">${escapeHTML(t("Amount"))}</th></tr>
+        ${rows}
+        <tr class="total"><td colspan="3">${escapeHTML(t("Total paid"))}</td><td class="num">${escapeHTML(money(total))}</td></tr>
+      </table>
+      <div class="sign">
+        <div><span class="line"></span>${escapeHTML(t("Provider signature"))}</div>
+        <div><span class="line"></span>${escapeHTML(t("Provider tax ID (EIN or SSN)"))}</div>
+      </div>
+      <footer>${escapeHTML(t("Amounts are what the family paid out of pocket. Subsidy payments from agencies are not included."))}</footer>
+    </body></html>`);
+}
+
+// Lets the provider review and edit the exact dates of care before a receipt
+// prints — some FSA / dependent-care administrators require them. The edited
+// wording is saved so the same dates appear next time and in the parent view.
+function ReceiptDatesDialog({ family, payments, ctx, provider, title, onSave, onClose }) {
+  const t = useT();
+  const initial = Object.fromEntries(payments.map((p) => [p.key, receiptDatesText(family, p.key, ctx)]));
+  const [texts, setTexts] = useState(initial);
+  const choose = (key, list) => setTexts((x) => ({ ...x, [key]: list }));
+  const print = async () => {
+    const saved = { ...(family.receiptDates || {}) };
+    payments.forEach((p) => { saved[p.key] = texts[p.key]; });
+    if (onSave) await onSave(family.id, { receiptDates: saved });
+    printReceipt(family, payments, { provider, t, title, datesFor: (key) => texts[key] });
+    onClose();
+  };
+  const chip = { padding: "5px 9px", borderRadius: 999, fontSize: 11.5, fontWeight: 600, border: `1px solid ${C.line}`, background: "#fff", color: C.tealDark };
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+      <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.35)" }} />
+      <div style={{ position: "relative", width: 600, maxWidth: "94vw", maxHeight: "88vh", background: C.paper, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column" }}>
+        <div style={{ padding: "18px 22px 12px", borderBottom: `1px solid ${C.line}` }}>
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 18, fontWeight: 600 }}>{t("Dates of care")} · {family.child}</div>
+          <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 3 }}>{t("Check or edit the dates before printing. Some FSA and dependent-care administrators require exact dates.")}</div>
+        </div>
+        <div style={{ flex: 1, overflowY: "auto", padding: "14px 22px", display: "flex", flexDirection: "column", gap: 16 }}>
+          {payments.map((p) => {
+            const d = careDatesFor(family, p.key, ctx);
+            return (
+              <div key={p.key} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: 700 }}>
+                  <span>{periodLabel(p.key)}</span><span>{money(p.total)}</span>
+                </div>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  {d.attended.length > 0 && <button type="button" onClick={() => choose(p.key, d.attended.join(", "))} style={chip}>{t("Days attended")} ({d.attended.length})</button>}
+                  {d.scheduled.length > 0 && <button type="button" onClick={() => choose(p.key, d.scheduled.join(", "))} style={chip}>{t("Scheduled days")} ({d.scheduled.length})</button>}
+                  <button type="button" onClick={() => choose(p.key, d.range)} style={chip}>{t("Whole month")}</button>
+                </div>
+                <textarea value={texts[p.key]} onChange={(e) => setTexts((x) => ({ ...x, [p.key]: e.target.value }))} rows={3}
+                  style={{ width: "100%", border: `1px solid ${C.line}`, borderRadius: 9, padding: "8px 10px", fontSize: 12.5, fontFamily: "inherit", resize: "vertical", color: C.ink }} />
+              </div>
+            );
+          })}
+        </div>
+        <div style={{ padding: "12px 22px", borderTop: `1px solid ${C.line}`, display: "flex", gap: 10 }}>
+          <button onClick={onClose} style={{ flex: 1, padding: "10px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Cancel")}</button>
+          <button onClick={print} style={{ flex: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "10px 0", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 13 }}><Printer size={14} /> {t("Save and print")}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const PRINT_BASE_CSS = `
+  @page { size: letter; margin: 0.6in; }
+  body { font-family: Georgia, "Times New Roman", serif; color: #111; font-size: 10.5pt; margin: 0; }
+  header { display: flex; justify-content: space-between; border-bottom: 2px solid #111; padding-bottom: 8px; margin-bottom: 14px; }
+  .provider { font-weight: bold; font-size: 12pt; } .muted { color: #444; font-size: 9.5pt; } .right { text-align: right; }
+  .title { font-weight: bold; text-transform: uppercase; letter-spacing: 0.06em; font-size: 10pt; }
+  h2 { font-size: 10.5pt; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid #999; padding-bottom: 3px; margin: 16px 0 6px; }
+  table { width: 100%; border-collapse: collapse; } th, td { text-align: left; vertical-align: top; padding: 4px 6px; }
+  table.kv th { width: 32%; color: #444; font-weight: normal; }
+  table.grid th { font-size: 9pt; color: #444; border-bottom: 1px solid #999; } table.grid td { border-bottom: 1px solid #ddd; }
+  .flag { font-weight: bold; } .box { border: 1px solid #999; padding: 8px 10px; min-height: 40px; white-space: pre-wrap; }
+  .sign { display: flex; gap: 24px; margin-top: 28px; font-size: 9pt; color: #444; } .sign div { flex: 1; }
+  .line { display: block; border-bottom: 1px solid #111; height: 24px; margin-bottom: 3px; }
+  footer { margin-top: 18px; font-size: 8.5pt; color: #444; }`;
+const printHeader = (provider, title, sub) => `<header><div><div class="provider">${escapeHTML(provider.name || "")}</div><div class="muted">${escapeHTML([provider.lic, provider.city].filter(Boolean).join(" · "))}</div>${providerContact(provider) ? `<div class="muted">${escapeHTML(providerContact(provider))}</div>` : ""}</div><div class="right"><div class="title">${escapeHTML(title)}</div><div class="muted">${escapeHTML(sub || "")}</div></div></header>`;
+
+// Printable incident report for the provider's file (and to share with the parent).
+function printIncidentReport(inc, { provider = {}, t = (x) => x } = {}) {
+  const kv = (k, v) => `<tr><th>${escapeHTML(k)}</th><td>${escapeHTML(v || "—")}</td></tr>`;
+  printHTML(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHTML(t("Incident report"))} — ${escapeHTML(inc.child)}</title><style>${PRINT_BASE_CSS}</style></head><body>
+    ${printHeader(provider, t("Incident report"), `${t("Printed")} ${todayMDY()}`)}
+    <table class="kv">
+      ${kv(t("Child"), inc.child)}
+      ${kv(t("Date and time"), `${inc.date} · ${inc.time}`)}
+      ${kv(t("Severity"), t(inc.severity))}
+      ${kv(t("Others involved"), inc.others)}
+      ${kv(t("Reported by"), inc.reportedBy)}
+    </table>
+    <h2>${escapeHTML(t("What happened"))}</h2><div class="box">${escapeHTML(inc.description)}</div>
+    <h2>${escapeHTML(t("Action taken"))}</h2><div class="box">${escapeHTML(inc.actionTaken)}</div>
+    <h2>${escapeHTML(t("Parent / guardian notified"))}</h2>
+    <table class="kv">${kv(t("Notified"), inc.parentNotified ? `${t("Yes")}${inc.notifiedAt ? ` — ${inc.notifiedAt}` : ""}${inc.notifiedHow ? ` (${inc.notifiedHow})` : ""}` : t("Not yet"))}</table>
+    <div class="sign"><div><span class="line"></span>${escapeHTML(t("Provider signature"))}</div><div><span class="line"></span>${escapeHTML(t("Parent / guardian signature"))}</div><div style="flex:0.5"><span class="line"></span>${escapeHTML(t("Date"))}</div></div>
+    <footer>${escapeHTML(t("This is the provider's own record. Incidents that meet CCLD's reporting threshold must also be reported on the official LIC 624."))}</footer>
+  </body></html>`);
+}
+
+// The licensing-visit packet: license and inspection, ratios, staff, facility
+// documents (with renewal dates) and each child's file, flagging what's missing.
+function printAuditPacket({ provider = {}, licensing = {}, docs = [], families = [], staff = [], ratio, t = (x) => x }) {
+  const kv = (k, v) => `<tr><th>${escapeHTML(k)}</th><td>${v}</td></tr>`;
+  const childRows = families.map((f) => {
+    const cdocs = defaultChildDocs(f);
+    const issues = cdocs.filter((d) => d.status !== "submitted" || ["expired", "expiring"].includes(docEffectiveStatus(d, 30)))
+      .map((d) => `${t(CHILD_DOC_TEMPLATES.find((x) => x.id === d.id)?.name || d.id)} (${trForm(t, docEffectiveStatus(d, 30)).label})`);
+    return `<tr><td>${escapeHTML(f.child)}</td><td>${escapeHTML(classroomOf(f.classroom)?.label || "")}</td><td>${escapeHTML(f.enrollDate)}</td><td class="${issues.length ? "flag" : ""}">${escapeHTML(issues.length ? issues.join("; ") : t("Complete"))}</td></tr>`;
+  }).join("");
+  printHTML(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHTML(t("Licensing visit packet"))}</title><style>${PRINT_BASE_CSS}</style></head><body>
+    ${printHeader(provider, t("Licensing visit packet"), `${t("Packet generated")}: ${todayMDY()}`)}
+    <h2>${escapeHTML(t("License & inspection"))}</h2>
+    <table class="kv">
+      ${kv(t("License"), escapeHTML(provider.lic || "—"))}
+      ${kv(t("Provider type"), escapeHTML(provider.providerType || "—"))}
+      ${kv(t("Licensed capacity"), escapeHTML(String(provider.capacity || "—")))}
+      ${kv(t("License renewal"), escapeHTML(licensing.renewalDate || "—"))}
+      ${kv(t("Last inspection"), escapeHTML([licensing.inspectionDate, licensing.inspectionResult].filter(Boolean).join(" — ") || "—"))}
+      ${licensing.citations ? kv(t("Citations / corrections"), escapeHTML(licensing.citations)) : ""}
+      ${kv(t("Children enrolled / qualified adults"), escapeHTML(`${families.length} / ${ratio.qualified} (${t("guidance suggests")} ${ratio.required})`))}
+    </table>
+    <h2>${escapeHTML(t("Staff"))}</h2>
+    <table class="grid"><tr><th>${escapeHTML(t("Name"))}</th><th>${escapeHTML(t("Role"))}</th><th>${escapeHTML(t("Certifications"))}</th></tr>
+      ${staff.filter((x) => x.status === "active").map((x) => { const miss = CERT_TEMPLATES.filter((c) => x.certs[c.id] !== "complete"); return `<tr><td>${escapeHTML(x.name)}</td><td>${escapeHTML(t(x.role))}</td><td class="${miss.length ? "flag" : ""}">${escapeHTML(miss.length ? `${t("Needed")}: ${miss.map((c) => t(c.name)).join(", ")}` : t("All current"))}</td></tr>`; }).join("") || `<tr><td colspan="3">—</td></tr>`}
+    </table>
+    <h2>${escapeHTML(t("Facility documents"))}</h2>
+    <table class="grid"><tr><th>${escapeHTML(t("Document"))}</th><th>${escapeHTML(t("Status"))}</th><th>${escapeHTML(t("Renews / expires"))}</th></tr>
+      ${docs.map((d) => `<tr><td>${escapeHTML(t(d.name))}</td><td class="${d.displayStatus !== "submitted" ? "flag" : ""}">${escapeHTML(trForm(t, d.displayStatus || d.status).label)}</td><td>${escapeHTML(d.expiresOn || d.date || "")}</td></tr>`).join("")}
+    </table>
+    <h2>${escapeHTML(t("Children's files"))}</h2>
+    <table class="grid"><tr><th>${escapeHTML(t("Child"))}</th><th>${escapeHTML(t("Age group"))}</th><th>${escapeHTML(t("Start date"))}</th><th>${escapeHTML(t("File status"))}</th></tr>${childRows}</table>
+    <footer>${escapeHTML(t("Confidential — contains children's personal information."))}</footer>
+  </body></html>`);
+}
+
+// Monthly sign-in / sign-out sheets, one page per child, for subsidy
+// attendance records. Pre-fills times already recorded in Bookings and leaves
+// signature lines for parents. Days the child isn't scheduled, or the program
+// is closed, are left off.
+function printSignInSheets(children, { year, month, attendanceLog = {}, schedule = [], closures = [], provider = {}, t = (x) => x }) {
+  const monthName = new Date(year, month, 1).toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const sheet = (c) => {
+    const prog = c.subsidized ? programOf(c.programId) : null;
+    const rows = [];
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date = new Date(year, month, d);
+      const mdy = `${pad2(month + 1)}/${pad2(d)}/${year}`;
+      const weekday = DAY_BY_INDEX[date.getDay()];
+      const open = (schedule.find((x) => x.day === weekday)?.open) && !closureOn(closures, mdy);
+      if (!open || !childDays(c).includes(weekday)) continue;
+      const raw = (attendanceLog[mdy] || {})[c.id];
+      const rec = raw === true ? {} : raw || {};
+      rows.push(`<tr><td>${escapeHTML(mdy)}</td><td>${escapeHTML(t(weekday).slice(0, 3))}</td>` +
+        (rec.absent
+          ? `<td colspan="4" class="absent">${escapeHTML(t("Absent"))}</td>`
+          : `<td>${escapeHTML(rec.in && rec.in !== "—" ? rec.in : "")}</td><td></td><td>${escapeHTML(rec.out || "")}</td><td></td>`) +
+        `</tr>`);
+    }
+    return `
+      <section class="sheet">
+        <header>
+          <div><div class="provider">${escapeHTML(provider.name || "")}</div><div class="muted">${escapeHTML([provider.lic, provider.city].filter(Boolean).join(" · "))}</div>${providerContact(provider) ? `<div class="muted">${escapeHTML(providerContact(provider))}</div>` : ""}</div>
+          <div class="right"><div class="title">${escapeHTML(t("Monthly sign-in / sign-out sheet"))}</div><div class="muted">${escapeHTML(monthName)}</div></div>
+        </header>
+        <table class="meta">
+          <tr><th>${escapeHTML(t("Child"))}</th><td>${escapeHTML(c.child)}</td><th>${escapeHTML(t("Parent / guardian"))}</th><td>${escapeHTML(c.parents?.[0]?.name || c.parent || "")}</td></tr>
+          <tr><th>${escapeHTML(t("Program"))}</th><td>${escapeHTML(prog ? `${prog.label} — ${prog.agency}` : t("Private pay"))}</td><th>${escapeHTML(t("Schedule"))}</th><td>${escapeHTML(`${c.sessionsApproved || ""} · ${childDays(c).map((x) => t(x).slice(0, 3)).join(", ")}`)}</td></tr>
+        </table>
+        <table class="log">
+          <tr><th>${escapeHTML(t("Date"))}</th><th>${escapeHTML(t("Day"))}</th><th>${escapeHTML(t("Time in"))}</th><th>${escapeHTML(t("Parent signature"))}</th><th>${escapeHTML(t("Time out"))}</th><th>${escapeHTML(t("Parent signature"))}</th></tr>
+          ${rows.join("") || `<tr><td colspan="6" class="absent">${escapeHTML(t("No scheduled days this month."))}</td></tr>`}
+        </table>
+        <div class="sign">
+          <div><span class="line"></span>${escapeHTML(t("Parent / guardian signature"))}</div>
+          <div><span class="line"></span>${escapeHTML(t("Provider signature"))}</div>
+          <div><span class="line short"></span>${escapeHTML(t("Date"))}</div>
+        </div>
+        <footer>${escapeHTML(t("If your agency requires its own attendance form, copy these times onto it."))}</footer>
+      </section>`;
+  };
+  printHTML(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHTML(t("Sign-in sheets"))} — ${escapeHTML(monthName)}</title>
+    <style>
+      @page { size: letter; margin: 0.5in; }
+      body { font-family: Georgia, "Times New Roman", serif; color: #111; font-size: 10pt; margin: 0; }
+      .sheet { page-break-after: always; } .sheet:last-child { page-break-after: auto; }
+      header { display: flex; justify-content: space-between; border-bottom: 2px solid #111; padding-bottom: 6px; margin-bottom: 10px; }
+      .provider { font-weight: bold; font-size: 11.5pt; } .title { font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; font-size: 9.5pt; }
+      .right { text-align: right; } .muted { color: #444; font-size: 9pt; }
+      table { width: 100%; border-collapse: collapse; }
+      .meta th { text-align: left; color: #444; font-weight: normal; width: 16%; padding: 3px 4px; } .meta td { padding: 3px 4px; }
+      .log { margin-top: 10px; } .log th { font-size: 8.5pt; text-align: left; border-bottom: 1.5px solid #111; padding: 4px; }
+      .log td { border-bottom: 1px solid #bbb; padding: 0 4px; height: 22px; } .log td:nth-child(4), .log td:nth-child(6) { width: 26%; }
+      .absent { color: #444; font-style: italic; }
+      .sign { display: flex; gap: 24px; margin-top: 22px; font-size: 9pt; color: #444; }
+      .sign div { flex: 1; } .sign div:last-child { flex: 0.5; }
+      .line { display: block; border-bottom: 1px solid #111; height: 22px; margin-bottom: 3px; }
+      footer { margin-top: 14px; font-size: 8pt; color: #444; }
+    </style></head><body>${children.map(sheet).join("")}</body></html>`);
+}
+
+/* ------------------------------ enrollment ------------------------------------ */
+// The step that turns a family from the Tours pipeline into enrolled children.
+// Collects only what's needed to start care and billing; everything else
+// (documents, schedule details, split payments) is finished in the family record.
+const CARE_TYPES = [
+  { id: "Full-time", sessionLength: "Full-day (10+ hrs)", sessions: "5 / week", rateKey: "fullTime" },
+  { id: "Part-time", sessionLength: "Part-day (6 hrs)", sessions: "3 / week", rateKey: "partTime" },
+  { id: "Drop-in / hourly", sessionLength: "Drop-in / hourly", sessions: "12 / month", rateKey: "hourly" },
+];
+const GUARDIAN_RELATIONSHIPS = ["Mother", "Father", "Guardian", "Grandparent", "Foster parent", "Other"];
+const FAMILY_COLORS = [C.teal, C.sky, C.amber, C.coral, C.tealDark];
+const lastNameFromFamily = (name) => (name || "").replace(/\s*family\s*$/i, "").trim();
+// "18m" → infants/toddlers boundary in months; "3", "3y" → years.
+function classroomForAge(age, offeredIds) {
+  const m = String(age || "").trim().match(/^(\d+(?:\.\d+)?)\s*(m|mo|months?)?/i);
+  if (!m) return null;
+  const months = m[2] ? Number(m[1]) : Number(m[1]) * 12;
+  const id = months < 18 ? "infants" : months < 36 ? "toddlers" : months < 60 ? "preschool" : "prek";
+  return offeredIds.includes(id) ? id : null;
+}
+
+function EnrollModal({ prospect, providerInfo, tuitionRates, onCancel, onEnroll }) {
+  const t = useT();
+  const offered = providerInfo?.classrooms?.length ? CLASSROOMS.filter((c) => providerInfo.classrooms.includes(c.id)) : CLASSROOMS;
+  const programs = providerInfo?.subsidyPrograms?.length ? PROGRAMS.filter((p) => providerInfo.subsidyPrograms.includes(p.id)) : PROGRAMS;
+  const lastName = lastNameFromFamily(prospect.name === "New family" ? "" : prospect.name);
+  // "2 (ages 1, 3)" → two child rows, ages 1y and 3y
+  const countMatch = String(prospect.children || "").match(/^\s*(\d+)/);
+  const ages = (String(prospect.children || "").match(/\d+/g) || []).slice(1);
+  const childCount = Math.min(Math.max(Number(countMatch?.[1]) || 1, 1), 4);
+  const offeredIds = offered.map((o) => o.id);
+  const [children, setChildren] = useState(() => Array.from({ length: childCount }, (_, i) => {
+    const age = ages[i] ? `${ages[i]}y` : "";
+    return { first: "", last: lastName, age, classroom: classroomForAge(age, offeredIds) || offered[0]?.id || "", classroomPicked: false };
+  }));
+  const [start, setStart] = useState(/^\d{2}\/\d{2}\/\d{4}$/.test(prospect.start || "") ? prospect.start : "");
+  const [careType, setCareType] = useState(CARE_TYPES.find((c) => c.id === prospect.careType)?.id || "Full-time");
+  const [pay, setPay] = useState("private");
+  const [subsidy, setSubsidy] = useState({ programId: programs[0]?.id || "", coverage: "", copay: "", authEnd: "" });
+  const [parents, setParents] = useState([{ name: "", relationship: "Mother", phone: prospect.contact || "", email: prospect.email || "" }]);
+  const [ec, setEc] = useState({ name: "", relationship: "", phone: "" });
+  const [tried, setTried] = useState(false);
+
+  const care = CARE_TYPES.find((c) => c.id === careType);
+  // The provider's own schedule options; defaults to the one matching the care type.
+  const scheduleNames = ACTIVE_CARE_SCHEDULES.map((o) => o.name);
+  const [schedulePick, setSchedulePick] = useState(null);
+  const sessionLength = schedulePick || (scheduleNames.includes(care.sessionLength) ? care.sessionLength : scheduleNames[0] || care.sessionLength);
+  const tuitionFor = (classroom) => tuitionRates?.[classroom]?.[care.rateKey] || 0;
+  // Typing an age moves the age group along with it, until the provider picks one themselves.
+  const setChild = (i, k, v) => setChildren((cs) => cs.map((c, idx) => {
+    if (idx !== i) return c;
+    if (k === "classroom") return { ...c, classroom: v, classroomPicked: true };
+    if (k === "age" && !c.classroomPicked) return { ...c, age: v, classroom: classroomForAge(v, offeredIds) || c.classroom };
+    return { ...c, [k]: v };
+  }));
+  const setParent = (i, k, v) => setParents((ps) => ps.map((p, idx) => (idx === i ? { ...p, [k]: v } : p)));
+
+  const problems = [];
+  if (children.some((c) => !c.first.trim())) problems.push(t("Each child needs a first name."));
+  if (children.some((c) => !c.classroom)) problems.push(t("Choose an age group for each child."));
+  if (!start) problems.push(t("Add a start date."));
+  if (!parents[0].name.trim() || !(parents[0].phone.trim() || parents[0].email.trim())) problems.push(t("Add a parent or guardian with a phone or email."));
+  if (!ec.name.trim() || !ec.phone.trim()) problems.push(t("Add an emergency contact with a phone number."));
+  if (pay === "subsidy" && (!subsidy.programId || !subsidy.coverage)) problems.push(t("Add the subsidy program and monthly amount it covers."));
+
+  const submit = () => {
+    setTried(true);
+    if (problems.length) return;
+    const household = `h${Date.now()}`;
+    const familyLast = lastName || children[0].last.trim() || children[0].first.trim();
+    const cleanParents = parents.filter((p) => p.name.trim()).map((p) => ({ ...p, name: p.name.trim() }));
+    const records = children.map((c, i) => ({
+      id: Date.now() + i,
+      child: `${c.first.trim()} ${c.last.trim()}`.trim(),
+      enrollDate: start,
+      household,
+      householdName: `${familyLast} Family`,
+      subsidized: pay === "subsidy",
+      age: c.age.trim() || "—",
+      parent: cleanParents[0].name,
+      color: FAMILY_COLORS[i % FAMILY_COLORS.length],
+      classroom: c.classroom,
+      parents: cleanParents,
+      emergencyContact: { ...ec, name: ec.name.trim() },
+      providerType: providerInfo?.providerType || PROVIDER_TYPES[0],
+      programId: pay === "subsidy" ? subsidy.programId : null,
+      coverageAmount: pay === "subsidy" ? Number(subsidy.coverage) || 0 : 0,
+      coverageBasis: pay === "subsidy" ? "monthly" : "private-pay",
+      copay: pay === "subsidy" ? Number(subsidy.copay) || 0 : tuitionFor(c.classroom),
+      sessionsApproved: care.sessions,
+      sessionLength,
+      authStart: start,
+      authEnd: pay === "subsidy" ? (subsidy.authEnd || "") : "Ongoing",
+      // A subsidized family starts with its paperwork outstanding; private-pay has none.
+      status: pay === "subsidy" ? "docs-needed" : "active",
+      notices: [],
+      forms: pay === "subsidy" ? FORM_TEMPLATES.map((f) => ({ id: f.id, status: "missing" })) : [],
+      // Every new child starts with their file empty, so the dashboard flags it.
+      documents: CHILD_DOC_TEMPLATES.map((d) => ({ id: d.id, status: "missing" })),
+      notes: prospect.notes || "",
+      fromTourId: prospect.id,
+    }));
+    onEnroll(prospect, records);
+  };
+
+  const label = (txt) => <div style={{ fontSize: 11.5, fontWeight: 700, color: C.inkSoft, marginBottom: 5 }}>{txt}</div>;
+  const chip = (on) => ({ padding: "7px 12px", borderRadius: 999, fontSize: 12.5, fontWeight: 600, border: `1px solid ${on ? C.teal : C.line}`, background: on ? C.tealTint : "#fff", color: on ? C.tealDark : C.inkSoft });
+
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+      <div onClick={onCancel} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.35)" }} />
+      <div style={{ position: "relative", width: 620, maxWidth: "94vw", maxHeight: "90vh", background: C.paper, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column" }}>
+        <div style={{ padding: "20px 22px 14px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>{t("Enroll")} {prospect.name}</div>
+            <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 3 }}>{t("Just what's needed to start care. Documents and details can be finished in their family record.")}</div>
+          </div>
+          <button onClick={onCancel} style={{ background: "none", border: "none", color: C.inkSoft, padding: 4 }}><X size={19} /></button>
+        </div>
+
+        <div style={{ flex: 1, overflowY: "auto", padding: "16px 22px 22px", display: "flex", flexDirection: "column", gap: 18 }}>
+          <Section title={t("Children")} icon={Users}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {children.map((c, i) => (
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "1.2fr 1.2fr 0.6fr 1.4fr auto", gap: 8, alignItems: "end" }}>
+                  <div>{i === 0 && label(t("First name"))}<input value={c.first} onChange={(e) => setChild(i, "first", e.target.value)} style={{ ...inputStyle, width: "100%" }} /></div>
+                  <div>{i === 0 && label(t("Last name"))}<input value={c.last} onChange={(e) => setChild(i, "last", e.target.value)} style={{ ...inputStyle, width: "100%" }} /></div>
+                  <div>{i === 0 && label(t("Age"))}<input value={c.age} onChange={(e) => setChild(i, "age", e.target.value)} placeholder="2y" style={{ ...inputStyle, width: "100%" }} /></div>
+                  <div>{i === 0 && label(t("Age group"))}
+                    <Select value={c.classroom} onChange={(v) => setChild(i, "classroom", v)} options={offered.map((o) => o.id)} labels={offered.map((o) => classroomLabelWithRange(o.id))} />
+                  </div>
+                  <button onClick={() => setChildren((cs) => cs.filter((_, idx) => idx !== i))} disabled={children.length === 1} title={t("Remove")} style={{ background: "none", border: "none", color: children.length === 1 ? "#C9C4B4" : C.danger, padding: "8px 4px" }}><Trash2 size={14} /></button>
+                </div>
+              ))}
+              <button onClick={() => setChildren((cs) => [...cs, { first: "", last: lastName, age: "", classroom: offered[0]?.id || "", classroomPicked: false }])} style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 12.5, fontWeight: 700, padding: 0 }}>
+                <Plus size={13} /> {t("Add a sibling")}
+              </button>
+            </div>
+          </Section>
+
+          <Section title={t("Care and start date")} icon={CalendarDays}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div>{label(t("Start date"))}<DateField value={start} onChange={(v) => setStart(v || "")} /></div>
+              <div>{label(t("Schedule"))}
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  {CARE_TYPES.map((ct) => <button key={ct.id} type="button" onClick={() => { setCareType(ct.id); setSchedulePick(null); }} style={chip(careType === ct.id)}>{t(ct.id)}</button>)}
+                </div>
+              </div>
+              {scheduleNames.length > 0 && (
+                <div>{label(t("Hours"))}
+                  <Select value={sessionLength} onChange={setSchedulePick} options={scheduleNames} labels={scheduleNames.map((n) => `${t(n)} · ${sessionTime(n)}`)} />
+                </div>
+              )}
+            </div>
+          </Section>
+
+          <Section title={t("How care is paid for")} icon={DollarSign}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ display: "flex", gap: 6 }}>
+                <button type="button" onClick={() => setPay("private")} style={chip(pay === "private")}>{t("Private pay")}</button>
+                <button type="button" onClick={() => setPay("subsidy")} style={chip(pay === "subsidy")}>{t("Subsidy")}</button>
+              </div>
+              {pay === "private" ? (
+                <div style={{ fontSize: 12.5, color: C.inkSoft }}>
+                  {children.map((c, i) => (
+                    <div key={i}>{(c.first || t("Child")) + ": "}<b style={{ color: C.ink }}>{money(tuitionFor(c.classroom))}</b>{care.rateKey === "hourly" ? ` / ${t("hour")}` : ` / ${t("month")}`}</div>
+                  ))}
+                  <div style={{ fontSize: 11.5, marginTop: 4 }}>{t("From your tuition rates. Sibling discounts apply automatically.")}</div>
+                </div>
+              ) : (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                  <div style={{ gridColumn: "1 / -1" }}>{label(t("Program"))}<Select value={subsidy.programId} onChange={(v) => setSubsidy({ ...subsidy, programId: v })} options={programs.map((p) => p.id)} labels={programs.map((p) => p.label)} /></div>
+                  <div>{label(t("Covered by the program, per month"))}<MoneyInput icon={DollarSign} suffix="/ mo" value={subsidy.coverage} onChange={(v) => setSubsidy({ ...subsidy, coverage: v })} /></div>
+                  <div>{label(t("Family copay, per month"))}<MoneyInput icon={DollarSign} suffix="/ mo" value={subsidy.copay} onChange={(v) => setSubsidy({ ...subsidy, copay: v })} /></div>
+                  <div style={{ gridColumn: "1 / -1" }}>{label(t("Authorization ends"))}<DateField value={subsidy.authEnd} onChange={(v) => setSubsidy({ ...subsidy, authEnd: v || "" })} placeholder={t("From the authorization letter")} /></div>
+                </div>
+              )}
+            </div>
+          </Section>
+
+          <Section title={t("Parents and guardians")} icon={Phone}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {parents.map((p, i) => (
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 8 }}>
+                  <input value={p.name} onChange={(e) => setParent(i, "name", e.target.value)} placeholder={t("Full name")} style={{ ...inputStyle, width: "100%" }} />
+                  <Select value={p.relationship} onChange={(v) => setParent(i, "relationship", v)} options={GUARDIAN_RELATIONSHIPS} labels={GUARDIAN_RELATIONSHIPS.map((r) => t(r))} />
+                  <input value={p.phone} onChange={(e) => setParent(i, "phone", e.target.value)} placeholder={t("Phone")} style={{ ...inputStyle, width: "100%" }} />
+                  <input value={p.email} onChange={(e) => setParent(i, "email", e.target.value)} placeholder={t("Email")} style={{ ...inputStyle, width: "100%" }} />
+                </div>
+              ))}
+              {parents.length < 2 ? (
+                <button onClick={() => setParents((ps) => [...ps, { name: "", relationship: "Father", phone: "", email: "" }])} style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 12.5, fontWeight: 700, padding: 0 }}>
+                  <Plus size={13} /> {t("Add a second parent or guardian")}
+                </button>
+              ) : (
+                <button onClick={() => setParents((ps) => ps.slice(0, 1))} style={{ alignSelf: "flex-start", background: "none", border: "none", color: C.inkSoft, fontSize: 12, fontWeight: 600, padding: 0 }}>{t("Remove second parent")}</button>
+              )}
+              {parents.length > 1 && <div style={{ fontSize: 11.5, color: C.inkSoft }}>{t("To split tuition between households, set it up in their family record after enrolling.")}</div>}
+            </div>
+          </Section>
+
+          <Section title={t("Emergency contact")} icon={AlertTriangle}>
+            <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 8 }}>
+              <input value={ec.name} onChange={(e) => setEc({ ...ec, name: e.target.value })} placeholder={t("Name")} style={{ ...inputStyle, width: "100%" }} />
+              <input value={ec.phone} onChange={(e) => setEc({ ...ec, phone: e.target.value })} placeholder={t("Phone")} style={{ ...inputStyle, width: "100%" }} />
+              <div style={{ gridColumn: "1 / -1" }}><RelationshipField value={ec.relationship} onChange={(v) => setEc({ ...ec, relationship: v })} /></div>
+            </div>
+          </Section>
+
+          {tried && problems.length > 0 && (
+            <div style={{ padding: "10px 12px", borderRadius: 10, background: C.dangerTint, color: C.danger, fontSize: 12.5, display: "flex", flexDirection: "column", gap: 3 }}>
+              {problems.map((pr) => <div key={pr}>• {pr}</div>)}
+            </div>
+          )}
+        </div>
+
+        <div style={{ padding: "14px 22px", borderTop: `1px solid ${C.line}`, display: "flex", gap: 10 }}>
+          <button onClick={onCancel} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13.5 }}>{t("Cancel")}</button>
+          <button onClick={submit} style={{ flex: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "11px 0", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 13.5 }}>
+            <UserPlus size={14} /> {children.length > 1 ? t("Enroll children") : t("Enroll child")}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialEditing = false, startEnroll }) {
   const t = useT();
   const [editing, setEditing] = useState(initialEditing);
   const [form, setForm] = useState(prospect);
@@ -5647,7 +7162,7 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
           <Section title={t("Stage")} icon={ListChecks}>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
               {TOUR_STAGES.map((s) => (
-                <button key={s} onClick={() => update(prospect.id, { stage: s })} style={{
+                <button key={s} onClick={() => (s === "Enrolled" && !prospect.familyIds && startEnroll ? startEnroll(prospect) : update(prospect.id, { stage: s }))} style={{
                   padding: "7px 11px", borderRadius: 999, fontSize: 12, fontWeight: 600,
                   border: `1px solid ${s === prospect.stage ? C.teal : C.line}`, background: s === prospect.stage ? C.tealTint : "#fff", color: s === prospect.stage ? C.tealDark : C.inkSoft,
                 }}>{t(s)}</button>
@@ -5659,21 +7174,31 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
             right={!editing && <button onClick={() => setEditing(true)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 700 }}><Pencil size={12} /> {t("Edit")}</button>}>
             {editing ? (
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <Field label={t("Primary contact")}><input value={form.contact} onChange={field("contact")} style={inputStyle} /></Field>
-                <Field label={t("Preferred language")}><input value={form.language} onChange={field("language")} style={inputStyle} /></Field>
+                <Field label={t("Family name")}><input value={form.name} onChange={field("name")} placeholder={t("e.g. Ramirez Family")} style={inputStyle} /></Field>
+                <Field label={t("Phone")}><input value={form.contact} onChange={field("contact")} style={inputStyle} /></Field>
+                <Field label={t("Email")}><input type="email" value={form.email || ""} onChange={field("email")} style={inputStyle} /></Field>
+                <Field label={t("Preferred language")}>
+                  <Select value={form.language} onChange={(v) => setForm({ ...form, language: v })}
+                    options={Array.from(new Set(["English", "Español", "Tagalog", "中文", "Tiếng Việt", "한국어", form.language].filter(Boolean)))} />
+                </Field>
+                <Field label={t("Care needed")}>
+                  <Select value={form.careType || "Full-time"} onChange={(v) => setForm({ ...form, careType: v })} options={CARE_TYPES.map((c) => c.id)} labels={CARE_TYPES.map((c) => t(c.id))} />
+                </Field>
                 <Field label={t("Children")}><input value={form.children} onChange={field("children")} style={inputStyle} /></Field>
                 <Field label={t("Desired start date")}><input value={form.start} onChange={field("start")} placeholder={t("e.g. September 2026, or ASAP")} style={inputStyle} /></Field>
-                <Field label={t("Date toured")}><DateField value={form.tourDate === "Not scheduled" ? "" : form.tourDate} onChange={(v) => setForm((f) => ({ ...f, tourDate: v || "Not scheduled" }))} placeholder={t("Not scheduled")} /></Field>
+                <Field label={t("Tour date")}><DateField value={form.tourDate === "Not scheduled" ? "" : form.tourDate} onChange={(v) => setForm((f) => ({ ...f, tourDate: v || "Not scheduled" }))} placeholder={t("Not scheduled")} /></Field>
                 <Field label={t("Notes")}><textarea value={form.notes} onChange={field("notes")} rows={3} style={{ ...inputStyle, width: "100%" }} /></Field>
                 <Field label={t("Next follow-up")}><input value={form.followup} onChange={field("followup")} style={inputStyle} /></Field>
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 13 }}>
-                <Row left={<span style={{ color: C.inkSoft }}>{t("Primary contact")}</span>} right={<b>{form.contact || "—"}</b>} />
+                <Row left={<span style={{ color: C.inkSoft }}>{t("Phone")}</span>} right={<b>{form.contact || "—"}</b>} />
+                <Row left={<span style={{ color: C.inkSoft }}>{t("Email")}</span>} right={<b>{form.email || "—"}</b>} />
+                <Row left={<span style={{ color: C.inkSoft }}>{t("Care needed")}</span>} right={<b>{t(form.careType || "—")}</b>} />
                 <Row left={<span style={{ color: C.inkSoft }}>{t("Preferred language")}</span>} right={<b>{form.language}</b>} />
                 <Row left={<span style={{ color: C.inkSoft }}>{t("Children")}</span>} right={<b>{form.children}</b>} />
                 <Row left={<span style={{ color: C.inkSoft }}>{t("Desired start date")}</span>} right={<b>{form.start}</b>} />
-                <Row left={<span style={{ color: C.inkSoft }}>{t("Date toured")}</span>} right={<b>{form.tourDate}</b>} />
+                <Row left={<span style={{ color: C.inkSoft }}>{t("Tour date")}</span>} right={<b>{form.tourDate}</b>} />
                 <div style={{ padding: "9px 0" }}><span style={{ color: C.inkSoft, fontSize: 12 }}>{t("Notes")}</span><p style={{ margin: "4px 0 0", fontSize: 13 }}>{form.notes || "—"}</p></div>
                 <div style={{ padding: "9px 0" }}><span style={{ color: C.inkSoft, fontSize: 12 }}>{t("Next follow-up")}</span><p style={{ margin: "4px 0 0", fontSize: 13 }}>{form.followup || "—"}</p></div>
               </div>
@@ -5696,6 +7221,11 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
           ) : (
             <div style={{ display: "flex", gap: 10 }}>
               <button onClick={onClose} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13.5 }}>{t("Close")}</button>
+              {startEnroll && !prospect.familyIds && prospect.stage !== "Declined" && (
+                <button onClick={() => startEnroll(prospect)} style={{ flex: 1.4, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "11px 0", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 13.5 }}>
+                  <UserPlus size={14} /> {t("Enroll family")}
+                </button>
+              )}
               <button onClick={() => setConfirmingRemove(true)} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.dangerTint}`, background: C.dangerTint, color: C.danger, fontWeight: 600, fontSize: 13.5 }}>
                 <Trash2 size={14} /> {t("Remove")}
               </button>
@@ -5708,7 +7238,7 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
 }
 
 /* --------------------------------- payments ------------------------------------ */
-function Finances({ families, expenses, saveExpenses, reminderSettings, saveReminderSettings, staff, tier, payrollSettings, savePayrollSettings, onSave, refunds, saveRefunds, flexCareRequests, tuitionRates, saveTuitionRates, setScreen, providerInfo, meetingMode = false, budgetPlan, saveBudgetPlan, activeTab, setActiveTab }) {
+function Finances({ careCtx, families, expenses, saveExpenses, reminderSettings, saveReminderSettings, staff, tier, payrollSettings, savePayrollSettings, onSave, refunds, saveRefunds, flexCareRequests, tuitionRates, saveTuitionRates, setScreen, providerInfo, meetingMode = false, budgetPlan, saveBudgetPlan, activeTab, setActiveTab }) {
   const t = useT();
   const [tabLocal, setTabLocal] = useState("tuition");
   // Sidebar sub-nav can control which Finances tab is active directly; falls
@@ -5732,6 +7262,7 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
   const setSiblingDiscountFin = (field, val) => setRates((r) => ({ ...r, siblingDiscount: { ...(r.siblingDiscount || TUITION_RATES_DEFAULT.siblingDiscount), [field]: val } }));
   const saveRatesNow = async () => { await saveTuitionRates(rates); setEditingRates(false); };
   const [remindersOpen, setRemindersOpen] = useState(false);
+  const [receiptFor, setReceiptFor] = useState(null); // { familyId, payments, title }
   const isSimple = tier === "simple";
   // Budget Planner is available on both plans — it's core business ops, not a
   // premium feature, so it's listed identically for Simple and Extended.
@@ -5751,7 +7282,26 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
   const refundTotal = refunds.reduce((s, r) => s + r.amount, 0);
   const incomeTotal = subsidyTotal + copayTotal + privateTotal + flexCareTotal;
   const owingFamilies = families.filter((f) => f.copay > 0);
-  const unpaidCount = families.filter((f) => f.copay > 0 && f.paymentReceived === false).length;
+  const billing = currentBilling(reminderSettings);
+  const unpaidFamilies = owingFamilies.filter((f) => !paidFor(f, billing.key));
+  const unpaidCount = unpaidFamilies.length;
+  // Record (or undo) a payment for the current billing period.
+  const recordPayment = (f, method, splitIndex = null) => {
+    const amount = splitIndex == null ? effectiveTuition(f, families, tuitionRates).discounted : f.copaySplit[splitIndex].amount;
+    const entry = { date: todayMDY(), method, amount };
+    if (splitIndex == null) {
+      const pp = { ...(f.paidPeriods || {}) };
+      if (pp[billing.key]) delete pp[billing.key]; else pp[billing.key] = entry;
+      onSave(f.id, { paidPeriods: pp, paymentMethod: method });
+    } else {
+      onSave(f.id, { copaySplit: f.copaySplit.map((sp, i) => {
+        if (i !== splitIndex) return sp;
+        const pp = { ...(sp.paidPeriods || {}) };
+        if (pp[billing.key]) delete pp[billing.key]; else pp[billing.key] = { ...entry, method: sp.method || method };
+        return { ...sp, paidPeriods: pp };
+      }) });
+    }
+  };
 
   const exportTuition = () => downloadCSV("alaga-tuition-subsidies.csv",
     ["Child", "Household", "Type", "Program", "Monthly coverage", "Parent amount"],
@@ -5774,12 +7324,18 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
   const splitDraftTotal = splitDraft.reduce((s, r) => s + (Number(r.amount) || 0), 0);
   const saveSplitDraft = (f) => {
     const entry = { date: todayMDY(), change: `Switched to split pay — ${splitDraft.map((r) => `${r.parent} ${money(Number(r.amount) || 0)}/mo`).join(", ")}` };
-    onSave(f.id, { copaySplit: splitDraft.map((r) => ({ parent: r.parent, amount: Number(r.amount) || 0 })), paymentArrangementHistory: [entry, ...(f.paymentArrangementHistory || [])] });
+    const previous = f.copaySplit || [];
+    onSave(f.id, { copaySplit: splitDraft.map((r, i) => {
+      const prior = previous.find((x) => x.parent === r.parent) || previous[i];
+      return { parent: r.parent, amount: Number(r.amount) || 0, method: prior?.method, paidPeriods: prior?.paidPeriods || (i === 0 ? f.paidPeriods : undefined) };
+    }), paymentArrangementHistory: [entry, ...(f.paymentArrangementHistory || [])] });
     setEditingSplitId(null);
   };
   const consolidateToSinglePayer = (f) => {
     const entry = { date: todayMDY(), change: `Consolidated to single payer` };
-    onSave(f.id, { copaySplit: null, paymentArrangementHistory: [entry, ...(f.paymentArrangementHistory || [])] });
+    // Months either guardian paid stay on record for the single payer.
+    const merged = Object.assign({}, ...(f.copaySplit || []).map((sp) => sp.paidPeriods || {}), f.paidPeriods || {});
+    onSave(f.id, { copaySplit: null, paidPeriods: merged, paymentArrangementHistory: [entry, ...(f.paymentArrangementHistory || [])] });
     setEditingSplitId(null);
   };
 
@@ -5806,9 +7362,9 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
         <>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
             <Kpi label={t("Subsidy reimbursement / mo")} value={meetingMode ? "••••" : money(subsidyTotal)} sub={t("from agencies")} accent={C.teal} />
-            <Kpi label={t("Private tuition / mo")} value={meetingMode ? "••••" : money(privateTotal)} sub={t("autopay")} />
+            <Kpi label={t("Private tuition / mo")} value={meetingMode ? "••••" : money(privateTotal)} sub={t("billed monthly")} />
             <Kpi label={t("Split-pay families")} value={String(splitFamilies.length)} sub={t("payment divided between guardians")} accent={C.sky} />
-            <Kpi label={t("Unpaid this period")} value={String(unpaidCount)} sub={t("tap a family below to update")} accent={unpaidCount > 0 ? C.amber : C.teal} />
+            <Kpi label={`${t("Unpaid")} · ${billing.label}`} value={`${unpaidCount} / ${owingFamilies.length}`} sub={billing.overdue && unpaidCount ? `${t("past due since")} ${billing.dueDate}` : `${t("due")} ${billing.dueDate}`} accent={unpaidCount > 0 ? (billing.overdue ? C.danger : C.amber) : C.teal} />
           </div>
           <Card title={t("Tuition rates & sibling discount")} icon={DollarSign}
             right={<button onClick={() => setRatesOpen(!ratesOpen)} style={{ background: "none", border: "none", color: C.inkSoft }}>
@@ -5873,16 +7429,17 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
           {(() => {
             const rows = families.map((f) => {
               const method = f.paymentMethod || "Not set";
-              const received = f.paymentReceived !== false;
               const tuitionInfo = effectiveTuition(f, families, tuitionRates);
-              const isFamilyPaid = f.copaySplit ? f.copaySplit.every((s) => s.received === true) : received;
+              const isFamilyPaid = paidFor(f, billing.key);
+              const received = isFamilyPaid;
               const appliedLateFee = computeLateFee(f, reminderSettings, () => isFamilyPaid);
               const totalAmount = tuitionInfo.discounted + appliedLateFee;
               const type = f.copaySplit ? t("Split") : f.subsidized ? t("Subsidized") : t("Private");
-              const statusRank = f.copay <= 0 ? 2 : isFamilyPaid ? 2 : (f.copaySplit && f.copaySplit.some((s) => s.received)) ? 1 : 0;
-              const statusLabel = f.copay <= 0 ? "—" : isFamilyPaid ? t("Paid") : (f.copaySplit && f.copaySplit.some((s) => s.received)) ? t("Partial") : t("Unpaid");
+              const partial = partlyPaidFor(f, billing.key);
+              const statusRank = f.copay <= 0 ? 2 : isFamilyPaid ? 2 : partial ? 1 : 0;
+              const statusLabel = f.copay <= 0 ? "—" : isFamilyPaid ? t("Paid") : partial ? t("Partial") : billing.overdue ? t("Overdue") : t("Unpaid");
               const paymentLabel = f.copaySplit ? f.copaySplit.map((s) => t(s.method || PAYMENT_METHODS[0])).join(", ") : t(method === "Not set" ? PAYMENT_METHODS[0] : method);
-              const dueDate = f.copay > 0 ? nextDueDateFrom(reminderSettings) : "—";
+              const dueDate = f.copay > 0 ? billing.dueDate : "—";
               return { f, method, received, tuitionInfo, appliedLateFee, totalAmount, type, statusRank, statusLabel, paymentLabel, dueDate, isFamilyPaid };
             });
             const sorters = {
@@ -5924,8 +7481,9 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                   <tbody>
                     {sorted.map(({ f, tuitionInfo, appliedLateFee, totalAmount, type, statusLabel, statusRank, paymentLabel, dueDate }) => {
                       const isOpen = expandedPayment === f.id;
-                      const statusColor = statusRank === 2 ? C.teal : statusRank === 1 ? C.amber : f.copay > 0 ? C.amber : C.inkSoft;
-                      const statusBg = statusRank === 2 ? C.tealTint : statusRank === 1 ? C.amberTint : f.copay > 0 ? C.amberTint : "#EFEBE1";
+                      const late = statusRank === 0 && f.copay > 0 && billing.overdue;
+                      const statusColor = statusRank === 2 ? C.teal : late ? C.danger : statusRank === 1 || f.copay > 0 ? C.amber : C.inkSoft;
+                      const statusBg = statusRank === 2 ? C.tealTint : late ? C.dangerTint : statusRank === 1 || f.copay > 0 ? C.amberTint : "#EFEBE1";
                       return (
                         <React.Fragment key={f.id}>
                           <tr onClick={() => setExpandedPayment(isOpen ? null : f.id)} style={{ borderBottom: isOpen ? "none" : `1px solid ${C.line}`, cursor: "pointer" }}>
@@ -6024,11 +7582,11 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                       {f.copay > 0 && !f.copaySplit && (
                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                           <Select value={f.paymentMethod === "Not set" || !f.paymentMethod ? PAYMENT_METHODS[0] : f.paymentMethod} onChange={(v) => onSave(f.id, { paymentMethod: v })} options={PAYMENT_METHODS} labels={PAYMENT_METHODS.map((m) => t(m))} />
-                          <button onClick={() => onSave(f.id, { paymentReceived: !(f.paymentReceived !== false) })} style={{
+                          <button onClick={() => recordPayment(f, f.paymentMethod && f.paymentMethod !== "Not set" ? f.paymentMethod : PAYMENT_METHODS[0])} style={{
                             display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "none",
-                            background: f.paymentReceived !== false ? C.tealTint : C.amberTint, color: f.paymentReceived !== false ? C.tealDark : "#7A5620", fontSize: 11, fontWeight: 700,
+                            background: received ? C.tealTint : C.teal, color: received ? C.tealDark : "#fff", fontSize: 11, fontWeight: 700,
                           }}>
-                            {f.paymentReceived !== false ? <CheckCircle2 size={12} /> : <Clock size={12} />} {f.paymentReceived !== false ? t("Received this period") : t("Not yet received")}
+                            {received ? <><CheckCircle2 size={12} /> {t("Paid")} {f.paidPeriods?.[billing.key]?.date} · {t("undo")}</> : <><Plus size={12} /> {t("Record")} {billing.label} {t("payment")}</>}
                           </button>
                         </div>
                       )}
@@ -6036,7 +7594,7 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                         <div style={{ display: "flex", flexDirection: "column", gap: 8, paddingTop: 4, borderTop: `1px solid ${C.line}` }}>
                           {f.copaySplit.map((s, i) => {
                             const splitMethod = s.method || PAYMENT_METHODS[0];
-                            const splitReceived = s.received === true;
+                            const splitReceived = !!s.paidPeriods?.[billing.key];
                             const updateSplit = (fields) => {
                               const next = f.copaySplit.map((x, xi) => (xi === i ? { ...x, ...fields } : x));
                               onSave(f.id, { copaySplit: next });
@@ -6045,16 +7603,27 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                               <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                                 <span style={{ fontSize: 11.5, fontWeight: 700, color: C.ink, minWidth: 90 }}>{s.parent}</span>
                                 <Select value={splitMethod} onChange={(v) => updateSplit({ method: v })} options={PAYMENT_METHODS} labels={PAYMENT_METHODS.map((m) => t(m))} />
-                                <button onClick={() => updateSplit({ received: !splitReceived })} style={{
+                                <span style={{ fontSize: 11.5, color: C.inkSoft }}>{money(s.amount)}</span>
+                                <button onClick={() => recordPayment(f, splitMethod, i)} style={{
                                   display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "none",
-                                  background: splitReceived ? C.tealTint : C.amberTint, color: splitReceived ? C.tealDark : "#7A5620", fontSize: 11, fontWeight: 700,
+                                  background: splitReceived ? C.tealTint : C.teal, color: splitReceived ? C.tealDark : "#fff", fontSize: 11, fontWeight: 700,
                                 }}>
-                                  {splitReceived ? <CheckCircle2 size={12} /> : <Clock size={12} />} {splitReceived ? t("Received") : t("Not yet received")}
+                                  {splitReceived ? <><CheckCircle2 size={12} /> {t("Paid")} {s.paidPeriods[billing.key].date} · {t("undo")}</> : <><Plus size={12} /> {t("Record payment")}</>}
                                 </button>
                               </div>
                             );
                           })}
                         </div>
+                      )}
+                      {f.copay > 0 && paymentsOf(f).length > 0 && (
+                        <details style={{ fontSize: 11.5, color: C.inkSoft }}>
+                          <summary style={{ cursor: "pointer", fontWeight: 600 }}>{t("Payment history")} ({paymentsOf(f).length})</summary>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 3, marginTop: 6, paddingLeft: 4 }}>
+                            {paymentsOf(f).slice(0, 12).map((p) => (
+                              <div key={p.key}>{periodLabel(p.key)} — {money(p.total)} · {p.entries.map((e) => `${f.copaySplit ? `${e.who}: ` : ""}${t(e.method || "")} ${e.date}`).join(", ")}</div>
+                            ))}
+                          </div>
+                        </details>
                       )}
                                 </div>
                               </td>
@@ -6187,7 +7756,7 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                     </div>
                   </div>
                 )}
-                {reminderSettings.enabled && owingFamilies.map((f) => {
+                {reminderSettings.enabled && owingFamilies.filter((f) => !paidFor(f, periodKeyOf(parseAnyDate(nextDueDateFrom(reminderSettings))))).map((f) => {
                   const universalDueDate = nextDueDateFrom(reminderSettings);
                   const daysToDue = daysUntil(universalDueDate);
                   return (
@@ -6214,14 +7783,14 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
         <Card title={t("Tuition receipts by child")} icon={FileText} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("For families' FSA / HSA reimbursement")}</span>}>
           {families.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft }}>{t("No families enrolled yet.")}</div>}
           {families.map((f) => {
-            const months = ["May 2026", "June 2026", "July 2026"];
-            const amount = f.copay;
+            // Receipts come only from payments actually recorded in Tuition.
+            const paid = paymentsOf(f);
+            const months = paid.slice(0, 6);
             const fsa = f.fsaHsa && f.fsaHsa.enrolled ? f.fsaHsa : null;
-            const dl = (month) => downloadCSV(`alaga-receipt-${f.child.replace(/\s+/g, "-").toLowerCase()}-${month.replace(" ", "-")}.csv`,
-              ["Provider", "Child", "Service period", "Amount paid", "Purpose"],
-              [[providerInfo?.name || "", f.child, month, amount.toFixed(2), "Childcare tuition / copay — for FSA or HSA reimbursement submission"]]);
-            const dlYear = () => downloadCSV(`alaga-annual-summary-${f.child.replace(/\s+/g, "-").toLowerCase()}.csv`,
-              ["Provider", "Child", "Month", "Amount paid"], months.map((m) => [providerInfo?.name || "", f.child, m, amount.toFixed(2)]));
+            const year = String(startOfToday().getFullYear());
+            const thisYear = paid.filter((p) => p.key.startsWith(year));
+            const dl = (p) => setReceiptFor({ familyId: f.id, payments: [p] });
+            const dlYear = () => setReceiptFor({ familyId: f.id, payments: thisYear.slice().reverse(), title: `${t("Annual childcare payment summary")} ${year}` });
             return (
               <div key={f.id} style={{ padding: "12px 18px", borderBottom: `1px solid ${C.line}` }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8, flexWrap: "wrap", gap: 6 }}>
@@ -6229,14 +7798,17 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
                     <Dot c={f.color} /><b style={{ fontSize: 13.5 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>· {f.householdName}</span>
                     {fsa && <Pill label={`${t(fsa.accountType)}${fsa.employerName ? ` · ${fsa.employerName}` : ""}`} fg={C.teal} bg={C.tealTint} />}
                   </div>
-                  <button onClick={dlYear} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>
-                    <Download size={12} /> {t("Annual summary")}
-                  </button>
+                  {thisYear.length > 0 && (
+                    <button onClick={dlYear} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>
+                      <Printer size={12} /> {t("Annual summary")} {year}
+                    </button>
+                  )}
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                  {months.map((m) => (
-                    <button key={m} onClick={() => dl(m)} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: C.tealDark, background: C.tealTint, border: "none", borderRadius: 8, padding: "7px 11px" }}>
-                      <Download size={12} /> {m}
+                  {months.length === 0 && <span style={{ fontSize: 12, color: C.inkSoft }}>{f.copay > 0 ? t("No payments recorded yet — record them in Tuition.") : t("No out-of-pocket payments for this child.")}</span>}
+                  {months.map((p) => (
+                    <button key={p.key} onClick={() => dl(p)} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: C.tealDark, background: C.tealTint, border: "none", borderRadius: 8, padding: "7px 11px" }}>
+                      <Printer size={12} /> {periodLabel(p.key)} · {money(p.total)}
                     </button>
                   ))}
                 </div>
@@ -6247,6 +7819,10 @@ function Finances({ families, expenses, saveExpenses, reminderSettings, saveRemi
             <Info size={10} /> {t("These same receipts are also available to each family in their own parent view.")}
           </div>
         </Card>
+        {receiptFor && families.find((f) => f.id === receiptFor.familyId) && (
+          <ReceiptDatesDialog family={families.find((f) => f.id === receiptFor.familyId)} payments={receiptFor.payments} title={receiptFor.title}
+            ctx={careCtx} provider={providerInfo} onSave={onSave} onClose={() => setReceiptFor(null)} />
+        )}
         </>
       ) : tab === "refunds" ? (
         <RefundsCard families={families} refunds={refunds} saveRefunds={saveRefunds} onExport={exportRefunds} />
@@ -6617,11 +8193,24 @@ function RefundsCard({ families, refunds, saveRefunds, onExport }) {
 function parseAnyDate(str) {
   if (!str) return null;
   if (str.includes("/")) { const [m, d, y] = str.split("/"); return new Date(Number(y), Number(m) - 1, Number(d)); }
+  const iso = String(str).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (iso) return new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]));
   return new Date(str);
 }
 // A date with no year in it (e.g. a flex-care request stored as "MM/DD") is
 // effectively an unresolvable date — never treat it as past just because parsing
 // failed. Only compares by calendar day, so "today" is never considered past.
+// Which closure (if any) covers a given MM/DD/YYYY date.
+function closureOn(closures, mdy) {
+  const day = parseAnyDate(mdy);
+  if (!day) return null;
+  return (closures || []).find((c) => {
+    const parts = String(c.dates || "").split(" – ");
+    const start = parseAnyDate(c.start || parts[0]);
+    const end = parseAnyDate(c.end || parts[parts.length - 1]);
+    return start && end && day >= start && day <= end;
+  }) || null;
+}
 function isPastDate(str) {
   const d = parseAnyDate(str);
   if (!d || isNaN(d.getTime())) return false;
@@ -6635,11 +8224,11 @@ const EXPENSE_MONTHS = ["January", "February", "March", "April", "May", "June", 
 function BusinessExpenses({ expenses, saveExpenses, incomeTotal, expenseTotal, onExport, payrollTotal, refundTotal }) {
   const t = useT();
   const [form, setForm] = useState({ date: "", category: EXPENSE_CATEGORIES[0], subcategory: subcategoriesFor(EXPENSE_CATEGORIES[0])[0]?.label || "", description: "", amount: "" });
-  const [viewMonth, setViewMonth] = useState({ month: 6, year: 2026 }); // 0-indexed: 6 = July
+  const [viewMonth, setViewMonth] = useState(() => ({ month: new Date().getMonth(), year: new Date().getFullYear() })); // month is 0-indexed
   const [scanState, setScanState] = useState("idle"); // idle | scanning | review
   const receiptInputRef = React.useRef(null);
   const net = incomeTotal - expenseTotal - payrollTotal - refundTotal;
-  const isCurrentMonth = viewMonth.month === 6 && viewMonth.year === 2026;
+  const isCurrentMonth = viewMonth.month === new Date().getMonth() && viewMonth.year === new Date().getFullYear();
   const currentSubcats = subcategoriesFor(form.category);
   const selectedSubcat = currentSubcats.find((s) => s.label === form.subcategory);
 
@@ -6650,7 +8239,7 @@ function BusinessExpenses({ expenses, saveExpenses, incomeTotal, expenseTotal, o
     setScanState("scanning");
     setTimeout(() => {
       setForm({
-        date: "2026-07-30", category: "Cleaning & Sanitizing", subcategory: "Disinfecting wipes",
+        date: `${new Date().getFullYear()}-${pad2(new Date().getMonth() + 1)}-${pad2(new Date().getDate())}`, category: "Cleaning & Sanitizing", subcategory: "Disinfecting wipes",
         description: "Target — disinfecting wipes, hand soap, trash bags", amount: "34.82",
       });
       setScanState("review");
@@ -6770,14 +8359,33 @@ function BusinessExpenses({ expenses, saveExpenses, incomeTotal, expenseTotal, o
 
 /* -------------------------------- compliance ------------------------------------ */
 const INCIDENT_SEVERITIES = ["Minor", "Moderate", "Serious — required CCLD notice"];
-function Compliance({ docs, onSave, families, provider, staff, setScreen, incidents, saveIncidents, mandatedNotes, saveMandatedNotes }) {
+function Compliance({ licensing = {}, saveLicensing, docs, onSave, families, provider, staff, setScreen, incidents, saveIncidents, mandatedNotes, saveMandatedNotes }) {
   const t = useT();
+  const [editingLic, setEditingLic] = useState(false);
+  const [lic, setLic] = useState(licensing);
+  const renewLeft = licensing.renewalDate ? daysUntil(licensing.renewalDate) : null;
+  const renewPill = renewLeft === null
+    ? { label: t("Add your renewal date"), fg: C.inkSoft, bg: "#F1EEE5" }
+    : renewLeft < 0 ? { label: `${t("Expired")} ${licensing.renewalDate}`, fg: C.danger, bg: C.dangerTint }
+    : renewLeft <= 60 ? { label: `${t("Renews in")} ${renewLeft} ${t("days")} · ${licensing.renewalDate}`, fg: C.amber, bg: C.amberTint }
+    : { label: `${t("Current — renews")} ${licensing.renewalDate}`, fg: C.teal, bg: C.tealTint };
+  // Facility documents: upload a scan, or mark a paper copy on file.
+  const facilityFileRef = React.useRef(null);
+  const [uploadingFacilityId, setUploadingFacilityId] = useState(null);
+  const pickFacilityFile = (id) => { setUploadingFacilityId(id); facilityFileRef.current && facilityFileRef.current.click(); };
+  const onFacilityFile = (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = "";
+    if (file && uploadingFacilityId) onSave(uploadingFacilityId, { status: "submitted", fileName: file.name, uploadedOn: todayMDY() });
+    setUploadingFacilityId(null);
+  };
   const [tab, setTab] = useState("licensing");
   const [openDoc, setOpenDoc] = useState(null);
   const [auditMode, setAuditMode] = useState(false);
   const [expandedForms, setExpandedForms] = useState({});
   const [openIncidentId, setOpenIncidentId] = useState(null);
-  const [incidentForm, setIncidentForm] = useState({ childId: families[0]?.id || "", others: "", description: "", severity: INCIDENT_SEVERITIES[0], actionTaken: "", parentNotified: false });
+  const blankIncident = () => ({ childId: families[0]?.id || "", others: "", description: "", severity: INCIDENT_SEVERITIES[0], actionTaken: "", parentNotified: false, notifiedHow: "", reportedBy: "", date: todayMDY(), time: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) });
+  const [incidentForm, setIncidentForm] = useState(blankIncident);
   const [noteText, setNoteText] = useState("");
   const required = requiredQualifiedAdults(families.length);
   const qualified = qualifiedStaffCount(staff);
@@ -6793,20 +8401,20 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
   ];
 
   const logIncident = () => {
-    const child = families.find((f) => f.id === Number(incidentForm.childId));
+    const child = families.find((f) => String(f.id) === String(incidentForm.childId));
     if (!child || !incidentForm.description.trim()) return;
-    const now = new Date();
     incidentSeq += 1;
+    const now = new Date().toLocaleString("en-US", { month: "2-digit", day: "2-digit", year: "numeric", hour: "numeric", minute: "2-digit" });
     saveIncidents([{
-      id: `inc${incidentSeq}`, child: child.child, others: incidentForm.others, description: incidentForm.description,
+      id: `inc${Date.now()}`, child: child.child, childId: child.id, others: incidentForm.others, description: incidentForm.description,
       severity: incidentForm.severity, actionTaken: incidentForm.actionTaken, parentNotified: incidentForm.parentNotified,
-      date: now.toLocaleDateString("en-US"), time: now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+      notifiedHow: incidentForm.notifiedHow, notifiedAt: incidentForm.parentNotified ? now : "", reportedBy: incidentForm.reportedBy,
+      date: incidentForm.date || todayMDY(), time: incidentForm.time,
     }, ...incidents]);
-    setIncidentForm({ childId: families[0]?.id || "", others: "", description: "", severity: INCIDENT_SEVERITIES[0], actionTaken: "", parentNotified: false });
+    setIncidentForm(blankIncident());
   };
-  const exportIncident = (inc) => downloadCSV(`alaga-incident-${inc.child.replace(/\s+/g, "-").toLowerCase()}-${inc.date.replace(/\//g, "-")}.csv`,
-    ["Child", "Date", "Time", "Severity", "Description", "Action taken", "Others involved", "Parent notified"],
-    [[inc.child, inc.date, inc.time, inc.severity, inc.description, inc.actionTaken, inc.others, inc.parentNotified ? "Yes" : "No"]]);
+  const markNotified = (inc) => saveIncidents(incidents.map((x) => (x.id === inc.id ? { ...x, parentNotified: true, notifiedAt: new Date().toLocaleString("en-US", { month: "2-digit", day: "2-digit", year: "numeric", hour: "numeric", minute: "2-digit" }) } : x)));
+  const exportIncident = (inc) => printIncidentReport(inc, { provider, t });
 
   const addNote = () => {
     if (!noteText.trim()) return;
@@ -6837,9 +8445,22 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
       </div>
 
       {tab === "licensing" && (
-        <Card title={t("CCLD licensing status")} icon={ClipboardCheck}>
-          <Row left={<b>{t("License renewal")}</b>} right={<Pill label={t("Current — renews 03/2027")} fg={C.teal} bg={C.tealTint} />} />
-          <Row left={<b>{t("Last inspection")}</b>} right={<span style={{ fontSize: 13, color: C.inkSoft }}>04/12/2026 — {t("no citations")}</span>} />
+        <Card title={t("CCLD licensing status")} icon={ClipboardCheck}
+          right={saveLicensing && <button onClick={async () => { if (editingLic) { await saveLicensing(lic); setEditingLic(false); } else { setLic(licensing); setEditingLic(true); } }} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{editingLic ? t("Save changes") : <><Pencil size={12} /> {t("Edit")}</>}</button>}>
+          {editingLic ? (
+            <div style={{ padding: "12px 18px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <Field label={t("License renewal date")}><DateField value={lic.renewalDate || ""} onChange={(v) => setLic({ ...lic, renewalDate: v || "" })} /></Field>
+              <Field label={t("Last inspection date")}><DateField value={lic.inspectionDate || ""} onChange={(v) => setLic({ ...lic, inspectionDate: v || "" })} /></Field>
+              <Field label={t("Inspection result")}><input value={lic.inspectionResult || ""} onChange={(e) => setLic({ ...lic, inspectionResult: e.target.value })} placeholder={t("e.g. No citations")} style={{ ...inputStyle, width: "100%" }} /></Field>
+              <Field label={t("Citations / corrections (optional)")}><input value={lic.citations || ""} onChange={(e) => setLic({ ...lic, citations: e.target.value })} placeholder={t("What was cited and when it was corrected")} style={{ ...inputStyle, width: "100%" }} /></Field>
+            </div>
+          ) : (
+            <>
+              <Row left={<b>{t("License renewal")}</b>} right={<Pill {...renewPill} />} />
+              <Row left={<b>{t("Last inspection")}</b>} right={<span style={{ fontSize: 13, color: C.inkSoft }}>{[licensing.inspectionDate, licensing.inspectionResult].filter(Boolean).join(" — ") || t("Not recorded yet")}</span>} />
+              {licensing.citations && <Row left={<b>{t("Citations / corrections")}</b>} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{licensing.citations}</span>} />}
+            </>
+          )}
           <Row left={<b>{t("Ratio compliance today")}</b>} right={<Pill label={withinRatio ? t("Within ratio") : t("Understaffed for current enrollment")} fg={withinRatio ? C.teal : C.danger} bg={withinRatio ? C.tealTint : C.dangerTint} />} />
           <Row left={<b>{t("Staff certifications")}</b>}
             right={<div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -6853,21 +8474,24 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
       )}
 
       {tab === "documents" && (
-        <Card title={t("Documents on file")} icon={FileText} right={<span style={{ fontSize: 12, color: C.inkSoft }}>{t("Copies stored for inspection & recert")}</span>}>
+        <Card title={t("Documents on file")} icon={FileText} right={<span style={{ fontSize: 12, color: C.inkSoft }}>{t("Renewal reminders start 60 days before")}</span>}>
+          <input ref={facilityFileRef} type="file" accept="image/*,.pdf,.doc,.docx" onChange={onFacilityFile} style={{ display: "none" }} />
           {docs.map((d) => {
-            const meta = trForm(t, d.status);
+            const meta = trForm(t, d.displayStatus || d.status);
             return (
               <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 18px", borderBottom: `1px solid ${C.line}` }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <d.icon size={16} color={C.teal} />
                   <div>
                     <div style={{ fontSize: 13.5, fontWeight: 500 }}>{d.name}</div>
-                    <div style={{ fontSize: 11.5, color: meta.color, fontWeight: 600 }}>{meta.label} · {d.date}</div>
+                    <div style={{ fontSize: 11.5, color: meta.color, fontWeight: 600 }}>{meta.label}{d.expiresOn ? ` · ${t("renews / expires")} ${d.expiresOn}` : d.date ? ` · ${d.date}` : ""}</div>
+                    {d.fileName && <div style={{ fontSize: 10.5, color: C.inkSoft }}>{d.fileName}{d.uploadedOn ? ` · ${d.uploadedOn}` : ""}</div>}
                   </div>
                 </div>
-                <div style={{ display: "flex", gap: 6 }}>
-                  <IconBtn icon={Eye} title={t("View")} onClick={() => setOpenDoc(d)} />
-                  <IconBtn icon={Download} title={t("Download")} />
+                <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                  {d.status !== "submitted" && <button onClick={() => onSave(d.id, { status: "submitted", fileName: d.fileName || "Paper copy on file", uploadedOn: todayMDY() })} style={{ padding: "4px 8px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11, fontWeight: 600, color: C.inkSoft }}>{t("Mark on file")}</button>}
+                  <IconBtn icon={Upload} title={t("Upload")} accent={d.status !== "submitted"} onClick={() => pickFacilityFile(d.id)} />
+                  <IconBtn icon={Pencil} title={t("Edit dates and status")} onClick={() => setOpenDoc(d)} />
                 </div>
               </div>
             );
@@ -6876,7 +8500,7 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
       )}
 
       {tab === "forms" && (
-        <Card title={t("Blank forms & templates")} icon={FileCheck} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Get the current official version from CDSS/CCLD before filing")}</span>}>
+        <Card title={t("Blank forms & templates")} icon={FileCheck} right={<a href={CDSS_FORMS_URL} target="_blank" rel="noreferrer" style={{ fontSize: 12, fontWeight: 700, color: C.teal }}>{t("Official CDSS forms")} ↗</a>}>
           {BLANK_FORMS.map((f) => {
             const isOpen = expandedForms[f.id];
             return (
@@ -6892,16 +8516,10 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
                 </button>
                 {isOpen && (
                   <div style={{ padding: "14px 18px", background: C.cream, borderBottom: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 10 }}>
-                    <div style={{
-                      minHeight: 160, background: "#fff", border: `1px dashed ${C.line}`, borderRadius: 10,
-                      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, color: C.inkSoft,
-                    }}>
-                      <FileText size={28} color={C.inkSoft} />
-                      <div style={{ fontSize: 12, fontWeight: 600, textAlign: "center", maxWidth: 240 }}>{f.name}</div>
-                    </div>
-                    <div style={{ display: "flex", gap: 8 }}>
-                      <IconBtn icon={Download} title={t("Download")} />
-                      <span style={{ fontSize: 11, color: C.inkSoft, alignSelf: "center" }}>{t("Blank template — confirm against the current CDSS/CCLD version before use.")}</span>
+                    <div style={{ fontSize: 11.5, color: C.inkSoft, lineHeight: 1.5 }}>
+                      {/LIC \d+/.test(f.name)
+                        ? <>{t("Download the current version from the CDSS forms list, then upload the signed copy to the child's or staff member's record.")} <a href={CDSS_FORMS_URL} target="_blank" rel="noreferrer" style={{ color: C.teal, fontWeight: 700 }}>{t("Open CDSS forms")} ↗</a></>
+                        : t("Use your own version of this form, then upload the signed copy to the child's record.")}
                     </div>
                   </div>
                 )}
@@ -6923,6 +8541,11 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
                   <Select value={incidentForm.severity} onChange={(v) => setIncidentForm({ ...incidentForm, severity: v })} options={INCIDENT_SEVERITIES} labels={INCIDENT_SEVERITIES.map((s) => t(s))} />
                 </Field>
               </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+                <Field label={t("Date")}><DateField value={incidentForm.date} onChange={(v) => setIncidentForm({ ...incidentForm, date: v || "" })} allowClear={false} /></Field>
+                <Field label={t("Time")}><input value={incidentForm.time} onChange={(e) => setIncidentForm({ ...incidentForm, time: e.target.value })} placeholder="10:15 AM" style={{ ...inputStyle, width: "100%" }} /></Field>
+                <Field label={t("Reported by")}><input value={incidentForm.reportedBy} onChange={(e) => setIncidentForm({ ...incidentForm, reportedBy: e.target.value })} placeholder={t("Staff name")} style={{ ...inputStyle, width: "100%" }} /></Field>
+              </div>
               <Field label={t("Others involved (optional)")}>
                 <input value={incidentForm.others} onChange={(e) => setIncidentForm({ ...incidentForm, others: e.target.value })} placeholder={t("Other children or staff present")} style={inputStyle} />
               </Field>
@@ -6937,6 +8560,9 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
               <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: C.inkSoft }}>
                 <input type="checkbox" checked={incidentForm.parentNotified} onChange={(e) => setIncidentForm({ ...incidentForm, parentNotified: e.target.checked })} /> {t("Parent/guardian has been notified")}
               </label>
+              {incidentForm.parentNotified && (
+                <input value={incidentForm.notifiedHow} onChange={(e) => setIncidentForm({ ...incidentForm, notifiedHow: e.target.value })} placeholder={t("How — e.g. phone call at pickup, text")} style={inputStyle} />
+              )}
               <button onClick={logIncident} style={{ padding: "10px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13 }}>{t("Log incident")}</button>
               <div style={{ fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "flex-start", gap: 6 }}>
                 <Info size={11} style={{ marginTop: 1, flexShrink: 0 }} />
@@ -6954,7 +8580,7 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
                 <div key={inc.id}>
                   <button onClick={() => setOpenIncidentId(isOpen ? null : inc.id)} style={{ width: "100%", textAlign: "left", background: "none", border: "none", borderRadius: 0, padding: 0 }}>
                     <Row
-                      left={<><Dot c={severityColor} /><b>{inc.child}</b><span style={{ color: C.inkSoft }}>{inc.severity}</span></>}
+                      left={<><Dot c={severityColor} /><b>{inc.child}</b><span style={{ color: C.inkSoft }}>{t(inc.severity)}</span></>}
                       right={<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <span style={{ fontSize: 11.5, color: C.inkSoft }}>{inc.date} · {inc.time}</span>
                         <ChevronRight size={14} color={C.inkSoft} style={{ transform: isOpen ? "rotate(90deg)" : "none", transition: "transform 0.15s" }} />
@@ -6965,10 +8591,12 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
                       <div><b>{t("What happened")}:</b> {inc.description}</div>
                       {inc.actionTaken && <div><b>{t("Action taken")}:</b> {inc.actionTaken}</div>}
                       {inc.others && <div><b>{t("Others involved")}:</b> {inc.others}</div>}
+                      {inc.reportedBy && <div><b>{t("Reported by")}:</b> {inc.reportedBy}</div>}
                       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        <Pill label={inc.parentNotified ? t("Parent notified") : t("Parent not yet notified")} fg={inc.parentNotified ? C.teal : C.amber} bg={inc.parentNotified ? C.tealTint : C.amberTint} />
+                        <Pill label={inc.parentNotified ? `${t("Parent notified")}${inc.notifiedAt ? ` · ${inc.notifiedAt}` : ""}` : t("Parent not yet notified")} fg={inc.parentNotified ? C.teal : C.amber} bg={inc.parentNotified ? C.tealTint : C.amberTint} />
+                        {!inc.parentNotified && <button onClick={() => markNotified(inc)} style={{ fontSize: 11.5, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("Mark notified")}</button>}
                         <button onClick={() => exportIncident(inc)} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>
-                          <Download size={12} /> {t("Export")}
+                          <Printer size={12} /> {t("Print")}
                         </button>
                       </div>
                     </div>
@@ -7014,12 +8642,12 @@ function Compliance({ docs, onSave, families, provider, staff, setScreen, incide
       )}
 
       {openDoc && <DocPreview doc={docs.find((d) => d.id === openDoc.id) || openDoc} onClose={() => setOpenDoc(null)} onSave={onSave} t={t} />}
-      {auditMode && <AuditMode docs={docs} families={families} onClose={() => setAuditMode(false)} provider={provider} staff={staff} />}
+      {auditMode && <AuditMode licensing={licensing} docs={docs} families={families} onClose={() => setAuditMode(false)} provider={provider} staff={staff} />}
     </div>
   );
 }
 
-function AuditMode({ docs, families, onClose, provider, staff }) {
+function AuditMode({ licensing = {}, docs, families, onClose, provider, staff }) {
   const t = useT();
   const required = requiredQualifiedAdults(families.length);
   const qualified = qualifiedStaffCount(staff);
@@ -7031,7 +8659,7 @@ function AuditMode({ docs, families, onClose, provider, staff }) {
           <ClipboardCheck size={16} /> {t("Audit Mode")}
         </div>
         <div style={{ display: "flex", gap: 10 }}>
-          <button onClick={() => window.print()} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: "none", background: C.amber, color: "#fff", fontWeight: 700, fontSize: 12.5 }}>
+          <button onClick={() => printAuditPacket({ provider, licensing, docs, families, staff, ratio: { required, qualified }, t })} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: "none", background: C.amber, color: "#fff", fontWeight: 700, fontSize: 12.5 }}>
             <Printer size={13} /> {t("Print packet")}
           </button>
           <button onClick={onClose} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.3)", background: "none", color: "#fff", fontWeight: 600, fontSize: 12.5 }}>
@@ -7043,11 +8671,11 @@ function AuditMode({ docs, families, onClose, provider, staff }) {
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "28px 24px 60px" }}>
         <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, color: C.tealDark }}>{provider.name}</div>
         <div style={{ fontSize: 13, color: C.inkSoft, marginTop: 4 }}>{provider.lic} · {provider.city}</div>
-        <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{t("Packet generated")}: 07/27/2026</div>
+        <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{t("Packet generated")}: {todayMDY()}</div>
 
         <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: C.tealDark, marginTop: 26, marginBottom: 10 }}>{t("License & ratio status")}</h3>
-        <Row left={<b>{t("License renewal")}</b>} right={<Pill label={t("Current — renews 03/2027")} fg={C.teal} bg={C.tealTint} />} />
-        <Row left={<b>{t("Last inspection")}</b>} right={<span style={{ fontSize: 13, color: C.inkSoft }}>04/12/2026 — {t("no citations")}</span>} />
+        <Row left={<b>{t("License renewal")}</b>} right={<span style={{ fontSize: 13, color: C.inkSoft }}>{licensing.renewalDate || t("Not recorded yet")}</span>} />
+        <Row left={<b>{t("Last inspection")}</b>} right={<span style={{ fontSize: 13, color: C.inkSoft }}>{[licensing.inspectionDate, licensing.inspectionResult].filter(Boolean).join(" — ") || t("Not recorded yet")}</span>} />
         <Row left={<b>{t("Ratio compliance today")}</b>} right={<Pill label={withinRatio ? t("Within ratio") : t("Understaffed for current enrollment")} fg={withinRatio ? C.teal : C.danger} bg={withinRatio ? C.tealTint : C.dangerTint} />} />
         <Row left={<b>{t("Children enrolled / qualified adults on staff")}</b>} right={<span style={{ fontSize: 13 }}>{families.length} / {qualified} ({t("guidance suggests")} {required})</span>} />
 
@@ -7059,14 +8687,14 @@ function AuditMode({ docs, families, onClose, provider, staff }) {
 
         <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: C.tealDark, marginTop: 26, marginBottom: 10 }}>{t("Facility documents")}</h3>
         {docs.map((d) => {
-          const meta = trForm(t, d.status);
-          return <Row key={d.id} left={<b style={{ fontSize: 13 }}>{d.name}</b>} right={<span style={{ fontSize: 12, color: meta.color, fontWeight: 700 }}>{meta.label} · {d.date}</span>} />;
+          const meta = trForm(t, d.displayStatus || d.status);
+          return <Row key={d.id} left={<b style={{ fontSize: 13 }}>{d.name}</b>} right={<span style={{ fontSize: 12, color: meta.color, fontWeight: 700 }}>{meta.label}{d.expiresOn ? ` · ${d.expiresOn}` : d.date ? ` · ${d.date}` : ""}</span>} />;
         })}
 
         <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: C.tealDark, marginTop: 26, marginBottom: 10 }}>{t("Children's file status")}</h3>
         {families.map((f) => {
           const cdocs = defaultChildDocs(f);
-          const missingCount = cdocs.filter((d) => d.status !== "submitted").length;
+          const missingCount = cdocs.filter((d) => d.status !== "submitted" || ["expired", "expiring"].includes(docEffectiveStatus(d, 30))).length;
           return (
             <Row key={f.id} left={<><Dot c={f.color} /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>{classroomOf(f.classroom)?.label}</span></>}
               right={missingCount === 0
@@ -7081,77 +8709,53 @@ function AuditMode({ docs, families, onClose, provider, staff }) {
 }
 
 function DocPreview({ doc, onClose, onSave, t }) {
-  const [editing, setEditing] = useState(false);
   const [status, setStatus] = useState(doc.status);
-  const [date, setDate] = useState(doc.date);
+  const [expiresOn, setExpiresOn] = useState(doc.expiresOn || "");
+  const [note, setNote] = useState(doc.date || "");
   const [saveState, setSaveState] = useState("idle");
-  const meta = trForm(t, status);
   const STATUS_OPTIONS = ["submitted", "pending", "missing", "not-due"];
-  const STATUS_LABELS = STATUS_OPTIONS.map((s) => trForm(t, s).label);
+  const STATUS_LABELS = STATUS_OPTIONS.map((x) => trForm(t, x).label);
+  const meta = trForm(t, docEffectiveStatus({ status, expiresOn }));
 
   const handleSave = async () => {
     setSaveState("saving");
-    const ok = await onSave(doc.id, { status, date });
+    const ok = await onSave(doc.id, { status, expiresOn, date: note });
     setSaveState(ok ? "saved" : "error");
-    if (ok) { setTimeout(() => setSaveState("idle"), 1200); setEditing(false); }
+    if (ok) setTimeout(onClose, 500);
   };
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 40, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.35)" }} />
-      <div style={{ position: "relative", width: 560, maxWidth: "94vw", maxHeight: "88vh", background: C.paper, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column" }}>
+      <div style={{ position: "relative", width: 520, maxWidth: "94vw", maxHeight: "88vh", background: C.paper, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column" }}>
         <div style={{ padding: "20px 22px 16px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
           <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
             <div style={{ width: 40, height: 40, borderRadius: 10, background: C.tealTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <doc.icon size={19} color={C.tealDark} />
             </div>
             <div>
-              <div style={{ fontFamily: "'Fraunces', serif", fontSize: 17, fontWeight: 600 }}>{doc.name}</div>
-              <div style={{ fontSize: 12, color: meta.color, fontWeight: 600, marginTop: 2 }}>{meta.label} · {date}</div>
+              <div style={{ fontFamily: "'Fraunces', serif", fontSize: 17, fontWeight: 600 }}>{t(doc.name)}</div>
+              <div style={{ fontSize: 12, color: meta.color, fontWeight: 600, marginTop: 2 }}>{meta.label}{expiresOn ? ` · ${expiresOn}` : ""}</div>
             </div>
           </div>
           <button onClick={onClose} style={{ background: "none", border: "none", color: C.inkSoft, padding: 4 }}><X size={19} /></button>
         </div>
-
-        <div style={{ flex: 1, overflowY: "auto", padding: 22, display: "flex", flexDirection: "column", gap: 14 }}>
-          <div style={{
-            minHeight: 260, background: C.cream, border: `1px dashed ${C.line}`, borderRadius: 12,
-            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, color: C.inkSoft,
-          }}>
-            <FileText size={40} color={C.inkSoft} />
-            <div style={{ fontSize: 13, fontWeight: 600, textAlign: "center", maxWidth: 260 }}>{doc.name}</div>
-            <div style={{ fontSize: 11.5, textAlign: "center", maxWidth: 260 }}>{t("Copies stored for inspection & recert")}</div>
+        <div style={{ flex: 1, overflowY: "auto", padding: 22, display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
+            <FileText size={13} /> {doc.fileName ? `${doc.fileName}${doc.uploadedOn ? ` · ${doc.uploadedOn}` : ""}` : t("No file uploaded yet.")}
           </div>
-
-          {editing ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <Field label={t("Status")}>
-                <Select value={status} onChange={setStatus} options={STATUS_OPTIONS} labels={STATUS_LABELS} />
-              </Field>
-              <Field label={t("Notes / renewal date")}>
-                <input value={date} onChange={(e) => setDate(e.target.value)} style={inputStyle} />
-              </Field>
-            </div>
-          ) : (
-            <button onClick={() => setEditing(true)} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "10px 0", borderRadius: 9, border: `1px solid ${C.line}`, background: "#fff", color: C.tealDark, fontWeight: 600, fontSize: 13 }}>
-              <Pencil size={13} /> {t("Edit")}
-            </button>
-          )}
+          <Field label={t("Status")}><Select value={status} onChange={setStatus} options={STATUS_OPTIONS} labels={STATUS_LABELS} /></Field>
+          <Field label={t("Renews / expires on")}><DateField value={expiresOn} onChange={(v) => setExpiresOn(v || "")} placeholder={t("No expiration")} /></Field>
+          <Field label={t("Notes (optional)")}><input value={note} onChange={(e) => setNote(e.target.value)} placeholder={t("e.g. renewal filed, policy number")} style={{ ...inputStyle, width: "100%" }} /></Field>
+          <div style={{ fontSize: 11, color: C.inkSoft }}>{t("Alaga reminds you 60 days before the renewal date.")}</div>
         </div>
-
         <div style={{ padding: "14px 22px", borderTop: `1px solid ${C.line}`, display: "flex", gap: 10 }}>
-          <button onClick={onClose} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13.5 }}>{t("Close")}</button>
-          {editing ? (
-            <button onClick={handleSave} disabled={saveState === "saving"} style={{ flex: 2, padding: "11px 0", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13.5 }}>
-              {saveState === "saving" ? t("Saving…") : saveState === "saved" ? t("Saved") : t("Save changes")}
-            </button>
-          ) : (
-            <button style={{ flex: 2, padding: "11px 0", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
-              <Download size={15} /> {t("Download")}
-            </button>
-          )}
+          <button onClick={onClose} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13.5 }}>{t("Cancel")}</button>
+          <button onClick={handleSave} disabled={saveState === "saving"} style={{ flex: 2, padding: "11px 0", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 13.5 }}>
+            {saveState === "saving" ? t("Saving…") : saveState === "saved" ? t("Saved") : t("Save changes")}
+          </button>
+        </div>
       </div>
-    </div>
     </div>
   );
 }
@@ -7161,21 +8765,21 @@ function SecurityScreen({ accessLog, isEmpty }) {
   const t = useT();
   const [access, saveAccess] = usePersistentState("support-access-provider-1", SUPPORT_ACCESS_DEFAULT);
   const [durationChoice, setDurationChoice] = useState(ACCESS_DURATIONS[1].id);
-  const isExpired = access.status === "granted" && access.expiresAt && new Date(access.expiresAt) < new Date("2026-07-30");
+  const isExpired = access.status === "granted" && access.expiresAt && new Date(access.expiresAt) < startOfToday();
   const isActive = access.status === "granted" && !isExpired;
 
   const approve = () => {
     const d = ACCESS_DURATIONS.find((x) => x.id === durationChoice);
     const days = durationChoice === "24h" ? 1 : durationChoice === "7d" ? 7 : 30;
-    const expires = new Date("2026-07-30"); expires.setDate(expires.getDate() + days);
-    saveAccess({ ...access, status: "granted", grantedAt: "07/30/2026", durationLabel: d.label, expiresAt: expires.toISOString().slice(0, 10) });
+    const expires = startOfToday(); expires.setDate(expires.getDate() + days);
+    saveAccess({ ...access, status: "granted", grantedAt: todayMDY(), durationLabel: d.label, expiresAt: expires.toISOString().slice(0, 10) });
   };
   const decline = () => saveAccess({ ...access, status: "declined" });
   const revoke = () => saveAccess({ ...SUPPORT_ACCESS_DEFAULT });
   const proactivelyGrant = () => {
     const days = durationChoice === "24h" ? 1 : durationChoice === "7d" ? 7 : 30;
-    const expires = new Date("2026-07-30"); expires.setDate(expires.getDate() + days);
-    saveAccess({ ...access, status: "granted", grantedAt: "07/30/2026", durationLabel: ACCESS_DURATIONS.find((x) => x.id === durationChoice).label, expiresAt: expires.toISOString().slice(0, 10) });
+    const expires = startOfToday(); expires.setDate(expires.getDate() + days);
+    saveAccess({ ...access, status: "granted", grantedAt: todayMDY(), durationLabel: ACCESS_DURATIONS.find((x) => x.id === durationChoice).label, expiresAt: expires.toISOString().slice(0, 10) });
   };
 
   const PRINCIPLES = [
@@ -7294,16 +8898,35 @@ function SecurityScreen({ accessLog, isEmpty }) {
 // Shared by Messages and Calendar (event/announcement reminders) — appends a
 // message to each named family's thread, creating the thread if it doesn't
 // exist yet, so "notify parents" always actually produces something.
-function broadcastToFamilies(threads, saveThreads, names, text, kind) {
+// Messages carry a real timestamp; older sample messages keep their text label.
+const msgNow = () => ({ at: Date.now(), time: "" });
+function fmtMsgTime(m, t = (x) => x) {
+  if (!m) return "";
+  if (!m.at) return m.time || "";
+  const d = new Date(m.at);
+  const diff = Math.round((startOfToday() - new Date(d.getFullYear(), d.getMonth(), d.getDate())) / 86400000);
+  const tm = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  if (diff <= 0) return tm;
+  if (diff === 1) return `${t("Yesterday")}, ${tm}`;
+  return `${d.toLocaleDateString("en-US", { month: "short", day: "numeric" })}, ${tm}`;
+}
+const threadLastAt = (th) => { const m = th.messages[th.messages.length - 1]; return (m && m.at) || 0; };
+// One conversation per household: matched by household id first, then by name.
+function findThread(threads, { household, name }) {
+  return threads.find((th) => (household && th.household === household)) || threads.find((th) => th.name === name);
+}
+function broadcastToFamilies(threads, saveThreads, names, text, kind, families = []) {
   if (!text.trim() || names.length === 0) return threads;
   let updated = [...threads];
   names.forEach((name) => {
-    const existing = updated.find((th) => th.name === name);
+    const fam = families.find((f) => (f.householdName || f.child) === name);
+    const household = fam?.household;
+    const existing = findThread(updated, { household, name });
     if (existing) {
-      updated = updated.map((th) => (th.id === existing.id ? { ...th, unread: false, messages: [...th.messages, { from: "me", text, time: "Just now", attachment: null }] } : th));
+      updated = updated.map((th) => (th.id === existing.id ? { ...th, unread: false, messages: [...th.messages, { from: "me", text, ...msgNow(), attachment: null }] } : th));
     } else {
       const newId = `th-${Date.now()}-${name.replace(/\s+/g, "")}`;
-      updated = [{ id: newId, name, kind, unread: false, messages: [{ from: "me", text, time: "Just now", attachment: null }] }, ...updated];
+      updated = [{ id: newId, name, household, kind, unread: false, messages: [{ from: "me", text, ...msgNow(), attachment: null }] }, ...updated];
     }
   });
   saveThreads(updated);
@@ -7350,9 +8973,21 @@ function eventAnnouncementOpener(type, name) {
   };
   return byType[type] || byType["Other"];
 }
-function Messages({ threads, saveThreads, families, staff }) {
+function Messages({ threads: rawThreads, saveThreads, families, staff, goToFamily }) {
   const t = useT();
+  const [query, setQuery] = useState("");
+  const [unreadOnly, setUnreadOnly] = useState(false);
+  // Newest conversation first.
+  const threads = [...rawThreads].sort((a, b) => threadLastAt(b) - threadLastAt(a));
   const [openId, setOpenId] = useState(threads[0]?.id || null);
+  const shown = threads.filter((th) => (!unreadOnly || th.unread)
+    && (!query.trim() || `${th.name} ${th.messages.map((m) => m.text).join(" ")}`.toLowerCase().includes(query.trim().toLowerCase())));
+  const unreadCount = threads.filter((th) => th.unread).length;
+  // Opening a conversation marks it read.
+  useEffect(() => {
+    const th = rawThreads.find((x) => x.id === openId);
+    if (th && th.unread) saveThreads(rawThreads.map((x) => (x.id === openId ? { ...x, unread: false } : x)));
+  }, [openId, rawThreads]);
   const [draft, setDraft] = useState("");
   const [attachment, setAttachment] = useState(null);
   const [composing, setComposing] = useState(false);
@@ -7388,14 +9023,14 @@ function Messages({ threads, saveThreads, families, staff }) {
   const send = () => {
     if (!draft.trim() && !attachment) return;
     saveThreads(threads.map((th) => th.id === openId
-      ? { ...th, unread: false, messages: [...th.messages, { from: "me", text: draft, time: "Just now", attachment }] }
+      ? { ...th, unread: false, messages: [...th.messages, { from: "me", text: draft, ...msgNow(), attachment }] }
       : th));
     setDraft(""); setAttachment(null);
   };
 
   const startThreadsAndSend = (names, text, kind) => {
     if (!text.trim() || names.length === 0) return;
-    const updated = broadcastToFamilies(threads, saveThreads, names, text, kind);
+    const updated = broadcastToFamilies(rawThreads, saveThreads, names, text, kind, families);
     const target = updated.find((th) => th.name === names[0]);
     if (target) setOpenId(target.id);
     setComposing(false);
@@ -7409,13 +9044,24 @@ function Messages({ threads, saveThreads, families, staff }) {
             <Plus size={14} /> {t("New message")}
           </button>
         </div>
+        {threads.length > 0 && (
+          <div style={{ padding: "8px 10px", borderBottom: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 6 }}>
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("Search messages…")} style={{ ...inputStyle, width: "100%", padding: "7px 10px", fontSize: 12.5 }} />
+            <div style={{ display: "flex", gap: 6 }}>
+              {[[false, t("All")], [true, `${t("Unread")}${unreadCount ? ` (${unreadCount})` : ""}`]].map(([v, label]) => (
+                <button key={String(v)} onClick={() => setUnreadOnly(v)} style={{ padding: "4px 10px", borderRadius: 999, fontSize: 11.5, fontWeight: 700, border: `1px solid ${unreadOnly === v ? C.teal : C.line}`, background: unreadOnly === v ? C.tealTint : "#fff", color: unreadOnly === v ? C.tealDark : C.inkSoft }}>{label}</button>
+              ))}
+            </div>
+          </div>
+        )}
+        {threads.length > 0 && shown.length === 0 && <div style={{ padding: 18, fontSize: 12.5, color: C.inkSoft, textAlign: "center" }}>{t("No conversations match.")}</div>}
         {threads.length === 0 && (
           <div style={{ padding: 24, textAlign: "center" }}>
             <div style={{ display: "flex", justifyContent: "center", marginBottom: 4 }}><EmptyIllustration size={60} /></div>
             <div style={{ fontSize: 12.5, color: C.inkSoft, lineHeight: 1.5 }}>{t("No conversations yet. Messages from families will appear here.")}</div>
           </div>
         )}
-        {threads.map((th) => {
+        {shown.map((th) => {
           const last = th.messages[th.messages.length - 1];
           return (
             <button key={th.id} onClick={() => setOpenId(th.id)} style={{
@@ -7425,9 +9071,11 @@ function Messages({ threads, saveThreads, families, staff }) {
               <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
                 <Dot c={th.unread ? C.coral : C.line} />
                 <b style={{ fontSize: 13 }}>{th.name}</b>
+                {th.kind === "agency" && <span style={{ fontSize: 10, fontWeight: 700, color: C.sky }}>{t("Agency")}</span>}
+                {th.kind === "staff" && <span style={{ fontSize: 10, fontWeight: 700, color: C.inkSoft }}>{t("Staff")}</span>}
               </div>
-              <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{last.attachment ? `📎 ${last.attachment.name}` : last.text}</div>
-              <div style={{ fontSize: 10.5, color: C.inkSoft, marginTop: 2 }}>{last.time}</div>
+              <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{last.deleted ? t("Message deleted") : last.attachment ? `📎 ${last.attachment.name}` : `${last.from === "me" ? `${t("You")}: ` : ""}${last.text}`}</div>
+              <div style={{ fontSize: 10.5, color: C.inkSoft, marginTop: 2 }}>{fmtMsgTime(last, t)}</div>
             </button>
           );
         })}
@@ -7436,7 +9084,19 @@ function Messages({ threads, saveThreads, families, staff }) {
       <div style={{ flex: 1, minWidth: 0, background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, display: "flex", flexDirection: "column" }}>
         {open ? (
           <>
-            <div style={{ padding: "14px 18px", borderBottom: `1px solid ${C.line}`, fontWeight: 600, fontSize: 14.5 }}>{open.name}</div>
+            {(() => {
+              const fam = families.find((f) => (open.household && f.household === open.household) || (f.householdName || f.child) === open.name);
+              const kids = fam ? families.filter((f) => f.household === fam.household).map((f) => f.child.split(" ")[0]).join(", ") : "";
+              return (
+                <div style={{ padding: "12px 18px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: 14.5 }}>{open.name}</div>
+                    {kids && <div style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Children")}: {kids}</div>}
+                  </div>
+                  {fam && goToFamily && <button onClick={() => goToFamily(fam.id)} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: `1px solid ${C.line}`, borderRadius: 8, padding: "6px 10px" }}>{t("View family")}</button>}
+                </div>
+              );
+            })()}
             <div style={{ flex: 1, overflowY: "auto", padding: "16px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
               {open.messages.map((m, i) => (
                 <div key={i} style={{ alignSelf: m.from === "me" ? "flex-end" : "flex-start", maxWidth: "72%" }}>
@@ -7479,7 +9139,7 @@ function Messages({ threads, saveThreads, families, staff }) {
                     )
                   )}
                   <div style={{ fontSize: 10.5, color: C.inkSoft, marginTop: 3, textAlign: m.from === "me" ? "right" : "left" }}>
-                    {m.time}{m.edited && !m.deleted ? ` · ${t("edited")}` : ""}
+                    {fmtMsgTime(m, t)}{m.edited && !m.deleted ? ` · ${t("edited")}` : ""}
                   </div>
                 </div>
               ))}
@@ -7527,6 +9187,14 @@ function ComposeModal({ families, staff, onClose, onSend }) {
   const [selectedFamilies, setSelectedFamilies] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState("");
   const [text, setText] = useState("");
+  const TEMPLATES = [
+    ["", t("Start from a template (optional)")],
+    ["Hi! A friendly reminder that this month's tuition is due. Let me know if you have any questions.", t("Tuition reminder")],
+    ["Hi! We still need a few documents for your child's file. Could you send them this week?", t("Missing documents")],
+    ["Hi! Just a reminder that pickup is by closing time. Thank you for helping us end the day on time.", t("Pickup reminder")],
+    ["Hi! We'll be closed on [date]. Please plan care accordingly.", t("Closure notice")],
+  ];
+  const [template, setTemplate] = useState("");
 
   const toggleFamily = (name) => setSelectedFamilies((s) => s.includes(name) ? s.filter((x) => x !== name) : [...s, name]);
 
@@ -7593,12 +9261,13 @@ function ComposeModal({ families, staff, onClose, onSend }) {
             </div>
           )}
 
+          <Select value={template} onChange={(v) => { setTemplate(v); if (v) setText(v); }} options={TEMPLATES.map((x) => x[0])} labels={TEMPLATES.map((x) => x[1])} />
           <Field label={t("Message")}>
             <textarea value={text} onChange={(e) => setText(e.target.value)} rows={4} placeholder={t("Write your message…")}
               style={{ width: "100%", border: `1px solid ${C.line}`, borderRadius: 10, padding: "10px 12px", fontSize: 13, fontFamily: "inherit", resize: "vertical" }} />
           </Field>
 
-          <button onClick={() => onSend(names, text, recipientType.includes("all") ? "broadcast" : "direct")} disabled={!canSend} style={{
+          <button onClick={() => onSend(names, text, recipientType.includes("staff") ? "staff" : recipientType.includes("all") ? "broadcast" : "direct")} disabled={!canSend} style={{
             padding: "11px 0", borderRadius: 10, border: "none", background: canSend ? C.teal : "#D8DFD8", color: "#fff", fontWeight: 600, fontSize: 13.5,
           }}>
             {t("Send")} {names.length > 1 ? `(${names.length} ${t("recipients")})` : ""}
@@ -7610,8 +9279,12 @@ function ComposeModal({ families, staff, onClose, onSend }) {
 }
 
 /* --------------------------------- analytics ------------------------------------ */
-function Analytics({ families, expenses, prospects, staff, alumni, addDeparture, refunds, flexCareRequests, tuitionRates, setScreen }) {
+function Analytics({ families, expenses: allExpenses, prospects, staff, alumni, addDeparture, refunds, flexCareRequests, tuitionRates, setScreen, provider = {} }) {
   const t = useT();
+  const thisMonth = periodKeyOf(startOfToday());
+  const expenses = allExpenses.filter((e) => monthKeyOfDate(e.date) === thisMonth);
+  const capacity = Number(provider.capacity) || 0;
+  const openings = Math.max(0, capacity - families.length);
   const classroomData = groupByClassroom(families).map((g) => ({ name: g.classroom.label, children: g.families.length }));
   const subsidyTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + (f.coverageBasis === "monthly" ? f.coverageAmount : 0), 0);
   const copayTotal = families.filter((f) => f.subsidized).reduce((s, f) => s + effectiveTuition(f, families, tuitionRates).discounted, 0);
@@ -7662,20 +9335,31 @@ function Analytics({ families, expenses, prospects, staff, alumni, addDeparture,
     ...EXPENSE_CATEGORIES.map((cat) => ({ name: t(cat), amount: expenses.filter((e) => e.category === cat).reduce((s, e) => s + e.amount, 0) })),
   ].filter((c) => c.amount > 0);
 
-  const occupancyTrend = [
-    { month: "Feb", occupancy: 12 }, { month: "Mar", occupancy: 12 }, { month: "Apr", occupancy: 13 },
-    { month: "May", occupancy: 13 }, { month: "Jun", occupancy: 14 }, { month: "Jul", occupancy: families.length },
-  ];
+  // Children enrolled at the end of each of the last six months, from start
+  // dates and withdrawal dates (current families plus past ones).
+  const occupancyTrend = Array.from({ length: 6 }, (_, i) => {
+    const now = startOfToday();
+    const first = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+    const end = i === 5 ? now : new Date(first.getFullYear(), first.getMonth() + 1, 0);
+    const inCare = (start, left) => { const s0 = parseAnyDate(start); const l = left ? parseAnyDate(left) : null; return s0 && s0 <= end && (!l || l >= end); };
+    const current = families.filter((f) => inCare(f.enrollDate, f.departedOn)).length;
+    const past = alumni.filter((a) => !families.some((f) => f.id === a.familyId) && inCare(a.enrollDate, a.leftDate)).length;
+    return { month: first.toLocaleDateString("en-US", { month: "short" }), occupancy: current + past };
+  });
   const PIE_COLORS = [C.teal, C.amber, C.sky, C.coral];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "10px 14px", borderRadius: 12, background: C.cream, fontSize: 12.5, color: C.inkSoft }}>
+        <span><Info size={13} style={{ verticalAlign: -2, marginRight: 6 }} />{t("Need a report for an agency, your accountant or taxes? Attendance, payments and year-end summaries download from Settings.")}</span>
+        <button onClick={() => setScreen && setScreen("settings", { tab: "data" })} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "#fff", border: `1px solid ${C.line}`, borderRadius: 8, padding: "6px 10px", whiteSpace: "nowrap" }}>{t("Download reports")}</button>
+      </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 14 }}>
-        <Kpi label={t("Occupancy")} value={`${families.length} / ${families.length}`} sub={t("0 openings this month")} accent={C.teal} />
+        <Kpi label={t("Occupancy")} value={capacity ? `${families.length} / ${capacity}` : String(families.length)} sub={capacity ? (openings === 0 ? t("Full — no openings") : `${openings} ${t(openings === 1 ? "opening" : "openings")}`) : t("Add your licensed capacity in Settings")} accent={openings === 0 ? C.amber : C.teal} />
         <Kpi label={t("Subsidy share of revenue")} value={incomeTotal > 0 ? `${Math.round(((subsidyTotal + copayTotal) / incomeTotal) * 100)}%` : "0%"} sub={`${subsidizedCount} ${t("of")} ${families.length} ${t("families")}`} />
         <Kpi label={t("Monthly income")} value={money(incomeTotal)} sub={t("tuition, subsidy, copay & flex care")} accent={C.teal} />
         <Kpi label={t("Flex & after-hours care")} value={money(flexCareTotal)} sub={flexCareUnpaidTotal > 0 ? `${money(flexCareUnpaidTotal)} ${t("not yet collected")}` : t("early drop-off, weekend, extra days…")} accent={flexCareUnpaidTotal > 0 ? C.amber : C.teal} onClick={() => setScreen && setScreen("bookings")} />
-        <Kpi label={t("Net income")} value={money(net)} sub={t("after payroll & expenses")} accent={net >= 0 ? C.teal : C.danger} />
+        <Kpi label={t("Net income")} value={money(net)} sub={t("after payroll & this month's expenses")} accent={net >= 0 ? C.teal : C.danger} />
         <Kpi label={t("Labor cost")} value={`${laborShare}%`} sub={t("of monthly income")} accent={laborShare > 50 ? C.amber : C.sky} />
       </div>
 
@@ -7711,16 +9395,16 @@ function Analytics({ families, expenses, prospects, staff, alumni, addDeparture,
             <LineChart data={occupancyTrend} margin={{ top: 4, right: 12, left: -18, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={C.line} vertical={false} />
               <XAxis dataKey="month" tick={{ fontSize: 11, fill: C.inkSoft }} axisLine={{ stroke: C.line }} tickLine={false} />
-              <YAxis domain={[0, Math.max(14, families.length)]} tick={{ fontSize: 11, fill: C.inkSoft }} axisLine={false} tickLine={false} />
+              <YAxis allowDecimals={false} domain={[0, Math.max(capacity, families.length, 1)]} tick={{ fontSize: 11, fill: C.inkSoft }} axisLine={false} tickLine={false} />
               <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: `1px solid ${C.line}` }} />
               <Line type="monotone" dataKey="occupancy" stroke={C.teal} strokeWidth={2.5} dot={{ r: 3, fill: C.teal }} />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title={t("Business expenses by category")}>
+        <ChartCard title={t("This month's costs by category")}>
           {expenseByCategory.length === 0 ? (
-            <div style={{ padding: 30, fontSize: 12.5, color: C.inkSoft, textAlign: "center" }}>{t("No expenses logged yet.")}</div>
+            <div style={{ padding: 30, fontSize: 12.5, color: C.inkSoft, textAlign: "center" }}>{t("No expenses logged this month.")}</div>
           ) : (
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={expenseByCategory} layout="vertical" margin={{ top: 4, right: 16, left: 10, bottom: 0 }}>
@@ -7774,10 +9458,12 @@ function ChartCard({ title, children }) {
 function FamilyRetention({ families, alumni, addDeparture, avgTenureMonths, longest, retentionRate, positiveDepartures, negativeDepartures, tenureDistribution }) {
   const t = useT();
   const [form, setForm] = useState({ name: "", classroom: CLASSROOMS[0].id, enrollDate: "", leftDate: "", reason: DEPARTURE_REASONS[0].id });
+  const [addingPast, setAddingPast] = useState(false);
 
   const logDeparture = () => {
     if (!form.name.trim() || !form.enrollDate || !form.leftDate) return;
     addDeparture({ ...form });
+    setAddingPast(false);
     setForm({ name: "", classroom: CLASSROOMS[0].id, enrollDate: "", leftDate: "", reason: DEPARTURE_REASONS[0].id });
   };
 
@@ -7826,7 +9512,13 @@ function FamilyRetention({ families, alumni, addDeparture, avgTenureMonths, long
         </Card>
       </div>
 
-      <Card title={t("Log a departure")} icon={Plus} right={<span style={{ fontSize: 11, color: C.inkSoft }}>{t("Keeps retention data accurate as families leave")}</span>}>
+      {!addingPast ? (
+        <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+          <Info size={12} /> {t("When you withdraw a child in Families, they're added here automatically.")}
+          <button onClick={() => setAddingPast(true)} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none", padding: 0 }}>{t("Add a family who left before you used Alaga")}</button>
+        </div>
+      ) : (
+      <Card title={t("Add a past family")} icon={Plus} right={<button onClick={() => setAddingPast(false)} style={{ background: "none", border: "none", color: C.inkSoft }}><X size={15} /></button>}>
         <div style={{ padding: 18, display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 12 }}>
           <Field label={t("Child's name")}><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} style={inputStyle} /></Field>
           <Field label={t("Enrollment date")}><DateField value={form.enrollDate} onChange={(v) => setForm({ ...form, enrollDate: v })} /></Field>
@@ -7836,9 +9528,10 @@ function FamilyRetention({ families, alumni, addDeparture, avgTenureMonths, long
           </Field>
         </div>
         <div style={{ padding: "0 18px 18px" }}>
-          <button onClick={logDeparture} style={{ padding: "9px 16px", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 12.5 }}>{t("Log departure")}</button>
+          <button onClick={logDeparture} style={{ padding: "9px 16px", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 12.5 }}>{t("Add past family")}</button>
         </div>
       </Card>
+      )}
     </div>
   );
 }
@@ -7849,6 +9542,7 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
   const t = useT();
   const [step, setStep] = useState(growth.started ? "checklist" : "overview");
   const [packetOpen, setPacketOpen] = useState(false);
+  const [subTab, setSubTab] = useState("checklist");
   const [form, setForm] = useState({ targetCapacity: growth.targetCapacity, targetStaff: growth.targetStaff, timeline: growth.timeline });
 
   const openDays = weeklySchedule.filter((d) => d.open);
@@ -7932,7 +9626,6 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
   const grouped = Object.keys(EXPANSION_CATEGORIES).map((cat) => ({
     cat, label: EXPANSION_CATEGORIES[cat], items: growth.checklist.filter((i) => i.category === cat),
   })).filter((g) => g.items.length > 0);
-  const [subTab, setSubTab] = useState("checklist");
   const SUB_TABS = [
     ["checklist", t("Checklist")],
     ["families", t("Families to Notify")],
@@ -8044,7 +9737,7 @@ function GrowthPacket({ growth, families, provider, currentCapacity, onClose }) 
       <div style={{ maxWidth: 760, margin: "0 auto", padding: "28px 24px 60px" }}>
         <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, color: C.tealDark }}>{provider.name}</div>
         <div style={{ fontSize: 13, color: C.inkSoft, marginTop: 4 }}>{provider.lic} · {provider.city}</div>
-        <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{t("Packet generated")}: 07/28/2026</div>
+        <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{t("Packet generated")}: {todayMDY()}</div>
 
         <div style={{ background: C.amberTint, border: "1px solid #E4C77A", borderRadius: 12, padding: "14px 16px", marginTop: 18, fontSize: 12, color: "#7A5620", lineHeight: 1.55 }}>
           {t("This checklist reflects general California Small/Large Family Child Care Home licensing patterns as a starting point. It is not a guarantee of current requirements — confirm specifics with your Licensing Program Analyst (LPA) before submitting anything.")}
@@ -8082,10 +9775,10 @@ function GrowthPacket({ growth, families, provider, currentCapacity, onClose }) 
   );
 }
 
-const SUPPORT_TICKETS_DEFAULT = [
+const SUPPORT_TICKETS_DEFAULT = demoDates([
   { id: 1, provider: "Demo Provider", subject: "Can't download July attendance CSV", category: "Technical issue", status: "resolved", date: "07/22/2026", time: "2:41 PM", message: "The Export CSV button on Bookings doesn't seem to do anything when I click it on Safari.", replies: [{ from: "support", text: "This was a Safari-specific pop-up blocker issue — should be fixed now. Let us know if it happens again!", date: "07/23/2026", time: "10:05 AM" }] },
   { id: 2, provider: "Demo Provider", subject: "Question about CalWORKs Stage 2 to Stage 1 transition", category: "Subsidy / eligibility question", status: "open", date: "07/25/2026", time: "9:14 AM", message: "One of my families is transitioning from Stage 2 to Stage 1 — do I need to create a new subsidy record or just update the program on the existing one?", replies: [] },
-];
+]);
 function SupportScreen({ providerInfo }) {
   const t = useT();
   const CATEGORIES = ["Technical issue", "Billing question", "Subsidy / eligibility question", "Account or login", "Feature request", "Other"];
@@ -8282,7 +9975,16 @@ function TicketDrawer({ ticket, onClose, onToggleStatus, onReply }) {
   );
 }
 
-function PlanBilling({ tier, saveTier, tierLocked, meetingMode, billing, saveBilling, families, staff, expenses, compDocs, provider, refunds }) {
+// Access after canceling runs to the end of the period already paid for.
+function billingPeriodEnd(billing, from = startOfToday()) {
+  const start = parseAnyDate(billing.startedOn) || from;
+  const months = billing.cycle === "annual" ? 12 : 1;
+  let end = new Date(start);
+  while (end <= from) end = new Date(end.getFullYear(), end.getMonth() + months, end.getDate());
+  end.setDate(end.getDate() - 1);
+  return `${pad2(end.getMonth() + 1)}/${pad2(end.getDate())}/${end.getFullYear()}`;
+}
+function PlanBilling({ tier, saveTier, tierLocked, meetingMode, billing, saveBilling, families, staff, expenses, compDocs, provider, refunds, downloadBackup }) {
   const t = useT();
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [exported, setExported] = useState(false);
@@ -8303,27 +10005,10 @@ function PlanBilling({ tier, saveTier, tierLocked, meetingMode, billing, saveBil
     saveTier(planId);
     if (canceled) saveBilling({ ...billing, status: "active", canceledAt: null });
   };
-  const exportEverything = () => {
-    downloadCSV(`alaga-export-families-${provider.name.replace(/\s+/g, "-").toLowerCase()}.csv`,
-      ["Child", "Household", "Classroom", "Type", "Program", "Enrolled", "Accommodations"],
-      families.map((f) => [f.child, f.householdName, classroomOf(f.classroom)?.label || "", f.subsidized ? "Subsidized" : "Private-pay", f.subsidized ? (programOf(f.programId)?.label || "") : "", f.enrollDate, f.accommodations || ""]));
-    downloadCSV(`alaga-export-staff-${provider.name.replace(/\s+/g, "-").toLowerCase()}.csv`,
-      ["Name", "Role", "Hire date", "End date", "Status"],
-      staff.map((s) => [s.name, t(s.role), s.hireDate, s.endDate || "", s.status]));
-    downloadCSV(`alaga-export-finances-${provider.name.replace(/\s+/g, "-").toLowerCase()}.csv`,
-      ["Date", "Category", "Description", "Amount"],
-      expenses.map((e) => [e.date, e.category, e.description, e.amount.toFixed(2)]));
-    downloadCSV(`alaga-export-compliance-${provider.name.replace(/\s+/g, "-").toLowerCase()}.csv`,
-      ["Document", "Status", "Date"],
-      compDocs.map((d) => [d.name, d.status, d.date || ""]));
-    downloadCSV(`alaga-export-refunds-${provider.name.replace(/\s+/g, "-").toLowerCase()}.csv`,
-      ["Child", "Amount", "Reason", "Date", "Method", "Notes"],
-      refunds.map((r) => [r.child, r.amount.toFixed(2), t(r.reason), r.date, t(r.method), r.notes || ""]));
-    setExported(true);
-  };
+  const exportEverything = () => { downloadBackup && downloadBackup(); setExported(true); };
   const confirmCancelSubscription = () => {
     exportEverything();
-    saveBilling({ ...billing, status: "canceled", canceledAt: "08/27/2026" });
+    saveBilling({ ...billing, status: "canceled", canceledAt: todayMDY(), accessUntil: billingPeriodEnd(billing) });
     setConfirmCancel(false);
   };
   const reactivate = () => saveBilling({ ...billing, status: "active", canceledAt: null });
@@ -8336,7 +10021,7 @@ function PlanBilling({ tier, saveTier, tierLocked, meetingMode, billing, saveBil
       <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 16 }}>
         {canceled && (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderRadius: 10, background: C.dangerTint, color: C.danger, fontSize: 12.5 }}>
-            <span>{t("Your subscription is canceled — access continues through")} {billing.canceledAt}.</span>
+            <span>{t("Your subscription is canceled — access continues through")} {billing.accessUntil || billingPeriodEnd(billing)}.</span>
             <button onClick={reactivate} style={{ fontWeight: 700, background: "none", border: "none", color: C.danger, textDecoration: "underline", fontSize: 12.5 }}>{t("Reactivate")}</button>
           </div>
         )}
@@ -8415,11 +10100,11 @@ function PlanBilling({ tier, saveTier, tierLocked, meetingMode, billing, saveBil
         <div style={{ borderTop: `1px solid ${C.line}`, paddingTop: 14 }}>
           <div style={{ fontSize: 11.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6 }}>{t("Cancellation & data retention policy")}</div>
           <div style={{ fontSize: 12, color: C.inkSoft, lineHeight: 1.6 }}>
-            {t("Cancel anytime — you'll keep full access through the end of your current billing period, no refund for partial periods. On cancellation, Alaga automatically generates a full export of your records for you to keep. Your account stays fully reactivatable for 90 days, then converts to a read-only archive for up to 3 years — matching California's minimum retention period for children's records — before permanent deletion. Keeping your own copy is still your responsibility as the licensee; Alaga holding a copy doesn't substitute for that. Downgrading from Extended to Simple takes effect immediately; upgrading is prorated for the rest of the current period.")}
+            {t("Cancel anytime — you'll keep full access through the end of your current billing period, no refund for partial periods. On cancellation, Alaga downloads a full export of your records for you to keep. Your account stays reactivatable for 90 days, then becomes a read-only archive for up to 3 years before permanent deletion. California licensing requires some children's records to be kept for at least 3 years after care ends — keeping your own copy is your responsibility as the licensee. Downgrading from Extended to Simple takes effect immediately; upgrading is prorated for the rest of the current period.")}
           </div>
           {exported && (
             <div style={{ marginTop: 10, padding: "9px 12px", borderRadius: 9, background: C.tealTint, color: C.tealDark, fontSize: 12, display: "flex", alignItems: "center", gap: 8 }}>
-              <CheckCircle2 size={14} /> {t("Your data export downloaded — families, staff, finances, and compliance records.")}
+              <CheckCircle2 size={14} /> {t("Your export downloaded as one .zip file — every report plus a complete backup.")}
             </div>
           )}
           {!canceled && !exported && (
@@ -8472,7 +10157,7 @@ function CCLDVerifyLink({ lic }) {
   );
 }
 
-function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier, tierLocked, meetingMode, billing, saveBilling, families, staff, expenses, compDocs, provider, saveProviderInfo, refunds }) {
+function SettingsScreen({ tab: tabProp, setTab: setTabProp, exportCtx, threads, saveThreads, isDemo, onSignOut, language, setLanguage, a11y, saveA11y, tier, saveTier, tierLocked, meetingMode, billing, saveBilling, families, staff, expenses, compDocs, provider, saveProviderInfo, refunds }) {
   const t = useT();
   const ALL_LANGS = ["English", "Español", "Tagalog", "中文", "Tiếng Việt", "한국어"];
   // Language is an accessibility need, not a premium feature — every language is
@@ -8486,12 +10171,19 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
   const [profile, setProfile] = useState(provider);
   const [comparisonOpen, setComparisonOpen] = useState(false);
 
-  const saveProfile = () => { saveProviderInfo(profile); setEditingProfile(false); };
-  const [tab, setTab] = useState("profile");
+  const capLimit = CAPACITY_LIMITS[profile.providerType];
+  const capInvalid = !profile.capacity || profile.capacity < 1 || (capLimit && profile.capacity > capLimit);
+  const saveProfile = () => { if (capInvalid) return; saveProviderInfo(profile); setEditingProfile(false); };
+  const [localTab, setLocalTab] = useState("profile");
+  const tab = tabProp || localTab;
+  const setTab = setTabProp || setLocalTab;
+  const downloadBackup = () => downloadFullExport(exportCtx);
   const TABS = [
     ["profile", t("Business Profile")],
+    ["data", t("Reports & your data")],
     ["language", t("Language & Accessibility")],
     ["billing", t("Plan & Billing")],
+    ["account", t("Account")],
   ];
 
   return (
@@ -8508,7 +10200,7 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
       {tab === "profile" && (
       <Card title={t("Business profile")} icon={Building2}
         right={editingProfile
-          ? <button onClick={saveProfile} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("Save changes")}</button>
+          ? <button onClick={saveProfile} disabled={capInvalid} style={{ fontSize: 12, fontWeight: 700, color: capInvalid ? C.inkSoft : C.teal, background: "none", border: "none" }}>{t("Save changes")}</button>
           : <button onClick={() => setEditingProfile(true)} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}><Pencil size={12} /> {t("Edit")}</button>}>
         {editingProfile ? (
           <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
@@ -8519,7 +10211,13 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               <Field label={t("Provider type")}><Select value={profile.providerType} onChange={(v) => setProfile({ ...profile, providerType: v })} options={PROVIDER_TYPES} /></Field>
-              <Field label={t("Licensed capacity")}><input type="number" value={profile.capacity} onChange={(e) => setProfile({ ...profile, capacity: Number(e.target.value) })} style={inputStyle} /></Field>
+              <Field label={t("Licensed capacity")}><input type="number" min={1} max={capLimit} value={profile.capacity} onChange={(e) => setProfile({ ...profile, capacity: Number(e.target.value) })} style={{ ...inputStyle, borderColor: capInvalid ? C.danger : C.line }} /></Field>
+            </div>
+            {capInvalid && <div style={{ fontSize: 11.5, color: C.danger }}>{capLimit ? `${t("Enter a number from 1 to")} ${capLimit} ${t("for this license type.")}` : t("Enter your licensed capacity.")}</div>}
+            <Field label={t("Street address (shown on receipts and printouts)")}><input value={profile.address || ""} onChange={(e) => setProfile({ ...profile, address: e.target.value })} placeholder="123 Main St, Culver City, CA 90230" style={inputStyle} /></Field>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <Field label={t("Business phone")}><input value={profile.phone || ""} onChange={(e) => setProfile({ ...profile, phone: e.target.value })} placeholder="(310) 555-0100" style={inputStyle} /></Field>
+              <Field label={t("Business email")}><input value={profile.email || ""} onChange={(e) => setProfile({ ...profile, email: e.target.value })} placeholder="hello@example.com" style={inputStyle} /></Field>
             </div>
             <div style={{ display: "flex", gap: 8 }}>
               <button onClick={() => { setEditingProfile(false); setProfile(provider); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Cancel")}</button>
@@ -8533,6 +10231,9 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
               right={profile.lic === "License pending" ? <Pill label={t("Pending")} fg={C.amber} bg={C.amberTint} /> : <b>{profile.lic}</b>} />
             <Row left={<span style={{ color: C.inkSoft }}>{t("Provider type")}</span>} right={<b>{profile.providerType}</b>} />
             <Row left={<span style={{ color: C.inkSoft }}>{t("Licensed capacity")}</span>} right={<b>{profile.capacity}</b>} />
+            <Row left={<span style={{ color: C.inkSoft }}>{t("Address")}</span>} right={profile.address ? <b>{profile.address}</b> : <span style={{ fontSize: 12, color: C.amber }}>{t("Add it so receipts are complete")}</span>} />
+            <Row left={<span style={{ color: C.inkSoft }}>{t("Phone")}</span>} right={<b>{profile.phone || "—"}</b>} />
+            <Row left={<span style={{ color: C.inkSoft }}>{t("Email")}</span>} right={<b>{profile.email || "—"}</b>} />
             {profile.lic !== "License pending" && <CCLDVerifyLink lic={profile.lic} />}
           </div>
         )}
@@ -8540,8 +10241,14 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
       )}
 
       {tab === "billing" && (
-        <PlanBilling tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} billing={billing} saveBilling={saveBilling} families={families} staff={staff} expenses={expenses} compDocs={compDocs} provider={provider} refunds={refunds} />
+        <PlanBilling tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} billing={billing} saveBilling={saveBilling} families={families} staff={staff} expenses={expenses} compDocs={compDocs} provider={provider} refunds={refunds} downloadBackup={downloadBackup} />
       )}
+
+      {tab === "data" && (
+        <YourDataTab ctx={exportCtx} downloadBackup={downloadBackup} goToBilling={() => setTab("billing")} billing={billing} threads={threads} saveThreads={saveThreads} families={families} provider={provider} />
+      )}
+
+      {tab === "account" && <AccountTab isDemo={isDemo} onSignOut={onSignOut} />}
 
       {tab === "language" && (
       <>
@@ -8580,6 +10287,163 @@ function SettingsScreen({ language, setLanguage, a11y, saveA11y, tier, saveTier,
     </div>
   );
 }
+function YourDataTab({ ctx, downloadBackup, goToBilling, billing, threads, saveThreads, families, provider }) {
+  const t = useT();
+  const now = startOfToday();
+  const months = Array.from({ length: 12 }, (_, i) => periodKeyOf(new Date(now.getFullYear(), now.getMonth() - i, 1)));
+  const years = [now.getFullYear(), now.getFullYear() - 1];
+  const [month, setMonth] = useState(months[0]);
+  const [year, setYear] = useState(years[0]);
+  const [exportedCount, setExportedCount] = useState(0);
+  const [notifyOpen, setNotifyOpen] = useState(false);
+  const [notifyText, setNotifyText] = useState(t("Hi families — a quick update: we're changing how we keep records and messages. Starting [date], please reach us at [phone/email]. Thank you!"));
+  const [notified, setNotified] = useState(false);
+  const [deletionRequested, setDeletionRequested] = useState(false);
+  const [tickets, setTickets] = usePersistentState("support-tickets", SUPPORT_TICKETS_DEFAULT);
+  const canceled = billing.status === "canceled";
+  const dl = (id, arg) => downloadReport(id, ctx, arg);
+  const btn = { display: "flex", alignItems: "center", gap: 6, padding: "7px 12px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12, fontWeight: 700, color: C.tealDark, whiteSpace: "nowrap" };
+  const reportRow = (title, desc, control, onClick) => (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 18px", borderBottom: `1px solid ${C.line}` }}>
+      <div style={{ minWidth: 0 }}>
+        <div style={{ fontSize: 13.5, fontWeight: 600 }}>{title}</div>
+        <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 2 }}>{desc}</div>
+      </div>
+      <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0 }}>
+        {control}
+        <button onClick={onClick} style={btn}><Download size={13} /> CSV</button>
+      </div>
+    </div>
+  );
+  const monthSelect = <Select value={month} onChange={setMonth} options={months} labels={months.map(periodLabel)} />;
+  const yearSelect = <Select value={String(year)} onChange={(v) => setYear(Number(v))} options={years.map(String)} />;
+  const sendNotice = () => {
+    const names = [...new Set(families.map((f) => f.householdName || f.child))];
+    broadcastToFamilies(threads, saveThreads, names, notifyText, "announcement", families);
+    setNotified(true); setNotifyOpen(false);
+  };
+  const requestDeletion = () => {
+    const now2 = new Date();
+    setTickets([{ id: Date.now(), provider: provider?.name || "Provider", subject: "Account deletion request", category: "Account or login", status: "open",
+      date: now2.toLocaleDateString("en-US"), time: now2.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+      message: `Please delete the Alaga account and all records for ${provider?.name || "this provider"} (${provider?.lic || ""}). Requested ${todayMDY()}.`, replies: [] }, ...(Array.isArray(tickets) ? tickets : [])]);
+    setDeletionRequested(true);
+  };
+  const step = (n, done, title, body) => (
+    <div style={{ display: "flex", gap: 12, padding: "14px 18px", borderBottom: `1px solid ${C.line}` }}>
+      <div style={{ width: 24, height: 24, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, background: done ? C.teal : C.cream, color: done ? "#fff" : C.inkSoft }}>{done ? <Check size={13} /> : n}</div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 13.5, fontWeight: 600 }}>{title}</div>
+        <div style={{ marginTop: 4 }}>{body}</div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <Card title={t("Reports")} icon={FileText} right={<span style={{ fontSize: 12, color: C.inkSoft }}>{t("Opens in Excel, Google Sheets or Numbers")}</span>}>
+        {reportRow(t("Attendance"), t("Every child's days, times in and out, and absences — for subsidy agencies and your records."), monthSelect, () => dl("attendance", month))}
+        {reportRow(t("Payments received"), t("Every tuition and copay payment, with who paid and how — for your accountant."), yearSelect, () => dl("payments", year))}
+        {reportRow(t("Income & expenses by month"), t("Payments received, refunds and logged expenses for each month — a starting point for taxes."), yearSelect, () => dl("yearSummary", year))}
+        {reportRow(t("Enrollment roster"), t("Current children with guardians, schedules and funding."), null, () => dl("roster"))}
+        {reportRow(t("Children's documents"), t("Which documents are on file for each child, and when they renew."), null, () => dl("childDocs"))}
+        {reportRow(t("Incident log"), t("Every incident you've logged, with how parents were notified."), null, () => dl("incidents"))}
+        {reportRow(t("Business expenses"), t("Every expense you've logged, by category."), null, () => dl("expenses"))}
+        <div style={{ padding: "10px 18px", fontSize: 11.5, color: C.inkSoft }}>{t("Printable monthly sign-in sheets are in Bookings. Receipts for families are in Finances → Receipts.")}</div>
+      </Card>
+
+      <Card title={t("Download everything")} icon={Download}>
+        <div style={{ padding: 18, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14 }}>
+          <div style={{ fontSize: 12.5, color: C.inkSoft, lineHeight: 1.55 }}>
+            {t("One .zip file with every report above, past families, staff, facility documents, messages, tours, 12 months of attendance, and a complete backup of your records. Uploaded scans and photos are listed by file name.")}
+            {exportedCount > 0 && <div style={{ marginTop: 6, color: C.teal, fontWeight: 700 }}>{t("Downloaded")} — {exportedCount} {t("files")}</div>}
+          </div>
+          <button onClick={() => setExportedCount(downloadBackup())} style={{ ...btn, background: C.teal, color: "#fff", border: "none", padding: "10px 16px" }}><Download size={14} /> {t("Download .zip")}</button>
+        </div>
+      </Card>
+
+      <Card title={t("Leaving Alaga")} icon={LogOut} right={<span style={{ fontSize: 12, color: C.inkSoft }}>{t("Go step by step — nothing is deleted until the last step")}</span>}>
+        {step(1, exportedCount > 0, t("Download a copy of your records"),
+          <button onClick={() => setExportedCount(downloadBackup())} style={btn}><Download size={13} /> {exportedCount > 0 ? t("Download again") : t("Download .zip")}</button>)}
+        {step(2, notified, t("Let families know (optional)"),
+          notifyOpen ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <textarea value={notifyText} onChange={(e) => setNotifyText(e.target.value)} rows={3} style={{ width: "100%", border: `1px solid ${C.line}`, borderRadius: 10, padding: "9px 11px", fontSize: 12.5, fontFamily: "inherit" }} />
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={sendNotice} disabled={!families.length} style={{ ...btn, background: C.teal, color: "#fff", border: "none" }}><Send size={12} /> {t("Send to all families")}</button>
+                <button onClick={() => setNotifyOpen(false)} style={btn}>{t("Cancel")}</button>
+              </div>
+            </div>
+          ) : notified ? <span style={{ fontSize: 12, color: C.teal, fontWeight: 600 }}>{t("Sent — see Messages")}</span>
+            : <button onClick={() => setNotifyOpen(true)} style={btn}><MessageSquare size={13} /> {t("Write a message")}</button>)}
+        {step(3, canceled, t("Cancel your subscription"),
+          canceled ? <span style={{ fontSize: 12, color: C.inkSoft }}>{t("Canceled — access continues through")} {billing.accessUntil || billingPeriodEnd(billing)}.</span>
+            : <button onClick={goToBilling} style={btn}>{t("Go to Plan & Billing")}</button>)}
+        {step(4, deletionRequested, t("Ask us to delete your account"),
+          deletionRequested ? <span style={{ fontSize: 12, color: C.inkSoft }}>{t("Request sent. The Alaga team will confirm by email before anything is deleted — you can follow it in Support.")}</span>
+            : <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <div style={{ fontSize: 11.5, color: C.inkSoft, lineHeight: 1.5 }}>{t("Deletion is permanent. Without a request, a canceled account becomes a read-only archive after 90 days.")}</div>
+                <button onClick={requestDeletion} disabled={exportedCount === 0} title={exportedCount === 0 ? t("Download your records first") : ""} style={{ ...btn, alignSelf: "flex-start", color: exportedCount === 0 ? C.inkSoft : C.danger }}>{t("Request account deletion")}</button>
+                {exportedCount === 0 && <div style={{ fontSize: 11, color: C.inkSoft }}>{t("Download your records first (step 1).")}</div>}
+              </div>)}
+        <div style={{ padding: "12px 18px", fontSize: 11.5, color: C.inkSoft, lineHeight: 1.55, display: "flex", gap: 8 }}>
+          <Info size={13} style={{ flexShrink: 0, marginTop: 1 }} />
+          <span>{t("Closing your child care business? Also tell your Licensing Program Analyst and every subsidy agency you work with, and keep children's records for at least 3 years after care ends.")}</span>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+function AccountTab({ isDemo, onSignOut }) {
+  const t = useT();
+  const [user, setUser] = useState(null);
+  const [checked, setChecked] = useState(false);
+  const [msg, setMsg] = useState("");
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try { const { auth } = await import("./firebase.js"); if (alive) setUser(auth.currentUser); } catch (e) { /* not signed in */ }
+      if (alive) setChecked(true);
+    })();
+    return () => { alive = false; };
+  }, []);
+  const resetPassword = async () => {
+    try {
+      const { sendPasswordResetEmail } = await import("firebase/auth");
+      const { auth } = await import("./firebase.js");
+      await sendPasswordResetEmail(auth, user.email);
+      setMsg(`${t("Password reset email sent to")} ${user.email}.`);
+    } catch (e) { setMsg(t("Couldn't send the email. Try again in a moment.")); }
+  };
+  const signOutNow = async () => {
+    try { const { signOut } = await import("firebase/auth"); const { auth } = await import("./firebase.js"); await signOut(auth); } catch (e) { /* already signed out */ }
+    onSignOut && onSignOut();
+  };
+  return (
+    <Card title={t("Account")} icon={Lock}>
+      <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
+        {!checked ? <div style={{ fontSize: 12.5, color: C.inkSoft }}>{t("Loading…")}</div> : user ? (
+          <>
+            <Row left={<span style={{ color: C.inkSoft }}>{t("Signed in as")}</span>} right={<b>{user.email}</b>} />
+            {user.metadata?.lastSignInTime && <Row left={<span style={{ color: C.inkSoft }}>{t("Last sign-in")}</span>} right={<span style={{ fontSize: 13 }}>{new Date(user.metadata.lastSignInTime).toLocaleString("en-US")}</span>} />}
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <button onClick={resetPassword} style={{ padding: "8px 14px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 700, color: C.tealDark }}>{t("Change password")}</button>
+              <button onClick={signOutNow} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12.5, fontWeight: 700 }}><LogOut size={13} /> {t("Sign out")}</button>
+            </div>
+            {msg && <div style={{ fontSize: 12, color: C.tealDark }}>{msg}</div>}
+          </>
+        ) : (
+          <>
+            <div style={{ fontSize: 12.5, color: C.inkSoft }}>{isDemo ? t("You're exploring a demo — no account is signed in.") : t("No account is signed in on this device.")}</div>
+            <button onClick={signOutNow} style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 700, color: C.tealDark }}><LogOut size={13} /> {t("Back to start")}</button>
+          </>
+        )}
+      </div>
+    </Card>
+  );
+}
+
 function ToggleSwitch({ on, onClick }) {
   return (
     <button onClick={onClick} style={{
@@ -8609,7 +10473,7 @@ function Subsidy({ families: allFamilies, openFamId, setOpenFamId, loaded, meeti
         </div>
       )}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
-        <Kpi label={t("Subsidized families")} value={String(families.length)} sub={t("across 4 programs")} accent={C.teal} />
+        <Kpi label={t("Subsidized families")} value={String(families.length)} sub={`${t("across")} ${new Set(families.map((f) => f.programId)).size} ${t(new Set(families.map((f) => f.programId)).size === 1 ? "program" : "programs")}`} accent={C.teal} />
         <Kpi label={t("Monthly coverage")} value={money(totalCoverage)} sub={t("reimbursed by agencies")} accent={C.teal} />
         <Kpi label={t("Parent out-of-pocket")} value={money(totalCopay)} sub={t("in copays / mo")} accent={C.amber} />
         <Kpi label={t("Needs attention")} value={String(attention)} sub={t("expiring or missing docs")} accent={C.danger} />
@@ -8617,6 +10481,9 @@ function Subsidy({ families: allFamilies, openFamId, setOpenFamId, loaded, meeti
 
       <Card title={t("Families on subsidy")} icon={ShieldCheck}
         right={<span style={{ fontSize: 12, color: C.inkSoft }}>{t("Tap a family for full eligibility detail")}</span>}>
+        {families.length === 0 && (
+          <div style={{ padding: "30px 24px", textAlign: "center", fontSize: 12.5, color: C.inkSoft }}>{t("No subsidized families yet. Choose Subsidy when you enroll a family and they'll appear here.")}</div>
+        )}
         {families.map((f) => {
           const prog = programOf(f.programId);
           const dLeft = daysUntil(f.authEnd);
@@ -8630,7 +10497,7 @@ function Subsidy({ families: allFamilies, openFamId, setOpenFamId, loaded, meeti
                 <div style={{ width: 34, height: 34, borderRadius: "50%", background: f.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 13, flexShrink: 0 }}>{f.child[0]}</div>
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontWeight: 600, fontSize: 14 }}>{f.child} <span style={{ fontWeight: 400, color: C.inkSoft }}>· {f.parent}</span></div>
-                  <div style={{ fontSize: 12, color: C.inkSoft }}>{prog.label} · {prog.agency}</div>
+                  <div style={{ fontSize: 12, color: C.inkSoft }}>{prog?.label} · {prog?.agency}</div>
                 </div>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 18, flexShrink: 0 }}>
@@ -8645,7 +10512,7 @@ function Subsidy({ families: allFamilies, openFamId, setOpenFamId, loaded, meeti
                 <div style={{ textAlign: "right", minWidth: 92 }}>
                   <Pill {...trStatus(t, f.status)} />
                   <div style={{ fontSize: 11, color: dLeft <= 14 ? C.danger : C.inkSoft, marginTop: 3 }}>
-                    {dLeft > 0 ? `${t("Expires in")} ${dLeft}d` : t("expired")}
+                    {!f.authEnd || dLeft === 9999 ? t("No end date") : dLeft >= 0 ? `${t("Expires in")} ${dLeft}d` : t("expired")}
                   </div>
                 </div>
                 <ChevronRight size={16} color={C.inkSoft} />
@@ -8668,6 +10535,22 @@ function SubsidyDrawer({ fam, onClose, onSave, logAccess }) {
   const [sessionLength, setSessionLength] = useState(fam.sessionLength);
   const [authEnd, setAuthEnd] = useState(fam.authEnd);
   const [notes, setNotes] = useState(fam.notes);
+  const [forms, setForms] = useState(fam.forms || []);
+  const [caseworker, setCaseworker] = useState(fam.caseworker || { name: "", phone: "", email: "" });
+  // Marking a form on file (or back to missing) saves right away; the family's
+  // status follows automatically.
+  const toggleForm = (id) => {
+    const next = forms.map((x) => (x.id === id ? (x.status === "submitted" ? { id, status: "missing" } : { id, status: "submitted", date: todayMDY() }) : x));
+    setForms(next);
+    onSave(fam.id, { forms: next });
+  };
+  const missingForms = forms.filter((x) => x.status !== "submitted").map((x) => FORM_TEMPLATES.find((tpl) => tpl.id === x.id)?.name || x.id);
+  const requestMissing = () => {
+    const to = (fam.parents || []).map((p) => p.email).filter(Boolean).join(",");
+    const subject = encodeURIComponent(`Subsidy paperwork for ${fam.child}`);
+    const body = encodeURIComponent(`Hi,\n\nTo keep ${fam.child}'s ${prog?.label || "subsidy"} authorization current, we still need:\n\n${missingForms.map((m) => `- ${m}`).join("\n")}\n\nPlease send these when you can.\n\nThank you,`);
+    window.location.href = `mailto:${encodeURIComponent(to)}?subject=${subject}&body=${body}`;
+  };
   const [saveState, setSaveState] = useState("idle"); // idle | saving | saved | error
   const prog = programOf(programId);
   const dLeft = daysUntil(authEnd);
@@ -8677,7 +10560,7 @@ function SubsidyDrawer({ fam, onClose, onSave, logAccess }) {
   const handleSave = async () => {
     setSaveState("saving");
     const ok = await onSave(fam.id, {
-      providerType, programId, coverageAmount, copay, sessionsApproved, sessionLength, authEnd, notes,
+      providerType, programId, coverageAmount, copay, sessionsApproved, sessionLength, authEnd, notes, caseworker,
     });
     setSaveState(ok ? "saved" : "error");
     if (ok) setTimeout(() => setSaveState("idle"), 1800);
@@ -8703,12 +10586,8 @@ function SubsidyDrawer({ fam, onClose, onSave, logAccess }) {
               <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>{fam.child}</div>
               <div style={{ fontSize: 12.5, color: C.inkSoft }}>{fam.age} · parent/guardian {fam.parent}</div>
               <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 8 }}>
-                <Pill {...trStatus(t, fam.status)} />
-                {fam.status !== "active" && (
-                  <button onClick={markResolved} disabled={resolving} style={{ display: "flex", alignItems: "center", gap: 5, padding: "4px 9px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11, fontWeight: 600, color: C.teal }}>
-                    <CheckCircle2 size={11} /> {resolving ? t("Saving…") : t("Mark resolved")}
-                  </button>
-                )}
+                <Pill {...trStatus(t, subsidyStatus({ ...fam, forms, authEnd }))} />
+                <span style={{ fontSize: 11, color: C.inkSoft }}>{t("Updates from forms and authorization dates")}</span>
               </div>
             </div>
           </div>
@@ -8740,7 +10619,7 @@ function SubsidyDrawer({ fam, onClose, onSave, logAccess }) {
             </Field>
             <Field label={t("Subsidy program")}>
               <Select value={programId} onChange={setProgramId} options={PROGRAMS.map((p) => p.id)} labels={PROGRAMS.map((p) => p.label)} />
-              <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 4 }}>{t("Administering agency:")} {prog.agency}</div>
+              <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 4 }}>{t("Administering agency:")} {prog?.agency}</div>
             </Field>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -8766,19 +10645,19 @@ function SubsidyDrawer({ fam, onClose, onSave, logAccess }) {
                 <div style={{ flex: 1, border: `1px solid ${C.line}`, borderRadius: 9, padding: "9px 11px", fontSize: 13, color: C.inkSoft, background: "#FAF8F3" }}>{fam.authStart}</div>
                 <span style={{ color: C.inkSoft, fontSize: 12 }}>{t("to")}</span>
                 <div style={{ flex: 1, position: "relative" }}>
-                  <input value={authEnd} onChange={(e) => setAuthEnd(e.target.value)}
-                    style={{ width: "100%", border: `1px solid ${C.line}`, borderRadius: 9, padding: "9px 11px", fontSize: 13, color: C.ink }} />
+                  <DateField value={/^\d{2}\/\d{2}\/\d{4}$/.test(authEnd || "") ? authEnd : ""} onChange={(v) => setAuthEnd(v || "")} placeholder={t("From the authorization letter")} />
                 </div>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 6, fontSize: 11.5, color: dLeft <= 14 ? C.danger : C.inkSoft }}>
-                <Clock size={12} /> {dLeft > 0 ? `${t("Expires in")} ${dLeft} ${t("days — plan recertification")}` : t("Authorization has expired")}
+                <Clock size={12} /> {!authEnd || dLeft === 9999 ? t("Add the end date so Alaga can remind you before it expires.") : dLeft >= 0 ? `${t("Expires in")} ${dLeft} ${t("days — plan recertification")}` : t("Authorization has expired")}
               </div>
             </Field>
           </Section>
 
           {/* forms & eligibility documents */}
           <Section title={t("Forms & eligibility documents")} icon={FileText}>
-            {fam.forms.map((f) => {
+            {forms.length === 0 && <div style={{ fontSize: 12.5, color: C.inkSoft }}>{t("No forms tracked for this family.")}</div>}
+            {forms.map((f) => {
               const meta = trForm(t, f.status);
               const name = FORM_TEMPLATES.find((tpl) => tpl.id === f.id).name;
               return (
@@ -8792,28 +10671,31 @@ function SubsidyDrawer({ fam, onClose, onSave, logAccess }) {
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
                     <span style={{ fontSize: 11.5, fontWeight: 700, color: meta.color }}>{meta.label}</span>
-                    {f.status === "submitted" ? (
-                      <IconBtn icon={Download} title={t("Download")} />
-                    ) : (
-                      <IconBtn icon={Upload} title="Upload / request" accent />
-                    )}
+                    <button onClick={() => toggleForm(f.id)} style={{ padding: "4px 9px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11, fontWeight: 600, color: f.status === "submitted" ? C.inkSoft : C.tealDark }}>
+                      {f.status === "submitted" ? t("Mark missing") : t("Mark on file")}
+                    </button>
                   </div>
                 </div>
               );
             })}
-            <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-              <SmallBtn icon={Printer} label={t("Print eligibility notice")} />
-              <SmallBtn icon={Send} label={t("Request missing docs")} />
-            </div>
+            {missingForms.length > 0 && (
+              <button onClick={requestMissing} style={{ marginTop: 12, alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12, fontWeight: 600, color: C.tealDark }}>
+                <Send size={13} /> {t("Email the family for missing forms")} ({missingForms.length})
+              </button>
+            )}
           </Section>
 
           {/* agency contact */}
-          <Section title={t("Agency contact")} icon={Phone}>
-            <div style={{ fontSize: 13, fontWeight: 600 }}>{prog.agency}</div>
-            <div style={{ display: "flex", gap: 16, marginTop: 6, fontSize: 12.5, color: C.inkSoft }}>
-              <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Phone size={13} /> (213) 555-0148</span>
-              <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Mail size={13} /> cases@{prog.agency.toLowerCase().replace(/[^a-z]/g, "")}.org</span>
+          <Section title={t("Caseworker")} icon={Phone}>
+            <div style={{ fontSize: 12, color: C.inkSoft, marginBottom: 8 }}>{prog?.agency}</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              <input value={caseworker.name} onChange={(e) => setCaseworker({ ...caseworker, name: e.target.value })} placeholder={t("Caseworker name")} style={{ ...inputStyle, gridColumn: "1 / -1" }} />
+              <input value={caseworker.phone} onChange={(e) => setCaseworker({ ...caseworker, phone: e.target.value })} placeholder={t("Phone")} style={inputStyle} />
+              <input value={caseworker.email} onChange={(e) => setCaseworker({ ...caseworker, email: e.target.value })} placeholder={t("Email")} style={inputStyle} />
             </div>
+            {caseworker.email && (
+              <a href={`mailto:${caseworker.email}?subject=${encodeURIComponent(`${fam.child} — ${prog?.label || "subsidy"}`)}`} style={{ marginTop: 8, display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: C.teal }}><Mail size={12} /> {t("Email caseworker")}</a>
+            )}
           </Section>
 
           {/* notes */}
@@ -8983,7 +10865,7 @@ function SmallBtn({ icon: Icon, label }) {
 /* ===================================================================
    PARENT APP — read-only subsidy view for the family
    =================================================================== */
-function ParentApp({ families, onExit, showBackToProvider = true, status, setChildStatus, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage, events = [] }) {
+function ParentApp({ careCtx, families, onExit, showBackToProvider = true, status, setChildStatus, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage, events = [] }) {
   const t = useT();
   const [famId, setFamId] = useState(families[0]?.id);
   const fam = families.find((f) => f.id === famId) || families[0];
@@ -9019,13 +10901,13 @@ function ParentApp({ families, onExit, showBackToProvider = true, status, setChi
     saveFlexCare([{ id: `fc${flexSeq}`, child: fam.child, classroom: fam.classroom, type: flexForm.type, date: flexForm.date, hours: Number(flexForm.hours), notes: flexForm.notes, status: "pending", requestedBy: "parent", parentPaymentMethod: flexForm.paymentMethod, paymentConfirmed: false }, ...flexCareRequests]);
     const threadName = fam.householdName || fam.child;
     const noteText = `${t("New flex care request")}: ${t(flexForm.type)}, ${flexForm.date} — ${t("view and respond in Bookings")}.`;
-    const existingThread = threads.find((th) => th.name === threadName);
+    const existingThread = findThread(threads, { household: fam.household, name: threadName });
     if (existingThread) {
       saveThreads(threads.map((th) => th.id === existingThread.id
-        ? { ...th, unread: true, messages: [...th.messages, { from: "them", text: noteText, time: "Just now" }] }
+        ? { ...th, unread: true, messages: [...th.messages, { from: "them", text: noteText, ...msgNow() }] }
         : th));
     } else {
-      saveThreads([{ id: `th-flex-${Date.now()}`, name: threadName, unread: true, messages: [{ from: "them", text: noteText, time: "Just now" }] }, ...threads]);
+      saveThreads([{ id: `th-flex-${Date.now()}`, name: threadName, household: fam.household, unread: true, messages: [{ from: "them", text: noteText, ...msgNow() }] }, ...threads]);
     }
     setFlexForm({ type: FLEX_CARE_TYPES[0], date: "", hours: 1, notes: "", paymentMethod: PAYMENT_METHODS[0] });
   };
@@ -9034,27 +10916,24 @@ function ParentApp({ families, onExit, showBackToProvider = true, status, setChi
   // The parent's own conversation with the provider — a single thread, not a
   // full inbox, since a family only talks to one provider.
   const myThreadName = fam.householdName || fam.child;
-  const myThread = threads.find((th) => th.name === myThreadName);
+  const myThread = findThread(threads, { household: fam.household, name: myThreadName });
   const [myDraft, setMyDraft] = useState("");
   const [expandedEventId, setExpandedEventId] = useState(null);
   const sendToProvider = () => {
     if (!myDraft.trim()) return;
     if (myThread) {
-      saveThreads(threads.map((th) => (th.id === myThread.id ? { ...th, unread: true, messages: [...th.messages, { from: "them", text: myDraft, time: "Just now" }] } : th)));
+      saveThreads(threads.map((th) => (th.id === myThread.id ? { ...th, unread: true, messages: [...th.messages, { from: "them", text: myDraft, ...msgNow() }] } : th)));
     } else {
-      saveThreads([{ id: `th-parent-${Date.now()}`, name: myThreadName, unread: true, messages: [{ from: "them", text: myDraft, time: "Just now" }] }, ...threads]);
+      saveThreads([{ id: `th-parent-${Date.now()}`, name: myThreadName, household: fam.household, unread: true, messages: [{ from: "them", text: myDraft, ...msgNow() }] }, ...threads]);
     }
     setMyDraft("");
   };
 
-  const monthlyAmount = fam.copay;
-  const receiptMonths = ["May 2026", "June 2026", "July 2026"];
-  const downloadReceipt = (month) => downloadCSV(`alaga-receipt-${fam.child.replace(/\s+/g, "-").toLowerCase()}-${month.replace(" ", "-")}.csv`,
-    ["Provider", "Child", "Service period", "Amount paid", "Purpose"],
-    [[provider.name, fam.child, month, monthlyAmount.toFixed(2), "Childcare tuition / copay — for FSA or HSA reimbursement submission"]]);
-  const downloadYearSummary = () => downloadCSV(`alaga-annual-summary-${fam.child.replace(/\s+/g, "-").toLowerCase()}.csv`,
-    ["Provider", "Child", "Month", "Amount paid"],
-    receiptMonths.map((m) => [provider.name, fam.child, m, monthlyAmount.toFixed(2)]));
+  // Receipts list only months the provider has recorded as paid.
+  const paidMonths = paymentsOf(fam).slice(0, 12);
+  const receiptDates = (key) => receiptDatesText(fam, key, careCtx);
+  const downloadReceipt = (p) => printReceipt(fam, [p], { provider, t, datesFor: receiptDates });
+  const downloadYearSummary = () => printReceipt(fam, paidMonths.filter((p) => p.key.startsWith(String(startOfToday().getFullYear()))).reverse(), { provider, t, datesFor: receiptDates, title: `${t("Annual childcare payment summary")} ${startOfToday().getFullYear()}` });
 
   return (
     <div style={{ flex: 1, minHeight: "100vh", display: "flex", flexDirection: "column", background: C.cream }}>
@@ -9267,14 +11146,15 @@ function ParentApp({ families, onExit, showBackToProvider = true, status, setChi
                 <FileText size={15} color={C.teal} /> {t("Receipts for reimbursement")}
               </div>
               <button onClick={downloadYearSummary} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, fontWeight: 700, color: C.tealDark, background: "none", border: "none" }}>
-                <Download size={12} /> {t("Download all")}
+                <Printer size={12} /> {t("Year summary")}
               </button>
             </div>
-            {receiptMonths.map((m) => (
-              <div key={m} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 18px", borderBottom: `1px solid ${C.line}` }}>
+            {paidMonths.length === 0 && <div style={{ padding: "12px 18px", fontSize: 12.5, color: C.inkSoft }}>{t("No payments recorded yet.")}</div>}
+            {paidMonths.map((m) => (
+              <div key={m.key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 18px", borderBottom: `1px solid ${C.line}` }}>
                 <div>
-                  <div style={{ fontSize: 13.5, fontWeight: 500 }}>{m}</div>
-                  <div style={{ fontSize: 11.5, color: C.inkSoft }}>{money(monthlyAmount)} {t("paid")}</div>
+                  <div style={{ fontSize: 13.5, fontWeight: 500 }}>{periodLabel(m.key)}</div>
+                  <div style={{ fontSize: 11.5, color: C.inkSoft }}>{money(m.total)} {t("paid")} · {m.entries.map((e) => e.date).join(", ")}</div>
                 </div>
                 <button onClick={() => downloadReceipt(m)} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: C.tealDark, background: C.tealTint, border: "none", borderRadius: 8, padding: "7px 11px" }}>
                   <Download size={13} /> {t("Download")}
