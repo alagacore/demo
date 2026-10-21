@@ -831,6 +831,14 @@ const T = {
   "Deenroll": { es: "Dar de baja", tl: "I-deenroll", zh: "退托", vi: "Rút khỏi", ko: "퇴소" },
   "They stay on your roster through their last day, then move to Deenrolled. Their record is kept.": { es: "Permanecen en su lista hasta su último día y luego pasan a Dados de baja. Su expediente se conserva.", tl: "Mananatili sila sa roster hanggang sa huling araw, saka lilipat sa Deenrolled. Itinatago ang kanilang rekord.", zh: "孩子会保留在名单上直到最后一天，之后移至已退托。其档案会被保留。", vi: "Trẻ vẫn ở trong danh sách đến ngày cuối, sau đó chuyển sang Đã rút. Hồ sơ được giữ lại.", ko: "마지막 날까지 명단에 남은 후 퇴소 목록으로 이동합니다. 기록은 보관됩니다." },
   "Confirm deenrollment": { es: "Confirmar baja", tl: "Kumpirmahin ang deenrollment", zh: "确认退托", vi: "Xác nhận rút", ko: "퇴소 확인" },
+  "Child information sheet": { es: "Hoja de información del niño", tl: "Information sheet ng bata", zh: "儿童信息表", vi: "Phiếu thông tin trẻ", ko: "아동 정보지" },
+  "Printed": { es: "Impreso", tl: "Na-print", zh: "打印于", vi: "Đã in", ko: "인쇄일" },
+  "Allergies, medical & special needs": { es: "Alergias, necesidades médicas y especiales", tl: "Allergy, medikal at espesyal na pangangailangan", zh: "过敏、医疗及特殊需求", vi: "Dị ứng, nhu cầu y tế và đặc biệt", ko: "알레르기, 의료 및 특별 지원" },
+  "Document": { es: "Documento", tl: "Dokumento", zh: "文件", vi: "Tài liệu", ko: "서류" },
+  "Confidential — contains a child's personal information. Store securely.": { es: "Confidencial: contiene información personal de un niño. Guárdelo de forma segura.", tl: "Kumpidensyal — may personal na impormasyon ng bata. Itago nang ligtas.", zh: "机密——包含儿童个人信息，请妥善保管。", vi: "Bảo mật — có thông tin cá nhân của trẻ. Hãy cất giữ an toàn.", ko: "기밀 — 아동 개인정보가 포함되어 있습니다. 안전하게 보관하세요." },
+  "Print": { es: "Imprimir", tl: "I-print", zh: "打印", vi: "In", ko: "인쇄" },
+  "Print an information sheet for each child": { es: "Imprimir una hoja de información por niño", tl: "Mag-print ng information sheet para sa bawat bata", zh: "为每个孩子打印信息表", vi: "In phiếu thông tin cho từng trẻ", ko: "아이별 정보지 인쇄" },
+  "Print this child's information sheet": { es: "Imprimir la hoja de información de este niño", tl: "I-print ang information sheet ng batang ito", zh: "打印此孩子的信息表", vi: "In phiếu thông tin của trẻ này", ko: "이 아이의 정보지 인쇄" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -3266,7 +3274,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
             <div style={{ flex: 1, overflowY: "auto", padding: "28px 32px 60px" }}>
               {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
-              {screen === "families" && <Families families={families} onWithdraw={withdrawChild} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
+              {screen === "families" && <Families families={families} provider={providerInfo} onWithdraw={withdrawChild} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
               {screen === "bookings" && <Bookings families={families} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
               {screen === "staff" && <StaffScreen staff={staff} families={families} updateStaffMember={updateStaffMember} addStaffMember={addStaffMember} removeStaffMember={removeStaffMember} />}
               {screen === "calendar" && <CalendarScreen schedule={weeklySchedule} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} families={families} threads={threads} saveThreads={saveThreads} />}
@@ -3982,7 +3990,7 @@ function CheckIn({ families, status, log, setChildStatus }) {
 }
 
 /* --------------------------------- families ------------------------------------ */
-function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHousehold: openHouseholdProp, setOpenHousehold: setOpenHouseholdProp, tuitionRates, alumni = [], onWithdraw, openTuition }) {
+function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHousehold: openHouseholdProp, setOpenHousehold: setOpenHouseholdProp, tuitionRates, alumni = [], onWithdraw, openTuition, provider }) {
   const t = useT();
   const [openHouseholdLocal, setOpenHouseholdLocal] = useState(null);
   // Support both a parent-controlled open household (used when the search bar or
@@ -4124,12 +4132,12 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
         })}
       </Card>
       )}
-      {open && <HouseholdDrawer household={open} onClose={() => setOpenHousehold(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} tuitionRates={tuitionRates} onWithdraw={onWithdraw} openTuition={openTuition} />}
+      {open && <HouseholdDrawer household={open} onClose={() => setOpenHousehold(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} tuitionRates={tuitionRates} onWithdraw={onWithdraw} openTuition={openTuition} provider={provider} />}
     </>
   );
 }
 
-function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, tuitionRates, onWithdraw, openTuition }) {
+function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, tuitionRates, onWithdraw, openTuition, provider }) {
   const t = useT();
   const [openChildId, setOpenChildId] = useState(null);
   const [editing, setEditing] = useState(false);
@@ -4166,7 +4174,12 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
               <div style={{ fontSize: 12.5, color: C.inkSoft }}>{household.children.length} {t(household.children.length === 1 ? "child" : "children")} {t("enrolled")}</div>
             </div>
           </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: C.inkSoft, padding: 4 }}><X size={19} /></button>
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <button onClick={() => printChildSheets(household.children, { parents: household.parents, provider, t })} title={t("Print an information sheet for each child")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 10px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", color: C.tealDark, fontSize: 12, fontWeight: 600 }}>
+              <Printer size={13} /> {t("Print")}
+            </button>
+            <button onClick={onClose} style={{ background: "none", border: "none", color: C.inkSoft, padding: 4 }}><X size={19} /></button>
+          </div>
         </div>
 
         <div style={{ flex: 1, overflowY: "auto", padding: "18px 22px 26px", display: "flex", flexDirection: "column", gap: 20 }}>
@@ -4301,12 +4314,12 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
           )}
         </div>
       </div>
-      {openChild && <ChildDrawer child={openChild} onClose={() => setOpenChildId(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} tuitionRates={tuitionRates} families={household.children} onWithdraw={onWithdraw} openTuition={openTuition} parents={household.parents} />}
+      {openChild && <ChildDrawer child={openChild} onClose={() => setOpenChildId(null)} goToSubsidy={goToSubsidy} onSave={onSave} logAccess={logAccess} tuitionRates={tuitionRates} families={household.children} onWithdraw={onWithdraw} openTuition={openTuition} parents={household.parents} provider={provider} />}
     </div>
   );
 }
 
-function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRates, families, onWithdraw, openTuition, parents = [] }) {
+function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRates, families, onWithdraw, openTuition, parents = [], provider }) {
   const t = useT();
   const [editingBasics, setEditingBasics] = useState(false);
   const [basics, setBasics] = useState({ child: child.child, age: child.age, classroom: child.classroom, enrollDate: child.enrollDate });
@@ -4411,7 +4424,12 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
               </div>
             </div>
           </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: C.inkSoft, padding: 4 }}><X size={19} /></button>
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <button onClick={() => printChildSheets([{ ...child, accommodations }], { parents, provider, t, docsById: { [child.id]: docs } })} title={t("Print this child's information sheet")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 10px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", color: C.tealDark, fontSize: 12, fontWeight: 600 }}>
+              <Printer size={13} /> {t("Print")}
+            </button>
+            <button onClick={onClose} style={{ background: "none", border: "none", color: C.inkSoft, padding: 4 }}><X size={19} /></button>
+          </div>
         </div>
 
         <div style={{ flex: 1, overflowY: "auto", padding: "18px 22px 26px", display: "flex", flexDirection: "column", gap: 20 }}>
@@ -5931,6 +5949,100 @@ function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, 
       {open && <ProspectDrawer prospect={open} onClose={() => setOpenId(null)} update={updateProspect} remove={removeProspect} logAccess={logAccess} startEnroll={startEnroll && ((p) => { setOpenId(null); startEnroll(p); })} />}
     </div>
   );
+}
+
+/* ------------------------------ printing ------------------------------------ */
+// Printer-friendly child information sheets. Builds a plain, black-and-white
+// page (one child per page) and opens the browser's print dialog, so it works
+// with any printer or "Save as PDF". Private notes are left off on purpose.
+const escapeHTML = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+function printChildSheets(children, { parents = [], provider = {}, t = (x) => x, docsById = {} } = {}) {
+  const row = (label, value) => `<tr><th>${escapeHTML(label)}</th><td>${escapeHTML(value || "—")}</td></tr>`;
+  const sheet = (c) => {
+    const prog = c.subsidized ? programOf(c.programId) : null;
+    const docs = docsById[c.id] || defaultChildDocs(c);
+    const ec = c.emergencyContact || {};
+    const guardians = (c.parents && c.parents.length ? c.parents : parents);
+    return `
+      <section class="sheet">
+        <header>
+          <div>
+            <div class="provider">${escapeHTML(provider.name || "")}</div>
+            <div class="muted">${escapeHTML([provider.lic, provider.city].filter(Boolean).join(" · "))}</div>
+          </div>
+          <div class="right">
+            <div class="title">${escapeHTML(t("Child information sheet"))}</div>
+            <div class="muted">${escapeHTML(t("Printed"))} ${escapeHTML(todayMDY())}</div>
+          </div>
+        </header>
+        <h1>${escapeHTML(c.child)}</h1>
+        ${c.accommodations ? `<div class="alert"><b>${escapeHTML(t("Allergies, medical & special needs"))}:</b> ${escapeHTML(c.accommodations)}</div>` : ""}
+        <h2>${escapeHTML(t("Child"))}</h2>
+        <table>
+          ${row(t("Age"), c.age)}
+          ${row(t("Age group"), classroomLabelWithRange(c.classroom))}
+          ${row(t("Start date"), c.enrollDate)}
+          ${row(t("Schedule"), `${c.sessionsApproved || ""} · ${c.sessionLength || ""} (${sessionTime(c.sessionLength)})`)}
+          ${row(t("Funding"), c.subsidized ? `${prog?.label || t("Subsidy")} — ${prog?.agency || ""}` : t("Private pay"))}
+          ${c.departedOn ? row(t("Last day of care"), c.departedOn) : ""}
+        </table>
+        <h2>${escapeHTML(t("Parents and guardians"))}</h2>
+        <table class="grid">
+          <tr><th>${escapeHTML(t("Name"))}</th><th>${escapeHTML(t("Relationship"))}</th><th>${escapeHTML(t("Phone"))}</th><th>${escapeHTML(t("Email"))}</th></tr>
+          ${guardians.map((g) => `<tr><td>${escapeHTML(g.name)}</td><td>${escapeHTML(t(g.relationship || ""))}</td><td>${escapeHTML(g.phone)}</td><td>${escapeHTML(g.email)}</td></tr>`).join("")}
+        </table>
+        <h2>${escapeHTML(t("Emergency contact"))}</h2>
+        <table>
+          ${row(t("Name"), ec.name)}
+          ${row(t("Relationship"), t(ec.relationship || ""))}
+          ${row(t("Phone"), ec.phone)}
+        </table>
+        <h2>${escapeHTML(t("Enrollment documents"))}</h2>
+        <table class="grid">
+          <tr><th>${escapeHTML(t("Document"))}</th><th>${escapeHTML(t("Status"))}</th><th>${escapeHTML(t("Date"))}</th></tr>
+          ${docs.map((d) => {
+            const name = CHILD_DOC_TEMPLATES.find((tpl) => tpl.id === d.id)?.name || d.id;
+            const on = d.status === "submitted";
+            return `<tr><td><span class="box">${on ? "&#10003;" : ""}</span>${escapeHTML(t(name))}</td><td>${escapeHTML(on ? t("On file") : t("Missing"))}</td><td>${escapeHTML(d.date || "")}</td></tr>`;
+          }).join("")}
+        </table>
+        <footer>${escapeHTML(t("Confidential — contains a child's personal information. Store securely."))}</footer>
+      </section>`;
+  };
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHTML(children.map((c) => c.child).join(", "))}</title>
+    <style>
+      @page { size: letter; margin: 0.6in; }
+      * { box-sizing: border-box; }
+      body { font-family: Georgia, "Times New Roman", serif; color: #111; font-size: 11pt; margin: 0; }
+      .sheet { page-break-after: always; }
+      .sheet:last-child { page-break-after: auto; }
+      header { display: flex; justify-content: space-between; border-bottom: 2px solid #111; padding-bottom: 8px; margin-bottom: 14px; }
+      .provider { font-weight: bold; font-size: 12pt; }
+      .title { font-weight: bold; text-transform: uppercase; letter-spacing: 0.06em; font-size: 10pt; }
+      .right { text-align: right; }
+      .muted { color: #444; font-size: 9.5pt; }
+      h1 { font-size: 20pt; margin: 0 0 10px; }
+      h2 { font-size: 10.5pt; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid #999; padding-bottom: 3px; margin: 16px 0 6px; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { text-align: left; vertical-align: top; padding: 4px 6px; }
+      table:not(.grid) th { width: 32%; font-weight: normal; color: #444; }
+      table.grid th { font-size: 9.5pt; color: #444; border-bottom: 1px solid #999; }
+      table.grid td { border-bottom: 1px solid #ddd; }
+      .alert { border: 2px solid #111; padding: 8px 10px; margin: 6px 0 4px; }
+      .box { display: inline-block; width: 12px; height: 12px; border: 1px solid #111; margin-right: 7px; text-align: center; line-height: 11px; font-size: 10px; }
+      footer { margin-top: 22px; font-size: 8.5pt; color: #444; border-top: 1px solid #999; padding-top: 6px; }
+    </style></head><body>${children.map(sheet).join("")}</body></html>`;
+  // A hidden frame avoids pop-up blockers and leaves the app as it was.
+  const frame = document.createElement("iframe");
+  frame.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;";
+  document.body.appendChild(frame);
+  const doc = frame.contentWindow.document;
+  doc.open(); doc.write(html); doc.close();
+  setTimeout(() => {
+    frame.contentWindow.focus();
+    frame.contentWindow.print();
+    setTimeout(() => frame.remove(), 1000);
+  }, 150);
 }
 
 /* ------------------------------ enrollment ------------------------------------ */
