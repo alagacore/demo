@@ -153,20 +153,22 @@ const ACCESS_DURATIONS = [
 // feature flags — check-in is deferred until B2B/B2C check-in processes are finalized
 const FEATURES = { checkin: false };
 
+// Ordered by how a provider's day runs: today's work first, then the people,
+// then the money, then paperwork, then the planning tools.
 const NAV = [
   { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
   { id: "checkin", label: "Check-in", icon: ScanLine },
-  { id: "families", label: "Families", icon: Users },
   { id: "bookings", label: "Bookings", icon: CalendarClock },
-  { id: "staff", label: "Staff & Ratios", icon: UserCog, extended: true },
   { id: "calendar", label: "Calendar", icon: CalendarDays },
+  { id: "messages", label: "Messages", icon: MessageSquare },
+  { id: "families", label: "Families", icon: Users },
   { id: "tours", label: "Tours", icon: ListChecks },
   { id: "waitlist", label: "Waitlist", icon: Hourglass },
   { id: "subsidy", label: "Subsidy", icon: ShieldCheck },
   { id: "payments", label: "Finances", icon: CreditCard },
   { id: "compliance", label: "Compliance", icon: ClipboardCheck },
   { id: "security", label: "Privacy & Security", icon: Lock, extended: true },
-  { id: "messages", label: "Messages", icon: MessageSquare },
+  { id: "staff", label: "Staff & Ratios", icon: UserCog, extended: true },
   { id: "analytics", label: "Analytics", icon: BarChart3, extended: true },
   { id: "growth", label: "Growth", icon: TrendingUp, badge: "New", extended: true },
   { id: "support", label: "Support", icon: LifeBuoy },
@@ -579,6 +581,7 @@ function isoToMDY(iso) {
   return `${String(m).padStart(2, "0")}/${String(d).padStart(2, "0")}/${y}`;
 }
 const todayMDY = () => isoToMDY(new Date().toISOString().slice(0, 10));
+const initialsOf = (name) => (name || "").split(/\s+/).filter((w) => /^[A-Za-z]/.test(w)).slice(0, 2).map((w) => w[0].toUpperCase()).join("") || "?";
 const daysUntil = (mmddyyyy) => {
   if (!mmddyyyy || !mmddyyyy.includes("/")) return 9999;
   const [m, d, y] = mmddyyyy.split("/").map(Number);
@@ -729,6 +732,11 @@ const T = {
   "Large": { es: "Grande", tl: "Malaki", zh: "大", vi: "Lớn", ko: "크게" },
   "Extra large": { es: "Muy grande", tl: "Sobrang laki", zh: "特大", vi: "Rất lớn", ko: "매우 크게" },
   "Provider OS": { es: "Sistema del Proveedor", tl: "Provider OS", zh: "服务商系统", vi: "Hệ thống nhà cung cấp", ko: "제공자 시스템" },
+  "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
+  "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
+  "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
+  "missing documents": { es: "documentos faltantes", tl: "kulang na dokumento", zh: "份文件缺失", vi: "hồ sơ còn thiếu", ko: "누락 서류" },
+  "missing document": { es: "documento faltante", tl: "kulang na dokumento", zh: "份文件缺失", vi: "hồ sơ còn thiếu", ko: "누락 서류" },
   "The foundation for your childcare business": { es: "La base de su negocio de cuidado infantil", tl: "Ang pundasyon ng negosyo mo sa childcare", zh: "您托育事业的基石", vi: "Nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업을 위한 토대" },
   "Simple": { es: "Simple", tl: "Simple", zh: "简易版", vi: "Đơn giản", ko: "심플" },
   "Extended": { es: "Extendido", tl: "Extended", zh: "扩展版", vi: "Mở rộng", ko: "확장" },
@@ -2942,7 +2950,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   // the Families directory rather than dropping the provider into the full list.
   const goToFamily = useCallback((famId) => {
     const match = (isEmpty ? [] : FAMILIES).find((f) => f.id === famId);
-    if (match) setOpenHousehold(match.householdName);
+    if (match) setOpenHousehold(match.household);
     navigateToScreen("families");
   }, [isEmpty, navigateToScreen]);
   const [overrides, setOverrides] = useState({});
@@ -3124,9 +3132,9 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
         <>
           <Sidebar screen={screen} setScreen={setScreen} mode={mode} setMode={setMode} provider={providerInfo} onExitToLanding={onExitToLanding} isEmpty={isEmpty} navItems={navItems} tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} financesTab={financesTab} setFinancesTab={setFinancesTab} />
           <main style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
-            <Topbar screen={screen} setScreen={setScreen} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} />
+            <Topbar screen={screen} setScreen={setScreen} provider={providerInfo} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} />
             <div style={{ flex: 1, overflowY: "auto", padding: "28px 32px 60px" }}>
-              {screen === "dashboard" && <Dashboard setScreen={setScreen} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} />}
+              {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
               {screen === "families" && <Families families={families} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
               {screen === "bookings" && <Bookings families={families} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
@@ -3256,7 +3264,7 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
         <AlagaMark size={30} color="#EFEAE0" arch={false} />
         <div>
           <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 900, lineHeight: 1 }}>alaga</div>
-          <div style={{ fontSize: 8.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "#B9CFC6", marginTop: 4 }}>{t("The foundation for your childcare business")}</div>
+          <div style={{ fontSize: 8.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "#B9CFC6", marginTop: 4 }}>{t("Nurturing the foundation for your childcare business")}</div>
         </div>
       </div>
 
@@ -3372,7 +3380,7 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
   );
 }
 
-function Topbar({ screen, setScreen, families, staff, goBack, canGoBack, goToFamily }) {
+function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBack, goToFamily }) {
   const t = useT();
   const title = NAV.find((n) => n.id === screen)?.label || "";
   // Reflects the real current date whenever the page loads/refreshes.
@@ -3463,7 +3471,7 @@ function Topbar({ screen, setScreen, families, staff, goBack, canGoBack, goToFam
             </div>
           )}
         </div>
-        <div style={{ width: 34, height: 34, borderRadius: "50%", background: C.tealTint, color: C.tealDark, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 13 }}>TA</div>
+        <div style={{ width: 34, height: 34, borderRadius: "50%", background: C.tealTint, color: C.tealDark, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 13 }} title={provider?.contactName || provider?.name}>{initialsOf(provider?.contactName || provider?.name)}</div>
       </div>
     </div>
   );
@@ -3482,13 +3490,12 @@ function computeSetupItems({ providerInfo, weeklySchedule, staff, families, pros
   ];
 }
 
-function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNotices, saveDismissedNotices, tuitionRates, saveTuitionRates, weeklySchedule, staff, prospects, compDocs, providerInfo, flexCareRequests, saveFlexCare, goToSubsidyFamily, goToFlexRequest, meetingMode = false }) {
+function Dashboard({ setScreen, goToFamily, families, checklist, saveChecklist, dismissedNotices, saveDismissedNotices, tuitionRates, saveTuitionRates, weeklySchedule, staff, prospects, compDocs, providerInfo, flexCareRequests, saveFlexCare, goToSubsidyFamily, goToFlexRequest, meetingMode = false }) {
   const t = useT();
   const [newTask, setNewTask] = useState("");
   const [collapsed, setCollapsed] = useState({});
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [showAttention, setShowAttention] = useState(true);
-  const [ratesOpen, setRatesOpen] = useState(false);
   const subsidizedFams = families.filter((f) => f.subsidized);
   const privateFams = families.filter((f) => !f.subsidized);
   const monthlySubsidy = subsidizedFams.reduce((s, f) => s + (f.coverageBasis === "monthly" ? f.coverageAmount : 0), 0);
@@ -3498,25 +3505,34 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
   const pendingFlex = flexCareRequests.filter((r) => r.status === "pending" && !isPastDate(r.date));
   const unpaidFlex = flexCareRequests.filter((r) => r.status === "approved" && !r.paymentConfirmed && !isPastDate(r.date));
   const flexNeedingAttention = [...pendingFlex, ...unpaidFlex];
-  const totalAttention = expiring.length + flexNeedingAttention.length;
+  // Paperwork that's pending or missing — the licensing documents for the
+  // business, and each child's own file (immunizations, enrollment forms, etc.).
+  const docsNeedingAttention = compDocs.filter((d) => d.status !== "submitted");
+  const childrenMissingDocs = families
+    .map((f) => ({ f, missing: defaultChildDocs(f).filter((d) => d.status === "missing").length }))
+    .filter((x) => x.missing > 0);
+  const totalAttention = expiring.length + flexNeedingAttention.length + docsNeedingAttention.length + childrenMissingDocs.length;
   const approveFlexInline = (id) => saveFlexCare(flexCareRequests.map((r) => (r.id === id ? { ...r, status: "approved" } : r)));
 
   const setupItems = computeSetupItems({ providerInfo, weeklySchedule, staff, families, prospects, compDocs });
   const setupDoneCount = setupItems.filter((i) => i.done).length;
   const setupPct = Math.round((setupDoneCount / setupItems.length) * 100);
 
-  const doneCount = checklist.filter((c) => c.done).length;
+  // "Today's" checklist starts fresh each morning: a task only counts as done
+  // if it was ticked off today, so yesterday's checks don't carry over.
+  const today = todayMDY();
+  const isDoneToday = (c) => c.doneOn === today;
+  const doneCount = checklist.filter(isDoneToday).length;
   const pct = checklist.length ? Math.round((doneCount / checklist.length) * 100) : 0;
-  const toggleTask = (id) => saveChecklist(checklist.map((c) => (c.id === id ? { ...c, done: !c.done } : c)));
+  const toggleTask = (id) => saveChecklist(checklist.map((c) => (c.id === id ? { ...c, doneOn: isDoneToday(c) ? null : today } : c)));
   const addTask = () => {
     if (!newTask.trim()) return;
-    saveChecklist([...checklist, { id: Date.now(), text: newTask, done: false }]);
+    saveChecklist([...checklist, { id: Date.now(), text: newTask, doneOn: null }]);
     setNewTask("");
   };
   const removeTask = (id) => saveChecklist(checklist.filter((c) => c.id !== id));
   const resolveNotice = (famId) => saveDismissedNotices([...dismissedNotices, famId]);
   const toggleCollapse = (id) => setCollapsed((c) => ({ ...c, [id]: !c[id] }));
-  const openDays = weeklySchedule.filter((d) => d.open);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
@@ -3578,6 +3594,32 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
                   )}
                 </div>
               ))}
+              {docsNeedingAttention.length > 0 && (
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Documents")}</div>
+              )}
+              {docsNeedingAttention.map((d) => (
+                <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
+                  <button onClick={() => setScreen("compliance")} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
+                    <Dot c={d.status === "missing" ? "#F2A28A" : "#F2C88A"} /><b style={{ fontSize: 13 }}>{t(d.name)}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {d.date || t(d.status)}</span>
+                  </button>
+                  <button onClick={() => setScreen("compliance")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                    {t("Review")}
+                  </button>
+                </div>
+              ))}
+              {childrenMissingDocs.length > 0 && (
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Child records")}</div>
+              )}
+              {childrenMissingDocs.map(({ f, missing }) => (
+                <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
+                  <button onClick={() => goToFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
+                    <Dot c="#F2A28A" /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {missing} {t(missing === 1 ? "missing document" : "missing documents")}</span>
+                  </button>
+                  <button onClick={() => goToFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                    {t("Review")}
+                  </button>
+                </div>
+              ))}
             </div>
           )}
         </div>
@@ -3622,8 +3664,8 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
         {checklist.map((c) => (
           <div key={c.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "9px 18px", borderBottom: `1px solid ${C.line}` }}>
             <label style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13.5, cursor: "pointer", flex: 1 }}>
-              <input type="checkbox" checked={c.done} onChange={() => toggleTask(c.id)} style={{ width: 16, height: 16, accentColor: C.teal }} />
-              <span style={{ textDecoration: c.done ? "line-through" : "none", color: c.done ? C.inkSoft : C.ink }}>{c.text}</span>
+              <input type="checkbox" checked={isDoneToday(c)} onChange={() => toggleTask(c.id)} style={{ width: 16, height: 16, accentColor: C.teal }} />
+              <span style={{ textDecoration: isDoneToday(c) ? "line-through" : "none", color: isDoneToday(c) ? C.inkSoft : C.ink }}>{c.text}</span>
             </label>
             <button onClick={() => removeTask(c.id)} style={{ background: "none", border: "none", color: C.inkSoft }}><X size={13} /></button>
           </div>
@@ -3666,32 +3708,6 @@ function Dashboard({ setScreen, families, checklist, saveChecklist, dismissedNot
         })}
       </div>
 
-      <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, overflow: "hidden" }}>
-        <button onClick={() => setRatesOpen(!ratesOpen)} style={{
-          width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left",
-          padding: "13px 18px", background: "none", border: "none", borderBottom: ratesOpen ? `1px solid ${C.line}` : "none",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 600, fontSize: 14 }}>
-            <Clock size={15} color={C.teal} /> {t("Weekly hours")}
-          </div>
-          <ChevronDown size={16} color={C.inkSoft} style={{ transform: ratesOpen ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />
-        </button>
-        {ratesOpen && (
-          <div style={{ padding: "10px 18px", fontSize: 11.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
-            <Clock size={12} /> {openDays.length > 0 ? `${openDays.map((d) => t(d.day).slice(0, 3)).join(", ")} · ${openDays[0].hours}` : t("No open days set — configure in Calendar.")}
-            <button onClick={() => setScreen("calendar")} style={{ marginLeft: "auto", fontSize: 11, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("Edit in Calendar")}</button>
-          </div>
-        )}
-      </div>
-
-      <button onClick={() => setScreen("payments")} style={{
-        display: "flex", alignItems: "center", gap: 8, padding: "12px 18px", borderRadius: 14, border: `1px solid ${C.line}`,
-        background: "#fff", color: C.tealDark, fontSize: 12.5, fontWeight: 600, textAlign: "left",
-      }}>
-        <DollarSign size={15} color={C.teal} />
-        {t("Tuition rates and sibling discount now live in Finances → Tuition & Subsidies.")}
-        <ArrowRight size={13} style={{ marginLeft: "auto" }} />
-      </button>
     </div>
   );
 }
