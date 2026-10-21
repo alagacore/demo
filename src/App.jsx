@@ -894,6 +894,14 @@ const T = {
   "page": { es: "página", tl: "pahina", zh: "页", vi: "trang", ko: "페이지" },
   "pages": { es: "páginas", tl: "pahina", zh: "页", vi: "trang", ko: "페이지" },
   "One page per child with each scheduled day, times already recorded here, and lines for parent signatures.": { es: "Una página por niño con cada día programado, las horas ya registradas aquí y líneas para la firma de los padres.", tl: "Isang pahina bawat bata: bawat naka-schedule na araw, mga oras na naitala na rito, at linya para sa pirma ng magulang.", zh: "每个孩子一页：列出每个排定日、此处已记录的时间以及家长签名栏。", vi: "Mỗi trẻ một trang: các ngày theo lịch, giờ đã ghi ở đây và dòng chữ ký phụ huynh.", ko: "아이별 한 장: 예정된 날짜, 여기 기록된 시간, 보호자 서명란." },
+  "Care schedules you offer": { es: "Horarios de cuidado que ofrece", tl: "Mga iskedyul na inaalok mo", zh: "您提供的托育时段", vi: "Các khung giờ chăm sóc bạn cung cấp", ko: "제공하는 돌봄 일정" },
+  "e.g. Before & after school": { es: "ej. Antes y después de la escuela", tl: "hal. Bago at pagkatapos ng klase", zh: "例如：课前课后", vi: "vd: Trước và sau giờ học", ko: "예: 방과 전후" },
+  "e.g. 7:00 AM – 8:30 AM, 2:30 PM – 6:00 PM": { es: "ej. 7:00 AM – 8:30 AM, 2:30 PM – 6:00 PM", tl: "hal. 7:00 AM – 8:30 AM, 2:30 PM – 6:00 PM", zh: "例如：7:00 AM – 8:30 AM, 2:30 PM – 6:00 PM", vi: "vd: 7:00 AM – 8:30 AM, 2:30 PM – 6:00 PM", ko: "예: 7:00 AM – 8:30 AM, 2:30 PM – 6:00 PM" },
+  "In use by enrolled children": { es: "En uso por niños inscritos", tl: "Ginagamit ng mga naka-enroll na bata", zh: "已有在托儿童使用", vi: "Đang được trẻ ghi danh sử dụng", ko: "등록 아동이 사용 중" },
+  "Add a schedule": { es: "Agregar un horario", tl: "Magdagdag ng iskedyul", zh: "添加时段", vi: "Thêm khung giờ", ko: "일정 추가" },
+  "These appear when you set a child's schedule. A child can also have their own drop-off and pick-up times.": { es: "Aparecen al configurar el horario de un niño. Un niño también puede tener sus propias horas de entrega y recogida.", tl: "Lumalabas ang mga ito kapag nagse-set ng iskedyul ng bata. Puwede ring may sariling oras ng hatid at sundo ang bata.", zh: "设置孩子时段时会显示这些选项。孩子也可以有自己的接送时间。", vi: "Các mục này hiện khi bạn đặt lịch cho trẻ. Trẻ cũng có thể có giờ đưa đón riêng.", ko: "아이 일정을 설정할 때 표시됩니다. 아이별 등·하원 시간도 따로 정할 수 있습니다." },
+  "Their own drop-off and pick-up times (optional)": { es: "Sus propias horas de entrega y recogida (opcional)", tl: "Sariling oras ng hatid at sundo (opsyonal)", zh: "其专属接送时间（可选）", vi: "Giờ đưa đón riêng (tùy chọn)", ko: "아이별 등·하원 시간 (선택)" },
+  "Hours": { es: "Horario", tl: "Oras", zh: "时间", vi: "Giờ", ko: "시간" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -1719,7 +1727,13 @@ const SESSION_TIMES = {
   "Part-time (3 hrs)": "9:00 AM – 12:00 PM",
   "Drop-in / hourly": "Varies by day",
 };
-const sessionTime = (sl) => SESSION_TIMES[sl] || sl;
+// Each provider defines the schedules they offer (name + hours) in Calendar →
+// Weekly Hours. The workspace keeps this list current; these are the defaults.
+const DEFAULT_CARE_SCHEDULES = Object.entries(SESSION_TIMES).map(([name, hours]) => ({ name, hours }));
+let ACTIVE_CARE_SCHEDULES = DEFAULT_CARE_SCHEDULES;
+const sessionTime = (sl) => ACTIVE_CARE_SCHEDULES.find((x) => x.name === sl)?.hours || SESSION_TIMES[sl] || sl;
+// A child's own drop-off/pick-up times win over their schedule's usual hours.
+const childHours = (f) => (f.customHours && f.customHours.trim()) || sessionTime(f.sessionLength);
 
 
 // Which days a child actually attends — falls back to a sensible default derived from
@@ -3145,6 +3159,8 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
       }))
     : WEEKLY_SCHEDULE_DEFAULT;
   const [weeklySchedule, saveWeeklySchedule] = usePersistentState(`calendar-weekly${sfx}`, initialSchedule);
+  const [careSchedules, saveCareSchedules] = usePersistentState(`care-schedules${sfx}`, DEFAULT_CARE_SCHEDULES);
+  ACTIVE_CARE_SCHEDULES = careSchedules.length ? careSchedules : DEFAULT_CARE_SCHEDULES;
   const [closures, saveClosures] = usePersistentState(`calendar-closures${sfx}`, isEmpty ? [] : PACKET_CLOSURES.map((c, i) => {
     const [start, end] = c.dates.split(" – ");
     return { id: `pc${i}`, name: c.name, dates: c.dates, start, end: end || start, fromPacket: true, notified: true };
@@ -3333,7 +3349,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
               {screen === "families" && <Families families={families} provider={providerInfo} onWithdraw={withdrawChild} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
               {screen === "bookings" && <Bookings families={families} schedule={fullWeek(weeklySchedule)} closures={closures} provider={providerInfo} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
               {screen === "staff" && <StaffScreen staff={staff} families={families} updateStaffMember={updateStaffMember} addStaffMember={addStaffMember} removeStaffMember={removeStaffMember} />}
-              {screen === "calendar" && <CalendarScreen schedule={fullWeek(weeklySchedule)} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} families={families} threads={threads} saveThreads={saveThreads} />}
+              {screen === "calendar" && <CalendarScreen careSchedules={careSchedules} saveCareSchedules={saveCareSchedules} schedule={fullWeek(weeklySchedule)} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} families={families} threads={threads} saveThreads={saveThreads} />}
               {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} startEnroll={(p) => setEnrollingProspectId(p.id)} />}
               {screen === "waitlist" && <WaitlistScreen prospects={prospects} updateProspect={updateProspect} removeProspect={removeProspect} logAccess={logAccess} families={families} providerInfo={providerInfo} startEnroll={(p) => setEnrollingProspectId(p.id)} />}
               {screen === "subsidy" && <Subsidy families={families} openFamId={openFamId} setOpenFamId={setOpenFamId} loaded={loaded} meetingMode={meetingMode} />}
@@ -3903,7 +3919,7 @@ function Dashboard({ setScreen, goToFamily, families, checklist, saveChecklist, 
                 <ChevronDown size={15} color={C.inkSoft} style={{ transform: isCollapsed ? "rotate(-90deg)" : "none", transition: "transform 0.15s" }} />
               </button>
               {!isCollapsed && g.families.map((f) => (
-                <Row key={f.id} left={<><Dot c={f.color} /><b>{f.child}</b></>} right={<span style={{ color: C.inkSoft, fontSize: 13 }}>{sessionTime(f.sessionLength)}</span>} />
+                <Row key={f.id} left={<><Dot c={f.color} /><b>{f.child}</b></>} right={<span style={{ color: C.inkSoft, fontSize: 13 }}>{childHours(f)}</span>} />
               ))}
             </div>
           );
@@ -4407,6 +4423,8 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
   const [sessionsApproved, setSessionsApproved] = useState(child.sessionsApproved);
   const [sessionLength, setSessionLength] = useState(child.sessionLength);
   const [days, setDays] = useState(childDays(child));
+  const [customHours, setCustomHours] = useState(child.customHours || "");
+  const scheduleNames = Array.from(new Set([...ACTIVE_CARE_SCHEDULES.map((o) => o.name), child.sessionLength].filter(Boolean)));
   const [editingTuition, setEditingTuition] = useState(false);
   const [tuition, setTuition] = useState(child.copay);
   const [notes, setNotes] = useState(child.notes);
@@ -4524,7 +4542,7 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
             {!editingSession ? (
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                 <StatBlock label={t("Schedule")} value={`${sessionsApproved} · ${days.map((d) => t(d).slice(0, 3)).join(", ")}`} />
-                <StatBlock label={t("Session length")} value={`${sessionLength} · ${sessionTime(sessionLength)}`} />
+                <StatBlock label={t("Session length")} value={`${t(sessionLength)} · ${(customHours && customHours.trim()) || sessionTime(sessionLength)}`} />
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -4545,10 +4563,11 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
                     </div>
                   )}
                 </Field>
-                <Field label={t("Session length")}><Select value={sessionLength} onChange={setSessionLength} options={SESSION_LENGTHS} /></Field>
+                <Field label={t("Session length")}><Select value={sessionLength} onChange={setSessionLength} options={scheduleNames} labels={scheduleNames.map((n) => `${t(n)} · ${sessionTime(n)}`)} /></Field>
+                <Field label={t("Their own drop-off and pick-up times (optional)")}><input value={customHours} onChange={(e) => setCustomHours(e.target.value)} placeholder={sessionTime(sessionLength)} style={inputStyle} /></Field>
                 <div style={{ display: "flex", gap: 8 }}>
-                  <button onClick={() => { setEditingSession(false); setSessionsApproved(child.sessionsApproved); setSessionLength(child.sessionLength); setDays(childDays(child)); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Cancel")}</button>
-                  <button onClick={() => { saveField("session", { sessionsApproved, sessionLength, daysOfWeek: days }); setEditingSession(false); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Save changes")}</button>
+                  <button onClick={() => { setEditingSession(false); setSessionsApproved(child.sessionsApproved); setSessionLength(child.sessionLength); setDays(childDays(child)); setCustomHours(child.customHours || ""); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Cancel")}</button>
+                  <button onClick={() => { saveField("session", { sessionsApproved, sessionLength, daysOfWeek: days, customHours: customHours.trim() }); setEditingSession(false); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12.5, fontWeight: 600 }}>{t("Save changes")}</button>
                 </div>
               </div>
             )}
@@ -5031,7 +5050,7 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
                         )}
                       </div>
                       <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                        <span style={{ fontSize: 12.5, color: C.inkSoft }}>{sessionTime(f.sessionLength)}</span>
+                        <span style={{ fontSize: 12.5, color: C.inkSoft }}>{childHours(f)}</span>
                         <button onClick={() => (isMoving ? setMovingId(null) : startMove(f))} title={t("Move classroom")} style={{
                           display: "flex", alignItems: "center", gap: 5, padding: "5px 8px", borderRadius: 7, border: `1px solid ${C.line}`, background: isMoving ? C.tealTint : "#fff", fontSize: 11, fontWeight: 700, color: C.tealDark,
                         }}>
@@ -5555,8 +5574,16 @@ function StaffDrawer({ member, onClose, update, remove }) {
 }
 
 /* --------------------------------- calendar ------------------------------------ */
-function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events, saveEvents, families, threads, saveThreads }) {
+function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events, saveEvents, families, threads, saveThreads, careSchedules = DEFAULT_CARE_SCHEDULES, saveCareSchedules }) {
   const t = useT();
+  const [editingOffers, setEditingOffers] = useState(false);
+  const [offers, setOffers] = useState(careSchedules);
+  const inUse = (name) => (families || []).filter((f) => f.sessionLength === name).length;
+  const saveOffers = async () => {
+    const clean = offers.map((o) => ({ name: o.name.trim(), hours: o.hours.trim() })).filter((o) => o.name);
+    if (saveCareSchedules) await saveCareSchedules(clean.length ? clean : DEFAULT_CARE_SCHEDULES);
+    setEditingOffers(false);
+  };
   const [editing, setEditing] = useState(false);
   const [local, setLocal] = useState(schedule);
   const [form, setForm] = useState({ start: "", end: "", name: "", notify: false });
@@ -5636,6 +5663,29 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
           }}>{label}</button>
         ))}
       </div>
+
+      {tab === "hours" && (
+        <Card title={t("Care schedules you offer")} icon={Clock}
+          right={<button onClick={() => (editingOffers ? saveOffers() : (setOffers(careSchedules), setEditingOffers(true)))} style={{ fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{editingOffers ? t("Save changes") : t("Edit")}</button>}>
+          {!editingOffers ? (
+            careSchedules.map((o) => (
+              <Row key={o.name} left={<b>{t(o.name)}</b>} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{o.hours || "—"}{inUse(o.name) ? ` · ${inUse(o.name)} ${t(inUse(o.name) === 1 ? "child" : "children")}` : ""}</span>} />
+            ))
+          ) : (
+            <div style={{ padding: "12px 18px", display: "flex", flexDirection: "column", gap: 8 }}>
+              {offers.map((o, i) => (
+                <div key={i} style={{ display: "flex", gap: 8 }}>
+                  <input value={o.name} onChange={(e) => setOffers((os) => os.map((x, xi) => (xi === i ? { ...x, name: e.target.value } : x)))} placeholder={t("e.g. Before & after school")} style={{ ...inputStyle, flex: 1.2 }} />
+                  <input value={o.hours} onChange={(e) => setOffers((os) => os.map((x, xi) => (xi === i ? { ...x, hours: e.target.value } : x)))} placeholder={t("e.g. 7:00 AM – 8:30 AM, 2:30 PM – 6:00 PM")} style={{ ...inputStyle, flex: 1.6 }} />
+                  <button type="button" onClick={() => setOffers((os) => os.filter((_, xi) => xi !== i))} disabled={inUse(o.name) > 0} title={inUse(o.name) > 0 ? t("In use by enrolled children") : t("Remove")} style={{ width: 30, borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", color: inUse(o.name) > 0 ? "#C9C4B4" : C.danger, display: "flex", alignItems: "center", justifyContent: "center" }}><Trash2 size={12} /></button>
+                </div>
+              ))}
+              <button type="button" onClick={() => setOffers((os) => [...os, { name: "", hours: "" }])} style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 5, padding: "5px 9px", borderRadius: 7, border: `1px dashed ${C.teal}`, background: "none", color: C.teal, fontSize: 11.5, fontWeight: 600 }}><Plus size={11} /> {t("Add a schedule")}</button>
+              <div style={{ fontSize: 11, color: C.inkSoft }}>{t("These appear when you set a child's schedule. A child can also have their own drop-off and pick-up times.")}</div>
+            </div>
+          )}
+        </Card>
+      )}
 
       {tab === "hours" && (
         <Card title={t("Weekly availability")} icon={CalendarDays}
@@ -6123,7 +6173,7 @@ function printChildSheets(children, { parents = [], provider = {}, t = (x) => x,
           ${row(t("Age"), c.age)}
           ${row(t("Age group"), classroomLabelWithRange(c.classroom))}
           ${row(t("Start date"), c.enrollDate)}
-          ${row(t("Schedule"), `${c.sessionsApproved || ""} · ${c.sessionLength || ""} (${sessionTime(c.sessionLength)})`)}
+          ${row(t("Schedule"), `${c.sessionsApproved || ""} · ${childDays(c).map((x) => t(x).slice(0, 3)).join(", ")} · ${c.sessionLength || ""} (${childHours(c)})`)}
           ${row(t("Funding"), c.subsidized ? `${prog?.label || t("Subsidy")} — ${prog?.agency || ""}` : t("Private pay"))}
           ${c.departedOn ? row(t("Last day of care"), c.departedOn) : ""}
         </table>
@@ -6299,6 +6349,10 @@ function EnrollModal({ prospect, providerInfo, tuitionRates, onCancel, onEnroll 
   const [tried, setTried] = useState(false);
 
   const care = CARE_TYPES.find((c) => c.id === careType);
+  // The provider's own schedule options; defaults to the one matching the care type.
+  const scheduleNames = ACTIVE_CARE_SCHEDULES.map((o) => o.name);
+  const [schedulePick, setSchedulePick] = useState(null);
+  const sessionLength = schedulePick || (scheduleNames.includes(care.sessionLength) ? care.sessionLength : scheduleNames[0] || care.sessionLength);
   const tuitionFor = (classroom) => tuitionRates?.[classroom]?.[care.rateKey] || 0;
   // Typing an age moves the age group along with it, until the provider picks one themselves.
   const setChild = (i, k, v) => setChildren((cs) => cs.map((c, idx) => {
@@ -6342,7 +6396,7 @@ function EnrollModal({ prospect, providerInfo, tuitionRates, onCancel, onEnroll 
       coverageBasis: pay === "subsidy" ? "monthly" : "private-pay",
       copay: pay === "subsidy" ? Number(subsidy.copay) || 0 : tuitionFor(c.classroom),
       sessionsApproved: care.sessions,
-      sessionLength: care.sessionLength,
+      sessionLength,
       authStart: start,
       authEnd: pay === "subsidy" ? (subsidy.authEnd || "") : "Ongoing",
       // A subsidized family starts with its paperwork outstanding; private-pay has none.
@@ -6397,9 +6451,14 @@ function EnrollModal({ prospect, providerInfo, tuitionRates, onCancel, onEnroll 
               <div>{label(t("Start date"))}<DateField value={start} onChange={(v) => setStart(v || "")} /></div>
               <div>{label(t("Schedule"))}
                 <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                  {CARE_TYPES.map((ct) => <button key={ct.id} type="button" onClick={() => setCareType(ct.id)} style={chip(careType === ct.id)}>{t(ct.id)}</button>)}
+                  {CARE_TYPES.map((ct) => <button key={ct.id} type="button" onClick={() => { setCareType(ct.id); setSchedulePick(null); }} style={chip(careType === ct.id)}>{t(ct.id)}</button>)}
                 </div>
               </div>
+              {scheduleNames.length > 0 && (
+                <div>{label(t("Hours"))}
+                  <Select value={sessionLength} onChange={setSchedulePick} options={scheduleNames} labels={scheduleNames.map((n) => `${t(n)} · ${sessionTime(n)}`)} />
+                </div>
+              )}
             </div>
           </Section>
 
