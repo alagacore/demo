@@ -16,23 +16,26 @@ import {
 } from "recharts";
 
 /* ---------------------------------- tokens --------------------------------- */
+// Softer, lighter palette: warm off-white surfaces, one muted terracotta for
+// actions and focus, and quieter tints for status. Text meets WCAG AA contrast.
 const C = {
-  cream: "#F8F1E1",
+  cream: "#FAF6EF",
   paper: "#FFFFFF",
+  side: "#F5F0E8",
   ink: "#2E2A22",
-  inkSoft: "#6B5F4D",
-  teal: "#C65F17",
-  tealDark: "#A65C1A",
-  tealTint: "#FBE4D1",
-  amber: "#C1934E",
-  amberTint: "#F3E6D1",
-  coral: "#DD7B25",
-  coralTint: "#FCE6D3",
-  sky: "#AF9557",
-  skyTint: "#EFE9DB",
-  line: "#E3D8C3",
+  inkSoft: "#6A6052",
+  teal: "#B05A22",
+  tealDark: "#8E4E1F",
+  tealTint: "#F7EADF",
+  amber: "#966B2B",
+  amberTint: "#F6EEDF",
+  coral: "#BE6A2C",
+  coralTint: "#F9ECDF",
+  sky: "#7D6C45",
+  skyTint: "#F1ECE2",
+  line: "#EAE2D5",
   danger: "#B3483C",
-  dangerTint: "#F7E3E0",
+  dangerTint: "#F8E9E6",
 };
 
 const FONTS = `
@@ -1240,6 +1243,56 @@ const T = {
   "Sent to Alaga support. Replies show in Support → My Requests.": { es: "Enviado al soporte de Alaga. Las respuestas aparecen en Soporte → Mis solicitudes.", tl: "Naipadala sa Alaga support. Lalabas ang sagot sa Support → My Requests.", zh: "已发送给Alaga支持团队。回复显示在“支持 → 我的请求”中。", vi: "Đã gửi đến hỗ trợ Alaga. Phản hồi hiện trong Hỗ trợ → Yêu cầu của tôi.", ko: "Alaga 지원팀에 전송되었습니다. 답변은 지원 → 내 요청에 표시됩니다." },
   "Didn't move forward": { es: "No continuaron", tl: "Hindi tumuloy", zh: "未继续", vi: "Không tiếp tục", ko: "진행 안 한 가족" },
   "To add a family, open them in Tours and set their stage to Waitlist. Families who didn't move forward are in Tours → Declined.": { es: "Para agregar una familia, ábrela en Visitas y cambia su etapa a Lista de espera. Las familias que no continuaron están en Visitas → Declinadas.", tl: "Para magdagdag, buksan ang pamilya sa Tours at gawing Waitlist ang stage. Nasa Tours → Declined ang mga hindi tumuloy.", zh: "如需添加家庭，请在“参观”中打开并将阶段设为候补。未继续的家庭在“参观 → 已拒绝”中。", vi: "Để thêm gia đình, mở trong Tham quan và đặt giai đoạn là Danh sách chờ. Gia đình không tiếp tục nằm ở Tham quan → Từ chối.", ko: "가족을 추가하려면 견학에서 열고 단계를 대기자로 바꾸세요. 진행하지 않은 가족은 견학 → 거절에 있습니다." },
+  "How do I…": { es: "¿Cómo…?", tl: "Paano…", zh: "如何…", vi: "Làm sao để…", ko: "방법 안내" },
+  "Take me there": { es: "Llévame ahí", tl: "Dalhin ako roon", zh: "带我去", vi: "Đưa tôi đến đó", ko: "바로 가기" },
+  "Browse all help": { es: "Ver toda la ayuda", tl: "Tingnan lahat ng tulong", zh: "浏览全部帮助", vi: "Xem tất cả hướng dẫn", ko: "전체 도움말 보기" },
+  "Search, or ask how to do something…": { es: "Busca o pregunta cómo hacer algo…", tl: "Maghanap, o itanong kung paano…", zh: "搜索，或询问如何操作…", vi: "Tìm kiếm hoặc hỏi cách làm…", ko: "검색하거나 방법을 물어보세요…" },
+  "Type what you want to do — e.g. print a receipt": { es: "Escribe lo que quieres hacer — p. ej. imprimir un recibo", tl: "I-type ang gusto mong gawin — hal. mag-print ng resibo", zh: "输入您想做的事 — 例如：打印收据", vi: "Nhập việc bạn muốn làm — vd: in biên nhận", ko: "하고 싶은 일을 입력하세요 — 예: 영수증 인쇄" },
+  "No answer for that yet. Ask us under Contact Us and we'll help.": { es: "Aún no hay respuesta para eso. Pregúntanos en Contáctanos y te ayudamos.", tl: "Wala pang sagot para diyan. Magtanong sa Contact Us at tutulungan ka namin.", zh: "暂时没有答案。请在“联系我们”中提问，我们会帮您。", vi: "Chưa có câu trả lời. Hãy hỏi chúng tôi trong Liên hệ.", ko: "아직 답변이 없습니다. 문의하기로 질문해 주세요." },
+  "Families & enrollment": { es: "Familias e inscripción", tl: "Pamilya at enrollment", zh: "家庭与入园", vi: "Gia đình & ghi danh", ko: "가족 및 등록" },
+  "Each day": { es: "Cada día", tl: "Araw-araw", zh: "每天", vi: "Hằng ngày", ko: "매일" },
+  "Money": { es: "Dinero", tl: "Pera", zh: "财务", vi: "Tài chính", ko: "재정" },
+  "Tours & waitlist": { es: "Visitas y lista de espera", tl: "Tour at waitlist", zh: "参观与候补", vi: "Tham quan & danh sách chờ", ko: "견학 및 대기자" },
+  "Licensing & paperwork": { es: "Licencia y papeleo", tl: "Lisensya at papeles", zh: "执照与文书", vi: "Giấy phép & giấy tờ", ko: "면허 및 서류" },
+  "Reports & settings": { es: "Informes y configuración", tl: "Mga ulat at settings", zh: "报告与设置", vi: "Báo cáo & cài đặt", ko: "보고서 및 설정" },
+  "Add a new family": { es: "Agregar una familia nueva", tl: "Magdagdag ng bagong pamilya", zh: "添加新家庭", vi: "Thêm gia đình mới", ko: "새 가족 추가" },
+  "Change a child's details or schedule": { es: "Cambiar los datos u horario de un niño", tl: "Baguhin ang detalye o iskedyul ng bata", zh: "修改孩子的信息或时间安排", vi: "Đổi thông tin hoặc lịch của trẻ", ko: "아동 정보 또는 일정 변경" },
+  "Withdraw a child who is leaving": { es: "Dar de baja a un niño que se va", tl: "I-withdraw ang batang aalis", zh: "为离园的孩子办理退园", vi: "Cho trẻ nghỉ học", ko: "퇴소하는 아동 처리" },
+  "Plan a graduation to kindergarten": { es: "Planear la graduación al kínder", tl: "Iplano ang pagtatapos papuntang kindergarten", zh: "安排升入幼儿园大班", vi: "Lên kế hoạch vào mẫu giáo lớn", ko: "유치원 진학(졸업) 계획" },
+  "Add a brother or sister who starts later": { es: "Agregar un hermano que empieza después", tl: "Magdagdag ng kapatid na magsisimula mamaya", zh: "添加稍后入园的兄弟姐妹", vi: "Thêm anh chị em bắt đầu sau", ko: "나중에 시작하는 형제자매 추가" },
+  "Mark a paper document as on file, or upload a scan": { es: "Marcar un documento en papel como archivado o subir un escaneo", tl: "Markahan ang papel na dokumento o mag-upload ng scan", zh: "将纸质文件标记为已存档或上传扫描件", vi: "Đánh dấu giấy tờ đã có hoặc tải bản quét", ko: "종이 서류 보관 표시 또는 스캔 업로드" },
+  "Print a child's information sheet": { es: "Imprimir la hoja de información de un niño", tl: "I-print ang information sheet ng bata", zh: "打印孩子的信息表", vi: "In phiếu thông tin của trẻ", ko: "아동 정보지 인쇄" },
+  "Get an emergency contact list": { es: "Obtener la lista de contactos de emergencia", tl: "Kunin ang listahan ng emergency contact", zh: "获取紧急联系人名单", vi: "Lấy danh sách liên hệ khẩn cấp", ko: "비상 연락처 목록 받기" },
+  "Check children in and out": { es: "Registrar entradas y salidas", tl: "Mag-check in at check out ng mga bata", zh: "办理入园和离园", vi: "Điểm danh đến và về", ko: "등·하원 체크" },
+  "A child leaves for an appointment and comes back": { es: "Un niño sale a una cita y regresa", tl: "Aalis ang bata para sa appointment at babalik", zh: "孩子外出预约后返回", vi: "Trẻ đi hẹn rồi quay lại", ko: "아동이 진료 등으로 외출 후 복귀" },
+  "Print monthly sign-in sheets": { es: "Imprimir hojas de entrada mensuales", tl: "I-print ang buwanang sign-in sheet", zh: "打印月度签到表", vi: "In bảng ký đến/về hàng tháng", ko: "월별 출석부 인쇄" },
+  "See who's booked on another day": { es: "Ver quién viene otro día", tl: "Tingnan kung sino ang naka-book sa ibang araw", zh: "查看其他日期的预约", vi: "Xem ai đăng ký ngày khác", ko: "다른 날짜 예약 보기" },
+  "Approve a request for extra care": { es: "Aprobar una solicitud de cuidado extra", tl: "Aprubahan ang hiling para sa extra care", zh: "批准额外照护申请", vi: "Duyệt yêu cầu giữ trẻ thêm", ko: "추가 보육 요청 승인" },
+  "Add a holiday or closure": { es: "Agregar un día festivo o cierre", tl: "Magdagdag ng holiday o pagsasara", zh: "添加假期或停业日", vi: "Thêm ngày lễ hoặc ngày nghỉ", ko: "휴일 또는 휴원일 추가" },
+  "Add an event like a field trip or photo day": { es: "Agregar un evento como una excursión o día de fotos", tl: "Magdagdag ng event gaya ng field trip o photo day", zh: "添加郊游或拍照日等活动", vi: "Thêm sự kiện như dã ngoại hoặc chụp ảnh", ko: "현장학습, 사진 촬영일 등 행사 추가" },
+  "Change your hours or the schedules you offer": { es: "Cambiar tu horario o los horarios que ofreces", tl: "Baguhin ang oras o iskedyul na inaalok mo", zh: "修改营业时间或提供的时段", vi: "Đổi giờ mở cửa hoặc lịch bạn cung cấp", ko: "운영 시간 또는 제공 일정 변경" },
+  "Record a tuition payment": { es: "Registrar un pago de colegiatura", tl: "Itala ang bayad sa tuition", zh: "记录学费付款", vi: "Ghi nhận thanh toán học phí", ko: "수업료 결제 기록" },
+  "Print a receipt for a family (FSA or dependent care)": { es: "Imprimir un recibo para una familia (FSA o cuidado de dependientes)", tl: "Mag-print ng resibo para sa pamilya (FSA o dependent care)", zh: "为家庭打印收据（FSA或受抚养人照护）", vi: "In biên nhận cho gia đình (FSA hoặc chăm sóc người phụ thuộc)", ko: "가족용 영수증 인쇄 (FSA·부양가족 보육)" },
+  "Set the due date or a late fee": { es: "Fijar la fecha de pago o un recargo", tl: "Itakda ang due date o late fee", zh: "设置付款日期或滞纳金", vi: "Đặt hạn thanh toán hoặc phí trễ", ko: "납부일 또는 연체료 설정" },
+  "Split tuition between two parents": { es: "Dividir la colegiatura entre dos padres", tl: "Hatiin ang tuition sa dalawang magulang", zh: "在两位家长之间分摊学费", vi: "Chia học phí giữa hai phụ huynh", ko: "부모 두 명이 수업료 분담" },
+  "Update a child's subsidy or caseworker": { es: "Actualizar el subsidio o trabajador social de un niño", tl: "I-update ang subsidy o caseworker ng bata", zh: "更新孩子的补助或个案工作者", vi: "Cập nhật trợ cấp hoặc nhân viên phụ trách của trẻ", ko: "아동 보조금 또는 담당자 정보 수정" },
+  "Log a refund": { es: "Registrar un reembolso", tl: "Itala ang refund", zh: "记录退款", vi: "Ghi nhận hoàn tiền", ko: "환불 기록" },
+  "Message one family or everyone": { es: "Enviar mensaje a una familia o a todas", tl: "Magpadala ng mensahe sa isang pamilya o sa lahat", zh: "给一个或所有家庭发消息", vi: "Nhắn cho một hoặc tất cả gia đình", ko: "한 가족 또는 전체에게 메시지" },
+  "Message a caseworker, agency or someone else": { es: "Enviar mensaje a un trabajador social, agencia u otra persona", tl: "Magpadala ng mensahe sa caseworker, ahensya o iba", zh: "给个案工作者、机构或其他人发消息", vi: "Nhắn cho nhân viên phụ trách, cơ quan hoặc người khác", ko: "담당자, 기관 또는 기타에게 메시지" },
+  "Turn new-message alerts on or off": { es: "Activar o desactivar alertas de mensajes", tl: "I-on o i-off ang alerto sa mensahe", zh: "开启或关闭新消息提醒", vi: "Bật/tắt thông báo tin nhắn mới", ko: "새 메시지 알림 켜기/끄기" },
+  "Follow up with a family who toured": { es: "Dar seguimiento a una familia que visitó", tl: "Mag-follow up sa pamilyang nag-tour", zh: "跟进参观过的家庭", vi: "Theo dõi gia đình đã tham quan", ko: "견학한 가족에게 후속 연락" },
+  "A waitlist family isn't moving forward": { es: "Una familia en espera no continuará", tl: "Hindi na tutuloy ang pamilya sa waitlist", zh: "候补家庭不再继续", vi: "Gia đình trong danh sách chờ không tiếp tục", ko: "대기 가족이 진행하지 않음" },
+  "Find families who didn't move forward": { es: "Encontrar familias que no continuaron", tl: "Hanapin ang mga pamilyang hindi tumuloy", zh: "查找未继续的家庭", vi: "Tìm gia đình không tiếp tục", ko: "진행하지 않은 가족 찾기" },
+  "Get ready for a licensing visit": { es: "Prepararse para una visita de licencias", tl: "Maghanda para sa licensing visit", zh: "准备执照检查", vi: "Chuẩn bị cho đợt kiểm tra giấy phép", ko: "면허 점검 준비" },
+  "Write up an incident or injury": { es: "Registrar un incidente o lesión", tl: "Itala ang insidente o pinsala", zh: "记录事故或受伤", vi: "Ghi lại sự cố hoặc chấn thương", ko: "사고 또는 부상 기록" },
+  "Update your license renewal or inspection": { es: "Actualizar la renovación de licencia o la inspección", tl: "I-update ang license renewal o inspeksyon", zh: "更新执照续期或检查信息", vi: "Cập nhật gia hạn giấy phép hoặc kiểm tra", ko: "면허 갱신 또는 점검 정보 수정" },
+  "Find official state forms": { es: "Encontrar formularios oficiales del estado", tl: "Hanapin ang opisyal na state forms", zh: "查找州政府官方表格", vi: "Tìm biểu mẫu chính thức của bang", ko: "주 공식 양식 찾기" },
+  "Add a staff member": { es: "Agregar a un miembro del personal", tl: "Magdagdag ng staff", zh: "添加员工", vi: "Thêm nhân viên", ko: "직원 추가" },
+  "Download attendance or payment reports": { es: "Descargar informes de asistencia o pagos", tl: "I-download ang ulat ng attendance o bayad", zh: "下载出勤或付款报告", vi: "Tải báo cáo điểm danh hoặc thanh toán", ko: "출석 또는 결제 보고서 다운로드" },
+  "Change the language or text size": { es: "Cambiar el idioma o el tamaño del texto", tl: "Baguhin ang wika o laki ng text", zh: "更改语言或文字大小", vi: "Đổi ngôn ngữ hoặc cỡ chữ", ko: "언어 또는 글자 크기 변경" },
+  "Update the address and phone on receipts": { es: "Actualizar la dirección y el teléfono en los recibos", tl: "I-update ang address at telepono sa resibo", zh: "更新收据上的地址和电话", vi: "Cập nhật địa chỉ và số điện thoại trên biên nhận", ko: "영수증의 주소와 전화번호 수정" },
+  "Sign out or change your password": { es: "Cerrar sesión o cambiar la contraseña", tl: "Mag-sign out o palitan ang password", zh: "退出登录或更改密码", vi: "Đăng xuất hoặc đổi mật khẩu", ko: "로그아웃 또는 비밀번호 변경" },
+  "Get help from the Alaga team": { es: "Obtener ayuda del equipo de Alaga", tl: "Humingi ng tulong sa Alaga team", zh: "获取Alaga团队的帮助", vi: "Nhận hỗ trợ từ đội Alaga", ko: "Alaga 팀에 도움 요청" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -2384,6 +2437,18 @@ const EXPANSION_STATUS_META = {
 
 const LanguageContext = React.createContext({ lang: "en", t: (s) => s });
 function useT() { return React.useContext(LanguageContext).t; }
+// Everyday words for a few app terms, applied to English text on screen.
+const PLAIN_EXACT = { flex: "extra care", Kanban: "Board" };
+const PLAIN_WORDS = [
+  [/\bDeenrolled\b/g, "Withdrawn"], [/\bdeenrolled\b/g, "withdrawn"], [/\bDeenrollment\b/g, "Withdrawal"], [/\bdeenrollment\b/g, "withdrawal"],
+  [/\bDeenroll\b/g, "Withdraw"], [/\bdeenroll\b/g, "withdraw"], [/\bFlex [Cc]are\b/g, "Extra care"], [/\bflex care\b/g, "extra care"],
+  [/\bAudit Mode\b/g, "Licensing Visit Mode"],
+];
+function plainEnglish(s) {
+  if (typeof s !== "string") return s;
+  if (PLAIN_EXACT[s]) return PLAIN_EXACT[s];
+  return PLAIN_WORDS.reduce((out, [re, to]) => out.replace(re, to), s);
+}
 function trStatus(t, status) { const m = STATUS_META[status]; return { label: t(m.label), fg: m.fg, bg: m.bg }; }
 function trForm(t, status) { const m = FORM_META[status]; return { ...m, label: t(m.label) }; }
 
@@ -3501,6 +3566,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const setScreen = navigateToScreen;
   const [settingsTab, setSettingsTab] = useState("profile");
   const [messageToast, setMessageToast] = useState(null);
+  const [supportTab, setSupportTab] = useState("help");
   const [openFamId, setOpenFamId] = useState(null);
   const [openHousehold, setOpenHousehold] = useState(null);
   const [flexHighlightId, setFlexHighlightId] = useState(null);
@@ -3704,6 +3770,14 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
     r.count = incomingCount;
   }, [incomingCount]);
   const flexAttentionCount = flexCareRequests.filter((r) => r.status === "pending" || (r.status === "approved" && !r.paymentConfirmed)).length;
+  // Jump to a screen (and a tab on Finances, Settings or Support).
+  const goTo = (target) => {
+    if (!target) return;
+    if (target.screen === "payments" && target.tab) setFinancesTab(target.tab);
+    if (target.screen === "settings" && target.tab) setSettingsTab(target.tab);
+    if (target.screen === "support") setSupportTab(target.tab || "help");
+    setScreen(target.screen);
+  };
   const navItems = NAV.filter((n) => tier === "extended" || !n.extended).map((n) => {
     if (n.id === "subsidy") return { ...n, badge: expiringCount > 0 ? expiringCount : undefined };
     if (n.id === "messages") return { ...n, badge: unreadMessagesCount > 0 ? unreadMessagesCount : undefined };
@@ -3718,7 +3792,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   });
   const openFam = families.find((f) => f.id === openFamId) || null;
   const langCode = LANG_CODES[language] || "en";
-  const t = useCallback((s) => (langCode === "en" ? s : (T[s] && T[s][langCode]) || s), [langCode]);
+  const t = useCallback((s) => (langCode === "en" ? plainEnglish(s) : (T[s] && T[s][langCode]) || s), [langCode]);
 
   const a11yCSS = `
     .a11y-scale { zoom: ${(a11y.textSize / 16).toFixed(3)}; }
@@ -3760,7 +3834,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
         <>
           <Sidebar screen={screen} setScreen={setScreen} mode={mode} setMode={setMode} provider={providerInfo} onExitToLanding={onExitToLanding} isEmpty={isEmpty} navItems={navItems} tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} financesTab={financesTab} setFinancesTab={setFinancesTab} />
           <main style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
-            <Topbar screen={screen} setScreen={setScreen} provider={providerInfo} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} />
+            <Topbar screen={screen} setScreen={setScreen} provider={providerInfo} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} goTo={goTo} available={navItems.map((n) => n.id)} />
             <div style={{ flex: 1, overflowY: "auto", padding: "28px 32px 60px" }}>
               {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} reminderSettings={reminderSettings} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} events={events} closures={closures} licensing={licensing} goToTour={() => setScreen("tours")} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
@@ -3777,7 +3851,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
               {screen === "messages" && <Messages threads={threads} saveThreads={saveThreads} families={families} staff={staff} goToFamily={goToFamily} openSupport={() => setScreen("support")} alertsOn={messageAlerts} setAlertsOn={saveMessageAlerts} />}
               {screen === "analytics" && <Analytics families={families} expenses={expenses} prospects={prospects} staff={staff} alumni={alumni} addDeparture={addDeparture} refunds={refunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={(id, opts) => { if (opts?.tab) setSettingsTab(opts.tab); setScreen(id); }} provider={providerInfo} />}
               {screen === "growth" && <GrowthScreen families={families} prospects={prospects} weeklySchedule={weeklySchedule} growth={growth} saveGrowth={saveGrowth} provider={providerInfo} staff={staff} />}
-              {screen === "support" && <SupportScreen providerInfo={providerInfo} />}
+              {screen === "support" && <SupportScreen providerInfo={providerInfo} goTo={goTo} available={navItems.map((n) => n.id)} tab={supportTab} setTab={setSupportTab} />}
               {screen === "settings" && <SettingsScreen tab={settingsTab} setTab={setSettingsTab} language={language} setLanguage={setLanguage} a11y={a11y} saveA11y={saveA11y} tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} billing={billing} saveBilling={saveBilling} families={families} staff={staff} expenses={expenses} compDocs={compDocs} provider={providerInfo} saveProviderInfo={saveProviderInfo} refunds={refunds}
                 exportCtx={{ provider: providerInfo, licensing, families, allFamilies: [...baseFamilies, ...addedFamilies].map((f) => mergeFam(f, overrides)), alumni, staff, attendanceLog, schedule: fullWeek(weeklySchedule), closures, compDocs, incidents, expenses, refunds, threads, prospects }}
                 threads={threads} saveThreads={saveThreads} isDemo={!isEmpty || !!forceTier || meetingMode} onSignOut={onExitToLanding} />}
@@ -3897,31 +3971,31 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
   const [expandedGroups, setExpandedGroups] = useState({});
   return (
     <aside style={{
-      width: 232, flexShrink: 0, background: C.tealDark, color: "#EFEAE0", display: "flex", flexDirection: "column", padding: "22px 14px",
-      backgroundImage: BANIG_PATTERN("#FFFFFF", 0.05), backgroundSize: "16px 16px",
+      width: 232, flexShrink: 0, background: C.side, color: C.ink, display: "flex", flexDirection: "column", padding: "22px 14px",
+      borderRight: `1px solid ${C.line}`,
     }}>
       {onExitToLanding && (
         <button onClick={onExitToLanding} style={{
           display: "flex", alignItems: "center", gap: 7, alignSelf: "flex-start",
-          padding: "6px 10px 6px 8px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.18)", background: "transparent",
-          color: "#CBDAD2", fontSize: 11.5, fontWeight: 600, marginBottom: 12,
+          padding: "6px 10px 6px 8px", borderRadius: 8, border: `1px solid ${C.line}`, background: "transparent",
+          color: C.inkSoft, fontSize: 11.5, fontWeight: 600, marginBottom: 12,
         }}>
           <ArrowLeft size={12} /> {t("Back to start")}
         </button>
       )}
 
       <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "4px 8px 22px" }}>
-        <AlagaMark size={30} color="#EFEAE0" arch={false} />
+        <AlagaMark size={30} color={C.ink} arch={false} />
         <div>
           <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 900, lineHeight: 1 }}>alaga</div>
-          <div style={{ fontSize: 8.5, letterSpacing: "0.14em", textTransform: "uppercase", color: "#B9CFC6", marginTop: 4 }}>{t("Nurturing the foundation for your childcare business")}</div>
+          <div style={{ fontSize: 8.5, letterSpacing: "0.14em", textTransform: "uppercase", color: C.inkSoft, marginTop: 4 }}>{t("Nurturing the foundation for your childcare business")}</div>
         </div>
       </div>
 
       {tierLocked ? (
         <div style={{
           display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0",
-          borderRadius: 9, background: "rgba(255,255,255,0.08)", margin: "0 0 14px", fontSize: 11.5, fontWeight: 700, color: "#EFEAE0",
+          borderRadius: 9, background: "#fff", margin: "0 0 14px", fontSize: 11.5, fontWeight: 700, color: C.ink,
         }}>
           {meetingMode ? <><Lock size={11} /> {t("Meeting-safe demo")}</> : (tier === "extended" ? t("Extended plan demo") : t("Simple plan demo"))}
         </div>
@@ -3929,7 +4003,7 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
         // Shows the current plan only; changing plans happens in Settings → Plan & Billing.
         <button onClick={() => setScreen("settings")} title={t("Change plan in Settings")} style={{
           display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0", width: "100%",
-          borderRadius: 9, border: "none", background: "rgba(255,255,255,0.08)", margin: "0 0 14px", fontSize: 11.5, fontWeight: 700, color: "#EFEAE0",
+          borderRadius: 9, border: "none", background: "#fff", margin: "0 0 14px", fontSize: 11.5, fontWeight: 700, color: C.ink,
         }}>
           {tier === "extended" ? t("Extended plan") : t("Simple plan")} <ChevronRight size={12} style={{ opacity: 0.7 }} />
         </button>
@@ -3938,11 +4012,11 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
       {isEmpty && (
         <div style={{ margin: "0 10px 14px", padding: "8px 10px", borderRadius: 9, background: "rgba(224,169,80,0.18)", border: "1px solid rgba(224,169,80,0.35)" }}>
           <div style={{ fontSize: 10.5, fontWeight: 700, color: C.amber, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("New workspace")}</div>
-          <div style={{ fontSize: 11, color: "#EFEAE0", marginTop: 2, lineHeight: 1.4 }}>{t("Empty preview — nothing here is real data yet.")}</div>
+          <div style={{ fontSize: 11, color: C.ink, marginTop: 2, lineHeight: 1.4 }}>{t("Empty preview — nothing here is real data yet.")}</div>
         </div>
       )}
 
-      <div style={{ fontSize: 10.5, letterSpacing: "0.08em", textTransform: "uppercase", color: "#7FA096", padding: "0 10px 6px" }}>{t("Workspace")}</div>
+      <div style={{ fontSize: 10.5, letterSpacing: "0.08em", textTransform: "uppercase", color: C.inkSoft, padding: "0 10px 6px" }}>{t("Workspace")}</div>
       <nav style={{ display: "flex", flexDirection: "column", gap: 2 }}>
         {(() => {
           const renderedGroups = new Set();
@@ -3962,8 +4036,8 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
                 <div key={owningGroup.id}>
                   <button onClick={() => setExpandedGroups((g) => ({ ...g, [owningGroup.id]: !isExpanded }))} style={{
                     width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "9px 10px", borderRadius: 9,
-                    border: "none", background: groupActive && !isExpanded ? "rgba(255,255,255,0.12)" : "transparent",
-                    color: groupActive ? "#fff" : "#CBDAD2", fontSize: 13.5, fontWeight: groupActive ? 600 : 500, textAlign: "left",
+                    border: "none", background: groupActive && !isExpanded ? C.tealTint : "transparent",
+                    color: groupActive ? C.tealDark : C.inkSoft, fontSize: 13.5, fontWeight: groupActive ? 600 : 500, textAlign: "left",
                   }}>
                     <owningGroup.icon size={16} strokeWidth={2} />
                     <span style={{ flex: 1 }}>{t(owningGroup.label)}</span>
@@ -3971,15 +4045,15 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
                     <ChevronDown size={13} style={{ transform: isExpanded ? "none" : "rotate(-90deg)", transition: "transform 0.12s", flexShrink: 0, opacity: 0.7 }} />
                   </button>
                   {isExpanded && (
-                    <div style={{ display: "flex", flexDirection: "column", gap: 1, margin: "2px 0 4px", marginLeft: 15, paddingLeft: 11, borderLeft: "1px solid rgba(255,255,255,0.14)" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 1, margin: "2px 0 4px", marginLeft: 15, paddingLeft: 11, borderLeft: `1px solid ${C.line}` }}>
                       {visibleChildren.map((c) => {
                         const childOn = screen === c.id && (!c.tab || financesTab === c.tab);
                         const src = navItems.find((x) => x.id === c.id);
                         return (
                           <button key={c.id + (c.tab || "")} onClick={() => { setScreen(c.id); if (c.tab && setFinancesTab) setFinancesTab(c.tab); }} style={{
                             display: "flex", alignItems: "center", gap: 8, padding: "7px 9px", borderRadius: 8,
-                            border: "none", background: childOn ? "rgba(255,255,255,0.12)" : "transparent",
-                            color: childOn ? "#fff" : "#B9CFC6", fontSize: 12.5, fontWeight: childOn ? 600 : 500, textAlign: "left",
+                            border: "none", background: childOn ? C.tealTint : "transparent",
+                            color: childOn ? C.tealDark : C.inkSoft, fontSize: 12.5, fontWeight: childOn ? 600 : 500, textAlign: "left",
                           }}>
                             <span style={{ flex: 1 }}>{t(c.label)}</span>
                             {src?.badge && (!c.tab) && <span style={{ background: C.coral, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "1px 5px" }}>{src.badge}</span>}
@@ -3995,8 +4069,8 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
             return (
               <button key={n.id} onClick={() => setScreen(n.id)} style={{
                 display: "flex", alignItems: "center", gap: 10, padding: "9px 10px", borderRadius: 9,
-                border: "none", background: on ? "rgba(255,255,255,0.12)" : "transparent",
-                color: on ? "#fff" : "#CBDAD2", fontSize: 13.5, fontWeight: on ? 600 : 500, textAlign: "left",
+                border: "none", background: on ? C.tealTint : "transparent",
+                color: on ? C.tealDark : C.inkSoft, fontSize: 13.5, fontWeight: on ? 600 : 500, textAlign: "left",
               }}>
                 <n.icon size={16} strokeWidth={2} />
                 <span style={{ flex: 1 }}>{t(n.label)}</span>
@@ -4010,7 +4084,7 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
       {false && setMode && (
         <button onClick={() => setMode("parent")} style={{
           display: "flex", alignItems: "center", gap: 10, padding: "9px 10px", borderRadius: 9, marginTop: 10,
-          border: "1px solid rgba(255,255,255,0.18)", background: "transparent", color: "#CBDAD2", fontSize: 13, fontWeight: 600, textAlign: "left",
+          border: `1px solid ${C.line}`, background: "transparent", color: C.inkSoft, fontSize: 13, fontWeight: 600, textAlign: "left",
         }}>
           <Users size={15} strokeWidth={2} />
           <span style={{ flex: 1 }}>{t("View as parent")}</span>
@@ -4018,24 +4092,25 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
         </button>
       )}
 
-      <div style={{ marginTop: "auto", paddingTop: 14, borderTop: "1px solid rgba(255,255,255,0.12)" }}>
+      <div style={{ marginTop: "auto", paddingTop: 14, borderTop: `1px solid ${C.line}` }}>
         <div style={{ fontSize: 12 }}>
-          <div style={{ fontWeight: 600, color: "#fff" }}>{provider.name}</div>
-          <div style={{ color: "#9DB5AA", marginTop: 2 }}>{provider.city}</div>
-          <div style={{ color: "#7FA096", marginTop: 1, fontSize: 11 }}>{provider.lic}</div>
+          <div style={{ fontWeight: 600, color: C.ink }}>{provider.name}</div>
+          <div style={{ color: C.inkSoft, marginTop: 2 }}>{provider.city}</div>
+          <div style={{ color: C.inkSoft, marginTop: 1, fontSize: 11 }}>{provider.lic}</div>
         </div>
       </div>
     </aside>
   );
 }
 
-function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBack, goToFamily }) {
+function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBack, goToFamily, goTo, available }) {
   const t = useT();
   const title = NAV.find((n) => n.id === screen)?.label || "";
   // Reflects the real current date whenever the page loads/refreshes.
   const [todayLabel] = useState(() => new Date().toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" }));
   const [query, setQuery] = useState("");
   const [focused, setFocused] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(null);
   const q = query.trim().toLowerCase();
 
   // Exact / near-exact match on a single family or child jumps straight to that
@@ -4049,9 +4124,11 @@ function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBac
     ...householdMatches.slice(0, 5).map((f) => ({ label: f.child, sub: `${f.householdName} · ${t("Families")}`, icon: Users, screen: "families", famId: f.id })),
     ...staff.filter((s) => s.name.toLowerCase().includes(q)).slice(0, 5).map((s) => ({ label: s.name, sub: `${t(s.role)} · ${t("Staff & Ratios")}`, icon: UserCog, screen: "staff" })),
     ...BLANK_FORMS.filter((f) => f.name.toLowerCase().includes(q)).slice(0, 3).map((f) => ({ label: f.name, sub: t("Blank forms & templates"), icon: FileText, screen: "compliance" })),
+    ...searchHelp(q, t).filter((h) => !available || available.includes(h.go.screen)).map((h) => ({ label: t(h.q), sub: `${t("How do I…")} · ${t(h.cat)}`, icon: LifeBuoy, help: h })),
   ];
 
   const selectResult = (r) => {
+    if (r.help) { setHelpOpen(r.help); setQuery(""); setFocused(false); return; }
     if (r.famId && goToFamily) goToFamily(r.famId);
     else setScreen(r.screen);
     setQuery(""); setFocused(false);
@@ -4082,7 +4159,7 @@ function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBac
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
         <div style={{ position: "relative" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${focused ? C.teal : C.line}`, borderRadius: 10, padding: "7px 12px", color: C.inkSoft, fontSize: 13, width: 240 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${focused ? C.teal : C.line}`, borderRadius: 10, padding: "7px 12px", color: C.inkSoft, fontSize: 13, width: 280 }}>
             <Search size={14} style={{ flexShrink: 0 }} />
             <input
               value={query}
@@ -4090,7 +4167,7 @@ function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBac
               onFocus={() => setFocused(true)}
               onBlur={() => setTimeout(() => setFocused(false), 150)}
               onKeyDown={handleEnter}
-              placeholder={t("Search families, forms…")}
+              placeholder={t("Search, or ask how to do something…")}
               style={{ border: "none", outline: "none", background: "none", fontSize: 13, width: "100%", fontFamily: "inherit", color: C.ink }}
             />
             {query && (
@@ -4101,10 +4178,10 @@ function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBac
             <div style={{
               position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, background: "#fff",
               border: `1px solid ${C.line}`, borderRadius: 10, boxShadow: "0 8px 24px rgba(0,0,0,0.1)", zIndex: 60,
-              maxHeight: 280, overflowY: "auto",
+              maxHeight: 360, overflowY: "auto", width: 340,
             }}>
               {results.length === 0 ? (
-                <div style={{ padding: "14px 16px", fontSize: 12.5, color: C.inkSoft }}>{t("No matches for")} "{query}"</div>
+                <div style={{ padding: "14px 16px", fontSize: 12.5, color: C.inkSoft }}>{t("No matches for")} "{query}". <button onMouseDown={() => { goTo && goTo({ screen: "support", tab: "help" }); setQuery(""); }} style={{ background: "none", border: "none", padding: 0, color: C.teal, fontWeight: 700, fontSize: 12.5 }}>{t("Browse all help")}</button></div>
               ) : results.map((r, i) => (
                 <button key={i} onMouseDown={() => selectResult(r)} style={{
                   width: "100%", textAlign: "left", display: "flex", alignItems: "center", gap: 10, padding: "10px 14px",
@@ -4120,8 +4197,136 @@ function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBac
             </div>
           )}
         </div>
+        {helpOpen && (
+          <div style={{ position: "fixed", inset: 0, zIndex: 80, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+            <div onClick={() => setHelpOpen(null)} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.35)" }} />
+            <div style={{ position: "relative", width: 460, maxWidth: "94vw", background: C.paper, borderRadius: 16, boxShadow: "0 20px 50px rgba(0,0,0,0.2)", padding: "18px 22px 20px" }}>
+              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, marginBottom: 12 }}>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("How do I…")}</div>
+                  <div style={{ fontFamily: "'Fraunces', serif", fontSize: 18, fontWeight: 600, marginTop: 2 }}>{t(helpOpen.q)}</div>
+                </div>
+                <button onClick={() => setHelpOpen(null)} style={{ background: "none", border: "none", color: C.inkSoft }}><X size={18} /></button>
+              </div>
+              <HelpAnswer topic={helpOpen} goTo={goTo} onDone={() => setHelpOpen(null)} />
+              <button onClick={() => { goTo && goTo({ screen: "support", tab: "help" }); setHelpOpen(null); }} style={{ marginTop: 12, background: "none", border: "none", padding: 0, fontSize: 12, fontWeight: 700, color: C.inkSoft }}>{t("Browse all help")} →</button>
+            </div>
+          </div>
+        )}
         <div style={{ width: 34, height: 34, borderRadius: "50%", background: C.tealTint, color: C.tealDark, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 13 }} title={provider?.contactName || provider?.name}>{initialsOf(provider?.contactName || provider?.name)}</div>
       </div>
+    </div>
+  );
+}
+
+/* -------------------------------- help ----------------------------------- */
+// Plain-language "How do I…" answers. Each one points at the screen where it's
+// done. The search bar and Support → How do I… both use this list.
+const HELP_TOPICS = [
+  { cat: "Families & enrollment", q: "Add a new family", go: { screen: "tours" }, k: "new family enroll sign up register child add start", a: ["Go to Enrollment → Tours and click Add family.", "Fill in the family's details.", "When they're ready, click Enroll family. Add each child's start date, schedule and how care is paid for.", "They show up in Families right away."] },
+  { cat: "Families & enrollment", q: "Change a child's details or schedule", go: { screen: "families" }, k: "edit update change days hours schedule classroom age birthday", a: ["Go to Enrollment → Families and click the family.", "Click the child's name.", "Click Edit next to Details (name, age group, start date, birth date) or Session (days and hours)."] },
+  { cat: "Families & enrollment", q: "Withdraw a child who is leaving", go: { screen: "families" }, k: "leaving withdraw drop remove quit last day moving switching deenroll unenroll", a: ["Open the child's record from Families.", "Click Withdraw at the bottom, pick their last day and the reason.", "They stay on your roster through that day, then move to Withdrawn. Their record is kept."] },
+  { cat: "Families & enrollment", q: "Plan a graduation to kindergarten", go: { screen: "families" }, k: "graduate graduation kindergarten aging out school", a: ["Open the child's record from Families.", "Add their birth date under Details — Alaga shows the fall they can start kindergarten.", "Click Plan graduation and choose their last day. It shows on your briefing the week before."] },
+  { cat: "Families & enrollment", q: "Add a brother or sister who starts later", go: { screen: "tours" }, k: "sibling brother sister second child pending start later", a: ["Enroll the family (or add the child) with their real start date.", "Until then they show as \"starts\" with the date in Families.", "They become active on that date automatically."] },
+  { cat: "Families & enrollment", q: "Mark a paper document as on file, or upload a scan", go: { screen: "families" }, k: "document paper immunization form upload scan file on file missing", a: ["Open the child's record from Families.", "Under Enrollment documents, click Mark on file for paper copies, or the upload button for a scan or photo."] },
+  { cat: "Families & enrollment", q: "Print a child's information sheet", go: { screen: "families" }, k: "print child information sheet contacts allergies", a: ["Open the family or the child from Families.", "Click Print at the top. Each child prints on their own page."] },
+  { cat: "Families & enrollment", q: "Get an emergency contact list", go: { screen: "families" }, k: "emergency contacts phone list sheet", a: ["Go to Enrollment → Families.", "Click Emergency contact sheet at the top. It downloads a list you can print or keep on your phone."] },
+
+  { cat: "Each day", q: "Check children in and out", go: { screen: "bookings" }, k: "check in check out sign in sign out arrive drop off pick up pickup attendance absent here today", a: ["Go to Bookings.", "Click Check in when a child arrives and Check out when they're picked up.", "Click Absent if they don't come. The \"Here right now\" count updates as you go."] },
+  { cat: "Each day", q: "A child leaves for an appointment and comes back", go: { screen: "bookings" }, k: "appointment doctor dentist leave early come back return step out", a: ["In Bookings, click Appointment next to the child when they leave.", "Click Back in when they return. If they don't come back that day, click Not returning.", "The times show on their sign-in sheet."] },
+  { cat: "Each day", q: "Print monthly sign-in sheets", go: { screen: "bookings" }, k: "sign in sheet print attendance paper monthly subsidy", a: ["Go to Bookings and click Sign-in sheets.", "Pick the month. Each child gets a page with their days, times already recorded, and lines for signatures."] },
+  { cat: "Each day", q: "See who's booked on another day", go: { screen: "bookings" }, k: "tomorrow next week another day date bookings schedule", a: ["Go to Bookings and click Change date.", "Pick Today, Tomorrow, Next week, or any date."] },
+  { cat: "Each day", q: "Approve a request for extra care", go: { screen: "bookings" }, k: "extra care flex early drop off late pickup weekend extra day request approve", a: ["Go to Bookings and click the Extra care tab.", "Approve or decline each request, and mark it paid when the family pays."] },
+
+  { cat: "Calendar", q: "Add a holiday or closure", go: { screen: "calendar" }, k: "closed closure holiday vacation day off break", a: ["Go to Calendar and open Closures.", "Pick the dates, name it, and check the box to tell families.", "Closed days come off Bookings automatically."] },
+  { cat: "Calendar", q: "Add an event like a field trip or photo day", go: { screen: "calendar" }, k: "event field trip photo day picture day carnival party meeting conference", a: ["Go to Calendar and open Events & Meetings.", "Click Add event, pick the type and date, and add anything families should bring.", "Check the box to tell families. It shows under Coming up on your dashboard."] },
+  { cat: "Calendar", q: "Change your hours or the schedules you offer", go: { screen: "calendar" }, k: "hours open close weekend saturday schedule full day half day part time", a: ["Go to Calendar.", "Edit Weekly Hours for the days you're open, or Care schedules you offer for full-day, part-day and other options."] },
+
+  { cat: "Money", q: "Record a tuition payment", go: { screen: "payments", tab: "tuition" }, k: "payment paid record tuition copay cash zelle venmo check", a: ["Go to Finances → Tuition & Billing.", "Click the family's Unpaid or Overdue status, then Record payment."] },
+  { cat: "Money", q: "Print a receipt for a family (FSA or dependent care)", go: { screen: "payments", tab: "receipts" }, k: "receipt fsa hsa dependent care tax statement proof of payment", a: ["Go to Finances → Receipts.", "Click the month for that child.", "Click Dates of care first if the family needs exact dates listed."] },
+  { cat: "Money", q: "Set the due date or a late fee", go: { screen: "payments", tab: "tuition" }, k: "due date late fee reminder billing", a: ["Go to Finances → Tuition & Billing.", "Set the Billing due date, and turn on a Late fee if you charge one."] },
+  { cat: "Money", q: "Split tuition between two parents", go: { screen: "families" }, k: "split tuition two parents guardians divorced shared custody", a: ["Open the child's record from Families.", "Under Funding, click Split tuition between guardians and set each person's share."] },
+  { cat: "Money", q: "Update a child's subsidy or caseworker", go: { screen: "subsidy" }, k: "subsidy calworks ccap voucher caseworker agency authorization recert", a: ["Go to Finances → Subsidy Programs and click the child.", "Update the program, amounts, end date and caseworker, then Save changes."] },
+  { cat: "Money", q: "Log a refund", go: { screen: "payments", tab: "refunds" }, k: "refund money back credit", a: ["Go to Finances → Refunds.", "Fill in the child, amount and reason, then Log refund."] },
+
+  { cat: "Messages", q: "Message one family or everyone", go: { screen: "messages" }, k: "message text announce send families parents everyone all", a: ["Go to Messages and click New message.", "Choose who it's for — one family, a group, or all families — and write your message."] },
+  { cat: "Messages", q: "Message a caseworker, agency or someone else", go: { screen: "messages" }, k: "caseworker agency vendor landlord substitute other", a: ["Go to Messages and click New message.", "Choose \"A subsidy agency or caseworker\" or \"Someone else\"."] },
+  { cat: "Messages", q: "Turn new-message alerts on or off", go: { screen: "messages" }, k: "notification alert sound push", a: ["Go to Messages and click Alerts on / Alerts off at the top of the list."] },
+
+  { cat: "Tours & waitlist", q: "Follow up with a family who toured", go: { screen: "tours" }, k: "follow up tour call back email text reminder", a: ["Go to Enrollment → Tours and click the family.", "Set a Follow up by date — it shows on your briefing when it's due.", "Use Email, Text or Call to open your own app with a message ready."] },
+  { cat: "Tours & waitlist", q: "A waitlist family isn't moving forward", go: { screen: "waitlist" }, k: "waitlist decline not interested remove cancel", a: ["Go to Enrollment → Waitlist.", "Click Not moving forward, pick a reason, and click Remove from waitlist."] },
+  { cat: "Tours & waitlist", q: "Find families who didn't move forward", go: { screen: "tours" }, k: "declined not interested past tours history", a: ["Go to Enrollment → Tours and click Didn't move forward at the top."] },
+
+  { cat: "Licensing & paperwork", q: "Get ready for a licensing visit", go: { screen: "compliance" }, k: "licensing visit inspection audit packet ccld lpa", a: ["Go to Compliance and click Enter Licensing Visit Mode.", "Check that everything looks right, then click Print packet."] },
+  { cat: "Licensing & paperwork", q: "Write up an incident or injury", go: { screen: "compliance" }, k: "incident injury accident bump fall report", a: ["Go to Compliance → Incident Reports.", "Fill in what happened and click Log incident. You can print it for the family to sign."] },
+  { cat: "Licensing & paperwork", q: "Update your license renewal or inspection", go: { screen: "compliance" }, k: "license renewal inspection citation", a: ["Go to Compliance → Licensing & Ratios and click Edit."] },
+  { cat: "Licensing & paperwork", q: "Find official state forms", go: { screen: "compliance" }, k: "forms cdss lic state official blank", a: ["Go to Compliance → Blank Forms and click Official CDSS forms."] },
+  { cat: "Licensing & paperwork", q: "Add a staff member", go: { screen: "staff" }, k: "staff employee assistant aide hire", a: ["Go to Staff & Ratios (Extended plan) and click Add staff member."] },
+
+  { cat: "Reports & settings", q: "Download attendance or payment reports", go: { screen: "settings", tab: "data" }, k: "report download attendance payments taxes accountant spreadsheet excel csv", a: ["Go to Settings → Reports & your data.", "Pick the month or year and click CSV. It opens in Excel or Google Sheets."] },
+  { cat: "Reports & settings", q: "Change the language or text size", go: { screen: "settings", tab: "language" }, k: "language spanish tagalog text size bigger dark mode", a: ["Go to Settings → Language & Accessibility."] },
+  { cat: "Reports & settings", q: "Update the address and phone on receipts", go: { screen: "settings", tab: "profile" }, k: "address phone email business name receipts", a: ["Go to Settings → Business Profile and click Edit."] },
+  { cat: "Reports & settings", q: "Sign out or change your password", go: { screen: "settings", tab: "account" }, k: "sign out log out logout password", a: ["Go to Settings → Account."] },
+  { cat: "Reports & settings", q: "Get help from the Alaga team", go: { screen: "support" }, k: "help support question problem contact", a: ["Go to Support → Contact Us and send us a message. Replies show in My Requests."] },
+];
+// Finds help topics for whatever someone types, in their own words.
+function searchHelp(query, t = (x) => x, limit = 4) {
+  const STOP = ["how", "the", "and", "for", "can", "what", "where", "do", "my", "a", "an", "to", "of", "in", "on", "is", "i", "child", "children", "kid", "kids", "family", "families"];
+  const words = String(query || "").toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length >= 3 && !STOP.includes(w));
+  if (!words.length) return [];
+  const tokens = (str) => String(str).toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+  // A word matches a whole word, or the start of one ("receipt" → "receipts").
+  const hits = (list, w) => list.some((x) => x === w || (x.startsWith(w) && x.length - w.length <= 3) || (w.startsWith(x) && x.length >= 4 && w.length - x.length <= 3));
+  const scored = HELP_TOPICS.map((h) => {
+    const qWords = tokens(`${h.q} ${t(h.q)}`), kWords = tokens(h.k);
+    const score = words.reduce((n, w) => n + (hits(qWords, w) ? 2 : hits(kWords, w) ? 1 : 0), 0);
+    return { h, score };
+  }).filter((x) => x.score > 0).sort((a2, b2) => b2.score - a2.score);
+  const best = scored[0]?.score || 0;
+  return scored.filter((x) => x.score >= best * 0.6).slice(0, limit).map((x) => x.h);
+}
+function HelpAnswer({ topic, goTo, onDone }) {
+  const t = useT();
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <ol style={{ margin: 0, paddingLeft: 20, display: "flex", flexDirection: "column", gap: 6, fontSize: 13, lineHeight: 1.5 }}>
+        {topic.a.map((step, i) => <li key={i}>{t(step)}</li>)}
+      </ol>
+      {goTo && (
+        <button onClick={() => { goTo(topic.go); onDone && onDone(); }} style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontSize: 12.5, fontWeight: 700 }}>
+          {t("Take me there")} <ArrowRight size={13} />
+        </button>
+      )}
+    </div>
+  );
+}
+function HelpCenter({ goTo, available }) {
+  const t = useT();
+  const [q, setQ] = useState("");
+  const [openQ, setOpenQ] = useState(null);
+  const topics = HELP_TOPICS.filter((h) => !available || available.includes(h.go.screen));
+  const shown = q.trim() ? searchHelp(q, t, 12).filter((h) => topics.includes(h)) : topics;
+  const cats = [...new Set(shown.map((h) => h.cat))];
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${C.line}`, borderRadius: 12, padding: "11px 14px", background: "#fff" }}>
+        <Search size={16} color={C.inkSoft} />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Type what you want to do — e.g. print a receipt")} style={{ border: "none", outline: "none", fontSize: 14, flex: 1, fontFamily: "inherit" }} />
+      </div>
+      {shown.length === 0 && <div style={{ fontSize: 13, color: C.inkSoft }}>{t("No answer for that yet. Ask us under Contact Us and we'll help.")}</div>}
+      {cats.map((cat) => (
+        <Card key={cat} title={t(cat)} icon={LifeBuoy}>
+          {shown.filter((h) => h.cat === cat).map((h) => (
+            <div key={h.q} style={{ borderBottom: `1px solid ${C.line}` }}>
+              <button onClick={() => setOpenQ(openQ === h.q ? null : h.q)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 18px", background: "none", border: "none", textAlign: "left", fontSize: 13.5, fontWeight: 600, color: C.ink }}>
+                {t(h.q)}
+                <ChevronDown size={15} color={C.inkSoft} style={{ transform: openQ === h.q ? "none" : "rotate(-90deg)", transition: "transform 0.15s", flexShrink: 0 }} />
+              </button>
+              {openQ === h.q && <div style={{ padding: "0 18px 14px" }}><HelpAnswer topic={h} goTo={goTo} /></div>}
+            </div>
+          ))}
+        </Card>
+      ))}
     </div>
   );
 }
@@ -4193,111 +4398,111 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
       <div style={{
-        background: C.tealDark, borderRadius: 16, padding: "24px 28px", color: "#fff", position: "relative", overflow: "hidden",
-        backgroundImage: BANIG_PATTERN("#FFFFFF", 0.05), backgroundSize: "16px 16px",
+        background: C.paper, border: `1px solid ${C.line}`, borderLeft: `4px solid ${C.teal}`, borderRadius: 16, padding: "24px 28px", color: C.ink, position: "relative", overflow: "hidden",
+        
       }}>
-        <div style={{ position: "absolute", top: -18, right: -10, opacity: 0.14 }}>
-          <AlagaMark size={130} color="#fff" arch={false} backdrop={false} />
+        <div style={{ position: "absolute", top: -18, right: -10, opacity: 0.07 }}>
+          <AlagaMark size={130} color={C.teal} arch={false} backdrop={false} />
         </div>
         <div style={{ position: "relative", maxWidth: 560 }}>
-          <div style={{ fontSize: 11.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>{t("Today's briefing")}</div>
+          <div style={{ fontSize: 11.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>{t("Today's briefing")}</div>
           <div style={{ fontFamily: "'Fraunces', serif", fontSize: 21, fontWeight: 500, lineHeight: 1.45 }}>
             {families.length === 0 ? (
               t("No children enrolled yet — once families join, this is where you'll see how your business is doing at a glance.")
             ) : (
               <>
                 <b>{families.length}</b> {t(families.length === 1 ? "child in your care" : "children in your care")} — {t("bringing in")} <b>{money(monthlySubsidy + monthlyCopay)}</b> {t("this month across")} {subsidizedFams.length} {t("subsidized")} {t("and")} {privateFams.length} {t("private-pay")}.
-                {totalAttention > 0 && <> <span style={{ color: "#F2C88A" }}>{totalAttention} {t(totalAttention === 1 ? "item needs" : "items need")} {t("your attention")}</span>.</>}
+                {totalAttention > 0 && <> <span style={{ color: C.teal }}>{totalAttention} {t(totalAttention === 1 ? "item needs" : "items need")} {t("your attention")}</span>.</>}
               </>
             )}
           </div>
           {totalAttention > 0 && (
-            <button onClick={() => setShowAttention(!showAttention)} style={{ marginTop: 14, display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: "1px solid rgba(255,255,255,0.3)", background: "rgba(255,255,255,0.1)", color: "#fff", fontWeight: 600, fontSize: 12.5 }}>
+            <button onClick={() => setShowAttention(!showAttention)} style={{ marginTop: 14, display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: `1px solid ${C.line}`, background: "#fff", color: C.ink, fontWeight: 600, fontSize: 12.5 }}>
               {showAttention ? t("Hide") : t("Review now")} <ChevronRight size={13} style={{ transform: showAttention ? "rotate(90deg)" : "none", transition: "transform 0.15s" }} />
             </button>
           )}
           {showAttention && totalAttention > 0 && (
-            <div style={{ marginTop: 12, borderRadius: 10, overflow: "hidden", background: "rgba(255,255,255,0.08)" }}>
+            <div style={{ marginTop: 12, borderRadius: 10, overflow: "hidden", background: C.cream }}>
               {dueSoon.length > 0 && (
-                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Today & this week")}</div>
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Today & this week")}</div>
               )}
               {dueSoon.map((it, i) => (
-                <div key={`due${i}`} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
-                  <button onClick={it.onClick} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
-                    <Dot c={it.n <= 0 ? "#F2A28A" : "#F2C88A"} /><b style={{ fontSize: 13 }}>{it.title}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {it.detail} · {whenLabel(it.n)}</span>
+                <div key={`due${i}`} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
+                  <button onClick={it.onClick} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
+                    <Dot c={it.n <= 0 ? C.danger : C.amber} /><b style={{ fontSize: 13 }}>{it.title}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {it.detail} · {whenLabel(it.n)}</span>
                   </button>
-                  <button onClick={it.onClick} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                  <button onClick={it.onClick} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "none", fontSize: 11, fontWeight: 600, color: C.ink, flexShrink: 0 }}>
                     {t("Review")}
                   </button>
                 </div>
               ))}
               {expiring.length > 0 && (
-                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Subsidy")}</div>
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Subsidy")}</div>
               )}
               {expiring.map((f) => (
-                <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
-                  <button onClick={() => goToSubsidyFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
-                    <Dot c="#F2C88A" /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {programOf(f.programId)?.label}</span>
+                <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
+                  <button onClick={() => goToSubsidyFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
+                    <Dot c={C.amber} /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {programOf(f.programId)?.label}</span>
                   </button>
-                  <button onClick={() => resolveNotice(f.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                  <button onClick={() => resolveNotice(f.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "none", fontSize: 11, fontWeight: 600, color: C.ink, flexShrink: 0 }}>
                     <CheckCircle2 size={11} /> {t("Resolve")}
                   </button>
                 </div>
               ))}
               {flexNeedingAttention.length > 0 && (
-                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Flex care")}</div>
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Flex care")}</div>
               )}
               {flexNeedingAttention.map((r) => (
-                <div key={r.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
-                  <button onClick={() => goToFlexRequest(r.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
-                    <Dot c={r.status === "pending" ? "#F2C88A" : "#8FBFAE"} /><b style={{ fontSize: 13 }}>{r.child}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {t(r.type)}, {r.date} · {r.status === "pending" ? t("awaiting approval") : t("payment unconfirmed")}</span>
+                <div key={r.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
+                  <button onClick={() => goToFlexRequest(r.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
+                    <Dot c={r.status === "pending" ? C.amber : C.teal} /><b style={{ fontSize: 13 }}>{r.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {t(r.type)}, {r.date} · {r.status === "pending" ? t("awaiting approval") : t("payment unconfirmed")}</span>
                   </button>
                   {r.status === "pending" ? (
-                    <button onClick={() => approveFlexInline(r.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                    <button onClick={() => approveFlexInline(r.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "none", fontSize: 11, fontWeight: 600, color: C.ink, flexShrink: 0 }}>
                       <CheckCircle2 size={11} /> {t("Approve")}
                     </button>
                   ) : (
-                    <button onClick={() => goToFlexRequest(r.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                    <button onClick={() => goToFlexRequest(r.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "none", fontSize: 11, fontWeight: 600, color: C.ink, flexShrink: 0 }}>
                       {t("Review")}
                     </button>
                   )}
                 </div>
               ))}
               {overdueTuition.length > 0 && (
-                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Tuition")} · {billingNow.label}</div>
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Tuition")} · {billingNow.label}</div>
               )}
               {overdueTuition.map((f) => (
-                <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
-                  <button onClick={openTuition} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
-                    <Dot c="#F2A28A" /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {meetingMode ? "••••" : money(f.copay)} {partlyPaidFor(f, billingNow.key) ? t("partly paid") : t("unpaid")} · {t("due")} {billingNow.dueDate}</span>
+                <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
+                  <button onClick={openTuition} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
+                    <Dot c={C.danger} /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {meetingMode ? "••••" : money(f.copay)} {partlyPaidFor(f, billingNow.key) ? t("partly paid") : t("unpaid")} · {t("due")} {billingNow.dueDate}</span>
                   </button>
-                  <button onClick={openTuition} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                  <button onClick={openTuition} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "none", fontSize: 11, fontWeight: 600, color: C.ink, flexShrink: 0 }}>
                     {t("Review")}
                   </button>
                 </div>
               ))}
               {docsNeedingAttention.length > 0 && (
-                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Documents")}</div>
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Documents")}</div>
               )}
               {docsNeedingAttention.map((d) => (
-                <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
-                  <button onClick={() => setScreen("compliance")} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
-                    <Dot c={["missing", "expired"].includes(d.displayStatus) ? "#F2A28A" : "#F2C88A"} /><b style={{ fontSize: 13 }}>{t(d.name)}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {trForm(t, d.displayStatus || d.status).label}{d.expiresOn && ["expired", "expiring"].includes(d.displayStatus) ? ` · ${d.expiresOn}` : ""}</span>
+                <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
+                  <button onClick={() => setScreen("compliance")} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
+                    <Dot c={["missing", "expired"].includes(d.displayStatus) ? C.danger : C.amber} /><b style={{ fontSize: 13 }}>{t(d.name)}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {trForm(t, d.displayStatus || d.status).label}{d.expiresOn && ["expired", "expiring"].includes(d.displayStatus) ? ` · ${d.expiresOn}` : ""}</span>
                   </button>
-                  <button onClick={() => setScreen("compliance")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                  <button onClick={() => setScreen("compliance")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "none", fontSize: 11, fontWeight: 600, color: C.ink, flexShrink: 0 }}>
                     {t("Review")}
                   </button>
                 </div>
               ))}
               {childrenMissingDocs.length > 0 && (
-                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Child records")}</div>
+                <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Child records")}</div>
               )}
               {childrenMissingDocs.map(({ f, missing }) => (
-                <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
-                  <button onClick={() => goToFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: "#fff", textAlign: "left" }}>
-                    <Dot c="#F2A28A" /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: "#CBDAD2", fontSize: 12 }}>— {missing} {t(missing === 1 ? "document to update" : "documents to update")}</span>
+                <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
+                  <button onClick={() => goToFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
+                    <Dot c={C.danger} /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {missing} {t(missing === 1 ? "document to update" : "documents to update")}</span>
                   </button>
-                  <button onClick={() => goToFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "1px solid rgba(255,255,255,0.25)", background: "none", fontSize: 11, fontWeight: 600, color: "#fff", flexShrink: 0 }}>
+                  <button onClick={() => goToFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "none", fontSize: 11, fontWeight: 600, color: C.ink, flexShrink: 0 }}>
                     {t("Review")}
                   </button>
                 </div>
@@ -5513,7 +5718,7 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div style={{ display: "flex", gap: 6 }}>
-        {[["roster", "Roster & Attendance"], ["flex", "Flex Care"]].map(([id, label]) => (
+        {[["roster", "Roster & Attendance"], ["flex", "Extra care"]].map(([id, label]) => (
           <button key={id} onClick={() => setBookingsTab(id)} style={{
             padding: "8px 16px", borderRadius: 999, fontSize: 12.5, fontWeight: 700, border: `1px solid ${bookingsTab === id ? C.teal : C.line}`,
             background: bookingsTab === id ? C.tealTint : "#fff", color: bookingsTab === id ? C.tealDark : C.inkSoft,
@@ -8778,12 +8983,12 @@ function Compliance({ licensing = {}, saveLicensing, docs, onSave, families, pro
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: C.tealDark, borderRadius: 14, padding: "16px 20px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: C.paper, border: `1px solid ${C.line}`, borderLeft: `4px solid ${C.teal}`, borderRadius: 14, padding: "16px 20px" }}>
         <div>
-          <div style={{ color: "#fff", fontWeight: 700, fontSize: 14.5 }}>{t("Ready for a licensing visit?")}</div>
-          <div style={{ color: "#B9CFC6", fontSize: 12, marginTop: 2 }}>{t("Audit Mode compiles a single printable packet — license, ratios, documents, and every child's file status.")}</div>
+          <div style={{ color: C.ink, fontWeight: 700, fontSize: 14.5 }}>{t("Ready for a licensing visit?")}</div>
+          <div style={{ color: C.tealDark, fontSize: 12, marginTop: 2 }}>{t("Audit Mode compiles a single printable packet — license, ratios, documents, and every child's file status.")}</div>
         </div>
-        <button onClick={() => setAuditMode(true)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", borderRadius: 9, border: "none", background: C.amber, color: "#fff", fontWeight: 700, fontSize: 13, flexShrink: 0 }}>
+        <button onClick={() => setAuditMode(true)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 13, flexShrink: 0 }}>
           <ClipboardCheck size={15} /> {t("Enter Audit Mode")}
         </button>
       </div>
@@ -9998,12 +10203,12 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
   if (step === "overview") {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        <div style={{ background: C.tealDark, borderRadius: 16, padding: "22px 26px", color: "#fff" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11.5, fontWeight: 700, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8 }}>
+        <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderLeft: `4px solid ${C.teal}`, borderRadius: 16, padding: "22px 26px", color: C.ink }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8 }}>
             <TrendingUp size={14} /> {t("Phase 2 · Growth")}
           </div>
           <div style={{ fontFamily: "'Fraunces', serif", fontSize: 22, fontWeight: 600, marginBottom: 8 }}>{t("Ready to grow your business?")}</div>
-          <div style={{ fontSize: 13, color: "#CBDAD2", lineHeight: 1.6, maxWidth: 560 }}>
+          <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.6, maxWidth: 560 }}>
             {t("If you're consistently full, growth usually means more paperwork before it means more revenue — a license capacity change, updated facility documents, possibly new staff, and letting every subsidy agency know your details changed. This assistant builds a checklist tailored to your situation and tracks it to done.")}
           </div>
         </div>
@@ -10060,14 +10265,14 @@ function GrowthScreen({ families, prospects, weeklySchedule, growth, saveGrowth,
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: C.tealDark, borderRadius: 16, padding: "16px 20px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: C.paper, border: `1px solid ${C.line}`, borderLeft: `4px solid ${C.teal}`, borderRadius: 16, padding: "16px 20px" }}>
         <div>
-          <div style={{ color: "#B9CFC6", fontSize: 11.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>{t("Growth assessment in progress")}</div>
-          <div style={{ color: "#fff", fontWeight: 700, fontSize: 15.5, marginTop: 2 }}>
+          <div style={{ color: C.tealDark, fontSize: 11.5, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>{t("Growth assessment in progress")}</div>
+          <div style={{ color: C.ink, fontWeight: 700, fontSize: 15.5, marginTop: 2 }}>
             {t("Target capacity")} {growth.targetCapacity} · {growth.timeline}
           </div>
         </div>
-        <button onClick={restart} style={{ fontSize: 12, fontWeight: 600, color: "#CBDAD2", background: "none", border: "1px solid rgba(255,255,255,0.25)", borderRadius: 8, padding: "7px 12px" }}>
+        <button onClick={restart} style={{ fontSize: 12, fontWeight: 600, color: C.inkSoft, background: "none", border: `1px solid ${C.line}`, borderRadius: 8, padding: "7px 12px" }}>
           {t("Start over")}
         </button>
       </div>
@@ -10205,7 +10410,7 @@ const SUPPORT_TICKETS_DEFAULT = demoDates([
   { id: 1, provider: "Demo Provider", subject: "Can't download July attendance CSV", category: "Technical issue", status: "resolved", date: "07/22/2026", time: "2:41 PM", message: "The Export CSV button on Bookings doesn't seem to do anything when I click it on Safari.", replies: [{ from: "support", text: "This was a Safari-specific pop-up blocker issue — should be fixed now. Let us know if it happens again!", date: "07/23/2026", time: "10:05 AM" }] },
   { id: 2, provider: "Demo Provider", subject: "Question about CalWORKs Stage 2 to Stage 1 transition", category: "Subsidy / eligibility question", status: "open", date: "07/25/2026", time: "9:14 AM", message: "One of my families is transitioning from Stage 2 to Stage 1 — do I need to create a new subsidy record or just update the program on the existing one?", replies: [] },
 ]);
-function SupportScreen({ providerInfo }) {
+function SupportScreen({ providerInfo, goTo, available, tab: tabProp, setTab: setTabProp }) {
   const t = useT();
   const CATEGORIES = ["Technical issue", "Billing question", "Subsidy / eligibility question", "Account or login", "Feature request", "Other"];
   const [category, setCategory] = useState(CATEGORIES[0]);
@@ -10232,9 +10437,12 @@ function SupportScreen({ providerInfo }) {
     const now = new Date();
     setTickets(tickets.map((tk) => (tk.id === id ? { ...tk, replies: [...tk.replies, { from: "me", text, date: now.toLocaleDateString("en-US"), time: now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) }] } : tk)));
   };
-  const [tab, setTab] = useState("contact");
+  const [localTab, setLocalTab] = useState("help");
+  const tab = tabProp || localTab;
+  const setTab = setTabProp || setLocalTab;
   const openCount = tickets.filter((tk) => tk.status === "open").length;
   const TABS = [
+    ["help", t("How do I…")],
     ["contact", t("Contact Us")],
     ["requests", `${t("My Requests")}${openCount > 0 ? ` (${openCount})` : ""}`],
   ];
@@ -10250,6 +10458,7 @@ function SupportScreen({ providerInfo }) {
         ))}
       </div>
 
+      {tab === "help" && <HelpCenter goTo={goTo} available={available} />}
       {tab === "contact" && (
       <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 16 }}>
         <Card title={t("Contact support")} icon={LifeBuoy}>
@@ -11364,24 +11573,24 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, statu
   return (
     <div style={{ flex: 1, minHeight: "100vh", display: "flex", flexDirection: "column", background: C.cream }}>
       {/* header */}
-      <div style={{ background: C.tealDark, color: "#fff", padding: "18px 26px" }}>
+      <div style={{ background: C.side, color: C.ink, padding: "18px 26px", borderBottom: `1px solid ${C.line}` }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <AlagaMark size={28} color="#fff" arch={false} />
+            <AlagaMark size={28} color={C.teal} arch={false} />
             <div>
               <div style={{ fontFamily: "'Fraunces', serif", fontSize: 18, fontWeight: 900 }}>alaga</div>
-              <div style={{ fontSize: 10.5, color: "#B9CFC6", textTransform: "uppercase", letterSpacing: "0.06em" }}>{t("Family app")}</div>
+              <div style={{ fontSize: 10.5, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.06em" }}>{t("Family app")}</div>
             </div>
           </div>
-          <button onClick={onExit} style={{ fontSize: 12, color: "#CBDAD2", background: "none", border: "1px solid rgba(255,255,255,0.25)", borderRadius: 8, padding: "7px 12px", fontWeight: 600 }}>
+          <button onClick={onExit} style={{ fontSize: 12, color: C.inkSoft, background: "none", border: `1px solid ${C.line}`, borderRadius: 8, padding: "7px 12px", fontWeight: 600 }}>
             {showBackToProvider ? t("Exit parent view") : t("Exit demo")}
           </button>
         </div>
         <div style={{ marginTop: 16, display: "flex", gap: 14, flexWrap: "wrap" }}>
           <div>
-            <div style={{ fontSize: 11.5, color: "#9DB5AA", fontWeight: 600, marginBottom: 5 }}>{t("Viewing as")}</div>
+            <div style={{ fontSize: 11.5, color: C.inkSoft, fontWeight: 600, marginBottom: 5 }}>{t("Viewing as")}</div>
             <select value={famId} onChange={(e) => setFamId(Number(e.target.value))} style={{
-              background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.25)",
+              background: "#fff", color: C.ink, border: `1px solid ${C.line}`,
               borderRadius: 9, padding: "8px 12px", fontSize: 13.5, fontFamily: "inherit",
             }}>
               {families.map((f) => <option key={f.id} value={f.id} style={{ color: C.ink }}>{f.parent} — {t("parent of")} {f.child}</option>)}
@@ -11389,9 +11598,9 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, statu
           </div>
           {setLanguage && (
             <div>
-              <div style={{ fontSize: 11.5, color: "#9DB5AA", fontWeight: 600, marginBottom: 5 }}>{t("Language")}</div>
+              <div style={{ fontSize: 11.5, color: C.inkSoft, fontWeight: 600, marginBottom: 5 }}>{t("Language")}</div>
               <select value={language} onChange={(e) => setLanguage(e.target.value)} style={{
-                background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.25)",
+                background: "#fff", color: C.ink, border: `1px solid ${C.line}`,
                 borderRadius: 9, padding: "8px 12px", fontSize: 13.5, fontFamily: "inherit",
               }}>
                 {PARENT_LANGS.map((l) => <option key={l} value={l} style={{ color: C.ink }}>{l}</option>)}
