@@ -1867,6 +1867,22 @@ function LoginScreen({ onAuthenticated, onBack }) {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+
+  const sendReset = async () => {
+    setError(""); setNotice("");
+    if (!email.trim()) { setError("Enter your email above, then tap \"Forgot password?\" again."); return; }
+    try {
+      const { sendPasswordResetEmail } = await import("firebase/auth");
+      const { auth } = await import("./firebase.js");
+      await sendPasswordResetEmail(auth, email.trim());
+    } catch (err) {
+      if (err.code === "auth/invalid-email") { setError(friendlyError(err.code)); return; }
+      // Any other result shows the same message, so the screen never reveals
+      // whether an account exists for that email.
+    }
+    setNotice("If an account exists for that email, a reset link is on its way.");
+  };
 
   const friendlyError = (code) => {
     switch (code) {
@@ -1913,7 +1929,7 @@ function LoginScreen({ onAuthenticated, onBack }) {
       <form onSubmit={submit} style={{ width: "100%", maxWidth: 380, background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: 28 }}>
         <div style={{ display: "flex", gap: 4, marginBottom: 20, background: C.cream, borderRadius: 10, padding: 4 }}>
           {["signin", "signup"].map((m) => (
-            <button key={m} type="button" onClick={() => { setMode(m); setError(""); }} style={{
+            <button key={m} type="button" onClick={() => { setMode(m); setError(""); setNotice(""); }} style={{
               flex: 1, padding: "9px 0", borderRadius: 7, border: "none", fontWeight: 700, fontSize: 13,
               background: mode === m ? "#fff" : "transparent", color: mode === m ? C.tealDark : C.inkSoft,
               boxShadow: mode === m ? C.line && "0 1px 2px rgba(0,0,0,0.06)" : "none",
@@ -1933,7 +1949,13 @@ function LoginScreen({ onAuthenticated, onBack }) {
           value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
           style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: `1px solid ${C.line}`, fontSize: 14, marginBottom: 6, fontFamily: "inherit" }} />
 
+        {mode === "signin" && (
+          <button type="button" onClick={sendReset} style={{ background: "none", border: "none", padding: 0, marginTop: 4, color: C.tealDark, fontSize: 12.5, fontWeight: 600 }}>
+            Forgot password?
+          </button>
+        )}
         {error && <div style={{ color: C.danger, fontSize: 12.5, marginTop: 6, marginBottom: 6 }}>{error}</div>}
+        {notice && <div style={{ color: C.tealDark, fontSize: 12.5, marginTop: 6, marginBottom: 6 }}>{notice}</div>}
 
         <button type="submit" disabled={busy} style={{
           width: "100%", marginTop: 14, padding: "12px 0", borderRadius: 10, border: "none",
@@ -1962,7 +1984,7 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
         <div style={{ fontFamily: "'Fraunces', serif", fontSize: 86, fontWeight: 900, color: C.tealDark }}>alaga</div>
       </div>
       <div style={{ color: C.inkSoft, fontSize: 14.5, fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 30, textAlign: "center", maxWidth: 520, lineHeight: 1.8 }}>
-        The foundation for<br />your childcare business.
+        Nurturing the foundation for<br />your childcare business.
       </div>
 
       <button onClick={onSignIn} style={{
@@ -2063,7 +2085,14 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
   );
 }
 
-const WIZARD_STEPS = ["Your business", "License & care type", "Weekly hours", "Preferences", "Import existing records", "Review"];
+const WIZARD_STEPS = ["Your business", "License & care type", "Weekly hours", "Preferences", "Review"];
+
+// California licensed capacity limits by home type — used to pre-fill and cap
+// the capacity field so a provider can't enter a number their license doesn't allow.
+const CAPACITY_LIMITS = {
+  [PROVIDER_TYPES[0]]: 8,
+  [PROVIDER_TYPES[1]]: 14,
+};
 
 function OnboardingWizard({ onComplete, onBack }) {
   const [step, setStep] = useState(0);
@@ -2137,10 +2166,23 @@ function OnboardingWizard({ onComplete, onBack }) {
           {step === 1 && (
             <>
               <Field label="Provider type">
-                <Select value={form.providerType} onChange={(v) => set("providerType", v)} options={PROVIDER_TYPES} />
+                <Select value={form.providerType} onChange={(v) => setForm((f) => ({ ...f, providerType: v, capacity: CAPACITY_LIMITS[v] || f.capacity }))} options={PROVIDER_TYPES} />
               </Field>
               <Field label="License number (optional if pending)"><input value={form.licenseNumber} onChange={(e) => set("licenseNumber", e.target.value)} placeholder="e.g. 198-402-3211" style={inputStyle} /></Field>
-              <Field label="Total capacity"><input type="number" value={form.capacity} onChange={(e) => set("capacity", Number(e.target.value))} style={{ ...inputStyle, maxWidth: 100 }} /></Field>
+              <Field label="Total capacity">
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <input type="number" min={1} max={CAPACITY_LIMITS[form.providerType]} value={form.capacity}
+                    onChange={(e) => {
+                      const limit = CAPACITY_LIMITS[form.providerType];
+                      const n = Number(e.target.value);
+                      set("capacity", limit ? Math.min(n, limit) : n);
+                    }}
+                    style={{ ...inputStyle, maxWidth: 100 }} />
+                  {CAPACITY_LIMITS[form.providerType] && (
+                    <span style={{ fontSize: 11.5, color: C.inkSoft }}>Up to {CAPACITY_LIMITS[form.providerType]} for this license type</span>
+                  )}
+                </div>
+              </Field>
               <Field label="Which age groups will you care for?">
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {CLASSROOMS.map((c) => (
@@ -2204,31 +2246,22 @@ function OnboardingWizard({ onComplete, onBack }) {
           )}
 
           {step === 4 && (
-            <>
-              <div style={{ fontSize: 13, color: C.ink, lineHeight: 1.5 }}>
-                Already running your business on paper or in a spreadsheet? You'll be able to bulk-import existing families, subsidy authorizations, and documents using a CSV template.
-              </div>
-              <div style={{ border: `1px dashed ${C.line}`, borderRadius: 12, padding: 22, textAlign: "center", background: C.cream }}>
-                <UploadCloud size={26} color={C.inkSoft} style={{ marginBottom: 8 }} />
-                <div style={{ fontSize: 12.5, color: C.inkSoft }}>CSV import — coming soon</div>
-              </div>
-              <div style={{ fontSize: 11.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
-                <Info size={12} /> You can skip this and add families one at a time through Tours instead.
-              </div>
-            </>
-          )}
-
-          {step === 5 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <StatBlock label="Business" value={form.businessName || "—"} />
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <StatBlock label="Business" value={form.businessName || "—"} />
+                <StatBlock label="City" value={form.city || "—"} />
                 <StatBlock label="Provider type" value={form.providerType} />
+                <StatBlock label="License #" value={form.licenseNumber || "Pending"} />
                 <StatBlock label="Capacity" value={String(form.capacity)} />
                 <StatBlock label="Age groups" value={form.classrooms.map((c) => classroomOf(c)?.label).join(", ") || "None selected"} />
                 <StatBlock label="Hours" value={`${form.hours} · ${form.days.length} days/week`} />
+                <StatBlock label="Languages offered" value={form.languagesOffered.join(", ") || "—"} />
               </div>
               <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
-                <CheckCircle2 size={13} color={C.teal} /> Your workspace will be ready — empty and waiting for your first family.
+                <CheckCircle2 size={13} color={C.teal} /> Everything here can be changed later in Settings and Calendar.
+              </div>
+              <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
+                <Info size={12} /> Have families on paper or in a spreadsheet? Add them from Tours once you're in.
               </div>
             </div>
           )}
@@ -3117,7 +3150,7 @@ export default function AlagaMockup() {
         if (res && res.value) list = JSON.parse(res.value);
       } catch (e) { /* nothing saved yet — start from the default cohort */ }
       const foundingCount = list.filter((p) => p.founding).length;
-      const today = "08/02/2026";
+      const today = new Date().toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" });
       const newEntry = {
         id: Date.now(),
         name: info.name || "New Provider",
