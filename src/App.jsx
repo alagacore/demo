@@ -777,6 +777,51 @@ const T = {
   "Large": { es: "Grande", tl: "Malaki", zh: "大", vi: "Lớn", ko: "크게" },
   "Extra large": { es: "Muy grande", tl: "Sobrang laki", zh: "特大", vi: "Rất lớn", ko: "매우 크게" },
   "Provider OS": { es: "Sistema del Proveedor", tl: "Provider OS", zh: "服务商系统", vi: "Hệ thống nhà cung cấp", ko: "제공자 시스템" },
+  "Enroll": { es: "Inscribir", tl: "I-enroll", zh: "登记入托", vi: "Ghi danh", ko: "등록" },
+  "Just what's needed to start care. Documents and details can be finished in their family record.": { es: "Solo lo necesario para empezar el cuidado. Los documentos y detalles se completan en el expediente de la familia.", tl: "Ang kailangan lang para makapagsimula. Matatapos ang mga dokumento at detalye sa rekord ng pamilya.", zh: "仅填写开始托育所需的信息。文件和其他细节可在家庭档案中补全。", vi: "Chỉ những thông tin cần để bắt đầu chăm sóc. Giấy tờ và chi tiết có thể hoàn tất trong hồ sơ gia đình.", ko: "돌봄 시작에 꼭 필요한 정보만 입력합니다. 서류와 세부 사항은 가족 기록에서 마무리할 수 있습니다." },
+  "First name": { es: "Nombre", tl: "Pangalan", zh: "名", vi: "Tên", ko: "이름" },
+  "Last name": { es: "Apellido", tl: "Apelyido", zh: "姓", vi: "Họ", ko: "성" },
+  "Age": { es: "Edad", tl: "Edad", zh: "年龄", vi: "Tuổi", ko: "나이" },
+  "Age group": { es: "Grupo de edad", tl: "Age group", zh: "年龄组", vi: "Nhóm tuổi", ko: "연령 그룹" },
+  "Add a sibling": { es: "Agregar un hermano", tl: "Magdagdag ng kapatid", zh: "添加兄弟姐妹", vi: "Thêm anh chị em", ko: "형제자매 추가" },
+  "Care and start date": { es: "Cuidado y fecha de inicio", tl: "Pag-aalaga at petsa ng simula", zh: "托育安排与开始日期", vi: "Chăm sóc và ngày bắt đầu", ko: "돌봄 및 시작일" },
+  "Full-time": { es: "Tiempo completo", tl: "Full-time", zh: "全日制", vi: "Toàn thời gian", ko: "종일" },
+  "Part-time": { es: "Medio tiempo", tl: "Part-time", zh: "半日制", vi: "Bán thời gian", ko: "시간제" },
+  "Drop-in / hourly": { es: "Por hora / ocasional", tl: "Drop-in / kada oras", zh: "临时 / 按小时", vi: "Theo giờ / thỉnh thoảng", ko: "단시간 / 시간당" },
+  "How care is paid for": { es: "Cómo se paga el cuidado", tl: "Paano binabayaran ang pag-aalaga", zh: "托育费用支付方式", vi: "Cách thanh toán chi phí chăm sóc", ko: "돌봄 비용 지불 방법" },
+  "hour": { es: "hora", tl: "oras", zh: "小时", vi: "giờ", ko: "시간" },
+  "From your tuition rates. Sibling discounts apply automatically.": { es: "Según sus tarifas. Los descuentos por hermanos se aplican automáticamente.", tl: "Mula sa tuition rates mo. Awtomatikong nalalapat ang sibling discount.", zh: "根据您的收费标准。兄弟姐妹折扣会自动应用。", vi: "Theo mức học phí của bạn. Giảm giá anh chị em được áp dụng tự động.", ko: "설정한 수업료 기준입니다. 형제자매 할인은 자동 적용됩니다." },
+  "Program": { es: "Programa", tl: "Programa", zh: "项目", vi: "Chương trình", ko: "프로그램" },
+  "Covered by the program, per month": { es: "Cubierto por el programa, al mes", tl: "Sagot ng programa, kada buwan", zh: "项目每月承担", vi: "Chương trình chi trả mỗi tháng", ko: "프로그램 월 지원액" },
+  "Family copay, per month": { es: "Copago de la familia, al mes", tl: "Copay ng pamilya, kada buwan", zh: "家庭每月自付", vi: "Phần gia đình trả mỗi tháng", ko: "가족 월 본인부담금" },
+  "Authorization ends": { es: "La autorización termina", tl: "Matatapos ang awtorisasyon", zh: "授权截止日期", vi: "Ủy quyền kết thúc", ko: "승인 종료일" },
+  "From the authorization letter": { es: "Según la carta de autorización", tl: "Mula sa authorization letter", zh: "见授权信", vi: "Theo thư ủy quyền", ko: "승인 통지서 기준" },
+  "Parents and guardians": { es: "Padres y tutores", tl: "Mga magulang at tagapag-alaga", zh: "父母与监护人", vi: "Cha mẹ và người giám hộ", ko: "부모 및 보호자" },
+  "Full name": { es: "Nombre completo", tl: "Buong pangalan", zh: "全名", vi: "Họ và tên", ko: "성명" },
+  "Add a second parent or guardian": { es: "Agregar otro padre o tutor", tl: "Magdagdag ng isa pang magulang o tagapag-alaga", zh: "添加另一位父母或监护人", vi: "Thêm cha/mẹ hoặc người giám hộ thứ hai", ko: "두 번째 부모 또는 보호자 추가" },
+  "Remove second parent": { es: "Quitar segundo padre", tl: "Alisin ang ikalawang magulang", zh: "移除第二位父母", vi: "Xóa cha/mẹ thứ hai", ko: "두 번째 부모 삭제" },
+  "To split tuition between households, set it up in their family record after enrolling.": { es: "Para dividir la colegiatura entre hogares, configúrelo en el expediente de la familia después de inscribir.", tl: "Para hatiin ang tuition sa dalawang bahay, i-set up ito sa rekord ng pamilya pagkatapos mag-enroll.", zh: "如需在两个家庭间分摊学费，请在登记后于家庭档案中设置。", vi: "Để chia học phí giữa hai hộ, hãy thiết lập trong hồ sơ gia đình sau khi ghi danh.", ko: "두 가정 간 수업료 분할은 등록 후 가족 기록에서 설정하세요." },
+  "Each child needs a first name.": { es: "Cada niño necesita un nombre.", tl: "Kailangan ng pangalan ng bawat bata.", zh: "每个孩子都需要填写名字。", vi: "Mỗi trẻ cần có tên.", ko: "아이마다 이름을 입력하세요." },
+  "Choose an age group for each child.": { es: "Elija un grupo de edad para cada niño.", tl: "Pumili ng age group para sa bawat bata.", zh: "请为每个孩子选择年龄组。", vi: "Chọn nhóm tuổi cho mỗi trẻ.", ko: "아이마다 연령 그룹을 선택하세요." },
+  "Add a start date.": { es: "Agregue una fecha de inicio.", tl: "Maglagay ng petsa ng simula.", zh: "请添加开始日期。", vi: "Thêm ngày bắt đầu.", ko: "시작일을 입력하세요." },
+  "Add a parent or guardian with a phone or email.": { es: "Agregue un padre o tutor con teléfono o correo.", tl: "Maglagay ng magulang o tagapag-alaga na may phone o email.", zh: "请添加一位有电话或邮箱的父母或监护人。", vi: "Thêm cha mẹ hoặc người giám hộ có số điện thoại hoặc email.", ko: "전화번호나 이메일이 있는 부모 또는 보호자를 추가하세요." },
+  "Add an emergency contact with a phone number.": { es: "Agregue un contacto de emergencia con teléfono.", tl: "Maglagay ng emergency contact na may phone number.", zh: "请添加一位有电话的紧急联系人。", vi: "Thêm liên hệ khẩn cấp có số điện thoại.", ko: "전화번호가 있는 비상 연락처를 추가하세요." },
+  "Add the subsidy program and monthly amount it covers.": { es: "Agregue el programa de subsidio y el monto mensual que cubre.", tl: "Ilagay ang subsidy program at buwanang halagang sagot nito.", zh: "请添加补助项目及其每月承担金额。", vi: "Thêm chương trình trợ cấp và số tiền chi trả hằng tháng.", ko: "보조금 프로그램과 월 지원액을 입력하세요." },
+  "Enroll children": { es: "Inscribir niños", tl: "I-enroll ang mga bata", zh: "为孩子们登记入托", vi: "Ghi danh các trẻ", ko: "아이들 등록" },
+  "Enroll child": { es: "Inscribir niño", tl: "I-enroll ang bata", zh: "为孩子登记入托", vi: "Ghi danh trẻ", ko: "아이 등록" },
+  "Mother": { es: "Madre", tl: "Ina", zh: "母亲", vi: "Mẹ", ko: "어머니" },
+  "Father": { es: "Padre", tl: "Ama", zh: "父亲", vi: "Cha", ko: "아버지" },
+  "Guardian": { es: "Tutor", tl: "Tagapag-alaga", zh: "监护人", vi: "Người giám hộ", ko: "보호자" },
+  "Grandparent": { es: "Abuelo/a", tl: "Lolo/Lola", zh: "祖父母", vi: "Ông/Bà", ko: "조부모" },
+  "Foster parent": { es: "Padre de acogida", tl: "Foster parent", zh: "寄养父母", vi: "Cha mẹ nuôi tạm", ko: "위탁 부모" },
+  "Enroll family": { es: "Inscribir familia", tl: "I-enroll ang pamilya", zh: "为家庭登记入托", vi: "Ghi danh gia đình", ko: "가족 등록" },
+  "Family name": { es: "Apellido de la familia", tl: "Pangalan ng pamilya", zh: "家庭名称", vi: "Tên gia đình", ko: "가족 이름" },
+  "e.g. Ramirez Family": { es: "ej. Familia Ramirez", tl: "hal. Ramirez Family", zh: "例如：Ramirez 家庭", vi: "vd: Gia đình Ramirez", ko: "예: Ramirez 가족" },
+  "Care needed": { es: "Cuidado necesario", tl: "Kailangang pag-aalaga", zh: "所需托育", vi: "Nhu cầu chăm sóc", ko: "필요한 돌봄" },
+  "Tour date": { es: "Fecha de visita", tl: "Petsa ng tour", zh: "参观日期", vi: "Ngày tham quan", ko: "견학 날짜" },
+  "Tour": { es: "Visita", tl: "Tour", zh: "参观", vi: "Tham quan", ko: "견학" },
+  "waiting since": { es: "esperando desde", tl: "naghihintay mula", zh: "等待自", vi: "chờ từ", ko: "대기 시작일" },
+  "To add a family, open them in Tours and set their stage to Waitlist. Families are listed in the order they joined.": { es: "Para agregar una familia, ábrala en Visitas y cambie su etapa a Lista de espera. Las familias aparecen en el orden en que se unieron.", tl: "Para magdagdag ng pamilya, buksan sila sa Tours at itakda ang stage sa Waitlist. Nakalista ang mga pamilya ayon sa pagkakasunod ng pagsali.", zh: "要添加家庭，请在参观中打开该家庭并将阶段设为候补名单。家庭按加入顺序排列。", vi: "Để thêm gia đình, mở gia đình trong Tham quan và đặt giai đoạn là Danh sách chờ. Các gia đình được xếp theo thứ tự tham gia.", ko: "가족을 추가하려면 견학에서 해당 가족을 열고 단계를 대기자 명단으로 설정하세요. 가족은 등록 순서대로 표시됩니다." },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -2953,6 +2998,10 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const baseCompDocsRaw = isEmpty ? COMPLIANCE_DOCS.map((d) => ({ ...d, status: "missing", date: undefined })) : COMPLIANCE_DOCS;
   const baseThreads = isEmpty ? [] : MESSAGE_THREADS;
 
+  // Families enrolled through the app (from Tours or the Waitlist). The sample
+  // daycare's families come from built-in data; these are the provider's own.
+  const [addedFamilies, saveAddedFamilies] = usePersistentState(`added-families${sfx}`, []);
+  const [enrollingProspectId, setEnrollingProspectId] = useState(null);
   const [mode, setMode] = useState(startInParentMode ? "parent" : "provider"); // "provider" | "parent"
   // Providers land on the welcome briefing every time they open the workspace —
   // it's a front porch, not a one-time onboarding step.
@@ -2994,10 +3043,10 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   // Search results for a specific child/family jump straight to their record in
   // the Families directory rather than dropping the provider into the full list.
   const goToFamily = useCallback((famId) => {
-    const match = (isEmpty ? [] : FAMILIES).find((f) => f.id === famId);
+    const match = [...(isEmpty ? [] : FAMILIES), ...addedFamilies].find((f) => f.id === famId);
     if (match) setOpenHousehold(match.household);
     navigateToScreen("families");
-  }, [isEmpty, navigateToScreen]);
+  }, [isEmpty, addedFamilies, navigateToScreen]);
   const [overrides, setOverrides] = useState({});
   const [loaded, setLoaded] = useState(false);
   const [language, setLanguage] = useState(onboardingData?.language || "English");
@@ -3082,6 +3131,9 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   }, []);
 
   const saveOverride = useCallback(async (famId, fields) => {
+    if (addedFamilies.some((f) => f.id === famId)) {
+      return saveAddedFamilies(addedFamilies.map((f) => (f.id === famId ? { ...f, ...fields } : f)));
+    }
     const merged = { ...(overrides[famId] || {}), ...fields };
     setOverrides((o) => ({ ...o, [famId]: merged }));
     try {
@@ -3090,7 +3142,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
     } catch (e) {
       return false;
     }
-  }, [overrides]);
+  }, [overrides, addedFamilies, saveAddedFamilies]);
 
   const saveCompDoc = useCallback(async (docId, fields) => {
     const merged = { ...(compOverrides[docId] || {}), ...fields };
@@ -3099,11 +3151,24 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   }, [compOverrides, saveCompOverrides]);
 
   const updateProspect = useCallback((id, fields) => {
-    saveProspects(prospects.map((p) => (p.id === id ? { ...p, ...fields } : p)));
+    saveProspects(prospects.map((p) => {
+      if (p.id !== id) return p;
+      const joiningWaitlist = fields.stage === "Waitlist" && p.stage !== "Waitlist";
+      return { ...p, ...fields, ...(joiningWaitlist ? { waitlistedOn: todayMDY(), waitlistedAt: Date.now() } : {}) };
+    }));
   }, [prospects, saveProspects]);
+  // Turning a tour family into enrolled children: creates one family record per
+  // child (sharing a household), marks the tour as Enrolled, and opens the record.
+  const enrollProspect = useCallback(async (prospect, records) => {
+    await saveAddedFamilies([...addedFamilies, ...records]);
+    saveProspects(prospects.map((p) => (p.id === prospect.id ? { ...p, stage: "Enrolled", familyIds: records.map((r) => r.id) } : p)));
+    setEnrollingProspectId(null);
+    setOpenHousehold(records[0].household);
+    navigateToScreen("families");
+  }, [addedFamilies, saveAddedFamilies, prospects, saveProspects, navigateToScreen]);
   const addProspect = useCallback(() => {
     tourSeq += 1;
-    saveProspects([{ id: `t${tourSeq}`, name: "New family", stage: "Inquiry", tourDate: "Not scheduled", careType: "Full-time", children: "Not entered", start: "Not entered", language: "English", contact: "", notes: "", followup: "" }, ...prospects]);
+    saveProspects([{ id: `t${tourSeq}`, name: "New family", stage: "Inquiry", tourDate: "Not scheduled", careType: "Full-time", children: "Not entered", start: "Not entered", language: "English", contact: "", email: "", notes: "", followup: "", addedOn: todayMDY() }, ...prospects]);
   }, [prospects, saveProspects]);
   const removeProspect = useCallback((id) => {
     saveProspects(prospects.filter((p) => p.id !== id));
@@ -3120,7 +3185,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
     saveStaff(staff.filter((s) => s.id !== id));
   }, [staff, saveStaff]);
 
-  const families = baseFamilies.map((f) => mergeFam(f, overrides));
+  const families = [...baseFamilies, ...addedFamilies].map((f) => mergeFam(f, overrides));
   const subsidizedFamsForBadge = families.filter((f) => f.subsidized);
   const expiringCount = subsidizedFamsForBadge.filter((f) => f.status !== "active" && !dismissedNotices.includes(f.id)).length;
   const unreadMessagesCount = threads.filter((th) => th.unread).length;
@@ -3185,8 +3250,8 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
               {screen === "bookings" && <Bookings families={families} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
               {screen === "staff" && <StaffScreen staff={staff} families={families} updateStaffMember={updateStaffMember} addStaffMember={addStaffMember} removeStaffMember={removeStaffMember} />}
               {screen === "calendar" && <CalendarScreen schedule={weeklySchedule} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} families={families} threads={threads} saveThreads={saveThreads} />}
-              {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} />}
-              {screen === "waitlist" && <WaitlistScreen prospects={prospects} updateProspect={updateProspect} removeProspect={removeProspect} logAccess={logAccess} families={families} providerInfo={providerInfo} />}
+              {screen === "tours" && <ToursScreen prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} startEnroll={(p) => setEnrollingProspectId(p.id)} />}
+              {screen === "waitlist" && <WaitlistScreen prospects={prospects} updateProspect={updateProspect} removeProspect={removeProspect} logAccess={logAccess} families={families} providerInfo={providerInfo} startEnroll={(p) => setEnrollingProspectId(p.id)} />}
               {screen === "subsidy" && <Subsidy families={families} openFamId={openFamId} setOpenFamId={setOpenFamId} loaded={loaded} meetingMode={meetingMode} />}
               {screen === "payments" && <Finances families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} activeTab={financesTab} setActiveTab={setFinancesTab} />}
               {screen === "compliance" && <Compliance docs={compDocs} onSave={saveCompDoc} families={families} provider={providerInfo} staff={staff} setScreen={setScreen} incidents={incidents} saveIncidents={saveIncidents} mandatedNotes={mandatedNotes} saveMandatedNotes={saveMandatedNotes} />}
@@ -3200,6 +3265,15 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
           </main>
           {screen === "subsidy" && openFam && (
             <SubsidyDrawer fam={openFam} onClose={() => setOpenFamId(null)} onSave={saveOverride} logAccess={logAccess} />
+          )}
+          {enrollingProspectId && prospects.find((p) => p.id === enrollingProspectId) && (
+            <EnrollModal
+              prospect={prospects.find((p) => p.id === enrollingProspectId)}
+              providerInfo={providerInfo}
+              tuitionRates={tuitionRates}
+              onCancel={() => setEnrollingProspectId(null)}
+              onEnroll={enrollProspect}
+            />
           )}
         </>
       ) : (
@@ -3920,6 +3994,9 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
   const activeCount = families.length - pendingCount;
   if (sortByLastName) households = [...households].sort((a, b) => a.household.localeCompare(b.household));
   const open = householdsRaw.find((h) => h.household === openHousehold) || null;
+  useEffect(() => {
+    if (open && open.children.every((c) => daysUntil(c.enrollDate) > 0)) setStatusFilter("pending");
+  }, [openHousehold]);
 
   const exportEmergencySheet = () => downloadCSV("alaga-emergency-contact-sheet.csv",
     ["Child", "Age", "Classroom", "Household", "Parent/Guardian", "Relationship", "Phone", "Email", "Emergency Contact", "Relationship", "Phone"],
@@ -4137,8 +4214,8 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
                   <div key={i} style={{ padding: "9px 0", borderBottom: i < parents.length - 1 ? `1px solid ${C.line}` : "none" }}>
                     <div style={{ fontSize: 13, fontWeight: 600 }}>{p.name} <span style={{ fontWeight: 400, color: C.inkSoft }}>· {p.relationship}</span></div>
                     <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 3, display: "flex", flexDirection: "column", gap: 2 }}>
-                      <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Phone size={12} /> {p.phone}</span>
-                      <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Mail size={12} /> {p.email}</span>
+                      {p.phone && <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Phone size={12} /> {p.phone}</span>}
+                      {p.email && <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Mail size={12} /> {p.email}</span>}
                     </div>
                   </div>
                 ))}
@@ -4172,7 +4249,7 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
           <Section title={t("Emergency contact")} icon={AlertTriangle}>
             {!editing ? (
               <div style={{ fontSize: 13 }}>
-                <div style={{ fontWeight: 600 }}>{ec.name} <span style={{ fontWeight: 400, color: C.inkSoft }}>· {ec.relationship}</span></div>
+                <div style={{ fontWeight: 600 }}>{ec.name}{ec.relationship && <span style={{ fontWeight: 400, color: C.inkSoft }}> · {ec.relationship}</span>}</div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3, color: C.inkSoft, fontSize: 12 }}><Phone size={12} /> {ec.phone}</div>
               </div>
             ) : (
@@ -5473,7 +5550,7 @@ function CalendarScreen({ schedule, saveSchedule, closures, saveClosures, events
 }
 
 /* --------------------------------- tours ------------------------------------ */
-function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, logAccess }) {
+function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, logAccess, startEnroll }) {
   const t = useT();
   const [openId, setOpenId] = useState(null);
   const [confirmingId, setConfirmingId] = useState(null);
@@ -5510,6 +5587,7 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
   const moveStage = (p, dir) => {
     const idx = TOUR_STAGES.indexOf(p.stage);
     const next = TOUR_STAGES[idx + dir];
+    if (next === "Enrolled" && !p.familyIds && startEnroll) { startEnroll(p); return; }
     if (next) updateProspect(p.id, { stage: next });
   };
 
@@ -5602,7 +5680,7 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 18px", borderBottom: `1px solid ${C.line}` }}>
                 <div style={{ minWidth: 0 }}>
                   <b style={{ fontSize: 13.5 }}>{p.name}</b>
-                  <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 2 }}>{p.language} · {p.children} · {t("Toured")}: {p.tourDate}</div>
+                  <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 2 }}>{p.language} · {p.children} · {t("Tour")}: {p.tourDate}</div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
                   <span style={{ fontSize: 12, color: C.inkSoft }}>{p.contact}</span>
@@ -5614,7 +5692,7 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
           ))}
         </Card>
       )}
-      {open && <ProspectDrawer prospect={open} onClose={() => { setOpenId(null); setNewlyAddedId(null); }} update={updateProspect} remove={removeProspect} logAccess={logAccess} initialEditing={open.id === newlyAddedId} />}
+      {open && <ProspectDrawer prospect={open} onClose={() => { setOpenId(null); setNewlyAddedId(null); }} update={updateProspect} remove={removeProspect} logAccess={logAccess} initialEditing={open.id === newlyAddedId} startEnroll={(p) => { setOpenId(null); startEnroll(p); }} />}
     </div>
   );
 }
@@ -5622,10 +5700,12 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
 // Dedicated Waitlist view — families whose Tours stage is "Waitlist", shown as
 // an ordered queue with a reason and quick actions, rather than buried inside
 // the general Tours pipeline. Reuses the same prospect data and drawer.
-function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, families, providerInfo }) {
+function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, families, providerInfo, startEnroll }) {
   const t = useT();
   const [openId, setOpenId] = useState(null);
-  const waitlisted = prospects.filter((p) => p.stage === "Waitlist");
+  // First to join is first in line. Families without a join date (older records)
+  // keep their place ahead of anyone added since.
+  const waitlisted = prospects.filter((p) => p.stage === "Waitlist").slice().sort((a, b) => (a.waitlistedAt || 0) - (b.waitlistedAt || 0));
   const open = prospects.find((p) => p.id === openId) || null;
 
   const capacityByClassroom = CLASSROOMS.map((c) => ({
@@ -5637,7 +5717,7 @@ function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, 
   const atCapacity = totalCapacity > 0 && totalEnrolled >= totalCapacity;
 
   const moveToTour = (p) => updateProspect(p.id, { stage: "Tour Scheduled" });
-  const moveToEnrolled = (p) => updateProspect(p.id, { stage: "Enrolled" });
+  const moveToEnrolled = (p) => (startEnroll ? startEnroll(p) : updateProspect(p.id, { stage: "Enrolled" }));
 
   // Two real, tracked steps once a spot opens: first let the family know a
   // spot is available, then — once they've been notified — invite them to
@@ -5651,7 +5731,7 @@ function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, 
       `Please reply within a few days to let us know if you'd still like to move forward — spots are offered in waitlist order, ` +
       `so we'll need to hear back before we can hold it for you.\n\nLooking forward to hearing from you,\n${providerInfo?.name || ""}`
     );
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${encodeURIComponent(p.email || "")}?subject=${subject}&body=${body}`;
     const entry = { date: todayMDY(), type: "availability" };
     updateProspect(p.id, { waitlistNotifications: [entry, ...(p.waitlistNotifications || [])] });
   };
@@ -5662,7 +5742,7 @@ function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, 
       `Next steps:\n- We'll send over the enrollment packet and any required forms\n- Once those are complete, we'll confirm the official start date\n` +
       `- Reach out anytime with questions before then\n\nWelcome to the family,\n${providerInfo?.name || ""}`
     );
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${encodeURIComponent(p.email || "")}?subject=${subject}&body=${body}`;
     const entry = { date: todayMDY(), type: "enrollment_invite" };
     updateProspect(p.id, { waitlistNotifications: [entry, ...(p.waitlistNotifications || [])] });
   };
@@ -5706,7 +5786,7 @@ function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, 
               }}>{i + 1}</div>
               <button onClick={() => setOpenId(p.id)} style={{ flex: 1, textAlign: "left", background: "none", border: "none", display: "flex", flexDirection: "column", gap: 2 }}>
                 <span style={{ fontSize: 13.5, fontWeight: 600 }}>{p.name}</span>
-                <span style={{ fontSize: 12, color: C.inkSoft }}>{p.children} · {t("desired start")}: {p.start}</span>
+                <span style={{ fontSize: 12, color: C.inkSoft }}>{p.children} · {t("desired start")}: {p.start}{p.waitlistedOn ? ` · ${t("waiting since")} ${p.waitlistedOn}` : ""}</span>
                 {p.notes && <span style={{ fontSize: 11.5, color: C.inkSoft, fontStyle: "italic" }}>{p.notes}</span>}
               </button>
               <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
@@ -5736,16 +5816,235 @@ function WaitlistScreen({ prospects, updateProspect, removeProspect, logAccess, 
           );
         })}
         <div style={{ padding: "10px 18px", fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
-          <Info size={10} /> {t("To add a family to the waitlist, open them from Tours and set their stage to Waitlist.")}
+          <Info size={10} /> {t("To add a family, open them in Tours and set their stage to Waitlist. Families are listed in the order they joined.")}
         </div>
       </Card>
 
-      {open && <ProspectDrawer prospect={open} onClose={() => setOpenId(null)} update={updateProspect} remove={removeProspect} logAccess={logAccess} />}
+      {open && <ProspectDrawer prospect={open} onClose={() => setOpenId(null)} update={updateProspect} remove={removeProspect} logAccess={logAccess} startEnroll={startEnroll && ((p) => { setOpenId(null); startEnroll(p); })} />}
     </div>
   );
 }
 
-function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialEditing = false }) {
+/* ------------------------------ enrollment ------------------------------------ */
+// The step that turns a family from the Tours pipeline into enrolled children.
+// Collects only what's needed to start care and billing; everything else
+// (documents, schedule details, split payments) is finished in the family record.
+const CARE_TYPES = [
+  { id: "Full-time", sessionLength: "Full-day (10+ hrs)", sessions: "5 / week", rateKey: "fullTime" },
+  { id: "Part-time", sessionLength: "Part-day (6 hrs)", sessions: "3 / week", rateKey: "partTime" },
+  { id: "Drop-in / hourly", sessionLength: "Drop-in / hourly", sessions: "12 / month", rateKey: "hourly" },
+];
+const GUARDIAN_RELATIONSHIPS = ["Mother", "Father", "Guardian", "Grandparent", "Foster parent", "Other"];
+const FAMILY_COLORS = [C.teal, C.sky, C.amber, C.coral, C.tealDark];
+const lastNameFromFamily = (name) => (name || "").replace(/\s*family\s*$/i, "").trim();
+// "18m" → infants/toddlers boundary in months; "3", "3y" → years.
+function classroomForAge(age, offeredIds) {
+  const m = String(age || "").trim().match(/^(\d+(?:\.\d+)?)\s*(m|mo|months?)?/i);
+  if (!m) return null;
+  const months = m[2] ? Number(m[1]) : Number(m[1]) * 12;
+  const id = months < 18 ? "infants" : months < 36 ? "toddlers" : months < 60 ? "preschool" : "prek";
+  return offeredIds.includes(id) ? id : null;
+}
+
+function EnrollModal({ prospect, providerInfo, tuitionRates, onCancel, onEnroll }) {
+  const t = useT();
+  const offered = providerInfo?.classrooms?.length ? CLASSROOMS.filter((c) => providerInfo.classrooms.includes(c.id)) : CLASSROOMS;
+  const programs = providerInfo?.subsidyPrograms?.length ? PROGRAMS.filter((p) => providerInfo.subsidyPrograms.includes(p.id)) : PROGRAMS;
+  const lastName = lastNameFromFamily(prospect.name === "New family" ? "" : prospect.name);
+  // "2 (ages 1, 3)" → two child rows, ages 1y and 3y
+  const countMatch = String(prospect.children || "").match(/^\s*(\d+)/);
+  const ages = (String(prospect.children || "").match(/\d+/g) || []).slice(1);
+  const childCount = Math.min(Math.max(Number(countMatch?.[1]) || 1, 1), 4);
+  const offeredIds = offered.map((o) => o.id);
+  const [children, setChildren] = useState(() => Array.from({ length: childCount }, (_, i) => {
+    const age = ages[i] ? `${ages[i]}y` : "";
+    return { first: "", last: lastName, age, classroom: classroomForAge(age, offeredIds) || offered[0]?.id || "", classroomPicked: false };
+  }));
+  const [start, setStart] = useState(/^\d{2}\/\d{2}\/\d{4}$/.test(prospect.start || "") ? prospect.start : "");
+  const [careType, setCareType] = useState(CARE_TYPES.find((c) => c.id === prospect.careType)?.id || "Full-time");
+  const [pay, setPay] = useState("private");
+  const [subsidy, setSubsidy] = useState({ programId: programs[0]?.id || "", coverage: "", copay: "", authEnd: "" });
+  const [parents, setParents] = useState([{ name: "", relationship: "Mother", phone: prospect.contact || "", email: prospect.email || "" }]);
+  const [ec, setEc] = useState({ name: "", relationship: "", phone: "" });
+  const [tried, setTried] = useState(false);
+
+  const care = CARE_TYPES.find((c) => c.id === careType);
+  const tuitionFor = (classroom) => tuitionRates?.[classroom]?.[care.rateKey] || 0;
+  // Typing an age moves the age group along with it, until the provider picks one themselves.
+  const setChild = (i, k, v) => setChildren((cs) => cs.map((c, idx) => {
+    if (idx !== i) return c;
+    if (k === "classroom") return { ...c, classroom: v, classroomPicked: true };
+    if (k === "age" && !c.classroomPicked) return { ...c, age: v, classroom: classroomForAge(v, offeredIds) || c.classroom };
+    return { ...c, [k]: v };
+  }));
+  const setParent = (i, k, v) => setParents((ps) => ps.map((p, idx) => (idx === i ? { ...p, [k]: v } : p)));
+
+  const problems = [];
+  if (children.some((c) => !c.first.trim())) problems.push(t("Each child needs a first name."));
+  if (children.some((c) => !c.classroom)) problems.push(t("Choose an age group for each child."));
+  if (!start) problems.push(t("Add a start date."));
+  if (!parents[0].name.trim() || !(parents[0].phone.trim() || parents[0].email.trim())) problems.push(t("Add a parent or guardian with a phone or email."));
+  if (!ec.name.trim() || !ec.phone.trim()) problems.push(t("Add an emergency contact with a phone number."));
+  if (pay === "subsidy" && (!subsidy.programId || !subsidy.coverage)) problems.push(t("Add the subsidy program and monthly amount it covers."));
+
+  const submit = () => {
+    setTried(true);
+    if (problems.length) return;
+    const household = `h${Date.now()}`;
+    const familyLast = lastName || children[0].last.trim() || children[0].first.trim();
+    const cleanParents = parents.filter((p) => p.name.trim()).map((p) => ({ ...p, name: p.name.trim() }));
+    const records = children.map((c, i) => ({
+      id: Date.now() + i,
+      child: `${c.first.trim()} ${c.last.trim()}`.trim(),
+      enrollDate: start,
+      household,
+      householdName: `${familyLast} Family`,
+      subsidized: pay === "subsidy",
+      age: c.age.trim() || "—",
+      parent: cleanParents[0].name,
+      color: FAMILY_COLORS[i % FAMILY_COLORS.length],
+      classroom: c.classroom,
+      parents: cleanParents,
+      emergencyContact: { ...ec, name: ec.name.trim() },
+      providerType: providerInfo?.providerType || PROVIDER_TYPES[0],
+      programId: pay === "subsidy" ? subsidy.programId : null,
+      coverageAmount: pay === "subsidy" ? Number(subsidy.coverage) || 0 : 0,
+      coverageBasis: pay === "subsidy" ? "monthly" : "private-pay",
+      copay: pay === "subsidy" ? Number(subsidy.copay) || 0 : tuitionFor(c.classroom),
+      sessionsApproved: care.sessions,
+      sessionLength: care.sessionLength,
+      authStart: start,
+      authEnd: pay === "subsidy" ? (subsidy.authEnd || "") : "Ongoing",
+      // A subsidized family starts with its paperwork outstanding; private-pay has none.
+      status: pay === "subsidy" ? "docs-needed" : "active",
+      notices: [],
+      forms: pay === "subsidy" ? FORM_TEMPLATES.map((f) => ({ id: f.id, status: "missing" })) : [],
+      // Every new child starts with their file empty, so the dashboard flags it.
+      documents: CHILD_DOC_TEMPLATES.map((d) => ({ id: d.id, status: "missing" })),
+      notes: prospect.notes || "",
+      fromTourId: prospect.id,
+    }));
+    onEnroll(prospect, records);
+  };
+
+  const label = (txt) => <div style={{ fontSize: 11.5, fontWeight: 700, color: C.inkSoft, marginBottom: 5 }}>{txt}</div>;
+  const chip = (on) => ({ padding: "7px 12px", borderRadius: 999, fontSize: 12.5, fontWeight: 600, border: `1px solid ${on ? C.teal : C.line}`, background: on ? C.tealTint : "#fff", color: on ? C.tealDark : C.inkSoft });
+
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+      <div onClick={onCancel} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.35)" }} />
+      <div style={{ position: "relative", width: 620, maxWidth: "94vw", maxHeight: "90vh", background: C.paper, borderRadius: 18, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column" }}>
+        <div style={{ padding: "20px 22px 14px", borderBottom: `1px solid ${C.line}`, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>{t("Enroll")} {prospect.name}</div>
+            <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 3 }}>{t("Just what's needed to start care. Documents and details can be finished in their family record.")}</div>
+          </div>
+          <button onClick={onCancel} style={{ background: "none", border: "none", color: C.inkSoft, padding: 4 }}><X size={19} /></button>
+        </div>
+
+        <div style={{ flex: 1, overflowY: "auto", padding: "16px 22px 22px", display: "flex", flexDirection: "column", gap: 18 }}>
+          <Section title={t("Children")} icon={Users}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {children.map((c, i) => (
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "1.2fr 1.2fr 0.6fr 1.4fr auto", gap: 8, alignItems: "end" }}>
+                  <div>{i === 0 && label(t("First name"))}<input value={c.first} onChange={(e) => setChild(i, "first", e.target.value)} style={{ ...inputStyle, width: "100%" }} /></div>
+                  <div>{i === 0 && label(t("Last name"))}<input value={c.last} onChange={(e) => setChild(i, "last", e.target.value)} style={{ ...inputStyle, width: "100%" }} /></div>
+                  <div>{i === 0 && label(t("Age"))}<input value={c.age} onChange={(e) => setChild(i, "age", e.target.value)} placeholder="2y" style={{ ...inputStyle, width: "100%" }} /></div>
+                  <div>{i === 0 && label(t("Age group"))}
+                    <Select value={c.classroom} onChange={(v) => setChild(i, "classroom", v)} options={offered.map((o) => o.id)} labels={offered.map((o) => classroomLabelWithRange(o.id))} />
+                  </div>
+                  <button onClick={() => setChildren((cs) => cs.filter((_, idx) => idx !== i))} disabled={children.length === 1} title={t("Remove")} style={{ background: "none", border: "none", color: children.length === 1 ? "#C9C4B4" : C.danger, padding: "8px 4px" }}><Trash2 size={14} /></button>
+                </div>
+              ))}
+              <button onClick={() => setChildren((cs) => [...cs, { first: "", last: lastName, age: "", classroom: offered[0]?.id || "", classroomPicked: false }])} style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 12.5, fontWeight: 700, padding: 0 }}>
+                <Plus size={13} /> {t("Add a sibling")}
+              </button>
+            </div>
+          </Section>
+
+          <Section title={t("Care and start date")} icon={CalendarDays}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div>{label(t("Start date"))}<DateField value={start} onChange={(v) => setStart(v || "")} /></div>
+              <div>{label(t("Schedule"))}
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  {CARE_TYPES.map((ct) => <button key={ct.id} type="button" onClick={() => setCareType(ct.id)} style={chip(careType === ct.id)}>{t(ct.id)}</button>)}
+                </div>
+              </div>
+            </div>
+          </Section>
+
+          <Section title={t("How care is paid for")} icon={DollarSign}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ display: "flex", gap: 6 }}>
+                <button type="button" onClick={() => setPay("private")} style={chip(pay === "private")}>{t("Private pay")}</button>
+                <button type="button" onClick={() => setPay("subsidy")} style={chip(pay === "subsidy")}>{t("Subsidy")}</button>
+              </div>
+              {pay === "private" ? (
+                <div style={{ fontSize: 12.5, color: C.inkSoft }}>
+                  {children.map((c, i) => (
+                    <div key={i}>{(c.first || t("Child")) + ": "}<b style={{ color: C.ink }}>{money(tuitionFor(c.classroom))}</b>{care.rateKey === "hourly" ? ` / ${t("hour")}` : ` / ${t("month")}`}</div>
+                  ))}
+                  <div style={{ fontSize: 11.5, marginTop: 4 }}>{t("From your tuition rates. Sibling discounts apply automatically.")}</div>
+                </div>
+              ) : (
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                  <div style={{ gridColumn: "1 / -1" }}>{label(t("Program"))}<Select value={subsidy.programId} onChange={(v) => setSubsidy({ ...subsidy, programId: v })} options={programs.map((p) => p.id)} labels={programs.map((p) => p.label)} /></div>
+                  <div>{label(t("Covered by the program, per month"))}<MoneyInput icon={DollarSign} suffix="/ mo" value={subsidy.coverage} onChange={(v) => setSubsidy({ ...subsidy, coverage: v })} /></div>
+                  <div>{label(t("Family copay, per month"))}<MoneyInput icon={DollarSign} suffix="/ mo" value={subsidy.copay} onChange={(v) => setSubsidy({ ...subsidy, copay: v })} /></div>
+                  <div style={{ gridColumn: "1 / -1" }}>{label(t("Authorization ends"))}<DateField value={subsidy.authEnd} onChange={(v) => setSubsidy({ ...subsidy, authEnd: v || "" })} placeholder={t("From the authorization letter")} /></div>
+                </div>
+              )}
+            </div>
+          </Section>
+
+          <Section title={t("Parents and guardians")} icon={Phone}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {parents.map((p, i) => (
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 8 }}>
+                  <input value={p.name} onChange={(e) => setParent(i, "name", e.target.value)} placeholder={t("Full name")} style={{ ...inputStyle, width: "100%" }} />
+                  <Select value={p.relationship} onChange={(v) => setParent(i, "relationship", v)} options={GUARDIAN_RELATIONSHIPS} labels={GUARDIAN_RELATIONSHIPS.map((r) => t(r))} />
+                  <input value={p.phone} onChange={(e) => setParent(i, "phone", e.target.value)} placeholder={t("Phone")} style={{ ...inputStyle, width: "100%" }} />
+                  <input value={p.email} onChange={(e) => setParent(i, "email", e.target.value)} placeholder={t("Email")} style={{ ...inputStyle, width: "100%" }} />
+                </div>
+              ))}
+              {parents.length < 2 ? (
+                <button onClick={() => setParents((ps) => [...ps, { name: "", relationship: "Father", phone: "", email: "" }])} style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 12.5, fontWeight: 700, padding: 0 }}>
+                  <Plus size={13} /> {t("Add a second parent or guardian")}
+                </button>
+              ) : (
+                <button onClick={() => setParents((ps) => ps.slice(0, 1))} style={{ alignSelf: "flex-start", background: "none", border: "none", color: C.inkSoft, fontSize: 12, fontWeight: 600, padding: 0 }}>{t("Remove second parent")}</button>
+              )}
+              {parents.length > 1 && <div style={{ fontSize: 11.5, color: C.inkSoft }}>{t("To split tuition between households, set it up in their family record after enrolling.")}</div>}
+            </div>
+          </Section>
+
+          <Section title={t("Emergency contact")} icon={AlertTriangle}>
+            <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 8 }}>
+              <input value={ec.name} onChange={(e) => setEc({ ...ec, name: e.target.value })} placeholder={t("Name")} style={{ ...inputStyle, width: "100%" }} />
+              <input value={ec.phone} onChange={(e) => setEc({ ...ec, phone: e.target.value })} placeholder={t("Phone")} style={{ ...inputStyle, width: "100%" }} />
+              <div style={{ gridColumn: "1 / -1" }}><RelationshipField value={ec.relationship} onChange={(v) => setEc({ ...ec, relationship: v })} /></div>
+            </div>
+          </Section>
+
+          {tried && problems.length > 0 && (
+            <div style={{ padding: "10px 12px", borderRadius: 10, background: C.dangerTint, color: C.danger, fontSize: 12.5, display: "flex", flexDirection: "column", gap: 3 }}>
+              {problems.map((pr) => <div key={pr}>• {pr}</div>)}
+            </div>
+          )}
+        </div>
+
+        <div style={{ padding: "14px 22px", borderTop: `1px solid ${C.line}`, display: "flex", gap: 10 }}>
+          <button onClick={onCancel} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13.5 }}>{t("Cancel")}</button>
+          <button onClick={submit} style={{ flex: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "11px 0", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 13.5 }}>
+            <UserPlus size={14} /> {children.length > 1 ? t("Enroll children") : t("Enroll child")}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialEditing = false, startEnroll }) {
   const t = useT();
   const [editing, setEditing] = useState(initialEditing);
   const [form, setForm] = useState(prospect);
@@ -5775,7 +6074,7 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
           <Section title={t("Stage")} icon={ListChecks}>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
               {TOUR_STAGES.map((s) => (
-                <button key={s} onClick={() => update(prospect.id, { stage: s })} style={{
+                <button key={s} onClick={() => (s === "Enrolled" && !prospect.familyIds && startEnroll ? startEnroll(prospect) : update(prospect.id, { stage: s }))} style={{
                   padding: "7px 11px", borderRadius: 999, fontSize: 12, fontWeight: 600,
                   border: `1px solid ${s === prospect.stage ? C.teal : C.line}`, background: s === prospect.stage ? C.tealTint : "#fff", color: s === prospect.stage ? C.tealDark : C.inkSoft,
                 }}>{t(s)}</button>
@@ -5787,21 +6086,31 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
             right={!editing && <button onClick={() => setEditing(true)} style={{ display: "flex", alignItems: "center", gap: 5, background: "none", border: "none", color: C.teal, fontSize: 12, fontWeight: 700 }}><Pencil size={12} /> {t("Edit")}</button>}>
             {editing ? (
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <Field label={t("Primary contact")}><input value={form.contact} onChange={field("contact")} style={inputStyle} /></Field>
-                <Field label={t("Preferred language")}><input value={form.language} onChange={field("language")} style={inputStyle} /></Field>
+                <Field label={t("Family name")}><input value={form.name} onChange={field("name")} placeholder={t("e.g. Ramirez Family")} style={inputStyle} /></Field>
+                <Field label={t("Phone")}><input value={form.contact} onChange={field("contact")} style={inputStyle} /></Field>
+                <Field label={t("Email")}><input type="email" value={form.email || ""} onChange={field("email")} style={inputStyle} /></Field>
+                <Field label={t("Preferred language")}>
+                  <Select value={form.language} onChange={(v) => setForm({ ...form, language: v })}
+                    options={Array.from(new Set(["English", "Español", "Tagalog", "中文", "Tiếng Việt", "한국어", form.language].filter(Boolean)))} />
+                </Field>
+                <Field label={t("Care needed")}>
+                  <Select value={form.careType || "Full-time"} onChange={(v) => setForm({ ...form, careType: v })} options={CARE_TYPES.map((c) => c.id)} labels={CARE_TYPES.map((c) => t(c.id))} />
+                </Field>
                 <Field label={t("Children")}><input value={form.children} onChange={field("children")} style={inputStyle} /></Field>
                 <Field label={t("Desired start date")}><input value={form.start} onChange={field("start")} placeholder={t("e.g. September 2026, or ASAP")} style={inputStyle} /></Field>
-                <Field label={t("Date toured")}><DateField value={form.tourDate === "Not scheduled" ? "" : form.tourDate} onChange={(v) => setForm((f) => ({ ...f, tourDate: v || "Not scheduled" }))} placeholder={t("Not scheduled")} /></Field>
+                <Field label={t("Tour date")}><DateField value={form.tourDate === "Not scheduled" ? "" : form.tourDate} onChange={(v) => setForm((f) => ({ ...f, tourDate: v || "Not scheduled" }))} placeholder={t("Not scheduled")} /></Field>
                 <Field label={t("Notes")}><textarea value={form.notes} onChange={field("notes")} rows={3} style={{ ...inputStyle, width: "100%" }} /></Field>
                 <Field label={t("Next follow-up")}><input value={form.followup} onChange={field("followup")} style={inputStyle} /></Field>
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 13 }}>
-                <Row left={<span style={{ color: C.inkSoft }}>{t("Primary contact")}</span>} right={<b>{form.contact || "—"}</b>} />
+                <Row left={<span style={{ color: C.inkSoft }}>{t("Phone")}</span>} right={<b>{form.contact || "—"}</b>} />
+                <Row left={<span style={{ color: C.inkSoft }}>{t("Email")}</span>} right={<b>{form.email || "—"}</b>} />
+                <Row left={<span style={{ color: C.inkSoft }}>{t("Care needed")}</span>} right={<b>{t(form.careType || "—")}</b>} />
                 <Row left={<span style={{ color: C.inkSoft }}>{t("Preferred language")}</span>} right={<b>{form.language}</b>} />
                 <Row left={<span style={{ color: C.inkSoft }}>{t("Children")}</span>} right={<b>{form.children}</b>} />
                 <Row left={<span style={{ color: C.inkSoft }}>{t("Desired start date")}</span>} right={<b>{form.start}</b>} />
-                <Row left={<span style={{ color: C.inkSoft }}>{t("Date toured")}</span>} right={<b>{form.tourDate}</b>} />
+                <Row left={<span style={{ color: C.inkSoft }}>{t("Tour date")}</span>} right={<b>{form.tourDate}</b>} />
                 <div style={{ padding: "9px 0" }}><span style={{ color: C.inkSoft, fontSize: 12 }}>{t("Notes")}</span><p style={{ margin: "4px 0 0", fontSize: 13 }}>{form.notes || "—"}</p></div>
                 <div style={{ padding: "9px 0" }}><span style={{ color: C.inkSoft, fontSize: 12 }}>{t("Next follow-up")}</span><p style={{ margin: "4px 0 0", fontSize: 13 }}>{form.followup || "—"}</p></div>
               </div>
@@ -5824,6 +6133,11 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
           ) : (
             <div style={{ display: "flex", gap: 10 }}>
               <button onClick={onClose} style={{ flex: 1, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13.5 }}>{t("Close")}</button>
+              {startEnroll && !prospect.familyIds && prospect.stage !== "Declined" && (
+                <button onClick={() => startEnroll(prospect)} style={{ flex: 1.4, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "11px 0", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 13.5 }}>
+                  <UserPlus size={14} /> {t("Enroll family")}
+                </button>
+              )}
               <button onClick={() => setConfirmingRemove(true)} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "11px 0", borderRadius: 10, border: `1px solid ${C.dangerTint}`, background: C.dangerTint, color: C.danger, fontWeight: 600, fontSize: 13.5 }}>
                 <Trash2 size={14} /> {t("Remove")}
               </button>
