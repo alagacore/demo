@@ -1328,6 +1328,23 @@ const T = {
   "expected": { es: "esperados", tl: "inaasahan", zh: "预计到园", vi: "dự kiến", ko: "예정" },
   "Closed today": { es: "Cerrado hoy", tl: "Sarado ngayon", zh: "今天休园", vi: "Hôm nay nghỉ", ko: "오늘 휴원" },
   "Check in / out": { es: "Entrada / salida", tl: "Check in / out", zh: "入园 / 离园", vi: "Đến / về", ko: "등·하원" },
+  "Good morning": { es: "Buenos días", tl: "Magandang umaga", zh: "早上好", vi: "Chào buổi sáng", ko: "좋은 아침입니다" },
+  "Good afternoon": { es: "Buenas tardes", tl: "Magandang hapon", zh: "下午好", vi: "Chào buổi chiều", ko: "좋은 오후입니다" },
+  "Good evening": { es: "Buenas noches", tl: "Magandang gabi", zh: "晚上好", vi: "Chào buổi tối", ko: "좋은 저녁입니다" },
+  "Listen": { es: "Escuchar", tl: "Pakinggan", zh: "收听", vi: "Nghe", ko: "듣기" },
+  "Stop": { es: "Detener", tl: "Ihinto", zh: "停止", vi: "Dừng", ko: "정지" },
+  "Listen to today's briefing": { es: "Escuchar el resumen de hoy", tl: "Pakinggan ang briefing ngayon", zh: "收听今日简报", vi: "Nghe tóm tắt hôm nay", ko: "오늘의 브리핑 듣기" },
+  "Nothing urgent today.": { es: "Nada urgente hoy.", tl: "Walang urgent ngayon.", zh: "今天没有紧急事项。", vi: "Hôm nay không có việc gấp.", ko: "오늘은 급한 일이 없습니다." },
+  "Your daily routine": { es: "Tu rutina diaria", tl: "Ang iyong araw-araw na gawain", zh: "每日例行事项", vi: "Việc hằng ngày của bạn", ko: "나의 일과" },
+  "resets each morning": { es: "se reinicia cada mañana", tl: "nire-reset tuwing umaga", zh: "每天早上重置", vi: "đặt lại mỗi sáng", ko: "매일 아침 초기화" },
+  "Steadiness": { es: "Estabilidad", tl: "Katatagan", zh: "稳定", vi: "Vững vàng", ko: "꾸준함" },
+  "Patience": { es: "Paciencia", tl: "Pasensya", zh: "耐心", vi: "Kiên nhẫn", ko: "인내" },
+  "Trust": { es: "Confianza", tl: "Tiwala", zh: "信任", vi: "Niềm tin", ko: "신뢰" },
+  "Rest": { es: "Descanso", tl: "Pahinga", zh: "休息", vi: "Nghỉ ngơi", ko: "휴식" },
+  "Growth": { es: "Crecimiento", tl: "Paglago", zh: "成长", vi: "Phát triển", ko: "성장" },
+  "Community": { es: "Comunidad", tl: "Komunidad", zh: "社区", vi: "Cộng đồng", ko: "공동체" },
+  "Presence": { es: "Presencia", tl: "Presensya", zh: "陪伴", vi: "Hiện diện", ko: "함께함" },
+  "Warmth": { es: "Calidez", tl: "Init ng pagmamahal", zh: "温暖", vi: "Ấm áp", ko: "따뜻함" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -3618,10 +3635,9 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   // it's a front porch, not a one-time onboarding step.
   // The welcome screen shows once a day; later visits go straight to the dashboard.
   const welcomeKey = `alaga-welcome-seen${isEmpty ? "-empty" : ""}`;
-  const [showBriefing, setShowBriefing] = useState(() => {
-    if (startInParentMode) return false;
-    try { return localStorage.getItem(welcomeKey) !== todayMDY(); } catch (e) { return true; }
-  });
+  // The greeting, weekly note and Listen button now live at the top of the
+  // dashboard, so there's no separate welcome screen to click through.
+  const [showBriefing, setShowBriefing] = useState(false);
   const enterWorkspace = () => { try { localStorage.setItem(welcomeKey, todayMDY()); } catch (e) { /* private mode */ } setShowBriefing(false); };
   const [screen, setScreenRaw] = useState("dashboard");
   const [screenHistory, setScreenHistory] = useState([]);
@@ -4484,6 +4500,33 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
   ];
   // With nothing opened, only today's and overdue items show.
   const showGroup = (key) => openGroup === key || (!openGroup && key === "due" && dueNow.length > 0);
+  // Greeting, weekly note and read-aloud (moved here from the old welcome screen).
+  const langCode = React.useContext(LanguageContext).lang || "en";
+  const isMobileDash = useIsMobile();
+  const nowD = new Date();
+  const hr = nowD.getHours();
+  const contactFirst = (providerInfo?.contactName || "").trim().split(" ")[0];
+  const greeting = `${t(hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening")}${contactFirst ? `, ${contactFirst}` : ""}`;
+  const LOCALES = { en: "en-US", es: "es-US", tl: "fil-PH", zh: "zh-CN", vi: "vi-VN", ko: "ko-KR" };
+  const dateLong = nowD.toLocaleDateString(LOCALES[langCode] || "en-US", { weekday: "long", month: "long", day: "numeric" });
+  const theme = BRIEFING_THEMES[isoWeekNumber(nowD) % BRIEFING_THEMES.length];
+  const ttsOk = typeof window !== "undefined" && !!window.speechSynthesis;
+  const [speaking, setSpeaking] = useState(false);
+  const speak = () => {
+    if (!ttsOk) return;
+    if (speaking) { window.speechSynthesis.cancel(); setSpeaking(false); return; }
+    const parts = [`${greeting}.`];
+    if (families.length) parts.push(`${families.length} ${t(families.length === 1 ? "child in your care" : "children in your care")}.`);
+    dueSoon.filter((it) => it.n <= 0).forEach((it) => parts.push(`${it.title}: ${it.detail}.`));
+    briefGroups.filter((g) => g.count > 0 && g.key !== "due").forEach((g) => parts.push(`${g.label}: ${g.count}.`));
+    if (parts.length === 2 && !totalAttention) parts.push(t("Nothing urgent today."));
+    const u = new SpeechSynthesisUtterance(parts.join(" "));
+    u.lang = LOCALES[langCode] || "en-US";
+    u.rate = langCode === "en" ? 0.98 : 0.9;
+    u.onend = () => setSpeaking(false); u.onerror = () => setSpeaking(false);
+    window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); setSpeaking(true);
+  };
+  useEffect(() => () => { if (ttsOk) window.speechSynthesis.cancel(); }, []);
   const whenLabel = (n) => (n < 0 ? t("Overdue") : n === 0 ? t("Today") : n === 1 ? t("Tomorrow") : `${t("In")} ${n} ${t("days")}`);
   const totalAttention = dueSoon.length + expiring.length + flexNeedingAttention.length + docsNeedingAttention.length + childrenMissingDocs.length + overdueTuition.length;
   const approveFlexInline = (id) => saveFlexCare(flexCareRequests.map((r) => (r.id === id ? { ...r, status: "approved" } : r)));
@@ -4514,12 +4557,22 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
         background: C.paper, border: `1px solid ${C.line}`, borderLeft: `4px solid ${C.teal}`, borderRadius: 16, padding: "24px 28px", color: C.ink, position: "relative", overflow: "hidden",
         
       }}>
-        <div style={{ position: "absolute", top: -18, right: -10, opacity: 0.07 }}>
+        <div style={{ position: "absolute", top: -18, right: -10, opacity: 0.07, display: isMobileDash ? "none" : "block" }}>
           <AlagaMark size={130} color={C.teal} arch={false} backdrop={false} />
         </div>
         <div style={{ position: "relative", maxWidth: 560 }}>
-          <div style={{ fontSize: 11.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>{t("Today's briefing")}</div>
-          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 21, fontWeight: 500, lineHeight: 1.45 }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 10 }}>
+            <div>
+              <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, fontWeight: 600, lineHeight: 1.2 }}>{greeting}</div>
+              {isMobileDash && <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 3 }}>{dateLong}</div>}
+            </div>
+            {ttsOk && (
+              <button onClick={speak} title={speaking ? t("Stop") : t("Listen to today's briefing")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 12px", borderRadius: 999, border: `1px solid ${speaking ? C.teal : C.line}`, background: speaking ? C.tealTint : "#fff", color: speaking ? C.tealDark : C.inkSoft, fontSize: 12.5, fontWeight: 700, flexShrink: 0 }}>
+                {speaking ? <><Square size={11} fill={C.tealDark} /> {t("Stop")}</> : <><Volume2 size={14} /> {t("Listen")}</>}
+              </button>
+            )}
+          </div>
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 500, lineHeight: 1.45 }}>
             {families.length === 0 ? (
               t("No children enrolled yet — once families join, this is where you'll see how your business is doing at a glance.")
             ) : (
@@ -4630,6 +4683,10 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
               ))}
             </div>
           )}
+          <div style={{ marginTop: 16, display: "flex", alignItems: "flex-start", gap: 8, fontSize: 13, color: C.tealDark }}>
+            <Sparkles size={14} style={{ flexShrink: 0, marginTop: 2 }} />
+            <span><b>{t("This week")}: {langCode === "es" ? theme.wordEs : t(theme.word)}</b> — <i style={{ fontFamily: "'Fraunces', serif" }}>{langCode === "es" ? theme.lineEs : theme.line}</i></span>
+          </div>
         </div>
       </div>
 
@@ -4691,8 +4748,8 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
         </Card>
       ) : null}
 
-      <Card title={t("Today's checklist")} icon={ListChecks}
-        right={<span style={{ fontSize: 12, color: C.inkSoft }}>{doneCount}/{checklist.length} {t("done")}</span>}>
+      <Card title={t("Your daily routine")} icon={ListChecks}
+        right={<span style={{ fontSize: 12, color: C.inkSoft }}>{doneCount}/{checklist.length} {t("done")} · {t("resets each morning")}</span>}>
         <div style={{ padding: "14px 18px 6px" }}>
           <div style={{ height: 8, borderRadius: 999, background: C.cream, overflow: "hidden" }}>
             <div style={{ height: "100%", width: `${pct}%`, background: pct === 100 ? C.teal : C.amber, borderRadius: 999, transition: "width 0.3s" }} />
