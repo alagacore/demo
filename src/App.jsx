@@ -2647,7 +2647,7 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin" }) {
   );
 }
 
-function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
+function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, onEarlyAccess }) {
   // The cross-account admin view stays off the public page; open the site with
   // ?admin=1 at the end of the URL to see it.
   const showAdmin = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("admin");
@@ -2665,11 +2665,14 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
         Nurturing the foundation for<br />your childcare business.
       </div>
 
-      <button onClick={onSignIn} style={{
-        marginBottom: 36, background: C.teal, color: "#fff", border: "none", borderRadius: 12,
-        padding: "13px 28px", fontWeight: 700, fontSize: 15.5,
+      <button onClick={onEarlyAccess} style={{
+        marginBottom: 10, background: C.teal, color: "#fff", border: "none", borderRadius: 12,
+        padding: "14px 30px", fontWeight: 700, fontSize: 16,
       }}>
-        Sign in to your account
+        Request early access
+      </button>
+      <button onClick={onSignIn} style={{ marginBottom: 32, background: "none", border: "none", color: C.inkSoft, fontSize: 13, fontWeight: 600 }}>
+        Already have an account? <span style={{ color: C.teal, fontWeight: 700 }}>Sign in</span>
       </button>
 
       <div style={{ maxWidth: 980, width: "100%" }}>
@@ -2721,13 +2724,13 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
           Other ways in
         </div>
         <div style={{ display: "grid", gridTemplateColumns: showAdmin ? "1fr 1fr 1fr" : "1fr 1fr", gap: 18 }}>
-          <button onClick={onSignUp} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
+          <button onClick={onEarlyAccess} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
             <div style={{ width: 46, height: 46, borderRadius: 12, background: C.skyTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <Rocket size={22} color={C.sky} />
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>I'm a new provider signing up</div>
-              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>Create your account, then set up your own empty workspace.</div>
+              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>I'm a provider and want to use Alaga</div>
+              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>Request early access and a short demo — founding providers get setup help.</div>
             </div>
             <ArrowRight size={16} color={C.sky} />
           </button>
@@ -3094,6 +3097,7 @@ function AdminScreen({ onBack }) {
 
       <div style={{ maxWidth: 1180, margin: "0 auto", padding: "28px 32px 60px", display: "flex", flexDirection: "column", gap: 20 }}>
         <div>
+        <EarlyAccessAdmin />
           <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, color: C.ink }}>Providers on the platform</div>
           <div style={{ fontSize: 13, color: C.inkSoft, marginTop: 3 }}>A cross-account view for the Alaga team — not visible to individual providers.</div>
         </div>
@@ -3939,7 +3943,11 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
 }
 
 export default function AlagaMockup() {
-  const [entry, setEntry] = useState("landing"); // "landing" | "wizard" | "workspace" | "admin"
+  const [entry, setEntry] = useState(() => {
+    if (typeof window === "undefined") return "landing";
+    const pth = window.location.pathname.replace(/\/+$/, "");
+    return pth === "/early-access" || new URLSearchParams(window.location.search).has("early-access") ? "early" : "landing";
+  }); // "landing" | "early" | "wizard" | "workspace" | "admin"
   const [isEmptyWorkspace, setIsEmptyWorkspace] = useState(false);
   const [forcedTier, setForcedTier] = useState(null);
   const [meetingMode, setMeetingMode] = useState(false);
@@ -3982,9 +3990,16 @@ export default function AlagaMockup() {
     return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><LandingChooser
       onDemo={(demoTier, isMeeting) => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier(demoTier); setMeetingMode(!!isMeeting); setStartInParent(false); setEntry("workspace"); }}
       onSignUp={() => { setAuthMode("signup"); setEntry("auth"); }}
+      onEarlyAccess={() => setEntry("early")}
       onAdmin={() => setEntry("admin")}
       onSignIn={() => { setAuthMode("signin"); setEntry("auth"); }}
       onParentDemo={() => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier("extended"); setMeetingMode(false); setStartInParent(true); setEntry("workspace"); }}
+    /></LanguageContext.Provider>;
+  }
+  if (entry === "early") {
+    return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><EarlyAccessScreen
+      onBack={() => { if (window.location.pathname !== "/") window.history.replaceState(null, "", "/"); setEntry("landing"); }}
+      onDemo={() => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier("extended"); setMeetingMode(false); setStartInParent(false); setEntry("workspace"); }}
     /></LanguageContext.Provider>;
   }
   if (entry === "auth") {
@@ -4012,6 +4027,201 @@ export default function AlagaMockup() {
     /></LanguageContext.Provider>;
   }
   return <Workspace isEmpty={isEmptyWorkspace} providerInfo={providerInfo} onboardingData={onboardingData} onExitToLanding={() => setEntry("landing")} forceTier={forcedTier} meetingMode={meetingMode} startInParentMode={startInParent} />;
+}
+
+/* ------------------------------ early access ------------------------------------ */
+// Public "Request early access" form. Each request is saved to Firestore
+// (collection early_access). Only the Alaga admin account can read them.
+const EARLY_ACCESS_ADMIN = "sarahallisondiaz@gmail.com";
+const EA_PROVIDER_TYPES = ["Small family child care home (up to 8)", "Large family child care home (up to 14)", "Child care center", "License-exempt / family, friend & neighbor", "Getting licensed"];
+const EA_TRACKING = ["Paper and binders", "Excel or Google Sheets", "Another app", "A mix of these"];
+const EA_LANGS = ["English", "Español", "Tagalog", "中文", "Tiếng Việt", "한국어"];
+async function eaDb() {
+  const { getFirestore } = await import("firebase/firestore");
+  const { app } = await import("./firebase.js");
+  return getFirestore(app);
+}
+function EarlyAccessScreen({ onBack, onDemo }) {
+  const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : new URLSearchParams();
+  const source = [params.get("utm_source"), params.get("utm_medium"), params.get("utm_campaign"), params.get("ref")].filter(Boolean).join(" / ") || (typeof document !== "undefined" && document.referrer ? new URL(document.referrer).hostname : "direct");
+  const [f, setF] = useState({ name: "", email: "", phone: "", business: "", city: "", providerType: EA_PROVIDER_TYPES[0], children: "", tracking: EA_TRACKING[0], subsidy: "Yes", language: "English", wantsDemo: true, notes: "", website: "" });
+  const [state, setState] = useState("idle"); // idle | sending | done | error
+  const [err, setErr] = useState("");
+  const set = (k) => (e) => setF({ ...f, [k]: e && e.target ? (e.target.type === "checkbox" ? e.target.checked : e.target.value) : e });
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim());
+  const canSend = f.name.trim() && emailOk && f.city.trim() && state !== "sending";
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!canSend) { setErr(!emailOk ? "Please enter a valid email." : "Please fill in your name, email and city."); return; }
+    if (f.website) { setState("done"); return; } // bots fill hidden fields
+    setState("sending"); setErr("");
+    try {
+      const db = await eaDb();
+      const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
+      const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 15000));
+      await Promise.race([timeout, addDoc(collection(db, "early_access"), {
+        name: f.name.trim().slice(0, 119), email: f.email.trim().toLowerCase().slice(0, 199), phone: f.phone.trim().slice(0, 40),
+        business: f.business.trim().slice(0, 150), city: f.city.trim().slice(0, 100), providerType: f.providerType,
+        children: String(f.children).slice(0, 10), tracking: f.tracking, subsidy: f.subsidy, language: f.language,
+        wantsDemo: !!f.wantsDemo, notes: f.notes.trim().slice(0, 1999), source: source.slice(0, 200), createdAt: serverTimestamp(),
+      })]);
+      setState("done");
+    } catch (ex) {
+      setState("error");
+      setErr("Something went wrong saving your request. Please try again in a moment, or email us and we'll add you.");
+    }
+  };
+  const input = { width: "100%", boxSizing: "border-box", border: `1px solid ${C.line}`, borderRadius: 10, padding: "11px 12px", fontSize: 14.5, fontFamily: "inherit", background: "#fff", color: C.ink };
+  const label = (txt, req) => <div style={{ fontSize: 12.5, fontWeight: 700, color: C.inkSoft, marginBottom: 5 }}>{txt}{req && <span style={{ color: C.teal }}> *</span>}</div>;
+  return (
+    <div style={{ minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", color: C.ink, backgroundImage: BANIG_PATTERN(C.line, 0.5), backgroundSize: "16px 16px", padding: "32px 16px 60px" }}>
+      <style>{FONTS}</style>
+      <div style={{ maxWidth: 560, margin: "0 auto" }}>
+        <button onClick={onBack} style={{ background: "none", border: "none", color: C.inkSoft, fontSize: 13, fontWeight: 600, padding: 0, marginBottom: 18, display: "flex", alignItems: "center", gap: 6 }}><ArrowLeft size={14} /> Back</button>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+          <AlagaMark size={44} color={C.tealDark} />
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 34, fontWeight: 900, color: C.tealDark }}>alaga</div>
+        </div>
+        {state === "done" ? (
+          <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderLeft: `4px solid ${C.teal}`, borderRadius: 16, padding: "26px 24px", marginTop: 18 }}>
+            <CheckCircle2 size={28} color={C.teal} />
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, marginTop: 10 }}>You're on the list!</div>
+            <div style={{ fontSize: 14.5, color: C.inkSoft, lineHeight: 1.6, marginTop: 8 }}>
+              Thank you{f.name ? `, ${f.name.split(" ")[0]}` : ""}. {f.wantsDemo ? "We'll reach out within two business days to set up a short demo at a time that works for you." : "We'll email you as soon as early access opens."}
+            </div>
+            {onDemo && <button onClick={onDemo} style={{ marginTop: 18, padding: "12px 18px", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 14.5 }}>Explore the sample daycare while you wait →</button>}
+          </div>
+        ) : (
+          <>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 28, fontWeight: 600, lineHeight: 1.25, marginTop: 8 }}>Request early access</div>
+            <div style={{ fontSize: 14.5, color: C.inkSoft, lineHeight: 1.6, marginTop: 8 }}>
+              Alaga keeps attendance, families, tuition, subsidy paperwork and licensing in one simple place — built for home-based child care providers, in six languages. Founding providers get hands-on setup help and founding pricing.
+            </div>
+            <form onSubmit={submit} style={{ boxSizing: "border-box", background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, padding: "22px 20px", marginTop: 20, display: "flex", flexDirection: "column", gap: 14 }}>
+              <div>{label("Your name", true)}<input value={f.name} onChange={set("name")} autoComplete="name" style={input} /></div>
+              <div>{label("Email", true)}<input type="email" value={f.email} onChange={set("email")} autoComplete="email" inputMode="email" style={input} /></div>
+              <div>{label("Phone (optional)")}<input type="tel" value={f.phone} onChange={set("phone")} autoComplete="tel" style={input} /></div>
+              <div>{label("Child care business name (optional)")}<input value={f.business} onChange={set("business")} style={input} /></div>
+              <div>{label("City", true)}<input value={f.city} onChange={set("city")} autoComplete="address-level2" placeholder="e.g. Culver City" style={input} /></div>
+              <div>{label("What kind of program?")}<select value={f.providerType} onChange={set("providerType")} style={input}>{EA_PROVIDER_TYPES.map((x) => <option key={x}>{x}</option>)}</select></div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>{label("How many children?")}<input type="number" min={0} max={200} value={f.children} onChange={set("children")} inputMode="numeric" style={input} /></div>
+                <div>{label("Work with subsidies?")}<select value={f.subsidy} onChange={set("subsidy")} style={input}>{["Yes", "No", "Not sure"].map((x) => <option key={x}>{x}</option>)}</select></div>
+              </div>
+              <div>{label("How do you keep track of things today?")}<select value={f.tracking} onChange={set("tracking")} style={input}>{EA_TRACKING.map((x) => <option key={x}>{x}</option>)}</select></div>
+              <div>{label("Preferred language")}<select value={f.language} onChange={set("language")} style={input}>{EA_LANGS.map((x) => <option key={x}>{x}</option>)}</select></div>
+              <div>{label("Anything you'd like us to know? (optional)")}<textarea value={f.notes} onChange={set("notes")} rows={3} placeholder="What takes up the most time each week?" style={{ ...input, resize: "vertical" }} /></div>
+              <input value={f.website} onChange={set("website")} tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: -9999, width: 1, height: 1, opacity: 0 }} />
+              <label style={{ display: "flex", gap: 10, alignItems: "flex-start", fontSize: 14, cursor: "pointer" }}>
+                <input type="checkbox" checked={f.wantsDemo} onChange={set("wantsDemo")} style={{ width: 18, height: 18, accentColor: C.teal, marginTop: 1, flexShrink: 0 }} />
+                <span>I'd like a short demo (about 15 minutes)</span>
+              </label>
+              {err && <div style={{ fontSize: 13, color: C.danger }}>{err}</div>}
+              <button type="submit" disabled={state === "sending"} style={{ padding: "13px 0", borderRadius: 11, border: "none", background: canSend ? C.teal : "#D9D2C5", color: "#fff", fontWeight: 700, fontSize: 15.5 }}>
+                {state === "sending" ? "Sending…" : "Request early access"}
+              </button>
+              <div style={{ fontSize: 11.5, color: C.inkSoft, lineHeight: 1.5 }}>We'll only use this to contact you about Alaga. We never sell your information.</div>
+            </form>
+            {onDemo && <button onClick={onDemo} style={{ marginTop: 14, background: "none", border: "none", color: C.teal, fontWeight: 700, fontSize: 14, padding: 0 }}>Or explore the sample daycare first →</button>}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+// Private list of early-access requests for the Alaga admin account.
+function EarlyAccessAdmin() {
+  const [user, setUser] = useState(undefined);
+  const [rows, setRows] = useState(null);
+  const [msg, setMsg] = useState("");
+  const [cred, setCred] = useState({ email: EARLY_ACCESS_ADMIN, password: "" });
+  useEffect(() => {
+    let unsub = () => {};
+    (async () => {
+      const { onAuthStateChanged } = await import("firebase/auth");
+      const { auth } = await import("./firebase.js");
+      unsub = onAuthStateChanged(auth, (u) => setUser(u || null));
+    })();
+    return () => unsub();
+  }, []);
+  const isAdmin = user && user.email === EARLY_ACCESS_ADMIN && user.emailVerified;
+  const load = async () => {
+    try {
+      const db = await eaDb();
+      const { collection, getDocs, query, orderBy } = await import("firebase/firestore");
+      const snap = await getDocs(query(collection(db, "early_access"), orderBy("createdAt", "desc")));
+      setRows(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      setMsg("");
+    } catch (e) { setMsg("Couldn't load requests. Check that the Firestore database and rules are set up."); }
+  };
+  useEffect(() => { if (isAdmin) load(); }, [isAdmin]);
+  const signIn = async (e) => {
+    e.preventDefault();
+    try { const { signInWithEmailAndPassword } = await import("firebase/auth"); const { auth } = await import("./firebase.js"); await signInWithEmailAndPassword(auth, cred.email, cred.password); setMsg(""); }
+    catch (ex) { setMsg("Sign-in didn't work. Check the email and password."); }
+  };
+  const verify = async () => {
+    try { const { sendEmailVerification } = await import("firebase/auth"); await sendEmailVerification(user); setMsg(`Verification email sent to ${user.email}. Open it, then reload this page.`); }
+    catch (e) { setMsg("Couldn't send the verification email. Try again in a minute."); }
+  };
+  const markContacted = async (r) => {
+    try {
+      const db = await eaDb();
+      const { doc, updateDoc, serverTimestamp } = await import("firebase/firestore");
+      const next = r.status === "contacted" ? "new" : "contacted";
+      await updateDoc(doc(db, "early_access", r.id), { status: next, contactedAt: serverTimestamp() });
+      setRows(rows.map((x) => (x.id === r.id ? { ...x, status: next } : x)));
+    } catch (e) { setMsg("Couldn't update that request."); }
+  };
+  const when = (r) => (r.createdAt && r.createdAt.toDate ? r.createdAt.toDate().toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "");
+  const exportCsv = () => downloadCSV("alaga-early-access.csv", ["Received", "Name", "Email", "Phone", "Business", "City", "Program", "Children", "Subsidies", "Tracks with", "Language", "Wants demo", "Notes", "Source", "Status"],
+    (rows || []).map((r) => [when(r), r.name, r.email, r.phone, r.business, r.city, r.providerType, r.children, r.subsidy, r.tracking, r.language, r.wantsDemo ? "Yes" : "No", r.notes, r.source, r.status || "new"]));
+  const box = { background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, padding: 18, marginBottom: 22 };
+  return (
+    <div style={box}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 10 }}>
+        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>Early access requests {rows ? `(${rows.length})` : ""}</div>
+        {isAdmin && rows && (
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={load} style={{ padding: "7px 12px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 700, color: C.tealDark }}>Refresh</button>
+            <button onClick={exportCsv} style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 12px", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12.5, fontWeight: 700 }}><Download size={13} /> CSV</button>
+          </div>
+        )}
+      </div>
+      {user === undefined && <div style={{ fontSize: 13, color: C.inkSoft }}>Loading…</div>}
+      {user === null && (
+        <form onSubmit={signIn} style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 360 }}>
+          <div style={{ fontSize: 13, color: C.inkSoft }}>Sign in with the Alaga admin account to see requests.</div>
+          <input type="email" value={cred.email} onChange={(e) => setCred({ ...cred, email: e.target.value })} style={{ ...inputStyle, padding: "9px 11px" }} />
+          <input type="password" value={cred.password} onChange={(e) => setCred({ ...cred, password: e.target.value })} placeholder="Password" style={{ ...inputStyle, padding: "9px 11px" }} />
+          <button type="submit" style={{ padding: "9px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 700 }}>Sign in</button>
+        </form>
+      )}
+      {user && user.email !== EARLY_ACCESS_ADMIN && <div style={{ fontSize: 13, color: C.inkSoft }}>Signed in as {user.email}. This list is only for the Alaga admin account.</div>}
+      {user && user.email === EARLY_ACCESS_ADMIN && !user.emailVerified && (
+        <div style={{ fontSize: 13, color: C.inkSoft, display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-start" }}>
+          For privacy, the request list opens only after your email is verified.
+          <button onClick={verify} style={{ padding: "8px 14px", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 13 }}>Send verification email</button>
+        </div>
+      )}
+      {msg && <div style={{ fontSize: 13, color: C.danger, marginTop: 8 }}>{msg}</div>}
+      {isAdmin && rows && rows.length === 0 && <div style={{ fontSize: 13, color: C.inkSoft }}>No requests yet. Share yoursite.com/early-access to start collecting them.</div>}
+      {isAdmin && rows && rows.map((r) => (
+        <div key={r.id} style={{ borderTop: `1px solid ${C.line}`, padding: "12px 0", display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ fontWeight: 700, fontSize: 14 }}>{r.name} {r.wantsDemo && <span style={{ fontSize: 11, fontWeight: 700, color: C.teal, background: C.tealTint, borderRadius: 999, padding: "2px 8px", marginLeft: 6 }}>Wants demo</span>}</div>
+            <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}><a href={`mailto:${r.email}`} style={{ color: C.tealDark }}>{r.email}</a>{r.phone ? ` · ${r.phone}` : ""} · {r.city}</div>
+            <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{[r.business, r.providerType, r.children ? `${r.children} children` : "", `Subsidies: ${r.subsidy}`, r.tracking, r.language].filter(Boolean).join(" · ")}</div>
+            {r.notes && <div style={{ fontSize: 12.5, marginTop: 4, fontStyle: "italic" }}>"{r.notes}"</div>}
+            <div style={{ fontSize: 11, color: C.inkSoft, marginTop: 3 }}>{when(r)}{r.source ? ` · from ${r.source}` : ""}</div>
+          </div>
+          <button onClick={() => markContacted(r)} style={{ alignSelf: "flex-start", padding: "6px 10px", borderRadius: 8, border: `1px solid ${r.status === "contacted" ? C.teal : C.line}`, background: r.status === "contacted" ? C.tealTint : "#fff", fontSize: 12, fontWeight: 700, color: r.status === "contacted" ? C.tealDark : C.inkSoft }}>
+            {r.status === "contacted" ? "Contacted ✓" : "Mark contacted"}
+          </button>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 /* --------------------------------- sidebar ------------------------------------ */
