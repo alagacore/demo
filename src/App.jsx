@@ -8,7 +8,7 @@ import {
   Pencil, Plus, Trash2, Split, ArrowLeft, Shield, FileCheck, HeartPulse, Flame, Eye,
   Moon, Contrast, Type, ZapOff, Lock, ListChecks, UserPlus, Settings as Gear, LifeBuoy, Paperclip, Image as ImageIcon,
   ArrowRight, Building2, Rocket, PlayCircle, UploadCloud, TrendingUp, Wand2, UserCog, Scale, ArrowLeftRight, Volume2, Square, Hourglass,
-  Wallet, Baby, Cookie, Puzzle, SprayCan, Palette, LogOut, Check, GraduationCap, Bell, BellOff,
+  Wallet, Baby, Cookie, Puzzle, SprayCan, Palette, LogOut, Check, GraduationCap, Bell, BellOff, Menu,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell,
@@ -38,7 +38,32 @@ const C = {
   dangerTint: "#F8E9E6",
 };
 
-const FONTS = `
+// Phone and small-tablet layout. Most screens use inline grid/flex styles, so
+// these rules restack them under 760px wide without changing the desktop look.
+const MOBILE_CSS = `
+@media (max-width: 760px) {
+  html, body { overflow-x: hidden; }
+  [style*="grid-template-columns: repeat(6"], [style*="grid-template-columns: repeat(5"], [style*="grid-template-columns: repeat(4"],
+  [style*="grid-template-columns: repeat(3"], [style*="grid-template-columns: 1fr 1fr 1fr 1fr"], [style*="grid-template-columns: 1fr 1fr 1fr;"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  [style*="grid-template-columns: 1fr 1fr;"], [style*="grid-template-columns: repeat(2"], [style*="grid-template-columns: 1.3fr 1fr"],
+  [style*="grid-template-columns: 1.1fr 0.9fr"], [style*="grid-template-columns: 1.2fr 1.2fr 0.6fr 1.4fr auto"] {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  [style*="display: flex"][style*="justify-content: space-between"] { flex-wrap: wrap; row-gap: 8px; }
+  [style*="width: 560px"], [style*="width: 580px"], [style*="width: 520px"], [style*="width: 480px"], [style*="width: 460px"] { width: 100% !important; }
+  [style*="padding: 24px; display: flex; align-items: center; justify-content: center"] { padding: 10px !important; }
+  [style*="max-height: 88vh"] { max-height: 94vh !important; }
+  input, select, textarea { font-size: 16px !important; min-width: 0; max-width: 100%; }
+  .wrap-mobile { flex-wrap: wrap !important; }
+  .alaga-main { padding: 16px 14px 80px !important; }
+}
+@media (max-width: 420px) {
+  [style*="font-size: 28px"] { font-size: 23px !important; }
+}
+`;
+const FONTS_BASE = `
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Work+Sans:wght@400;500;600;700&display=swap');
 
 /* Number inputs across the app (budgets, rates, fees, etc.) rely on typing a value
@@ -54,6 +79,7 @@ input[type="number"]::-webkit-inner-spin-button {
   margin: 0;
 }
 `;
+const FONTS = FONTS_BASE + MOBILE_CSS;
 
 /* ------------------------------ brand marks ---------------------------------- */
 // The real, finalized Alaga logo mark — arch with batok-pattern trim, sampaguita
@@ -2437,6 +2463,19 @@ const EXPANSION_STATUS_META = {
 
 const LanguageContext = React.createContext({ lang: "en", t: (s) => s });
 function useT() { return React.useContext(LanguageContext).t; }
+// True on phones and narrow windows; updates when the window is resized.
+function useIsMobile(max = 760) {
+  const q = `(max-width: ${max}px)`;
+  const [m, setM] = useState(() => typeof window !== "undefined" && window.matchMedia && window.matchMedia(q).matches);
+  useEffect(() => {
+    if (!window.matchMedia) return;
+    const mq = window.matchMedia(q);
+    const on = () => setM(mq.matches);
+    mq.addEventListener ? mq.addEventListener("change", on) : mq.addListener(on);
+    return () => (mq.removeEventListener ? mq.removeEventListener("change", on) : mq.removeListener(on));
+  }, [q]);
+  return m;
+}
 // Everyday words for a few app terms, applied to English text on screen.
 const PLAIN_EXACT = { flex: "extra care", Kanban: "Board" };
 const PLAIN_WORDS = [
@@ -3566,6 +3605,8 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const setScreen = navigateToScreen;
   const [settingsTab, setSettingsTab] = useState("profile");
   const [messageToast, setMessageToast] = useState(null);
+  const isMobile = useIsMobile();
+  const [navOpen, setNavOpen] = useState(false);
   const [supportTab, setSupportTab] = useState("help");
   const [openFamId, setOpenFamId] = useState(null);
   const [openHousehold, setOpenHousehold] = useState(null);
@@ -3832,10 +3873,18 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
 
       {mode === "provider" ? (
         <>
-          <Sidebar screen={screen} setScreen={setScreen} mode={mode} setMode={setMode} provider={providerInfo} onExitToLanding={onExitToLanding} isEmpty={isEmpty} navItems={navItems} tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} financesTab={financesTab} setFinancesTab={setFinancesTab} />
+          {!isMobile && <Sidebar screen={screen} setScreen={setScreen} mode={mode} setMode={setMode} provider={providerInfo} onExitToLanding={onExitToLanding} isEmpty={isEmpty} navItems={navItems} tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} financesTab={financesTab} setFinancesTab={setFinancesTab} />}
+          {isMobile && navOpen && (
+            <div style={{ position: "fixed", inset: 0, zIndex: 90, display: "flex" }}>
+              <div style={{ height: "100%", overflowY: "auto", display: "flex", boxShadow: "4px 0 24px rgba(0,0,0,0.15)" }}>
+                <Sidebar screen={screen} setScreen={(id) => { setScreen(id); setNavOpen(false); }} mode={mode} setMode={setMode} provider={providerInfo} onExitToLanding={onExitToLanding} isEmpty={isEmpty} navItems={navItems} tier={tier} saveTier={saveTier} tierLocked={tierLocked} meetingMode={meetingMode} financesTab={financesTab} setFinancesTab={(tb) => { setFinancesTab(tb); setNavOpen(false); }} />
+              </div>
+              <div onClick={() => setNavOpen(false)} style={{ flex: 1, background: "rgba(31,42,36,0.35)" }} />
+            </div>
+          )}
           <main style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
-            <Topbar screen={screen} setScreen={setScreen} provider={providerInfo} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} goTo={goTo} available={navItems.map((n) => n.id)} />
-            <div style={{ flex: 1, overflowY: "auto", padding: "28px 32px 60px" }}>
+            <Topbar screen={screen} setScreen={setScreen} provider={providerInfo} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} goTo={goTo} available={navItems.map((n) => n.id)} isMobile={isMobile} onMenu={() => setNavOpen(true)} unread={unreadMessagesCount} />
+            <div className="alaga-main" style={{ flex: 1, overflowY: "auto", padding: "28px 32px 60px" }}>
               {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} reminderSettings={reminderSettings} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} events={events} closures={closures} licensing={licensing} goToTour={() => setScreen("tours")} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
               {screen === "families" && <Families families={families} provider={providerInfo} onWithdraw={withdrawChild} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
@@ -3848,7 +3897,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
               {screen === "payments" && <Finances careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} expenses={expenses} saveExpenses={saveExpenses} reminderSettings={reminderSettings} saveReminderSettings={saveReminderSettings} staff={staff} tier={tier} payrollSettings={payrollSettings} savePayrollSettings={savePayrollSettings} onSave={saveOverride} refunds={refunds} saveRefunds={saveRefunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} setScreen={setScreen} providerInfo={providerInfo} meetingMode={meetingMode} budgetPlan={budgetPlan} saveBudgetPlan={saveBudgetPlan} activeTab={financesTab} setActiveTab={setFinancesTab} />}
               {screen === "compliance" && <Compliance licensing={licensing} saveLicensing={saveLicensing} docs={compDocs} onSave={saveCompDoc} families={families} provider={providerInfo} staff={staff} setScreen={setScreen} incidents={incidents} saveIncidents={saveIncidents} mandatedNotes={mandatedNotes} saveMandatedNotes={saveMandatedNotes} />}
               {screen === "security" && <SecurityScreen accessLog={accessLog} isEmpty={isEmpty} />}
-              {screen === "messages" && <Messages threads={threads} saveThreads={saveThreads} families={families} staff={staff} goToFamily={goToFamily} openSupport={() => setScreen("support")} alertsOn={messageAlerts} setAlertsOn={saveMessageAlerts} />}
+              {screen === "messages" && <Messages isMobile={isMobile} threads={threads} saveThreads={saveThreads} families={families} staff={staff} goToFamily={goToFamily} openSupport={() => setScreen("support")} alertsOn={messageAlerts} setAlertsOn={saveMessageAlerts} />}
               {screen === "analytics" && <Analytics families={families} expenses={expenses} prospects={prospects} staff={staff} alumni={alumni} addDeparture={addDeparture} refunds={refunds} flexCareRequests={flexCareRequests} tuitionRates={tuitionRates} setScreen={(id, opts) => { if (opts?.tab) setSettingsTab(opts.tab); setScreen(id); }} provider={providerInfo} />}
               {screen === "growth" && <GrowthScreen families={families} prospects={prospects} weeklySchedule={weeklySchedule} growth={growth} saveGrowth={saveGrowth} provider={providerInfo} staff={staff} />}
               {screen === "support" && <SupportScreen providerInfo={providerInfo} goTo={goTo} available={navItems.map((n) => n.id)} tab={supportTab} setTab={setSupportTab} />}
@@ -4103,7 +4152,7 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
   );
 }
 
-function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBack, goToFamily, goTo, available }) {
+function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBack, goToFamily, goTo, available, isMobile = false, onMenu, unread = 0 }) {
   const t = useT();
   const title = NAV.find((n) => n.id === screen)?.label || "";
   // Reflects the real current date whenever the page loads/refreshes.
@@ -4142,8 +4191,14 @@ function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBac
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 32px", borderBottom: `1px solid ${C.line}`, background: C.paper }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: isMobile ? "wrap" : "nowrap", rowGap: 10, padding: isMobile ? "10px 14px" : "18px 32px", borderBottom: `1px solid ${C.line}`, background: C.paper, position: isMobile ? "sticky" : "static", top: 0, zIndex: 30 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 10 : 14, minWidth: 0 }}>
+        {isMobile && onMenu && (
+          <button onClick={onMenu} aria-label={t("Menu")} style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", width: 38, height: 38, borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", color: C.ink, flexShrink: 0 }}>
+            <Menu size={18} />
+            {unread > 0 && <span style={{ position: "absolute", top: -4, right: -4, background: C.coral, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "1px 5px" }}>{unread}</span>}
+          </button>
+        )}
         {canGoBack && (
           <button onClick={goBack} title={t("Back")} style={{
             display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, borderRadius: 9,
@@ -4153,13 +4208,13 @@ function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBac
           </button>
         )}
         <div>
-          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 22, fontWeight: 600 }}>{t(title)}</div>
-          <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>{todayLabel}</div>
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: isMobile ? 19 : 22, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t(title)}</div>
+          {!isMobile && <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>{todayLabel}</div>}
         </div>
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-        <div style={{ position: "relative" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${focused ? C.teal : C.line}`, borderRadius: 10, padding: "7px 12px", color: C.inkSoft, fontSize: 13, width: 280 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 14, order: isMobile ? 3 : 0, width: isMobile ? "100%" : "auto" }}>
+        <div style={{ position: "relative", flex: isMobile ? 1 : "none" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, border: `1px solid ${focused ? C.teal : C.line}`, borderRadius: 10, padding: "7px 12px", color: C.inkSoft, fontSize: 13, width: isMobile ? "100%" : 280 }}>
             <Search size={14} style={{ flexShrink: 0 }} />
             <input
               value={query}
@@ -4178,7 +4233,7 @@ function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBac
             <div style={{
               position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, background: "#fff",
               border: `1px solid ${C.line}`, borderRadius: 10, boxShadow: "0 8px 24px rgba(0,0,0,0.1)", zIndex: 60,
-              maxHeight: 360, overflowY: "auto", width: 340,
+              maxHeight: 360, overflowY: "auto", width: isMobile ? "100%" : 340,
             }}>
               {results.length === 0 ? (
                 <div style={{ padding: "14px 16px", fontSize: 12.5, color: C.inkSoft }}>{t("No matches for")} "{query}". <button onMouseDown={() => { goTo && goTo({ screen: "support", tab: "help" }); setQuery(""); }} style={{ background: "none", border: "none", padding: 0, color: C.teal, fontWeight: 700, fontSize: 12.5 }}>{t("Browse all help")}</button></div>
@@ -4860,7 +4915,7 @@ function Families({ families, goToSubsidy, onSave, logAccess, setScreen, openHou
         <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: C.inkSoft }}>
           <Lock size={13} /> {t("Select a family to open their private record — every access is logged.")}
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div className="wrap-mobile" style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{ position: "relative" }}>
             <Search size={14} color={C.inkSoft} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)" }} />
             <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t("Search families…")} style={{
@@ -6709,7 +6764,7 @@ function ToursScreen({ prospects, updateProspect, addProspect, removeProspect, l
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
+      <div className="wrap-mobile" style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
         <Info size={12} /> {t("Families stay in a stage until you move them. Set a follow-up date and it shows on your dashboard; enrolled and declined families fold away after 30 days.")}
         {dueCount > 0 && <Pill label={`${dueCount} ${t(dueCount === 1 ? "follow-up due" : "follow-ups due")}`} fg="#7A5620" bg={C.amberTint} />}
       </div>
@@ -9542,7 +9597,7 @@ function threadGroup(th, families = [], staff = []) {
   return "other";
 }
 const THREAD_GROUPS = [["family", "Families"], ["agency", "Agencies"], ["staff", "Staff"], ["other", "Other"]];
-function Messages({ threads: rawThreads, saveThreads, families, staff, goToFamily, openSupport, alertsOn = true, setAlertsOn }) {
+function Messages({ threads: rawThreads, saveThreads, families, staff, goToFamily, openSupport, alertsOn = true, setAlertsOn, isMobile = false }) {
   const t = useT();
   const [query, setQuery] = useState("");
   const [unreadOnly, setUnreadOnly] = useState(false);
@@ -9555,7 +9610,7 @@ function Messages({ threads: rawThreads, saveThreads, families, staff, goToFamil
   const labelThread = (id, kind) => saveThreads(rawThreads.map((x) => (x.id === id ? { ...x, kind } : x)));
   // Newest conversation first.
   const threads = [...rawThreads].sort((a, b) => threadLastAt(b) - threadLastAt(a));
-  const [openId, setOpenId] = useState(threads[0]?.id || null);
+  const [openId, setOpenId] = useState(isMobile ? null : threads[0]?.id || null);
   const groupCounts = Object.fromEntries(THREAD_GROUPS.map(([g]) => [g, threads.filter((th) => threadGroup(th, families, staff) === g).length]));
   const shown = threads.filter((th) => (!unreadOnly || th.unread) && (group === "all" || threadGroup(th, families, staff) === group)
     && (!query.trim() || `${th.name} ${th.messages.map((m) => m.text).join(" ")}`.toLowerCase().includes(query.trim().toLowerCase())));
@@ -9626,8 +9681,8 @@ function Messages({ threads: rawThreads, saveThreads, families, staff, goToFamil
   };
 
   return (
-    <div style={{ display: "flex", gap: 16, height: "calc(100vh - 190px)", minHeight: 480 }}>
-      <div style={{ width: 280, flexShrink: 0, background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, overflowY: "auto", display: "flex", flexDirection: "column" }}>
+    <div style={{ display: "flex", gap: 16, height: isMobile ? "calc(100dvh - 150px)" : "calc(100vh - 190px)", minHeight: isMobile ? 420 : 480 }}>
+      <div style={{ width: isMobile ? "100%" : 280, display: isMobile && openId ? "none" : "flex", flexShrink: 0, background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, overflowY: "auto", flexDirection: "column" }}>
         <div style={{ padding: 10, borderBottom: `1px solid ${C.line}` }}>
           <button onClick={() => setComposing(true)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "9px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 12.5 }}>
             <Plus size={14} /> {t("New message")}
@@ -9675,7 +9730,12 @@ function Messages({ threads: rawThreads, saveThreads, families, staff, goToFamil
         })}
       </div>
 
-      <div style={{ flex: 1, minWidth: 0, background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, display: "flex", flexDirection: "column" }}>
+      <div style={{ flex: 1, minWidth: 0, background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, display: isMobile && !openId ? "none" : "flex", flexDirection: "column" }}>
+        {isMobile && openId && (
+          <button onClick={() => setOpenId(null)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "10px 14px", background: "none", border: "none", borderBottom: `1px solid ${C.line}`, fontSize: 13, fontWeight: 700, color: C.teal, textAlign: "left" }}>
+            <ArrowLeft size={14} /> {t("All conversations")}
+          </button>
+        )}
         {supportSent && (
           <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 18px", background: C.tealTint, borderBottom: `1px solid ${C.line}`, borderRadius: "14px 14px 0 0", fontSize: 12, color: C.tealDark }}>
             <CheckCircle2 size={13} /> {t("Sent to Alaga support. Replies show in Support → My Requests.")}
@@ -9767,9 +9827,9 @@ function Messages({ threads: rawThreads, saveThreads, families, staff, goToFamil
                 <Paperclip size={15} />
               </button>
               <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()}
-                placeholder={t("Write a reply…")} style={{ flex: 1, border: `1px solid ${C.line}`, borderRadius: 9, padding: "9px 12px", fontSize: 13, fontFamily: "inherit" }} />
+                placeholder={t("Write a reply…")} style={{ flex: 1, minWidth: 0, border: `1px solid ${C.line}`, borderRadius: 9, padding: "9px 12px", fontSize: 13, fontFamily: "inherit" }} />
               <button onClick={send} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 14px", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 12.5 }}>
-                <Send size={13} /> {t("Send")}
+                <Send size={13} /> {!isMobile && t("Send")}
               </button>
             </div>
           </>
@@ -11571,7 +11631,7 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, statu
   const downloadYearSummary = () => printReceipt(fam, paidMonths.filter((p) => p.key.startsWith(String(startOfToday().getFullYear()))).reverse(), { provider, t, datesFor: receiptDates, title: `${t("Annual childcare payment summary")} ${startOfToday().getFullYear()}` });
 
   return (
-    <div style={{ flex: 1, minHeight: "100vh", display: "flex", flexDirection: "column", background: C.cream }}>
+    <div style={{ flex: 1, minWidth: 0, minHeight: "100vh", display: "flex", flexDirection: "column", background: C.cream }}>
       {/* header */}
       <div style={{ background: C.side, color: C.ink, padding: "18px 26px", borderBottom: `1px solid ${C.line}` }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
