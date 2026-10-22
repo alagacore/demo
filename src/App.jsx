@@ -8,7 +8,7 @@ import {
   Pencil, Plus, Trash2, Split, ArrowLeft, Shield, FileCheck, HeartPulse, Flame, Eye,
   Moon, Contrast, Type, ZapOff, Lock, ListChecks, UserPlus, Settings as Gear, LifeBuoy, Paperclip, Image as ImageIcon,
   ArrowRight, Building2, Rocket, PlayCircle, UploadCloud, TrendingUp, Wand2, UserCog, Scale, ArrowLeftRight, Volume2, Square, Hourglass,
-  Wallet, Baby, Cookie, Puzzle, SprayCan, Palette, LogOut, Check, GraduationCap, Bell, BellOff, Menu,
+  Wallet, Baby, Cookie, Puzzle, SprayCan, Palette, LogOut, Check, GraduationCap, Bell, BellOff, Menu, Globe,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell,
@@ -1345,6 +1345,33 @@ const T = {
   "Community": { es: "Comunidad", tl: "Komunidad", zh: "社区", vi: "Cộng đồng", ko: "공동체" },
   "Presence": { es: "Presencia", tl: "Presensya", zh: "陪伴", vi: "Hiện diện", ko: "함께함" },
   "Warmth": { es: "Calidez", tl: "Init ng pagmamahal", zh: "温暖", vi: "Ấm áp", ko: "따뜻함" },
+  "Sign in": { es: "Iniciar sesión", tl: "Mag-sign in", zh: "登录", vi: "Đăng nhập", ko: "로그인" },
+  "Create account": { es: "Crear cuenta", tl: "Gumawa ng account", zh: "创建账户", vi: "Tạo tài khoản", ko: "계정 만들기" },
+  "Password": { es: "Contraseña", tl: "Password", zh: "密码", vi: "Mật khẩu", ko: "비밀번호" },
+  "Forgot password?": { es: "¿Olvidaste tu contraseña?", tl: "Nakalimutan ang password?", zh: "忘记密码？", vi: "Quên mật khẩu?", ko: "비밀번호를 잊으셨나요?" },
+  "Please wait…": { es: "Espera un momento…", tl: "Sandali lang…", zh: "请稍候…", vi: "Vui lòng chờ…", ko: "잠시만 기다려 주세요…" },
+  "Back": { es: "Atrás", tl: "Bumalik", zh: "返回", vi: "Quay lại", ko: "뒤로" },
+  "Enter your email above, then tap \"Forgot password?\" again.": { es: "Escribe tu correo arriba y vuelve a tocar \"¿Olvidaste tu contraseña?\".", tl: "Ilagay ang email sa itaas, pagkatapos i-tap ulit ang \"Nakalimutan ang password?\".", zh: "请先在上方输入邮箱，再点“忘记密码？”。", vi: "Nhập email ở trên rồi chạm lại \"Quên mật khẩu?\".", ko: "위에 이메일을 입력한 뒤 \"비밀번호를 잊으셨나요?\"를 다시 누르세요." },
+  "If an account exists for that email, a reset link is on its way.": { es: "Si existe una cuenta con ese correo, te enviamos un enlace para restablecerla.", tl: "Kung may account para sa email na iyon, may darating na reset link.", zh: "如果该邮箱有账户，重置链接已发送。", vi: "Nếu email này có tài khoản, liên kết đặt lại đang được gửi.", ko: "해당 이메일의 계정이 있다면 재설정 링크가 전송됩니다." },
+  "That doesn't look like a valid email address.": { es: "Ese correo no parece válido.", tl: "Mukhang hindi wastong email iyan.", zh: "这个邮箱地址似乎无效。", vi: "Email này có vẻ không hợp lệ.", ko: "올바른 이메일 주소가 아닌 것 같습니다." },
+  "No account found with that email.": { es: "No hay ninguna cuenta con ese correo.", tl: "Walang account sa email na iyan.", zh: "找不到该邮箱的账户。", vi: "Không tìm thấy tài khoản với email này.", ko: "해당 이메일의 계정이 없습니다." },
+  "Incorrect email or password.": { es: "Correo o contraseña incorrectos.", tl: "Mali ang email o password.", zh: "邮箱或密码错误。", vi: "Email hoặc mật khẩu không đúng.", ko: "이메일 또는 비밀번호가 올바르지 않습니다." },
+  "An account already exists with that email.": { es: "Ya existe una cuenta con ese correo.", tl: "May account na para sa email na iyan.", zh: "该邮箱已有账户。", vi: "Email này đã có tài khoản.", ko: "이미 해당 이메일의 계정이 있습니다." },
+  "Password should be at least 6 characters.": { es: "La contraseña debe tener al menos 6 caracteres.", tl: "Dapat hindi bababa sa 6 na character ang password.", zh: "密码至少需要6个字符。", vi: "Mật khẩu phải có ít nhất 6 ký tự.", ko: "비밀번호는 6자 이상이어야 합니다." },
+  "Something went wrong — please try again.": { es: "Algo salió mal — inténtalo de nuevo.", tl: "May nangyaring mali — subukan ulit.", zh: "出了点问题，请重试。", vi: "Đã xảy ra lỗi — vui lòng thử lại.", ko: "문제가 발생했습니다 — 다시 시도해 주세요." },
+  "Sign in to your account": { es: "Inicia sesión en tu cuenta", tl: "Mag-sign in sa iyong account", zh: "登录您的账户", vi: "Đăng nhập tài khoản", ko: "내 계정에 로그인" },
+  "Try a sample daycare": { es: "Prueba una guardería de ejemplo", tl: "Subukan ang sample na daycare", zh: "体验示例托育中心", vi: "Dùng thử nhà trẻ mẫu", ko: "샘플 보육원 둘러보기" },
+  "Meeting-safe": { es: "Para reuniones", tl: "Pang-meeting", zh: "会议安全模式", vi: "An toàn khi họp", ko: "회의용" },
+  "Core day-to-day operations — families, subsidy, check-in, and payments.": { es: "Lo esencial del día a día — familias, subsidios, entradas y pagos.", tl: "Pang-araw-araw na operasyon — pamilya, subsidy, check-in at bayad.", zh: "日常核心运营 — 家庭、补助、入园和付款。", vi: "Vận hành hằng ngày — gia đình, trợ cấp, điểm danh và thanh toán.", ko: "일상 핵심 운영 — 가족, 보조금, 등원, 결제." },
+  "Everything in Simple, plus staff, growth planning, and analytics.": { es: "Todo lo del Plan Simple, más personal, planes de crecimiento y análisis.", tl: "Lahat ng nasa Simple, dagdag ang staff, growth planning at analytics.", zh: "包含简易版全部功能，另有员工、成长规划和分析。", vi: "Mọi thứ trong gói Đơn giản, thêm nhân viên, kế hoạch phát triển và phân tích.", ko: "심플 요금제 전체 기능에 직원, 성장 계획, 분석 추가." },
+  "For screen-sharing with providers or investors — proprietary rate math and payout figures are hidden.": { es: "Para compartir pantalla con proveedores o inversionistas — se ocultan tarifas y pagos.", tl: "Para sa screen-sharing sa provider o investor — nakatago ang rates at payout.", zh: "用于与托育者或投资人共享屏幕 — 隐藏费率和付款数据。", vi: "Để chia sẻ màn hình với nhà cung cấp hoặc nhà đầu tư — ẩn số liệu giá và chi trả.", ko: "제공자나 투자자와 화면 공유용 — 요율과 지급 금액은 숨겨집니다." },
+  "Enter demo": { es: "Entrar", tl: "Pumasok sa demo", zh: "进入演示", vi: "Vào bản demo", ko: "데모 시작" },
+  "Other ways in": { es: "Otras opciones", tl: "Iba pang paraan", zh: "其他入口", vi: "Cách khác", ko: "다른 방법" },
+  "I'm a new provider signing up": { es: "Soy un proveedor nuevo", tl: "Bagong provider ako na mag-sign up", zh: "我是新托育者，要注册", vi: "Tôi là nhà cung cấp mới đăng ký", ko: "신규 제공자로 가입하기" },
+  "Create your account, then set up your own empty workspace.": { es: "Crea tu cuenta y luego prepara tu propio espacio de trabajo.", tl: "Gumawa ng account, pagkatapos i-set up ang sarili mong workspace.", zh: "创建账户，然后设置您自己的工作区。", vi: "Tạo tài khoản rồi thiết lập không gian làm việc của bạn.", ko: "계정을 만든 뒤 나만의 작업 공간을 설정하세요." },
+  "I'm a parent": { es: "Soy padre o madre", tl: "Magulang ako", zh: "我是家长", vi: "Tôi là phụ huynh", ko: "학부모입니다" },
+  "See what families see — check-in, receipts, FSA/HSA, messages.": { es: "Mira lo que ven las familias — entradas, recibos, FSA/HSA, mensajes.", tl: "Tingnan ang nakikita ng pamilya — check-in, resibo, FSA/HSA, mensahe.", zh: "查看家庭看到的内容 — 入园、收据、FSA/HSA、消息。", vi: "Xem những gì gia đình thấy — điểm danh, biên nhận, FSA/HSA, tin nhắn.", ko: "가족이 보는 화면 — 등원, 영수증, FSA/HSA, 메시지." },
+  "Built for licensed home-based Family Child Care providers in California.": { es: "Hecho para proveedores de cuidado infantil familiar con licencia en California.", tl: "Ginawa para sa lisensyadong home-based Family Child Care provider sa California.", zh: "专为加州持照家庭式托育者打造。", vi: "Dành cho nhà giữ trẻ tại gia có giấy phép ở California.", ko: "캘리포니아 면허 가정 보육 제공자를 위해 만들었습니다." },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -2489,6 +2516,52 @@ const EXPANSION_STATUS_META = {
 
 const LanguageContext = React.createContext({ lang: "en", t: (s) => s });
 function useT() { return React.useContext(LanguageContext).t; }
+const LANG_OPTIONS = ["English", "Español", "Tagalog", "中文", "Tiếng Việt", "한국어"];
+const LANG_SHORT = { "English": "EN", "Español": "ES", "Tagalog": "TL", "中文": "中文", "Tiếng Việt": "VI", "한국어": "한국어" };
+// First visit: match the phone or computer's own language when Alaga has it.
+function detectLanguage() {
+  const nav = (typeof navigator !== "undefined" && (navigator.languages || [navigator.language])) || [];
+  for (const l of nav) {
+    const c = String(l || "").toLowerCase();
+    if (c.startsWith("es")) return "Español";
+    if (c.startsWith("tl") || c.startsWith("fil")) return "Tagalog";
+    if (c.startsWith("zh")) return "中文";
+    if (c.startsWith("vi")) return "Tiếng Việt";
+    if (c.startsWith("ko")) return "한국어";
+    if (c.startsWith("en")) return "English";
+  }
+  return "English";
+}
+const makeT = (language) => { const code = LANG_CODES[language] || "en"; return (s) => (code === "en" ? plainEnglish(s) : (T[s] && T[s][code]) || s); };
+// Globe button that shows the current language and switches with one tap.
+function LanguagePicker({ language, setLanguage, compact = false, align = "right" }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ position: "relative" }}>
+      <button type="button" onClick={() => setOpen(!open)} aria-label="Language / Idioma / Wika" title="Language / Idioma / Wika" style={{
+        display: "flex", alignItems: "center", gap: 6, padding: compact ? "7px 9px" : "7px 12px", borderRadius: 999, border: `1px solid ${C.line}`,
+        background: "#fff", color: C.ink, fontSize: 12.5, fontWeight: 700, whiteSpace: "nowrap",
+      }}>
+        <Globe size={15} color={C.teal} /> {compact ? LANG_SHORT[language] || "EN" : language}
+      </button>
+      {open && (
+        <>
+          <div onClick={() => setOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 95 }} />
+          <div style={{ position: "absolute", top: "calc(100% + 6px)", [align]: 0, zIndex: 96, background: "#fff", border: `1px solid ${C.line}`, borderRadius: 12, boxShadow: "0 10px 30px rgba(0,0,0,0.12)", padding: 6, minWidth: 160 }}>
+            {LANG_OPTIONS.map((l) => (
+              <button key={l} type="button" onClick={() => { setLanguage(l); setOpen(false); }} style={{
+                width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "9px 12px", borderRadius: 8, border: "none",
+                background: l === language ? C.tealTint : "transparent", color: l === language ? C.tealDark : C.ink, fontSize: 14, fontWeight: l === language ? 700 : 500, textAlign: "left",
+              }}>
+                {l} {l === language && <Check size={14} />}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
 // True on phones and narrow windows; updates when the window is resized.
 function useIsMobile(max = 760) {
   const q = `(max-width: ${max}px)`;
@@ -2562,7 +2635,8 @@ function usePersistentState(key, initial) {
 // Real Firebase Authentication — this is a genuine account, not a demo mock. Once the
 // backend + Cloud SQL wiring exists, a successful sign-in here will load that specific
 // provider's real data instead of dropping into the shared demo dataset.
-function LoginScreen({ onAuthenticated, onBack, initialMode = "signin" }) {
+function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language, setLanguage }) {
+  const t = useT();
   const [mode, setMode] = useState(initialMode); // "signin" | "signup"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -2572,7 +2646,7 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin" }) {
 
   const sendReset = async () => {
     setError(""); setNotice("");
-    if (!email.trim()) { setError("Enter your email above, then tap \"Forgot password?\" again."); return; }
+    if (!email.trim()) { setError(t("Enter your email above, then tap \"Forgot password?\" again.")); return; }
     try {
       const { sendPasswordResetEmail } = await import("firebase/auth");
       const { auth } = await import("./firebase.js");
@@ -2582,18 +2656,18 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin" }) {
       // Any other result shows the same message, so the screen never reveals
       // whether an account exists for that email.
     }
-    setNotice("If an account exists for that email, a reset link is on its way.");
+    setNotice(t("If an account exists for that email, a reset link is on its way."));
   };
 
   const friendlyError = (code) => {
     switch (code) {
-      case "auth/invalid-email": return "That doesn't look like a valid email address.";
-      case "auth/user-not-found": return "No account found with that email.";
+      case "auth/invalid-email": return t("That doesn't look like a valid email address.");
+      case "auth/user-not-found": return t("No account found with that email.");
       case "auth/wrong-password":
-      case "auth/invalid-credential": return "Incorrect email or password.";
-      case "auth/email-already-in-use": return "An account already exists with that email.";
-      case "auth/weak-password": return "Password should be at least 6 characters.";
-      default: return "Something went wrong — please try again.";
+      case "auth/invalid-credential": return t("Incorrect email or password.");
+      case "auth/email-already-in-use": return t("An account already exists with that email.");
+      case "auth/weak-password": return t("Password should be at least 6 characters.");
+      default: return t("Something went wrong — please try again.");
     }
   };
 
@@ -2618,10 +2692,11 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin" }) {
   return (
     <div style={{
       minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex",
-      flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24,
+      flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24, position: "relative",
       backgroundImage: BANIG_PATTERN(C.line, 0.5), backgroundSize: "16px 16px",
     }}>
       <style>{FONTS}</style>
+      {setLanguage && <div style={{ position: "absolute", top: 16, right: 16 }}><LanguagePicker language={language} setLanguage={setLanguage} /></div>}
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 28 }}>
         <AlagaMark size={44} color={C.tealDark} />
         <div style={{ fontFamily: "'Fraunces', serif", fontSize: 34, fontWeight: 900, color: C.tealDark }}>alaga</div>
@@ -2635,24 +2710,24 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin" }) {
               background: mode === m ? "#fff" : "transparent", color: mode === m ? C.tealDark : C.inkSoft,
               boxShadow: mode === m ? C.line && "0 1px 2px rgba(0,0,0,0.06)" : "none",
             }}>
-              {m === "signin" ? "Sign in" : "Create account"}
+              {m === "signin" ? t("Sign in") : t("Create account")}
             </button>
           ))}
         </div>
 
-        <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft, marginBottom: 6 }}>Email</div>
+        <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft, marginBottom: 6 }}>{t("Email")}</div>
         <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)}
           placeholder="you@yourdaycare.com"
           style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: `1px solid ${C.line}`, fontSize: 14, marginBottom: 14, fontFamily: "inherit" }} />
 
-        <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft, marginBottom: 6 }}>Password</div>
+        <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft, marginBottom: 6 }}>{t("Password")}</div>
         <input type="password" required minLength={6} autoComplete={mode === "signin" ? "current-password" : "new-password"}
           value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
           style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: `1px solid ${C.line}`, fontSize: 14, marginBottom: 6, fontFamily: "inherit" }} />
 
         {mode === "signin" && (
           <button type="button" onClick={sendReset} style={{ background: "none", border: "none", padding: 0, marginTop: 4, color: C.tealDark, fontSize: 12.5, fontWeight: 600 }}>
-            Forgot password?
+            {t("Forgot password?")}
           </button>
         )}
         {error && <div style={{ color: C.danger, fontSize: 12.5, marginTop: 6, marginBottom: 6 }}>{error}</div>}
@@ -2662,57 +2737,59 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin" }) {
           width: "100%", marginTop: 14, padding: "12px 0", borderRadius: 10, border: "none",
           background: C.teal, color: "#fff", fontWeight: 700, fontSize: 14.5, opacity: busy ? 0.7 : 1,
         }}>
-          {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
+          {busy ? t("Please wait…") : mode === "signin" ? t("Sign in") : t("Create account")}
         </button>
       </form>
 
       <button onClick={onBack} style={{ marginTop: 18, background: "none", border: "none", color: C.inkSoft, fontSize: 13, fontWeight: 600 }}>
-        ← Back
+        ← {t("Back")}
       </button>
     </div>
   );
 }
 
-function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
+function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, language, setLanguage }) {
+  const t = useT();
   // The cross-account admin view stays off the public page; open the site with
   // ?admin=1 at the end of the URL to see it.
   const showAdmin = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("admin");
   return (
     <div style={{
-      minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "56px 32px",
+      minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "56px 32px", position: "relative",
       backgroundImage: BANIG_PATTERN(C.line, 0.5), backgroundSize: "16px 16px",
     }}>
       <style>{FONTS}</style>
+      {setLanguage && <div style={{ position: "absolute", top: 16, right: 16 }}><LanguagePicker language={language} setLanguage={setLanguage} /></div>}
       <div style={{ display: "flex", alignItems: "center", gap: 24, marginBottom: 14 }}>
         <AlagaMark size={104} color={C.tealDark} />
         <div style={{ fontFamily: "'Fraunces', serif", fontSize: 86, fontWeight: 900, color: C.tealDark }}>alaga</div>
       </div>
       <div style={{ color: C.inkSoft, fontSize: 14.5, fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 30, textAlign: "center", maxWidth: 520, lineHeight: 1.8 }}>
-        Nurturing the foundation for<br />your childcare business.
+        {t("Nurturing the foundation for your childcare business")}.
       </div>
 
       <button onClick={onSignIn} style={{
         marginBottom: 36, background: C.teal, color: "#fff", border: "none", borderRadius: 12,
         padding: "13px 28px", fontWeight: 700, fontSize: 15.5,
       }}>
-        Sign in to your account
+        {t("Sign in to your account")}
       </button>
 
       <div style={{ maxWidth: 980, width: "100%" }}>
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.inkSoft, marginBottom: 12 }}>
-          Populated demos
+          {t("Try a sample daycare")}
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 18, marginBottom: 28 }}>
           <button onClick={() => onDemo("simple")} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", flexDirection: "column", gap: 12 }}>
             <div style={{ width: 46, height: 46, borderRadius: 12, background: C.tealTint, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <PlayCircle size={22} color={C.tealDark} />
             </div>
-            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>Simple plan</div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>{t("Simple plan")}</div>
             <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>
-              Core day-to-day operations — families, subsidy, check-in, and payments.
+              {t("Core day-to-day operations — families, subsidy, check-in, and payments.")}
             </div>
             <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.teal, fontWeight: 700, fontSize: 13 }}>
-              Enter demo <ArrowRight size={13} />
+              {t("Enter demo")} <ArrowRight size={13} />
             </div>
           </button>
 
@@ -2720,12 +2797,12 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
             <div style={{ width: 46, height: 46, borderRadius: 12, background: C.amberTint, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <BarChart3 size={22} color={C.amber} />
             </div>
-            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>Extended plan</div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>{t("Extended plan")}</div>
             <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>
-              Everything in Simple, plus staff, growth planning, and analytics.
+              {t("Everything in Simple, plus staff, growth planning, and analytics.")}
             </div>
             <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.amber, fontWeight: 700, fontSize: 13 }}>
-              Enter demo <ArrowRight size={13} />
+              {t("Enter demo")} <ArrowRight size={13} />
             </div>
           </button>
 
@@ -2733,18 +2810,18 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
             <div style={{ width: 46, height: 46, borderRadius: 12, background: "#F1EEE5", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <Lock size={20} color={C.inkSoft} />
             </div>
-            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>Meeting-safe</div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>{t("Meeting-safe")}</div>
             <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>
-              For screen-sharing with providers or investors — proprietary rate math and payout figures are hidden.
+              {t("For screen-sharing with providers or investors — proprietary rate math and payout figures are hidden.")}
             </div>
             <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.inkSoft, fontWeight: 700, fontSize: 13 }}>
-              Enter demo <ArrowRight size={13} />
+              {t("Enter demo")} <ArrowRight size={13} />
             </div>
           </button>
         </div>
 
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.inkSoft, marginBottom: 12 }}>
-          Other ways in
+          {t("Other ways in")}
         </div>
         <div style={{ display: "grid", gridTemplateColumns: showAdmin ? "1fr 1fr 1fr" : "1fr 1fr", gap: 18 }}>
           <button onClick={onSignUp} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
@@ -2752,8 +2829,8 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
               <Rocket size={22} color={C.sky} />
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>I'm a new provider signing up</div>
-              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>Create your account, then set up your own empty workspace.</div>
+              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>{t("I'm a new provider signing up")}</div>
+              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>{t("Create your account, then set up your own empty workspace.")}</div>
             </div>
             <ArrowRight size={16} color={C.sky} />
           </button>
@@ -2763,8 +2840,8 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
               <Users size={22} color={C.coral} />
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>I'm a parent</div>
-              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>See what families see — check-in, receipts, FSA/HSA, messages.</div>
+              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>{t("I'm a parent")}</div>
+              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>{t("See what families see — check-in, receipts, FSA/HSA, messages.")}</div>
             </div>
             <ArrowRight size={16} color={C.coral} />
           </button>
@@ -2783,7 +2860,7 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
       </div>
 
       <div style={{ marginTop: 36, fontSize: 12.5, color: C.inkSoft, textAlign: "center" }}>
-        Built for licensed home-based Family Child Care providers in California.
+        {t("Built for licensed home-based Family Child Care providers in California.")}
       </div>
     </div>
   );
@@ -3611,7 +3688,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   );
 }
 
-function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData, onExitToLanding, forceTier, meetingMode = false, startInParentMode = false }) {
+function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, providerInfo: initialProviderInfo, onboardingData, onExitToLanding, forceTier, meetingMode = false, startInParentMode = false }) {
   const sfx = isEmpty ? "-empty" : "";
   const [providerInfo, saveProviderInfo] = usePersistentState(`provider-profile${sfx}`, {
     name: initialProviderInfo.name, city: initialProviderInfo.city, lic: initialProviderInfo.lic,
@@ -3688,7 +3765,9 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const [overrides, setOverrides] = useState({});
   const [loaded, setLoaded] = useState(false);
   // Saved on this device, so the chosen language stays until it's changed.
-  const [language, setLanguage] = usePersistentState(`app-language${sfx}`, onboardingData?.language || "English");
+  const [language, saveLanguage] = usePersistentState(`app-language${sfx}`, onboardingData?.language || initialLanguage);
+  // One choice everywhere: changing it here also sets the start and sign-in screens.
+  const setLanguage = (l) => { saveLanguage(l); onLanguageChange && onLanguageChange(l); };
   const [tier, saveTier] = usePersistentState(forceTier ? `platform-tier-demo-${forceTier}` : "platform-tier", forceTier || "simple");
   const tierLocked = !!forceTier;
   const [billing, saveBilling] = usePersistentState(`plan-billing${sfx}`, { cycle: "monthly", status: "active", canceledAt: null, startedOn: todayMDY() });
@@ -3945,7 +4024,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
             </div>
           )}
           <main style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
-            <Topbar screen={screen} setScreen={setScreen} provider={providerInfo} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} goTo={goTo} available={navItems.map((n) => n.id)} isMobile={isMobile} onMenu={() => setNavOpen(true)} unread={unreadMessagesCount} />
+            <Topbar screen={screen} setScreen={setScreen} provider={providerInfo} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} goTo={goTo} available={navItems.map((n) => n.id)} isMobile={isMobile} onMenu={() => setNavOpen(true)} unread={unreadMessagesCount} language={language} setLanguage={setLanguage} />
             <div className="alaga-main" style={{ flex: 1, overflowY: "auto", padding: "28px 32px 60px" }}>
               {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} reminderSettings={reminderSettings} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} events={events} closures={closures} licensing={licensing} goToTour={() => setScreen("tours")} attendanceLog={attendanceLog} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
@@ -4009,6 +4088,9 @@ export default function AlagaMockup() {
   const [providerInfo, setProviderInfo] = useState(PROVIDER);
   const [onboardingData, setOnboardingData] = useState(null);
   const [authMode, setAuthMode] = useState("signin");
+  const [publicLanguage, setPublicLanguage] = usePersistentState("app-language-public", detectLanguage());
+  const tPublic = makeT(publicLanguage);
+  const publicCtx = { lang: LANG_CODES[publicLanguage] || "en", t: tPublic };
   const [signupEmail, setSignupEmail] = useState("");
 
   const registerWithAdmin = async (info) => {
@@ -4041,7 +4123,7 @@ export default function AlagaMockup() {
   };
 
   if (entry === "landing") {
-    return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><LandingChooser
+    return <LanguageContext.Provider value={publicCtx}><LandingChooser language={publicLanguage} setLanguage={setPublicLanguage}
       onDemo={(demoTier, isMeeting) => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier(demoTier); setMeetingMode(!!isMeeting); setStartInParent(false); setEntry("workspace"); }}
       onSignUp={() => { setAuthMode("signup"); setEntry("auth"); }}
       onAdmin={() => setEntry("admin")}
@@ -4053,7 +4135,7 @@ export default function AlagaMockup() {
     // Real Firebase accounts. A brand-new account goes straight into the setup
     // wizard. Signing in to an existing account drops into the populated demo
     // workspace until the backend + Cloud SQL wiring can load each provider's own data.
-    return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><LoginScreen
+    return <LanguageContext.Provider value={publicCtx}><LoginScreen language={publicLanguage} setLanguage={setPublicLanguage}
       key={authMode}
       initialMode={authMode}
       onAuthenticated={(user, mode) => {
@@ -4073,7 +4155,7 @@ export default function AlagaMockup() {
       onBack={() => setEntry("landing")}
     /></LanguageContext.Provider>;
   }
-  return <Workspace isEmpty={isEmptyWorkspace} providerInfo={providerInfo} onboardingData={onboardingData} onExitToLanding={() => setEntry("landing")} forceTier={forcedTier} meetingMode={meetingMode} startInParentMode={startInParent} />;
+  return <Workspace initialLanguage={publicLanguage} onLanguageChange={setPublicLanguage} isEmpty={isEmptyWorkspace} providerInfo={providerInfo} onboardingData={onboardingData} onExitToLanding={() => setEntry("landing")} forceTier={forcedTier} meetingMode={meetingMode} startInParentMode={startInParent} />;
 }
 
 /* --------------------------------- sidebar ------------------------------------ */
@@ -4214,7 +4296,7 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
   );
 }
 
-function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBack, goToFamily, goTo, available, isMobile = false, onMenu, unread = 0 }) {
+function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBack, goToFamily, goTo, available, isMobile = false, onMenu, unread = 0, language, setLanguage }) {
   const t = useT();
   const title = NAV.find((n) => n.id === screen)?.label || "";
   // Reflects the real current date whenever the page loads/refreshes.
@@ -4330,6 +4412,7 @@ function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBac
             </div>
           </div>
         )}
+        {setLanguage && <LanguagePicker language={language} setLanguage={setLanguage} compact />}
         <div style={{ width: 34, height: 34, borderRadius: "50%", background: C.tealTint, color: C.tealDark, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 13 }} title={provider?.contactName || provider?.name}>{initialsOf(provider?.contactName || provider?.name)}</div>
       </div>
     </div>
