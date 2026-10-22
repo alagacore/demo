@@ -8,7 +8,7 @@ import {
   Pencil, Plus, Trash2, Split, ArrowLeft, Shield, FileCheck, HeartPulse, Flame, Eye,
   Moon, Contrast, Type, ZapOff, Lock, ListChecks, UserPlus, Settings as Gear, LifeBuoy, Paperclip, Image as ImageIcon,
   ArrowRight, Building2, Rocket, PlayCircle, UploadCloud, TrendingUp, Wand2, UserCog, Scale, ArrowLeftRight, Volume2, Square, Hourglass,
-  Wallet, Baby, Cookie, Puzzle, SprayCan, Palette, LogOut, Check, GraduationCap, Bell, BellOff, Menu,
+  Wallet, Baby, Cookie, Puzzle, SprayCan, Palette, LogOut, Check, GraduationCap, Bell, BellOff, Menu, Globe,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell,
@@ -1319,6 +1319,98 @@ const T = {
   "Update the address and phone on receipts": { es: "Actualizar la dirección y el teléfono en los recibos", tl: "I-update ang address at telepono sa resibo", zh: "更新收据上的地址和电话", vi: "Cập nhật địa chỉ và số điện thoại trên biên nhận", ko: "영수증의 주소와 전화번호 수정" },
   "Sign out or change your password": { es: "Cerrar sesión o cambiar la contraseña", tl: "Mag-sign out o palitan ang password", zh: "退出登录或更改密码", vi: "Đăng xuất hoặc đổi mật khẩu", ko: "로그아웃 또는 비밀번호 변경" },
   "Get help from the Alaga team": { es: "Obtener ayuda del equipo de Alaga", tl: "Humingi ng tulong sa Alaga team", zh: "获取Alaga团队的帮助", vi: "Nhận hỗ trợ từ đội Alaga", ko: "Alaga 팀에 도움 요청" },
+  "Who's here today": { es: "Quién está hoy", tl: "Sino ang narito ngayon", zh: "今天在园", vi: "Ai có mặt hôm nay", ko: "오늘 출석 현황" },
+  "Here": { es: "Presente", tl: "Narito", zh: "在园", vi: "Có mặt", ko: "원내" },
+  "here": { es: "presentes", tl: "narito", zh: "在园", vi: "có mặt", ko: "원내" },
+  "At appointment": { es: "En una cita", tl: "Nasa appointment", zh: "外出预约", vi: "Đi hẹn", ko: "외출 중" },
+  "Picked up": { es: "Recogido", tl: "Nasundo na", zh: "已接走", vi: "Đã đón", ko: "하원" },
+  "Not here yet": { es: "Aún no llega", tl: "Wala pa", zh: "尚未到园", vi: "Chưa đến", ko: "아직 미등원" },
+  "expected": { es: "esperados", tl: "inaasahan", zh: "预计到园", vi: "dự kiến", ko: "예정" },
+  "Closed today": { es: "Cerrado hoy", tl: "Sarado ngayon", zh: "今天休园", vi: "Hôm nay nghỉ", ko: "오늘 휴원" },
+  "Check in / out": { es: "Entrada / salida", tl: "Check in / out", zh: "入园 / 离园", vi: "Đến / về", ko: "등·하원" },
+  "Good morning": { es: "Buenos días", tl: "Magandang umaga", zh: "早上好", vi: "Chào buổi sáng", ko: "좋은 아침입니다" },
+  "Good afternoon": { es: "Buenas tardes", tl: "Magandang hapon", zh: "下午好", vi: "Chào buổi chiều", ko: "좋은 오후입니다" },
+  "Good evening": { es: "Buenas noches", tl: "Magandang gabi", zh: "晚上好", vi: "Chào buổi tối", ko: "좋은 저녁입니다" },
+  "Listen": { es: "Escuchar", tl: "Pakinggan", zh: "收听", vi: "Nghe", ko: "듣기" },
+  "Stop": { es: "Detener", tl: "Ihinto", zh: "停止", vi: "Dừng", ko: "정지" },
+  "Listen to today's briefing": { es: "Escuchar el resumen de hoy", tl: "Pakinggan ang briefing ngayon", zh: "收听今日简报", vi: "Nghe tóm tắt hôm nay", ko: "오늘의 브리핑 듣기" },
+  "Nothing urgent today.": { es: "Nada urgente hoy.", tl: "Walang urgent ngayon.", zh: "今天没有紧急事项。", vi: "Hôm nay không có việc gấp.", ko: "오늘은 급한 일이 없습니다." },
+  "Your daily routine": { es: "Tu rutina diaria", tl: "Ang iyong araw-araw na gawain", zh: "每日例行事项", vi: "Việc hằng ngày của bạn", ko: "나의 일과" },
+  "resets each morning": { es: "se reinicia cada mañana", tl: "nire-reset tuwing umaga", zh: "每天早上重置", vi: "đặt lại mỗi sáng", ko: "매일 아침 초기화" },
+  "Steadiness": { es: "Estabilidad", tl: "Katatagan", zh: "稳定", vi: "Vững vàng", ko: "꾸준함" },
+  "Patience": { es: "Paciencia", tl: "Pasensya", zh: "耐心", vi: "Kiên nhẫn", ko: "인내" },
+  "Trust": { es: "Confianza", tl: "Tiwala", zh: "信任", vi: "Niềm tin", ko: "신뢰" },
+  "Rest": { es: "Descanso", tl: "Pahinga", zh: "休息", vi: "Nghỉ ngơi", ko: "휴식" },
+  "Growth": { es: "Crecimiento", tl: "Paglago", zh: "成长", vi: "Phát triển", ko: "성장" },
+  "Community": { es: "Comunidad", tl: "Komunidad", zh: "社区", vi: "Cộng đồng", ko: "공동체" },
+  "Presence": { es: "Presencia", tl: "Presensya", zh: "陪伴", vi: "Hiện diện", ko: "함께함" },
+  "Warmth": { es: "Calidez", tl: "Init ng pagmamahal", zh: "温暖", vi: "Ấm áp", ko: "따뜻함" },
+  "Sign in": { es: "Iniciar sesión", tl: "Mag-sign in", zh: "登录", vi: "Đăng nhập", ko: "로그인" },
+  "Create account": { es: "Crear cuenta", tl: "Gumawa ng account", zh: "创建账户", vi: "Tạo tài khoản", ko: "계정 만들기" },
+  "Password": { es: "Contraseña", tl: "Password", zh: "密码", vi: "Mật khẩu", ko: "비밀번호" },
+  "Forgot password?": { es: "¿Olvidaste tu contraseña?", tl: "Nakalimutan ang password?", zh: "忘记密码？", vi: "Quên mật khẩu?", ko: "비밀번호를 잊으셨나요?" },
+  "Please wait…": { es: "Espera un momento…", tl: "Sandali lang…", zh: "请稍候…", vi: "Vui lòng chờ…", ko: "잠시만 기다려 주세요…" },
+  "Back": { es: "Atrás", tl: "Bumalik", zh: "返回", vi: "Quay lại", ko: "뒤로" },
+  "Enter your email above, then tap \"Forgot password?\" again.": { es: "Escribe tu correo arriba y vuelve a tocar \"¿Olvidaste tu contraseña?\".", tl: "Ilagay ang email sa itaas, pagkatapos i-tap ulit ang \"Nakalimutan ang password?\".", zh: "请先在上方输入邮箱，再点“忘记密码？”。", vi: "Nhập email ở trên rồi chạm lại \"Quên mật khẩu?\".", ko: "위에 이메일을 입력한 뒤 \"비밀번호를 잊으셨나요?\"를 다시 누르세요." },
+  "If an account exists for that email, a reset link is on its way.": { es: "Si existe una cuenta con ese correo, te enviamos un enlace para restablecerla.", tl: "Kung may account para sa email na iyon, may darating na reset link.", zh: "如果该邮箱有账户，重置链接已发送。", vi: "Nếu email này có tài khoản, liên kết đặt lại đang được gửi.", ko: "해당 이메일의 계정이 있다면 재설정 링크가 전송됩니다." },
+  "That doesn't look like a valid email address.": { es: "Ese correo no parece válido.", tl: "Mukhang hindi wastong email iyan.", zh: "这个邮箱地址似乎无效。", vi: "Email này có vẻ không hợp lệ.", ko: "올바른 이메일 주소가 아닌 것 같습니다." },
+  "No account found with that email.": { es: "No hay ninguna cuenta con ese correo.", tl: "Walang account sa email na iyan.", zh: "找不到该邮箱的账户。", vi: "Không tìm thấy tài khoản với email này.", ko: "해당 이메일의 계정이 없습니다." },
+  "Incorrect email or password.": { es: "Correo o contraseña incorrectos.", tl: "Mali ang email o password.", zh: "邮箱或密码错误。", vi: "Email hoặc mật khẩu không đúng.", ko: "이메일 또는 비밀번호가 올바르지 않습니다." },
+  "An account already exists with that email.": { es: "Ya existe una cuenta con ese correo.", tl: "May account na para sa email na iyan.", zh: "该邮箱已有账户。", vi: "Email này đã có tài khoản.", ko: "이미 해당 이메일의 계정이 있습니다." },
+  "Password should be at least 6 characters.": { es: "La contraseña debe tener al menos 6 caracteres.", tl: "Dapat hindi bababa sa 6 na character ang password.", zh: "密码至少需要6个字符。", vi: "Mật khẩu phải có ít nhất 6 ký tự.", ko: "비밀번호는 6자 이상이어야 합니다." },
+  "Something went wrong — please try again.": { es: "Algo salió mal — inténtalo de nuevo.", tl: "May nangyaring mali — subukan ulit.", zh: "出了点问题，请重试。", vi: "Đã xảy ra lỗi — vui lòng thử lại.", ko: "문제가 발생했습니다 — 다시 시도해 주세요." },
+  "Sign in to your account": { es: "Inicia sesión en tu cuenta", tl: "Mag-sign in sa iyong account", zh: "登录您的账户", vi: "Đăng nhập tài khoản", ko: "내 계정에 로그인" },
+  "Try a sample daycare": { es: "Prueba una guardería de ejemplo", tl: "Subukan ang sample na daycare", zh: "体验示例托育中心", vi: "Dùng thử nhà trẻ mẫu", ko: "샘플 보육원 둘러보기" },
+  "Meeting-safe": { es: "Para reuniones", tl: "Pang-meeting", zh: "会议安全模式", vi: "An toàn khi họp", ko: "회의용" },
+  "Core day-to-day operations — families, subsidy, check-in, and payments.": { es: "Lo esencial del día a día — familias, subsidios, entradas y pagos.", tl: "Pang-araw-araw na operasyon — pamilya, subsidy, check-in at bayad.", zh: "日常核心运营 — 家庭、补助、入园和付款。", vi: "Vận hành hằng ngày — gia đình, trợ cấp, điểm danh và thanh toán.", ko: "일상 핵심 운영 — 가족, 보조금, 등원, 결제." },
+  "Everything in Simple, plus staff, growth planning, and analytics.": { es: "Todo lo del Plan Simple, más personal, planes de crecimiento y análisis.", tl: "Lahat ng nasa Simple, dagdag ang staff, growth planning at analytics.", zh: "包含简易版全部功能，另有员工、成长规划和分析。", vi: "Mọi thứ trong gói Đơn giản, thêm nhân viên, kế hoạch phát triển và phân tích.", ko: "심플 요금제 전체 기능에 직원, 성장 계획, 분석 추가." },
+  "For screen-sharing with providers or investors — proprietary rate math and payout figures are hidden.": { es: "Para compartir pantalla con proveedores o inversionistas — se ocultan tarifas y pagos.", tl: "Para sa screen-sharing sa provider o investor — nakatago ang rates at payout.", zh: "用于与托育者或投资人共享屏幕 — 隐藏费率和付款数据。", vi: "Để chia sẻ màn hình với nhà cung cấp hoặc nhà đầu tư — ẩn số liệu giá và chi trả.", ko: "제공자나 투자자와 화면 공유용 — 요율과 지급 금액은 숨겨집니다." },
+  "Enter demo": { es: "Entrar", tl: "Pumasok sa demo", zh: "进入演示", vi: "Vào bản demo", ko: "데모 시작" },
+  "Other ways in": { es: "Otras opciones", tl: "Iba pang paraan", zh: "其他入口", vi: "Cách khác", ko: "다른 방법" },
+  "I'm a new provider signing up": { es: "Soy un proveedor nuevo", tl: "Bagong provider ako na mag-sign up", zh: "我是新托育者，要注册", vi: "Tôi là nhà cung cấp mới đăng ký", ko: "신규 제공자로 가입하기" },
+  "Create your account, then set up your own empty workspace.": { es: "Crea tu cuenta y luego prepara tu propio espacio de trabajo.", tl: "Gumawa ng account, pagkatapos i-set up ang sarili mong workspace.", zh: "创建账户，然后设置您自己的工作区。", vi: "Tạo tài khoản rồi thiết lập không gian làm việc của bạn.", ko: "계정을 만든 뒤 나만의 작업 공간을 설정하세요." },
+  "I'm a parent": { es: "Soy padre o madre", tl: "Magulang ako", zh: "我是家长", vi: "Tôi là phụ huynh", ko: "학부모입니다" },
+  "See what families see — check-in, receipts, FSA/HSA, messages.": { es: "Mira lo que ven las familias — entradas, recibos, FSA/HSA, mensajes.", tl: "Tingnan ang nakikita ng pamilya — check-in, resibo, FSA/HSA, mensahe.", zh: "查看家庭看到的内容 — 入园、收据、FSA/HSA、消息。", vi: "Xem những gì gia đình thấy — điểm danh, biên nhận, FSA/HSA, tin nhắn.", ko: "가족이 보는 화면 — 등원, 영수증, FSA/HSA, 메시지." },
+  "Built for licensed home-based Family Child Care providers in California.": { es: "Hecho para proveedores de cuidado infantil familiar con licencia en California.", tl: "Ginawa para sa lisensyadong home-based Family Child Care provider sa California.", zh: "专为加州持照家庭式托育者打造。", vi: "Dành cho nhà giữ trẻ tại gia có giấy phép ở California.", ko: "캘리포니아 면허 가정 보육 제공자를 위해 만들었습니다." },
+  "Request early access": { es: "Solicitar acceso anticipado", tl: "Humiling ng early access", zh: "申请抢先体验", vi: "Đăng ký dùng sớm", ko: "얼리 액세스 신청" },
+  "Already have an account?": { es: "¿Ya tienes una cuenta?", tl: "May account ka na?", zh: "已有账户？", vi: "Đã có tài khoản?", ko: "이미 계정이 있으신가요?" },
+  "I'm a provider and want to use Alaga": { es: "Soy proveedor y quiero usar Alaga", tl: "Provider ako at gusto kong gamitin ang Alaga", zh: "我是托育者，想使用Alaga", vi: "Tôi là nhà cung cấp và muốn dùng Alaga", ko: "Alaga를 사용하고 싶은 제공자입니다" },
+  "Request early access and a short demo — founding providers get setup help.": { es: "Solicita acceso anticipado y una demostración — los primeros proveedores reciben ayuda para empezar.", tl: "Humiling ng early access at maikling demo — may tulong sa setup ang mga founding provider.", zh: "申请抢先体验和简短演示 — 首批托育者可获得设置帮助。", vi: "Đăng ký dùng sớm và xem demo ngắn — nhà cung cấp đầu tiên được hỗ trợ thiết lập.", ko: "얼리 액세스와 짧은 데모를 신청하세요 — 초기 제공자는 설정 지원을 받습니다." },
+  "Please enter a valid email.": { es: "Escribe un correo válido.", tl: "Maglagay ng wastong email.", zh: "请输入有效的邮箱。", vi: "Vui lòng nhập email hợp lệ.", ko: "올바른 이메일을 입력하세요." },
+  "Please fill in your name, email and city.": { es: "Escribe tu nombre, correo y ciudad.", tl: "Ilagay ang pangalan, email at lungsod.", zh: "请填写姓名、邮箱和城市。", vi: "Vui lòng nhập tên, email và thành phố.", ko: "이름, 이메일, 도시를 입력하세요." },
+  "Something went wrong saving your request. Please try again in a moment, or email us and we'll add you.": { es: "No pudimos guardar tu solicitud. Inténtalo de nuevo en un momento o escríbenos y te agregamos.", tl: "Hindi na-save ang hiling mo. Subukan ulit mamaya, o i-email kami at idadagdag ka namin.", zh: "保存申请时出错。请稍后再试，或发邮件给我们，我们帮您添加。", vi: "Không lưu được yêu cầu. Vui lòng thử lại sau, hoặc email cho chúng tôi để được thêm vào.", ko: "신청을 저장하지 못했습니다. 잠시 후 다시 시도하시거나 이메일을 보내 주시면 추가해 드리겠습니다." },
+  "You're on the list!": { es: "¡Ya estás en la lista!", tl: "Nasa listahan ka na!", zh: "您已加入名单！", vi: "Bạn đã có trong danh sách!", ko: "명단에 등록되었습니다!" },
+  "Thank you": { es: "Gracias", tl: "Salamat", zh: "谢谢", vi: "Cảm ơn", ko: "감사합니다" },
+  "We'll reach out within two business days to set up a short demo at a time that works for you.": { es: "Te contactaremos en dos días hábiles para agendar una demostración breve cuando te convenga.", tl: "Makikipag-ugnayan kami sa loob ng dalawang araw ng trabaho para mag-set ng maikling demo sa oras na bagay sa iyo.", zh: "我们会在两个工作日内联系您，安排方便的时间进行简短演示。", vi: "Chúng tôi sẽ liên hệ trong hai ngày làm việc để hẹn buổi demo ngắn vào giờ phù hợp với bạn.", ko: "영업일 기준 2일 이내에 연락드려 편한 시간에 짧은 데모를 잡아 드리겠습니다." },
+  "We'll email you as soon as early access opens.": { es: "Te escribiremos en cuanto abra el acceso anticipado.", tl: "I-email ka namin pagbukas ng early access.", zh: "抢先体验开放时我们会第一时间发邮件通知您。", vi: "Chúng tôi sẽ email ngay khi mở đăng ký dùng sớm.", ko: "얼리 액세스가 열리면 바로 이메일로 알려 드리겠습니다." },
+  "Explore the sample daycare while you wait": { es: "Explora la guardería de ejemplo mientras esperas", tl: "Tingnan ang sample na daycare habang naghihintay", zh: "等待期间先看看示例托育中心", vi: "Xem nhà trẻ mẫu trong lúc chờ", ko: "기다리는 동안 샘플 보육원을 둘러보세요" },
+  "Or explore the sample daycare first": { es: "O explora primero la guardería de ejemplo", tl: "O tingnan muna ang sample na daycare", zh: "或先看看示例托育中心", vi: "Hoặc xem nhà trẻ mẫu trước", ko: "또는 먼저 샘플 보육원을 둘러보세요" },
+  "Alaga keeps attendance, families, tuition, subsidy paperwork and licensing in one simple place — built for home-based child care providers, in six languages. Founding providers get hands-on setup help and founding pricing.": { es: "Alaga reúne asistencia, familias, colegiaturas, papeleo de subsidios y licencias en un solo lugar sencillo — hecho para proveedores de cuidado infantil en casa, en seis idiomas. Los primeros proveedores reciben ayuda personal para empezar y precio de fundador.", tl: "Pinagsasama ng Alaga ang attendance, pamilya, tuition, papeles ng subsidy at lisensya sa isang simpleng lugar — para sa home-based child care provider, sa anim na wika. May personal na tulong sa setup at founding pricing ang mga founding provider.", zh: "Alaga把出勤、家庭、学费、补助文件和执照集中在一个简单的地方 — 专为家庭式托育者打造，支持六种语言。首批托育者可获得一对一设置帮助和创始价格。", vi: "Alaga gom điểm danh, gia đình, học phí, giấy tờ trợ cấp và giấy phép vào một nơi đơn giản — dành cho nhà giữ trẻ tại gia, bằng sáu ngôn ngữ. Nhà cung cấp đầu tiên được hỗ trợ thiết lập trực tiếp và giá ưu đãi sáng lập.", ko: "Alaga는 출석, 가족, 수업료, 보조금 서류, 면허를 한곳에서 간단하게 관리합니다 — 가정 보육 제공자를 위해 6개 언어로 만들었습니다. 초기 제공자는 직접 설정 지원과 창립 회원 요금을 받습니다." },
+  "Your name": { es: "Tu nombre", tl: "Pangalan mo", zh: "您的姓名", vi: "Tên của bạn", ko: "이름" },
+  "Phone (optional)": { es: "Teléfono (opcional)", tl: "Telepono (opsyonal)", zh: "电话（可选）", vi: "Điện thoại (tùy chọn)", ko: "전화번호 (선택)" },
+  "Child care business name (optional)": { es: "Nombre de tu negocio de cuidado infantil (opcional)", tl: "Pangalan ng child care business (opsyonal)", zh: "托育机构名称（可选）", vi: "Tên cơ sở giữ trẻ (tùy chọn)", ko: "보육 사업장 이름 (선택)" },
+  "e.g. Culver City": { es: "p. ej. Culver City", tl: "hal. Culver City", zh: "例如：Culver City", vi: "vd: Culver City", ko: "예: Culver City" },
+  "What kind of program?": { es: "¿Qué tipo de programa?", tl: "Anong uri ng programa?", zh: "哪种类型的托育？", vi: "Loại hình nào?", ko: "어떤 형태의 프로그램인가요?" },
+  "Small family child care home (up to 8)": { es: "Hogar de cuidado infantil familiar pequeño (hasta 8)", tl: "Maliit na family child care home (hanggang 8)", zh: "小型家庭托育（最多8名）", vi: "Nhà giữ trẻ gia đình nhỏ (tối đa 8)", ko: "소규모 가정 보육 (최대 8명)" },
+  "Large family child care home (up to 14)": { es: "Hogar de cuidado infantil familiar grande (hasta 14)", tl: "Malaking family child care home (hanggang 14)", zh: "大型家庭托育（最多14名）", vi: "Nhà giữ trẻ gia đình lớn (tối đa 14)", ko: "대규모 가정 보육 (최대 14명)" },
+  "Child care center": { es: "Centro de cuidado infantil", tl: "Child care center", zh: "托育中心", vi: "Trung tâm giữ trẻ", ko: "어린이집" },
+  "License-exempt / family, friend & neighbor": { es: "Exento de licencia / familia, amigos y vecinos", tl: "License-exempt / pamilya, kaibigan at kapitbahay", zh: "免执照 / 亲友邻居照护", vi: "Miễn giấy phép / gia đình, bạn bè và hàng xóm", ko: "면허 면제 / 가족·친구·이웃 돌봄" },
+  "Getting licensed": { es: "Tramitando la licencia", tl: "Nag-aapply ng lisensya", zh: "正在申请执照", vi: "Đang xin giấy phép", ko: "면허 취득 중" },
+  "How many children?": { es: "¿Cuántos niños?", tl: "Ilang bata?", zh: "多少个孩子？", vi: "Bao nhiêu trẻ?", ko: "아동 수" },
+  "Work with subsidies?": { es: "¿Trabajas con subsidios?", tl: "May subsidy ka ba?", zh: "是否接受补助？", vi: "Có nhận trợ cấp không?", ko: "보조금을 받나요?" },
+  "Yes": { es: "Sí", tl: "Oo", zh: "是", vi: "Có", ko: "예" },
+  "No": { es: "No", tl: "Hindi", zh: "否", vi: "Không", ko: "아니요" },
+  "Not sure": { es: "No estoy seguro", tl: "Hindi sigurado", zh: "不确定", vi: "Không chắc", ko: "잘 모르겠음" },
+  "How do you keep track of things today?": { es: "¿Cómo llevas el control hoy?", tl: "Paano mo itinatala ang lahat ngayon?", zh: "您现在用什么方式记录？", vi: "Hiện bạn theo dõi mọi thứ bằng cách nào?", ko: "지금은 어떻게 기록하고 계신가요?" },
+  "Paper and binders": { es: "Papel y carpetas", tl: "Papel at binder", zh: "纸张和文件夹", vi: "Giấy và bìa hồ sơ", ko: "종이와 바인더" },
+  "Excel or Google Sheets": { es: "Excel o Google Sheets", tl: "Excel o Google Sheets", zh: "Excel或Google表格", vi: "Excel hoặc Google Sheets", ko: "엑셀 또는 구글 시트" },
+  "Another app": { es: "Otra aplicación", tl: "Ibang app", zh: "其他应用", vi: "Ứng dụng khác", ko: "다른 앱" },
+  "A mix of these": { es: "Una combinación", tl: "Halo-halo", zh: "以上混合", vi: "Kết hợp các cách trên", ko: "여러 방법 혼용" },
+  "Anything you'd like us to know? (optional)": { es: "¿Algo que quieras contarnos? (opcional)", tl: "May gusto ka bang sabihin? (opsyonal)", zh: "还有什么想告诉我们的？（可选）", vi: "Bạn muốn chia sẻ gì thêm? (tùy chọn)", ko: "더 알려 주실 내용이 있나요? (선택)" },
+  "What takes up the most time each week?": { es: "¿Qué te quita más tiempo cada semana?", tl: "Ano ang pinakamatagal mong ginagawa bawat linggo?", zh: "每周最花时间的是什么？", vi: "Việc gì tốn thời gian nhất mỗi tuần?", ko: "매주 가장 시간이 많이 드는 일은 무엇인가요?" },
+  "I'd like a short demo (about 15 minutes)": { es: "Quiero una demostración breve (unos 15 minutos)", tl: "Gusto ko ng maikling demo (mga 15 minuto)", zh: "我想看简短演示（约15分钟）", vi: "Tôi muốn xem demo ngắn (khoảng 15 phút)", ko: "짧은 데모를 원합니다 (약 15분)" },
+  "Sending…": { es: "Enviando…", tl: "Ipinapadala…", zh: "发送中…", vi: "Đang gửi…", ko: "전송 중…" },
+  "We'll only use this to contact you about Alaga. We never sell your information.": { es: "Solo usaremos esto para contactarte sobre Alaga. Nunca vendemos tu información.", tl: "Gagamitin lang namin ito para kontakin ka tungkol sa Alaga. Hindi namin ibinebenta ang impormasyon mo.", zh: "我们只会用这些信息联系您关于Alaga的事，绝不出售您的信息。", vi: "Chúng tôi chỉ dùng thông tin này để liên hệ về Alaga. Chúng tôi không bao giờ bán thông tin của bạn.", ko: "Alaga 관련 연락에만 사용하며, 정보를 절대 판매하지 않습니다." },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -2463,6 +2555,52 @@ const EXPANSION_STATUS_META = {
 
 const LanguageContext = React.createContext({ lang: "en", t: (s) => s });
 function useT() { return React.useContext(LanguageContext).t; }
+const LANG_OPTIONS = ["English", "Español", "Tagalog", "中文", "Tiếng Việt", "한국어"];
+const LANG_SHORT = { "English": "EN", "Español": "ES", "Tagalog": "TL", "中文": "中文", "Tiếng Việt": "VI", "한국어": "한국어" };
+// First visit: match the phone or computer's own language when Alaga has it.
+function detectLanguage() {
+  const nav = (typeof navigator !== "undefined" && (navigator.languages || [navigator.language])) || [];
+  for (const l of nav) {
+    const c = String(l || "").toLowerCase();
+    if (c.startsWith("es")) return "Español";
+    if (c.startsWith("tl") || c.startsWith("fil")) return "Tagalog";
+    if (c.startsWith("zh")) return "中文";
+    if (c.startsWith("vi")) return "Tiếng Việt";
+    if (c.startsWith("ko")) return "한국어";
+    if (c.startsWith("en")) return "English";
+  }
+  return "English";
+}
+const makeT = (language) => { const code = LANG_CODES[language] || "en"; return (s) => (code === "en" ? plainEnglish(s) : (T[s] && T[s][code]) || s); };
+// Globe button that shows the current language and switches with one tap.
+function LanguagePicker({ language, setLanguage, compact = false, align = "right" }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ position: "relative" }}>
+      <button type="button" onClick={() => setOpen(!open)} aria-label="Language / Idioma / Wika" title="Language / Idioma / Wika" style={{
+        display: "flex", alignItems: "center", gap: 6, padding: compact ? "7px 9px" : "7px 12px", borderRadius: 999, border: `1px solid ${C.line}`,
+        background: "#fff", color: C.ink, fontSize: 12.5, fontWeight: 700, whiteSpace: "nowrap",
+      }}>
+        <Globe size={15} color={C.teal} /> {compact ? LANG_SHORT[language] || "EN" : language}
+      </button>
+      {open && (
+        <>
+          <div onClick={() => setOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 95 }} />
+          <div style={{ position: "absolute", top: "calc(100% + 6px)", [align]: 0, zIndex: 96, background: "#fff", border: `1px solid ${C.line}`, borderRadius: 12, boxShadow: "0 10px 30px rgba(0,0,0,0.12)", padding: 6, minWidth: 160 }}>
+            {LANG_OPTIONS.map((l) => (
+              <button key={l} type="button" onClick={() => { setLanguage(l); setOpen(false); }} style={{
+                width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "9px 12px", borderRadius: 8, border: "none",
+                background: l === language ? C.tealTint : "transparent", color: l === language ? C.tealDark : C.ink, fontSize: 14, fontWeight: l === language ? 700 : 500, textAlign: "left",
+              }}>
+                {l} {l === language && <Check size={14} />}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
 // True on phones and narrow windows; updates when the window is resized.
 function useIsMobile(max = 760) {
   const q = `(max-width: ${max}px)`;
@@ -2536,7 +2674,8 @@ function usePersistentState(key, initial) {
 // Real Firebase Authentication — this is a genuine account, not a demo mock. Once the
 // backend + Cloud SQL wiring exists, a successful sign-in here will load that specific
 // provider's real data instead of dropping into the shared demo dataset.
-function LoginScreen({ onAuthenticated, onBack, initialMode = "signin" }) {
+function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language, setLanguage }) {
+  const t = useT();
   const [mode, setMode] = useState(initialMode); // "signin" | "signup"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -2546,7 +2685,7 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin" }) {
 
   const sendReset = async () => {
     setError(""); setNotice("");
-    if (!email.trim()) { setError("Enter your email above, then tap \"Forgot password?\" again."); return; }
+    if (!email.trim()) { setError(t("Enter your email above, then tap \"Forgot password?\" again.")); return; }
     try {
       const { sendPasswordResetEmail } = await import("firebase/auth");
       const { auth } = await import("./firebase.js");
@@ -2556,18 +2695,18 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin" }) {
       // Any other result shows the same message, so the screen never reveals
       // whether an account exists for that email.
     }
-    setNotice("If an account exists for that email, a reset link is on its way.");
+    setNotice(t("If an account exists for that email, a reset link is on its way."));
   };
 
   const friendlyError = (code) => {
     switch (code) {
-      case "auth/invalid-email": return "That doesn't look like a valid email address.";
-      case "auth/user-not-found": return "No account found with that email.";
+      case "auth/invalid-email": return t("That doesn't look like a valid email address.");
+      case "auth/user-not-found": return t("No account found with that email.");
       case "auth/wrong-password":
-      case "auth/invalid-credential": return "Incorrect email or password.";
-      case "auth/email-already-in-use": return "An account already exists with that email.";
-      case "auth/weak-password": return "Password should be at least 6 characters.";
-      default: return "Something went wrong — please try again.";
+      case "auth/invalid-credential": return t("Incorrect email or password.");
+      case "auth/email-already-in-use": return t("An account already exists with that email.");
+      case "auth/weak-password": return t("Password should be at least 6 characters.");
+      default: return t("Something went wrong — please try again.");
     }
   };
 
@@ -2592,10 +2731,11 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin" }) {
   return (
     <div style={{
       minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex",
-      flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24,
+      flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24, position: "relative",
       backgroundImage: BANIG_PATTERN(C.line, 0.5), backgroundSize: "16px 16px",
     }}>
       <style>{FONTS}</style>
+      {setLanguage && <div style={{ position: "absolute", top: 16, right: 16 }}><LanguagePicker language={language} setLanguage={setLanguage} /></div>}
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 28 }}>
         <AlagaMark size={44} color={C.tealDark} />
         <div style={{ fontFamily: "'Fraunces', serif", fontSize: 34, fontWeight: 900, color: C.tealDark }}>alaga</div>
@@ -2609,24 +2749,24 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin" }) {
               background: mode === m ? "#fff" : "transparent", color: mode === m ? C.tealDark : C.inkSoft,
               boxShadow: mode === m ? C.line && "0 1px 2px rgba(0,0,0,0.06)" : "none",
             }}>
-              {m === "signin" ? "Sign in" : "Create account"}
+              {m === "signin" ? t("Sign in") : t("Create account")}
             </button>
           ))}
         </div>
 
-        <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft, marginBottom: 6 }}>Email</div>
+        <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft, marginBottom: 6 }}>{t("Email")}</div>
         <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)}
           placeholder="you@yourdaycare.com"
           style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: `1px solid ${C.line}`, fontSize: 14, marginBottom: 14, fontFamily: "inherit" }} />
 
-        <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft, marginBottom: 6 }}>Password</div>
+        <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft, marginBottom: 6 }}>{t("Password")}</div>
         <input type="password" required minLength={6} autoComplete={mode === "signin" ? "current-password" : "new-password"}
           value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
           style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: `1px solid ${C.line}`, fontSize: 14, marginBottom: 6, fontFamily: "inherit" }} />
 
         {mode === "signin" && (
           <button type="button" onClick={sendReset} style={{ background: "none", border: "none", padding: 0, marginTop: 4, color: C.tealDark, fontSize: 12.5, fontWeight: 600 }}>
-            Forgot password?
+            {t("Forgot password?")}
           </button>
         )}
         {error && <div style={{ color: C.danger, fontSize: 12.5, marginTop: 6, marginBottom: 6 }}>{error}</div>}
@@ -2636,60 +2776,62 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin" }) {
           width: "100%", marginTop: 14, padding: "12px 0", borderRadius: 10, border: "none",
           background: C.teal, color: "#fff", fontWeight: 700, fontSize: 14.5, opacity: busy ? 0.7 : 1,
         }}>
-          {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
+          {busy ? t("Please wait…") : mode === "signin" ? t("Sign in") : t("Create account")}
         </button>
       </form>
 
       <button onClick={onBack} style={{ marginTop: 18, background: "none", border: "none", color: C.inkSoft, fontSize: 13, fontWeight: 600 }}>
-        ← Back
+        ← {t("Back")}
       </button>
     </div>
   );
 }
 
-function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, onEarlyAccess }) {
+function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, onEarlyAccess, language, setLanguage }) {
+  const t = useT();
   // The cross-account admin view stays off the public page; open the site with
   // ?admin=1 at the end of the URL to see it.
   const showAdmin = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("admin");
   return (
     <div style={{
-      minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "56px 32px",
+      minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "56px 32px", position: "relative",
       backgroundImage: BANIG_PATTERN(C.line, 0.5), backgroundSize: "16px 16px",
     }}>
       <style>{FONTS}</style>
+      {setLanguage && <div style={{ position: "absolute", top: 16, right: 16 }}><LanguagePicker language={language} setLanguage={setLanguage} /></div>}
       <div style={{ display: "flex", alignItems: "center", gap: 24, marginBottom: 14 }}>
         <AlagaMark size={104} color={C.tealDark} />
         <div style={{ fontFamily: "'Fraunces', serif", fontSize: 86, fontWeight: 900, color: C.tealDark }}>alaga</div>
       </div>
       <div style={{ color: C.inkSoft, fontSize: 14.5, fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 30, textAlign: "center", maxWidth: 520, lineHeight: 1.8 }}>
-        Nurturing the foundation for<br />your childcare business.
+        {t("Nurturing the foundation for your childcare business")}.
       </div>
 
       <button onClick={onEarlyAccess} style={{
         marginBottom: 10, background: C.teal, color: "#fff", border: "none", borderRadius: 12,
         padding: "14px 30px", fontWeight: 700, fontSize: 16,
       }}>
-        Request early access
+        {t("Request early access")}
       </button>
       <button onClick={onSignIn} style={{ marginBottom: 32, background: "none", border: "none", color: C.inkSoft, fontSize: 13, fontWeight: 600 }}>
-        Already have an account? <span style={{ color: C.teal, fontWeight: 700 }}>Sign in</span>
+        {t("Already have an account?")} <span style={{ color: C.teal, fontWeight: 700 }}>{t("Sign in")}</span>
       </button>
 
       <div style={{ maxWidth: 980, width: "100%" }}>
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.inkSoft, marginBottom: 12 }}>
-          Populated demos
+          {t("Try a sample daycare")}
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 18, marginBottom: 28 }}>
           <button onClick={() => onDemo("simple")} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", flexDirection: "column", gap: 12 }}>
             <div style={{ width: 46, height: 46, borderRadius: 12, background: C.tealTint, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <PlayCircle size={22} color={C.tealDark} />
             </div>
-            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>Simple plan</div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>{t("Simple plan")}</div>
             <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>
-              Core day-to-day operations — families, subsidy, check-in, and payments.
+              {t("Core day-to-day operations — families, subsidy, check-in, and payments.")}
             </div>
             <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.teal, fontWeight: 700, fontSize: 13 }}>
-              Enter demo <ArrowRight size={13} />
+              {t("Enter demo")} <ArrowRight size={13} />
             </div>
           </button>
 
@@ -2697,12 +2839,12 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, onE
             <div style={{ width: 46, height: 46, borderRadius: 12, background: C.amberTint, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <BarChart3 size={22} color={C.amber} />
             </div>
-            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>Extended plan</div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>{t("Extended plan")}</div>
             <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>
-              Everything in Simple, plus staff, growth planning, and analytics.
+              {t("Everything in Simple, plus staff, growth planning, and analytics.")}
             </div>
             <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.amber, fontWeight: 700, fontSize: 13 }}>
-              Enter demo <ArrowRight size={13} />
+              {t("Enter demo")} <ArrowRight size={13} />
             </div>
           </button>
 
@@ -2710,18 +2852,18 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, onE
             <div style={{ width: 46, height: 46, borderRadius: 12, background: "#F1EEE5", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <Lock size={20} color={C.inkSoft} />
             </div>
-            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>Meeting-safe</div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>{t("Meeting-safe")}</div>
             <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>
-              For screen-sharing with providers or investors — proprietary rate math and payout figures are hidden.
+              {t("For screen-sharing with providers or investors — proprietary rate math and payout figures are hidden.")}
             </div>
             <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.inkSoft, fontWeight: 700, fontSize: 13 }}>
-              Enter demo <ArrowRight size={13} />
+              {t("Enter demo")} <ArrowRight size={13} />
             </div>
           </button>
         </div>
 
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.inkSoft, marginBottom: 12 }}>
-          Other ways in
+          {t("Other ways in")}
         </div>
         <div style={{ display: "grid", gridTemplateColumns: showAdmin ? "1fr 1fr 1fr" : "1fr 1fr", gap: 18 }}>
           <button onClick={onEarlyAccess} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
@@ -2729,8 +2871,8 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, onE
               <Rocket size={22} color={C.sky} />
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>I'm a provider and want to use Alaga</div>
-              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>Request early access and a short demo — founding providers get setup help.</div>
+              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>{t("I'm a provider and want to use Alaga")}</div>
+              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>{t("Request early access and a short demo — founding providers get setup help.")}</div>
             </div>
             <ArrowRight size={16} color={C.sky} />
           </button>
@@ -2740,8 +2882,8 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, onE
               <Users size={22} color={C.coral} />
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>I'm a parent</div>
-              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>See what families see — check-in, receipts, FSA/HSA, messages.</div>
+              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>{t("I'm a parent")}</div>
+              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>{t("See what families see — check-in, receipts, FSA/HSA, messages.")}</div>
             </div>
             <ArrowRight size={16} color={C.coral} />
           </button>
@@ -2760,7 +2902,7 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, onE
       </div>
 
       <div style={{ marginTop: 36, fontSize: 12.5, color: C.inkSoft, textAlign: "center" }}>
-        Built for licensed home-based Family Child Care providers in California.
+        {t("Built for licensed home-based Family Child Care providers in California.")}
       </div>
     </div>
   );
@@ -3374,7 +3516,7 @@ function isoWeekNumber(date) {
   return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 }
 
-function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, flexCareRequests, dismissedNotices, isEmpty, onEnter, language }) {
+function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, flexCareRequests, dismissedNotices, isEmpty, onEnter, language, reminderSettings, closures = [], licensing = {}, compDocs = [] }) {
   const now = new Date();
   const hour = now.getHours();
   const greetWord = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
@@ -3394,6 +3536,23 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   // Each item carries a JSX version for display plus plain English/Spanish
   // sentences for text-to-speech, since spoken items can't read the JSX.
   const items = [];
+  const plain = (tone, en, es) => items.push({ tone, text: en, textEs: es, speechEn: en, speechEs: es });
+  const es = (str) => (T[str] && T[str].es) || str;
+  const noop = () => {};
+  // Same overdue / due-today list the dashboard shows, so the two always agree.
+  briefingDueItems({ closures, prospects, families, licensing, reminderSettings, t: (x) => x, go: { calendar: noop, tours: noop, family: noop, compliance: noop, tuition: noop } })
+    .filter((it) => it.n <= 0)
+    .forEach((it) => { const said = /overdue|today/i.test(it.detail); plain("urgent", `${it.title} — ${it.detail}${said ? "" : it.n < 0 ? " (overdue)" : " (today)"}.`, `${it.title} — ${es(it.detail)}${said ? "" : it.n < 0 ? " (atrasado)" : " (hoy)"}.`); });
+  const billingNow = reminderSettings ? currentBilling(reminderSettings) : null;
+  const overdueTuition = billingNow && billingNow.overdue ? families.filter((f) => f.copay > 0 && !paidFor(f, billingNow.key)) : [];
+  if (overdueTuition.length > 0) plain("urgent",
+    `${overdueTuition.length} ${overdueTuition.length === 1 ? "family is" : "families are"} past due on ${billingNow.label} tuition.`,
+    `${overdueTuition.length} ${overdueTuition.length === 1 ? "familia tiene" : "familias tienen"} la colegiatura de ${billingNow.label} vencida.`);
+  const docsDue = compDocs.filter((d) => (d.displayStatus || d.status) !== "submitted").length;
+  const childDocsDue = families.filter((f) => defaultChildDocs(f).some((d) => d.status === "missing" || ["expired", "expiring"].includes(docEffectiveStatus(d, 30)))).length;
+  if (docsDue + childDocsDue > 0) plain("warn",
+    [docsDue ? `${docsDue} business ${docsDue === 1 ? "document" : "documents"}` : "", childDocsDue ? `${childDocsDue} ${childDocsDue === 1 ? "child's record" : "children's records"}` : ""].filter(Boolean).join(" and ") + " need updating.",
+    [docsDue ? `${docsDue} ${docsDue === 1 ? "documento del negocio" : "documentos del negocio"}` : "", childDocsDue ? `${childDocsDue} ${childDocsDue === 1 ? "expediente de niño" : "expedientes de niños"}` : ""].filter(Boolean).join(" y ") + " necesitan actualizarse.");
   if (families.length > 0) {
     items.push({
       tone: "ok", text: <>You have <strong>{families.length}</strong> {families.length === 1 ? "child" : "children"} in your care — <strong>{subsidizedFams.length}</strong> subsidized and <strong>{families.length - subsidizedFams.length}</strong> private-pay.</>,
@@ -3448,8 +3607,11 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
     items.push({ tone: "ok", text: okEn, textEs: okEs, speechEn: okEn, speechEs: okEs });
   }
   // Urgency first: anything needing action (warn), then messages, then good-news items.
-  const urgencyRank = { warn: 0, msg: 1, ok: 2 };
+  const urgencyRank = { urgent: 0, warn: 1, msg: 2, ok: 3 };
   items.sort((a, b) => urgencyRank[a.tone] - urgencyRank[b.tone]);
+  // Keep the morning view short: the three most urgent things, the rest wait on the dashboard.
+  const moreCount = Math.max(0, items.length - 3);
+  items.splice(3);
 
   // Text-to-speech mockup — English and Spanish only, matching the provider's
   // dashboard language when it's one of those two; real speech synthesis via
@@ -3487,7 +3649,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
     ? now.toLocaleDateString("es-ES", { weekday: "long", month: "long", day: "numeric" })
     : dateLabel;
 
-  const toneColor = { ok: C.teal, warn: C.amber, msg: C.sky };
+  const toneColor = { ok: C.teal, warn: C.amber, msg: C.sky, urgent: C.danger };
 
   return (
     <div style={{
@@ -3536,11 +3698,16 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
           </div>
           <div>
             {items.map((it, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "16px 20px", borderBottom: i < items.length - 1 ? `1px solid ${C.line}` : "none" }}>
+              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "16px 20px", borderBottom: i < items.length - 1 || moreCount ? `1px solid ${C.line}` : "none" }}>
                 <Dot c={toneColor[it.tone]} />
                 <div style={{ fontSize: 15, color: C.ink, lineHeight: 1.5 }}>{isEs ? it.textEs : it.text}</div>
               </div>
             ))}
+            {moreCount > 0 && (
+              <div style={{ padding: "12px 20px", fontSize: 13.5, color: C.inkSoft }}>
+                {isEs ? `Y ${moreCount} ${moreCount === 1 ? "cosa más" : "cosas más"} en tu panel.` : `Plus ${moreCount} more ${moreCount === 1 ? "thing" : "things"} on your dashboard.`}
+              </div>
+            )}
           </div>
         </div>
 
@@ -3564,7 +3731,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   );
 }
 
-function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData, onExitToLanding, forceTier, meetingMode = false, startInParentMode = false }) {
+function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, providerInfo: initialProviderInfo, onboardingData, onExitToLanding, forceTier, meetingMode = false, startInParentMode = false }) {
   const sfx = isEmpty ? "-empty" : "";
   const [providerInfo, saveProviderInfo] = usePersistentState(`provider-profile${sfx}`, {
     name: initialProviderInfo.name, city: initialProviderInfo.city, lic: initialProviderInfo.lic,
@@ -3586,7 +3753,12 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const [mode, setMode] = useState(startInParentMode ? "parent" : "provider"); // "provider" | "parent"
   // Providers land on the welcome briefing every time they open the workspace —
   // it's a front porch, not a one-time onboarding step.
-  const [showBriefing, setShowBriefing] = useState(!startInParentMode);
+  // The welcome screen shows once a day; later visits go straight to the dashboard.
+  const welcomeKey = `alaga-welcome-seen${isEmpty ? "-empty" : ""}`;
+  // The greeting, weekly note and Listen button now live at the top of the
+  // dashboard, so there's no separate welcome screen to click through.
+  const [showBriefing, setShowBriefing] = useState(false);
+  const enterWorkspace = () => { try { localStorage.setItem(welcomeKey, todayMDY()); } catch (e) { /* private mode */ } setShowBriefing(false); };
   const [screen, setScreenRaw] = useState("dashboard");
   const [screenHistory, setScreenHistory] = useState([]);
   // navigateToScreen replaces plain setScreen everywhere a nav happens, so the
@@ -3635,7 +3807,10 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   }, [isEmpty, addedFamilies, navigateToScreen]);
   const [overrides, setOverrides] = useState({});
   const [loaded, setLoaded] = useState(false);
-  const [language, setLanguage] = useState(onboardingData?.language || "English");
+  // Saved on this device, so the chosen language stays until it's changed.
+  const [language, saveLanguage] = usePersistentState(`app-language${sfx}`, onboardingData?.language || initialLanguage);
+  // One choice everywhere: changing it here also sets the start and sign-in screens.
+  const setLanguage = (l) => { saveLanguage(l); onLanguageChange && onLanguageChange(l); };
   const [tier, saveTier] = usePersistentState(forceTier ? `platform-tier-demo-${forceTier}` : "platform-tier", forceTier || "simple");
   const tierLocked = !!forceTier;
   const [billing, saveBilling] = usePersistentState(`plan-billing${sfx}`, { cycle: "monthly", status: "active", canceledAt: null, startedOn: todayMDY() });
@@ -3678,12 +3853,13 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const [mandatedNotes, saveMandatedNotes] = usePersistentState(`mandated-reporting-notes${sfx}`, []);
   const [expenses, saveExpenses] = usePersistentState(`business-expenses${sfx}`, baseExpenses);
   const [budgetPlan, saveBudgetPlan] = usePersistentState(`budget-plan${sfx}`, BUDGET_PLAN_DEFAULT);
-  const [checklist, saveChecklist] = usePersistentState("daily-checklist", [
-    { id: 1, text: "Confirm attendance sign-in sheet is out", done: false },
-    { id: 2, text: "Check for expiring subsidy authorizations", done: false },
-    { id: 3, text: "Review overnight messages from parents", done: false },
-    { id: 4, text: "Restock hand-washing & sanitizing supplies", done: false },
-    { id: 5, text: "Prep afternoon snack", done: false },
+  // Your own daily routine. Things Alaga already tracks (subsidies, messages,
+  // paperwork) show in the briefing instead, so they aren't repeated here.
+  const [checklist, saveChecklist] = usePersistentState(`daily-checklist-v2${sfx}`, [
+    { id: 1, text: "Put out the sign-in sheet", done: false },
+    { id: 2, text: "Restock hand-washing & sanitizing supplies", done: false },
+    { id: 3, text: "Prep afternoon snack", done: false },
+    { id: 4, text: "Wipe down tables and toys", done: false },
   ]);
   const [dismissedNotices, saveDismissedNotices] = usePersistentState(`dismissed-notices${sfx}`, []);
   const [a11y, saveA11y] = usePersistentState("accessibility-settings", { dark: false, highContrast: false, textSize: 16, reducedMotion: false });
@@ -3859,7 +4035,11 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
           dismissedNotices={dismissedNotices}
           isEmpty={isEmpty}
           language={language}
-          onEnter={() => setShowBriefing(false)}
+          reminderSettings={reminderSettings}
+          closures={closures}
+          licensing={licensing}
+          compDocs={compDocs}
+          onEnter={enterWorkspace}
         />
       </LanguageContext.Provider>
     );
@@ -3887,9 +4067,9 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
             </div>
           )}
           <main style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
-            <Topbar screen={screen} setScreen={setScreen} provider={providerInfo} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} goTo={goTo} available={navItems.map((n) => n.id)} isMobile={isMobile} onMenu={() => setNavOpen(true)} unread={unreadMessagesCount} />
+            <Topbar screen={screen} setScreen={setScreen} provider={providerInfo} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} goTo={goTo} available={navItems.map((n) => n.id)} isMobile={isMobile} onMenu={() => setNavOpen(true)} unread={unreadMessagesCount} language={language} setLanguage={setLanguage} />
             <div className="alaga-main" style={{ flex: 1, overflowY: "auto", padding: "28px 32px 60px" }}>
-              {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} reminderSettings={reminderSettings} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} events={events} closures={closures} licensing={licensing} goToTour={() => setScreen("tours")} />}
+              {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} reminderSettings={reminderSettings} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} events={events} closures={closures} licensing={licensing} goToTour={() => setScreen("tours")} attendanceLog={attendanceLog} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
               {screen === "families" && <Families families={families} provider={providerInfo} onWithdraw={withdrawChild} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
               {screen === "bookings" && <Bookings families={families} schedule={fullWeek(weeklySchedule)} closures={closures} provider={providerInfo} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
@@ -3955,6 +4135,9 @@ export default function AlagaMockup() {
   const [providerInfo, setProviderInfo] = useState(PROVIDER);
   const [onboardingData, setOnboardingData] = useState(null);
   const [authMode, setAuthMode] = useState("signin");
+  const [publicLanguage, setPublicLanguage] = usePersistentState("app-language-public", detectLanguage());
+  const tPublic = makeT(publicLanguage);
+  const publicCtx = { lang: LANG_CODES[publicLanguage] || "en", t: tPublic };
   const [signupEmail, setSignupEmail] = useState("");
 
   const registerWithAdmin = async (info) => {
@@ -3987,7 +4170,7 @@ export default function AlagaMockup() {
   };
 
   if (entry === "landing") {
-    return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><LandingChooser
+    return <LanguageContext.Provider value={publicCtx}><LandingChooser language={publicLanguage} setLanguage={setPublicLanguage}
       onDemo={(demoTier, isMeeting) => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier(demoTier); setMeetingMode(!!isMeeting); setStartInParent(false); setEntry("workspace"); }}
       onSignUp={() => { setAuthMode("signup"); setEntry("auth"); }}
       onEarlyAccess={() => setEntry("early")}
@@ -3997,7 +4180,7 @@ export default function AlagaMockup() {
     /></LanguageContext.Provider>;
   }
   if (entry === "early") {
-    return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><EarlyAccessScreen
+    return <LanguageContext.Provider value={publicCtx}><EarlyAccessScreen language={publicLanguage} setLanguage={setPublicLanguage}
       onBack={() => { if (window.location.pathname !== "/") window.history.replaceState(null, "", "/"); setEntry("landing"); }}
       onDemo={() => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier("extended"); setMeetingMode(false); setStartInParent(false); setEntry("workspace"); }}
     /></LanguageContext.Provider>;
@@ -4006,7 +4189,7 @@ export default function AlagaMockup() {
     // Real Firebase accounts. A brand-new account goes straight into the setup
     // wizard. Signing in to an existing account drops into the populated demo
     // workspace until the backend + Cloud SQL wiring can load each provider's own data.
-    return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><LoginScreen
+    return <LanguageContext.Provider value={publicCtx}><LoginScreen language={publicLanguage} setLanguage={setPublicLanguage}
       key={authMode}
       initialMode={authMode}
       onAuthenticated={(user, mode) => {
@@ -4026,7 +4209,7 @@ export default function AlagaMockup() {
       onBack={() => setEntry("landing")}
     /></LanguageContext.Provider>;
   }
-  return <Workspace isEmpty={isEmptyWorkspace} providerInfo={providerInfo} onboardingData={onboardingData} onExitToLanding={() => setEntry("landing")} forceTier={forcedTier} meetingMode={meetingMode} startInParentMode={startInParent} />;
+  return <Workspace initialLanguage={publicLanguage} onLanguageChange={setPublicLanguage} isEmpty={isEmptyWorkspace} providerInfo={providerInfo} onboardingData={onboardingData} onExitToLanding={() => setEntry("landing")} forceTier={forcedTier} meetingMode={meetingMode} startInParentMode={startInParent} />;
 }
 
 /* ------------------------------ early access ------------------------------------ */
@@ -4041,10 +4224,11 @@ async function eaDb() {
   const { app } = await import("./firebase.js");
   return getFirestore(app);
 }
-function EarlyAccessScreen({ onBack, onDemo }) {
+function EarlyAccessScreen({ onBack, onDemo, language = "English", setLanguage }) {
+  const t = useT();
   const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : new URLSearchParams();
   const source = [params.get("utm_source"), params.get("utm_medium"), params.get("utm_campaign"), params.get("ref")].filter(Boolean).join(" / ") || (typeof document !== "undefined" && document.referrer ? new URL(document.referrer).hostname : "direct");
-  const [f, setF] = useState({ name: "", email: "", phone: "", business: "", city: "", providerType: EA_PROVIDER_TYPES[0], children: "", tracking: EA_TRACKING[0], subsidy: "Yes", language: "English", wantsDemo: true, notes: "", website: "" });
+  const [f, setF] = useState({ name: "", email: "", phone: "", business: "", city: "", providerType: EA_PROVIDER_TYPES[0], children: "", tracking: EA_TRACKING[0], subsidy: "Yes", language: LANG_OPTIONS.includes(language) ? language : "English", wantsDemo: true, notes: "", website: "" });
   const [state, setState] = useState("idle"); // idle | sending | done | error
   const [err, setErr] = useState("");
   const set = (k) => (e) => setF({ ...f, [k]: e && e.target ? (e.target.type === "checkbox" ? e.target.checked : e.target.value) : e });
@@ -4052,7 +4236,7 @@ function EarlyAccessScreen({ onBack, onDemo }) {
   const canSend = f.name.trim() && emailOk && f.city.trim() && state !== "sending";
   const submit = async (e) => {
     e.preventDefault();
-    if (!canSend) { setErr(!emailOk ? "Please enter a valid email." : "Please fill in your name, email and city."); return; }
+    if (!canSend) { setErr(!emailOk ? t("Please enter a valid email.") : t("Please fill in your name, email and city.")); return; }
     if (f.website) { setState("done"); return; } // bots fill hidden fields
     setState("sending"); setErr("");
     try {
@@ -4068,7 +4252,7 @@ function EarlyAccessScreen({ onBack, onDemo }) {
       setState("done");
     } catch (ex) {
       setState("error");
-      setErr("Something went wrong saving your request. Please try again in a moment, or email us and we'll add you.");
+      setErr(t("Something went wrong saving your request. Please try again in a moment, or email us and we'll add you."));
     }
   };
   const input = { width: "100%", boxSizing: "border-box", border: `1px solid ${C.line}`, borderRadius: 10, padding: "11px 12px", fontSize: 14.5, fontFamily: "inherit", background: "#fff", color: C.ink };
@@ -4077,7 +4261,8 @@ function EarlyAccessScreen({ onBack, onDemo }) {
     <div style={{ minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", color: C.ink, backgroundImage: BANIG_PATTERN(C.line, 0.5), backgroundSize: "16px 16px", padding: "32px 16px 60px" }}>
       <style>{FONTS}</style>
       <div style={{ maxWidth: 560, margin: "0 auto" }}>
-        <button onClick={onBack} style={{ background: "none", border: "none", color: C.inkSoft, fontSize: 13, fontWeight: 600, padding: 0, marginBottom: 18, display: "flex", alignItems: "center", gap: 6 }}><ArrowLeft size={14} /> Back</button>
+        {setLanguage && <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: -8 }}><LanguagePicker language={language} setLanguage={(l) => { setLanguage(l); setF((x) => ({ ...x, language: l })); }} /></div>}
+        <button onClick={onBack} style={{ background: "none", border: "none", color: C.inkSoft, fontSize: 13, fontWeight: 600, padding: 0, marginBottom: 18, display: "flex", alignItems: "center", gap: 6 }}><ArrowLeft size={14} /> {t("Back")}</button>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
           <AlagaMark size={44} color={C.tealDark} />
           <div style={{ fontFamily: "'Fraunces', serif", fontSize: 34, fontWeight: 900, color: C.tealDark }}>alaga</div>
@@ -4085,44 +4270,44 @@ function EarlyAccessScreen({ onBack, onDemo }) {
         {state === "done" ? (
           <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderLeft: `4px solid ${C.teal}`, borderRadius: 16, padding: "26px 24px", marginTop: 18 }}>
             <CheckCircle2 size={28} color={C.teal} />
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, marginTop: 10 }}>You're on the list!</div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, marginTop: 10 }}>{t("You're on the list!")}</div>
             <div style={{ fontSize: 14.5, color: C.inkSoft, lineHeight: 1.6, marginTop: 8 }}>
-              Thank you{f.name ? `, ${f.name.split(" ")[0]}` : ""}. {f.wantsDemo ? "We'll reach out within two business days to set up a short demo at a time that works for you." : "We'll email you as soon as early access opens."}
+              {t("Thank you")}{f.name ? `, ${f.name.split(" ")[0]}` : ""}. {f.wantsDemo ? t("We'll reach out within two business days to set up a short demo at a time that works for you.") : t("We'll email you as soon as early access opens.")}
             </div>
-            {onDemo && <button onClick={onDemo} style={{ marginTop: 18, padding: "12px 18px", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 14.5 }}>Explore the sample daycare while you wait →</button>}
+            {onDemo && <button onClick={onDemo} style={{ marginTop: 18, padding: "12px 18px", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 14.5 }}>{t("Explore the sample daycare while you wait")} →</button>}
           </div>
         ) : (
           <>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 28, fontWeight: 600, lineHeight: 1.25, marginTop: 8 }}>Request early access</div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 28, fontWeight: 600, lineHeight: 1.25, marginTop: 8 }}>{t("Request early access")}</div>
             <div style={{ fontSize: 14.5, color: C.inkSoft, lineHeight: 1.6, marginTop: 8 }}>
-              Alaga keeps attendance, families, tuition, subsidy paperwork and licensing in one simple place — built for home-based child care providers, in six languages. Founding providers get hands-on setup help and founding pricing.
+              {t("Alaga keeps attendance, families, tuition, subsidy paperwork and licensing in one simple place — built for home-based child care providers, in six languages. Founding providers get hands-on setup help and founding pricing.")}
             </div>
             <form onSubmit={submit} style={{ boxSizing: "border-box", background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, padding: "22px 20px", marginTop: 20, display: "flex", flexDirection: "column", gap: 14 }}>
-              <div>{label("Your name", true)}<input value={f.name} onChange={set("name")} autoComplete="name" style={input} /></div>
-              <div>{label("Email", true)}<input type="email" value={f.email} onChange={set("email")} autoComplete="email" inputMode="email" style={input} /></div>
-              <div>{label("Phone (optional)")}<input type="tel" value={f.phone} onChange={set("phone")} autoComplete="tel" style={input} /></div>
-              <div>{label("Child care business name (optional)")}<input value={f.business} onChange={set("business")} style={input} /></div>
-              <div>{label("City", true)}<input value={f.city} onChange={set("city")} autoComplete="address-level2" placeholder="e.g. Culver City" style={input} /></div>
-              <div>{label("What kind of program?")}<select value={f.providerType} onChange={set("providerType")} style={input}>{EA_PROVIDER_TYPES.map((x) => <option key={x}>{x}</option>)}</select></div>
+              <div>{label(t("Your name"), true)}<input value={f.name} onChange={set("name")} autoComplete="name" style={input} /></div>
+              <div>{label(t("Email"), true)}<input type="email" value={f.email} onChange={set("email")} autoComplete="email" inputMode="email" style={input} /></div>
+              <div>{label(t("Phone (optional)"))}<input type="tel" value={f.phone} onChange={set("phone")} autoComplete="tel" style={input} /></div>
+              <div>{label(t("Child care business name (optional)"))}<input value={f.business} onChange={set("business")} style={input} /></div>
+              <div>{label(t("City"), true)}<input value={f.city} onChange={set("city")} autoComplete="address-level2" placeholder={t("e.g. Culver City")} style={input} /></div>
+              <div>{label(t("What kind of program?"))}<select value={f.providerType} onChange={set("providerType")} style={input}>{EA_PROVIDER_TYPES.map((x) => <option key={x} value={x}>{t(x)}</option>)}</select></div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                <div>{label("How many children?")}<input type="number" min={0} max={200} value={f.children} onChange={set("children")} inputMode="numeric" style={input} /></div>
-                <div>{label("Work with subsidies?")}<select value={f.subsidy} onChange={set("subsidy")} style={input}>{["Yes", "No", "Not sure"].map((x) => <option key={x}>{x}</option>)}</select></div>
+                <div>{label(t("How many children?"))}<input type="number" min={0} max={200} value={f.children} onChange={set("children")} inputMode="numeric" style={input} /></div>
+                <div>{label(t("Work with subsidies?"))}<select value={f.subsidy} onChange={set("subsidy")} style={input}>{["Yes", "No", "Not sure"].map((x) => <option key={x} value={x}>{t(x)}</option>)}</select></div>
               </div>
-              <div>{label("How do you keep track of things today?")}<select value={f.tracking} onChange={set("tracking")} style={input}>{EA_TRACKING.map((x) => <option key={x}>{x}</option>)}</select></div>
-              <div>{label("Preferred language")}<select value={f.language} onChange={set("language")} style={input}>{EA_LANGS.map((x) => <option key={x}>{x}</option>)}</select></div>
-              <div>{label("Anything you'd like us to know? (optional)")}<textarea value={f.notes} onChange={set("notes")} rows={3} placeholder="What takes up the most time each week?" style={{ ...input, resize: "vertical" }} /></div>
+              <div>{label(t("How do you keep track of things today?"))}<select value={f.tracking} onChange={set("tracking")} style={input}>{EA_TRACKING.map((x) => <option key={x} value={x}>{t(x)}</option>)}</select></div>
+              <div>{label(t("Preferred language"))}<select value={f.language} onChange={set("language")} style={input}>{EA_LANGS.map((x) => <option key={x}>{x}</option>)}</select></div>
+              <div>{label(t("Anything you'd like us to know? (optional)"))}<textarea value={f.notes} onChange={set("notes")} rows={3} placeholder={t("What takes up the most time each week?")} style={{ ...input, resize: "vertical" }} /></div>
               <input value={f.website} onChange={set("website")} tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: -9999, width: 1, height: 1, opacity: 0 }} />
               <label style={{ display: "flex", gap: 10, alignItems: "flex-start", fontSize: 14, cursor: "pointer" }}>
                 <input type="checkbox" checked={f.wantsDemo} onChange={set("wantsDemo")} style={{ width: 18, height: 18, accentColor: C.teal, marginTop: 1, flexShrink: 0 }} />
-                <span>I'd like a short demo (about 15 minutes)</span>
+                <span>{t("I'd like a short demo (about 15 minutes)")}</span>
               </label>
               {err && <div style={{ fontSize: 13, color: C.danger }}>{err}</div>}
               <button type="submit" disabled={state === "sending"} style={{ padding: "13px 0", borderRadius: 11, border: "none", background: canSend ? C.teal : "#D9D2C5", color: "#fff", fontWeight: 700, fontSize: 15.5 }}>
-                {state === "sending" ? "Sending…" : "Request early access"}
+                {state === "sending" ? t("Sending…") : t("Request early access")}
               </button>
-              <div style={{ fontSize: 11.5, color: C.inkSoft, lineHeight: 1.5 }}>We'll only use this to contact you about Alaga. We never sell your information.</div>
+              <div style={{ fontSize: 11.5, color: C.inkSoft, lineHeight: 1.5 }}>{t("We'll only use this to contact you about Alaga. We never sell your information.")}</div>
             </form>
-            {onDemo && <button onClick={onDemo} style={{ marginTop: 14, background: "none", border: "none", color: C.teal, fontWeight: 700, fontSize: 14, padding: 0 }}>Or explore the sample daycare first →</button>}
+            {onDemo && <button onClick={onDemo} style={{ marginTop: 14, background: "none", border: "none", color: C.teal, fontWeight: 700, fontSize: 14, padding: 0 }}>{t("Or explore the sample daycare first")} →</button>}
           </>
         )}
       </div>
@@ -4362,7 +4547,7 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
   );
 }
 
-function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBack, goToFamily, goTo, available, isMobile = false, onMenu, unread = 0 }) {
+function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBack, goToFamily, goTo, available, isMobile = false, onMenu, unread = 0, language, setLanguage }) {
   const t = useT();
   const title = NAV.find((n) => n.id === screen)?.label || "";
   // Reflects the real current date whenever the page loads/refreshes.
@@ -4478,6 +4663,7 @@ function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBac
             </div>
           </div>
         )}
+        {setLanguage && <LanguagePicker language={language} setLanguage={setLanguage} compact />}
         <div style={{ width: 34, height: 34, borderRadius: "50%", background: C.tealTint, color: C.tealDark, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 13 }} title={provider?.contactName || provider?.name}>{initialsOf(provider?.contactName || provider?.name)}</div>
       </div>
     </div>
@@ -4609,12 +4795,14 @@ function computeSetupItems({ providerInfo, weeklySchedule, staff, families, pros
   ];
 }
 
-function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, families, checklist, saveChecklist, dismissedNotices, saveDismissedNotices, tuitionRates, saveTuitionRates, weeklySchedule, staff, prospects, compDocs, providerInfo, flexCareRequests, saveFlexCare, goToSubsidyFamily, goToFlexRequest, meetingMode = false, events = [], closures = [], licensing = {} }) {
+function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, families, checklist, saveChecklist, dismissedNotices, saveDismissedNotices, tuitionRates, saveTuitionRates, weeklySchedule, staff, prospects, compDocs, providerInfo, flexCareRequests, saveFlexCare, goToSubsidyFamily, goToFlexRequest, meetingMode = false, events = [], closures = [], licensing = {}, attendanceLog = {} }) {
   const t = useT();
   const [newTask, setNewTask] = useState("");
   const [collapsed, setCollapsed] = useState({});
   const [scheduleOpen, setScheduleOpen] = useState(false);
-  const [showAttention, setShowAttention] = useState(true);
+  // Briefing starts as a short summary. Anything due today or overdue shows on
+  // its own; other groups open one at a time from the summary chips.
+  const [openGroup, setOpenGroup] = useState(null);
   const subsidizedFams = families.filter((f) => f.subsidized);
   const privateFams = families.filter((f) => !f.subsidized);
   const monthlySubsidy = subsidizedFams.reduce((s, f) => s + (f.coverageBasis === "monthly" ? f.coverageAmount : 0), 0);
@@ -4636,6 +4824,44 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
   const overdueTuition = billingNow && billingNow.overdue ? families.filter((f) => f.copay > 0 && !paidFor(f, billingNow.key)) : [];
   const dueSoon = briefingDueItems({ closures, prospects, families, licensing, reminderSettings, t,
     go: { calendar: () => setScreen("calendar"), tours: () => setScreen("tours"), family: goToFamily, compliance: () => setScreen("compliance"), tuition: openTuition } });
+  const dueNow = dueSoon.filter((it) => it.n <= 0);
+  const briefGroups = [
+    { key: "due", label: t("Today & this week"), count: dueSoon.length, urgent: dueNow.length > 0 },
+    { key: "tuition", label: t("Tuition"), count: overdueTuition.length, urgent: overdueTuition.length > 0 },
+    { key: "subsidy", label: t("Subsidy"), count: expiring.length },
+    { key: "flex", label: t("Extra care"), count: flexNeedingAttention.length },
+    { key: "docs", label: t("Documents"), count: docsNeedingAttention.length },
+    { key: "records", label: t("Child records"), count: childrenMissingDocs.length },
+  ];
+  // With nothing opened, only today's and overdue items show.
+  const showGroup = (key) => openGroup === key || (!openGroup && key === "due" && dueNow.length > 0);
+  // Greeting, weekly note and read-aloud (moved here from the old welcome screen).
+  const langCode = React.useContext(LanguageContext).lang || "en";
+  const isMobileDash = useIsMobile();
+  const nowD = new Date();
+  const hr = nowD.getHours();
+  const contactFirst = (providerInfo?.contactName || "").trim().split(" ")[0];
+  const greeting = `${t(hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening")}${contactFirst ? `, ${contactFirst}` : ""}`;
+  const LOCALES = { en: "en-US", es: "es-US", tl: "fil-PH", zh: "zh-CN", vi: "vi-VN", ko: "ko-KR" };
+  const dateLong = nowD.toLocaleDateString(LOCALES[langCode] || "en-US", { weekday: "long", month: "long", day: "numeric" });
+  const theme = BRIEFING_THEMES[isoWeekNumber(nowD) % BRIEFING_THEMES.length];
+  const ttsOk = typeof window !== "undefined" && !!window.speechSynthesis;
+  const [speaking, setSpeaking] = useState(false);
+  const speak = () => {
+    if (!ttsOk) return;
+    if (speaking) { window.speechSynthesis.cancel(); setSpeaking(false); return; }
+    const parts = [`${greeting}.`];
+    if (families.length) parts.push(`${families.length} ${t(families.length === 1 ? "child in your care" : "children in your care")}.`);
+    dueSoon.filter((it) => it.n <= 0).forEach((it) => parts.push(`${it.title}: ${it.detail}.`));
+    briefGroups.filter((g) => g.count > 0 && g.key !== "due").forEach((g) => parts.push(`${g.label}: ${g.count}.`));
+    if (parts.length === 2 && !totalAttention) parts.push(t("Nothing urgent today."));
+    const u = new SpeechSynthesisUtterance(parts.join(" "));
+    u.lang = LOCALES[langCode] || "en-US";
+    u.rate = langCode === "en" ? 0.98 : 0.9;
+    u.onend = () => setSpeaking(false); u.onerror = () => setSpeaking(false);
+    window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); setSpeaking(true);
+  };
+  useEffect(() => () => { if (ttsOk) window.speechSynthesis.cancel(); }, []);
   const whenLabel = (n) => (n < 0 ? t("Overdue") : n === 0 ? t("Today") : n === 1 ? t("Tomorrow") : `${t("In")} ${n} ${t("days")}`);
   const totalAttention = dueSoon.length + expiring.length + flexNeedingAttention.length + docsNeedingAttention.length + childrenMissingDocs.length + overdueTuition.length;
   const approveFlexInline = (id) => saveFlexCare(flexCareRequests.map((r) => (r.id === id ? { ...r, status: "approved" } : r)));
@@ -4666,12 +4892,22 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
         background: C.paper, border: `1px solid ${C.line}`, borderLeft: `4px solid ${C.teal}`, borderRadius: 16, padding: "24px 28px", color: C.ink, position: "relative", overflow: "hidden",
         
       }}>
-        <div style={{ position: "absolute", top: -18, right: -10, opacity: 0.07 }}>
+        <div style={{ position: "absolute", top: -18, right: -10, opacity: 0.07, display: isMobileDash ? "none" : "block" }}>
           <AlagaMark size={130} color={C.teal} arch={false} backdrop={false} />
         </div>
         <div style={{ position: "relative", maxWidth: 560 }}>
-          <div style={{ fontSize: 11.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>{t("Today's briefing")}</div>
-          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 21, fontWeight: 500, lineHeight: 1.45 }}>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 10 }}>
+            <div>
+              <div style={{ fontFamily: "'Fraunces', serif", fontSize: 26, fontWeight: 600, lineHeight: 1.2 }}>{greeting}</div>
+              {isMobileDash && <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 3 }}>{dateLong}</div>}
+            </div>
+            {ttsOk && (
+              <button onClick={speak} title={speaking ? t("Stop") : t("Listen to today's briefing")} style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 12px", borderRadius: 999, border: `1px solid ${speaking ? C.teal : C.line}`, background: speaking ? C.tealTint : "#fff", color: speaking ? C.tealDark : C.inkSoft, fontSize: 12.5, fontWeight: 700, flexShrink: 0 }}>
+                {speaking ? <><Square size={11} fill={C.tealDark} /> {t("Stop")}</> : <><Volume2 size={14} /> {t("Listen")}</>}
+              </button>
+            )}
+          </div>
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 500, lineHeight: 1.45 }}>
             {families.length === 0 ? (
               t("No children enrolled yet — once families join, this is where you'll see how your business is doing at a glance.")
             ) : (
@@ -4682,29 +4918,37 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
             )}
           </div>
           {totalAttention > 0 && (
-            <button onClick={() => setShowAttention(!showAttention)} style={{ marginTop: 14, display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: `1px solid ${C.line}`, background: "#fff", color: C.ink, fontWeight: 600, fontSize: 12.5 }}>
-              {showAttention ? t("Hide") : t("Review now")} <ChevronRight size={13} style={{ transform: showAttention ? "rotate(90deg)" : "none", transition: "transform 0.15s" }} />
-            </button>
+            <div style={{ marginTop: 14, display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {briefGroups.filter((g) => g.count > 0).map((g) => (
+                <button key={g.key} onClick={() => setOpenGroup(openGroup === g.key ? null : g.key)} style={{
+                  display: "inline-flex", alignItems: "center", gap: 6, padding: "7px 12px", borderRadius: 999, fontSize: 12.5, fontWeight: 700,
+                  border: `1px solid ${openGroup === g.key ? C.teal : C.line}`, background: openGroup === g.key ? C.tealTint : "#fff", color: openGroup === g.key ? C.tealDark : C.ink,
+                }}>
+                  {g.label} <span style={{ background: g.urgent ? C.danger : C.cream, color: g.urgent ? "#fff" : C.inkSoft, borderRadius: 999, padding: "0 7px", fontSize: 11.5 }}>{g.count}</span>
+                </button>
+              ))}
+              {openGroup && <button onClick={() => setOpenGroup(null)} style={{ padding: "7px 10px", borderRadius: 999, border: "none", background: "none", fontSize: 12.5, fontWeight: 700, color: C.inkSoft }}>{t("Hide")}</button>}
+            </div>
           )}
-          {showAttention && totalAttention > 0 && (
+          {(openGroup || dueNow.length > 0) && totalAttention > 0 && (
             <div style={{ marginTop: 12, borderRadius: 10, overflow: "hidden", background: C.cream }}>
-              {dueSoon.length > 0 && (
+              {dueSoon.length > 0 && showGroup("due") && (
                 <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Today & this week")}</div>
               )}
-              {dueSoon.map((it, i) => (
+              {showGroup("due") && (openGroup === "due" ? dueSoon : dueNow).map((it, i) => (
                 <div key={`due${i}`} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
                   <button onClick={it.onClick} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
-                    <Dot c={it.n <= 0 ? C.danger : C.amber} /><b style={{ fontSize: 13 }}>{it.title}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {it.detail} · {whenLabel(it.n)}</span>
+                    <Dot c={it.n <= 0 ? C.danger : C.amber} /><b style={{ fontSize: 13 }}>{it.title}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {it.detail}{/overdue|today/i.test(it.detail) ? "" : ` · ${whenLabel(it.n)}`}</span>
                   </button>
                   <button onClick={it.onClick} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "none", fontSize: 11, fontWeight: 600, color: C.ink, flexShrink: 0 }}>
                     {t("Review")}
                   </button>
                 </div>
               ))}
-              {expiring.length > 0 && (
+              {expiring.length > 0 && showGroup("subsidy") && (
                 <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Subsidy")}</div>
               )}
-              {expiring.map((f) => (
+              {showGroup("subsidy") && expiring.map((f) => (
                 <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
                   <button onClick={() => goToSubsidyFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
                     <Dot c={C.amber} /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {programOf(f.programId)?.label}</span>
@@ -4714,10 +4958,10 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
                   </button>
                 </div>
               ))}
-              {flexNeedingAttention.length > 0 && (
+              {flexNeedingAttention.length > 0 && showGroup("flex") && (
                 <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Flex care")}</div>
               )}
-              {flexNeedingAttention.map((r) => (
+              {showGroup("flex") && flexNeedingAttention.map((r) => (
                 <div key={r.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
                   <button onClick={() => goToFlexRequest(r.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
                     <Dot c={r.status === "pending" ? C.amber : C.teal} /><b style={{ fontSize: 13 }}>{r.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {t(r.type)}, {r.date} · {r.status === "pending" ? t("awaiting approval") : t("payment unconfirmed")}</span>
@@ -4733,10 +4977,10 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
                   )}
                 </div>
               ))}
-              {overdueTuition.length > 0 && (
+              {overdueTuition.length > 0 && showGroup("tuition") && (
                 <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Tuition")} · {billingNow.label}</div>
               )}
-              {overdueTuition.map((f) => (
+              {showGroup("tuition") && overdueTuition.map((f) => (
                 <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
                   <button onClick={openTuition} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
                     <Dot c={C.danger} /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {meetingMode ? "••••" : money(f.copay)} {partlyPaidFor(f, billingNow.key) ? t("partly paid") : t("unpaid")} · {t("due")} {billingNow.dueDate}</span>
@@ -4746,10 +4990,10 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
                   </button>
                 </div>
               ))}
-              {docsNeedingAttention.length > 0 && (
+              {docsNeedingAttention.length > 0 && showGroup("docs") && (
                 <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Documents")}</div>
               )}
-              {docsNeedingAttention.map((d) => (
+              {showGroup("docs") && docsNeedingAttention.map((d) => (
                 <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
                   <button onClick={() => setScreen("compliance")} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
                     <Dot c={["missing", "expired"].includes(d.displayStatus) ? C.danger : C.amber} /><b style={{ fontSize: 13 }}>{t(d.name)}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {trForm(t, d.displayStatus || d.status).label}{d.expiresOn && ["expired", "expiring"].includes(d.displayStatus) ? ` · ${d.expiresOn}` : ""}</span>
@@ -4759,10 +5003,10 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
                   </button>
                 </div>
               ))}
-              {childrenMissingDocs.length > 0 && (
+              {childrenMissingDocs.length > 0 && showGroup("records") && (
                 <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Child records")}</div>
               )}
-              {childrenMissingDocs.map(({ f, missing }) => (
+              {showGroup("records") && childrenMissingDocs.map(({ f, missing }) => (
                 <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
                   <button onClick={() => goToFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
                     <Dot c={C.danger} /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {missing} {t(missing === 1 ? "document to update" : "documents to update")}</span>
@@ -4774,9 +5018,44 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
               ))}
             </div>
           )}
+          <div style={{ marginTop: 16, display: "flex", alignItems: "flex-start", gap: 8, fontSize: 13, color: C.tealDark }}>
+            <Sparkles size={14} style={{ flexShrink: 0, marginTop: 2 }} />
+            <span><b>{t("This week")}: {langCode === "es" ? theme.wordEs : t(theme.word)}</b> — <i style={{ fontFamily: "'Fraunces', serif" }}>{langCode === "es" ? theme.lineEs : theme.line}</i></span>
+          </div>
         </div>
       </div>
 
+      {(() => {
+        // Who's booked today, and where each child is right now (from Bookings).
+        const now0 = startOfToday();
+        const wd = DAY_BY_INDEX[now0.getDay()];
+        const closed = closureOn(closures, todayMDY()) || !(weeklySchedule || []).find((d) => d.day === wd)?.open;
+        const booked = closed ? [] : families.filter((f) => childDays(f).includes(wd) && daysUntil(f.enrollDate) <= 0);
+        const log = attendanceLog[todayMDY()] || {};
+        const rec = (f) => { const v = log[f.id]; return v === true ? { in: "—" } : v || {}; };
+        const stateOf = (f) => { const r = rec(f); return r.absent ? "absent" : r.out ? "gone" : r.in && isAway(r) ? "away" : r.in ? "here" : "expected"; };
+        const count = (k) => booked.filter((f) => stateOf(f) === k).length;
+        const LABEL = { here: t("Here"), away: t("At appointment"), gone: t("Picked up"), absent: t("Absent"), expected: t("Not here yet") };
+        const COLOR = { here: C.teal, away: C.amber, gone: C.inkSoft, absent: C.inkSoft, expected: C.inkSoft };
+        return (
+          <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, overflow: "hidden" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "13px 18px", borderBottom: scheduleOpen ? `1px solid ${C.line}` : "none" }}>
+              <button onClick={() => setScheduleOpen(!scheduleOpen)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", padding: 0, textAlign: "left", fontWeight: 600, fontSize: 14, color: C.ink }}>
+                <Users size={15} color={C.teal} /> {t("Who's here today")}
+                <span style={{ fontWeight: 500, fontSize: 12.5, color: C.inkSoft }}>
+                  {closed ? t("Closed today") : `${count("here")} ${t("here")} · ${count("expected")} ${t("expected")}${count("away") ? ` · ${count("away")} ${t("away")}` : ""}${count("gone") ? ` · ${count("gone")} ${t("picked up")}` : ""}`}
+                </span>
+                {!closed && <ChevronDown size={15} color={C.inkSoft} style={{ transform: scheduleOpen ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />}
+              </button>
+              {!closed && <button onClick={() => setScreen("bookings")} style={{ padding: "6px 12px", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12, fontWeight: 700 }}>{t("Check in / out")}</button>}
+            </div>
+            {scheduleOpen && !closed && booked.map((f) => (
+              <Row key={f.id} left={<><Dot c={f.color} /><b>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>{childHours(f)}</span></>}
+                right={<span style={{ fontSize: 12.5, fontWeight: 600, color: COLOR[stateOf(f)] }}>{LABEL[stateOf(f)]}{rec(f).in && rec(f).in !== "—" && stateOf(f) === "here" ? ` · ${rec(f).in}` : ""}</span>} />
+            ))}
+          </div>
+        );
+      })()}
       <ComingUp items={comingUpItems({ events, t, go: { calendar: () => setScreen("calendar") } })} onAdd={() => setScreen("calendar")} />
 
       {setupItems.some((i) => !i.done) ? (
@@ -4802,14 +5081,10 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
             </button>
           ))}
         </Card>
-      ) : (
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", borderRadius: 12, background: C.tealTint, color: C.tealDark, fontSize: 12.5, fontWeight: 600 }}>
-          <CheckCircle2 size={16} /> {t("Your account setup is complete — this is what a healthy Alaga record looks like.")}
-        </div>
-      )}
+      ) : null}
 
-      <Card title={t("Today's checklist")} icon={ListChecks}
-        right={<span style={{ fontSize: 12, color: C.inkSoft }}>{doneCount}/{checklist.length} {t("done")}</span>}>
+      <Card title={t("Your daily routine")} icon={ListChecks}
+        right={<span style={{ fontSize: 12, color: C.inkSoft }}>{doneCount}/{checklist.length} {t("done")} · {t("resets each morning")}</span>}>
         <div style={{ padding: "14px 18px 6px" }}>
           <div style={{ height: 8, borderRadius: 999, background: C.cream, overflow: "hidden" }}>
             <div style={{ height: "100%", width: `${pct}%`, background: pct === 100 ? C.teal : C.amber, borderRadius: 999, transition: "width 0.3s" }} />
@@ -4830,37 +5105,6 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
           <button onClick={addTask} style={{ padding: "9px 14px", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 12.5 }}>{t("Add")}</button>
         </div>
       </Card>
-
-      <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, overflow: "hidden" }}>
-        <button onClick={() => setScheduleOpen(!scheduleOpen)} style={{
-          width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left",
-          padding: "13px 18px", background: "none", border: "none", borderBottom: scheduleOpen ? `1px solid ${C.line}` : "none",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 600, fontSize: 14 }}>
-            <CalendarClock size={15} color={C.teal} /> {t("Today's schedule by classroom")}
-          </div>
-          <ChevronDown size={16} color={C.inkSoft} style={{ transform: scheduleOpen ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />
-        </button>
-        {scheduleOpen && groupByClassroom(families).map((g) => {
-          const isCollapsed = collapsed[g.classroom.id];
-          return (
-            <div key={g.classroom.id}>
-              <button onClick={() => toggleCollapse(g.classroom.id)} style={{
-                width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left",
-                padding: "9px 18px", background: C.cream, border: "none", borderBottom: `1px solid ${C.line}`,
-              }}>
-                <span style={{ fontSize: 11.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                  {g.classroom.label} <span style={{ fontWeight: 500, textTransform: "none", color: C.inkSoft }}>· {g.classroom.range} · {g.families.length} {t(g.families.length === 1 ? "child" : "children")}</span>
-                </span>
-                <ChevronDown size={15} color={C.inkSoft} style={{ transform: isCollapsed ? "rotate(-90deg)" : "none", transition: "transform 0.15s" }} />
-              </button>
-              {!isCollapsed && g.families.map((f) => (
-                <Row key={f.id} left={<><Dot c={f.color} /><b>{f.child}</b></>} right={<span style={{ color: C.inkSoft, fontSize: 13 }}>{childHours(f)}</span>} />
-              ))}
-            </div>
-          );
-        })}
-      </div>
 
     </div>
   );
