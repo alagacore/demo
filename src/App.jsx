@@ -56,6 +56,12 @@ const MOBILE_CSS = `
   [style*="padding: 24px; display: flex; align-items: center; justify-content: center"] { padding: 10px !important; }
   [style*="max-height: 88vh"] { max-height: 94vh !important; }
   input, select, textarea { font-size: 16px !important; min-width: 0; max-width: 100%; }
+  button { min-height: 36px; }
+  .icon-btn { height: 40px !important; padding: 0 12px !important; }
+  [style*="font-size: 10px"], [style*="font-size: 10.5px"], [style*="font-size: 11px"] { font-size: 12px !important; }
+  [style*="font-size: 11.5px"], [style*="font-size: 12px"] { font-size: 13px !important; }
+  [style*="font-size: 12.5px"], [style*="font-size: 13px"] { font-size: 14px !important; }
+  .quick-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   .wrap-mobile { flex-wrap: wrap !important; }
   .alaga-main { padding: 16px 14px 80px !important; }
 }
@@ -79,7 +85,10 @@ input[type="number"]::-webkit-inner-spin-button {
   margin: 0;
 }
 `;
-const FONTS = FONTS_BASE + MOBILE_CSS;
+const FONTS = FONTS_BASE + MOBILE_CSS + `
+.icon-btn-label { display: none; }
+@media (max-width: 760px) { .icon-btn-label { display: inline; } }
+`;
 
 /* ------------------------------ brand marks ---------------------------------- */
 // The real, finalized Alaga logo mark — arch with batok-pattern trim, sampaguita
@@ -225,22 +234,23 @@ const FEATURES = { checkin: false };
 
 // Ordered by how a provider's day runs: today's work first, then the people,
 // then the money, then paperwork, then the planning tools.
+// Main menu in everyday words. Rarely used screens sit under "More".
 const NAV = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
+  { id: "dashboard", label: "Today", icon: LayoutGrid },
   { id: "checkin", label: "Check-in", icon: ScanLine },
-  { id: "bookings", label: "Bookings", icon: CalendarClock },
-  { id: "calendar", label: "Calendar", icon: CalendarDays },
+  { id: "bookings", label: "Attendance", icon: CalendarClock },
   { id: "messages", label: "Messages", icon: MessageSquare },
   { id: "families", label: "Families", icon: Users },
   { id: "tours", label: "Tours", icon: ListChecks },
   { id: "waitlist", label: "Waitlist", icon: Hourglass },
   { id: "subsidy", label: "Subsidy", icon: ShieldCheck },
-  { id: "payments", label: "Finances", icon: CreditCard },
-  { id: "compliance", label: "Compliance", icon: ClipboardCheck },
-  { id: "security", label: "Privacy & Security", icon: Lock, extended: true },
+  { id: "payments", label: "Money", icon: CreditCard },
+  { id: "calendar", label: "Calendar", icon: CalendarDays },
+  { id: "compliance", label: "Paperwork", icon: ClipboardCheck },
   { id: "staff", label: "Staff & Ratios", icon: UserCog, extended: true },
   { id: "analytics", label: "Analytics", icon: BarChart3, extended: true },
   { id: "growth", label: "Growth", icon: TrendingUp, badge: "New", extended: true },
+  { id: "security", label: "Privacy & Security", icon: Lock, extended: true },
   { id: "support", label: "Support", icon: LifeBuoy },
   { id: "settings", label: "Settings", icon: Gear },
 ].filter((n) => FEATURES.checkin || n.id !== "checkin");
@@ -251,15 +261,15 @@ const NAV = [
 // underlying screen routing is unchanged, this only changes how it's browsed.
 const NAV_GROUPS = [
   {
-    id: "grp-enrollment", label: "Enrollment", icon: Users,
+    id: "grp-enrollment", label: "Families", icon: Users,
     children: [
-      { id: "families", label: "Families" },
+      { id: "families", label: "All families" },
       { id: "tours", label: "Tours" },
       { id: "waitlist", label: "Waitlist" },
     ],
   },
   {
-    id: "grp-finances", label: "Finances", icon: CreditCard,
+    id: "grp-finances", label: "Money", icon: CreditCard,
     children: [
       { id: "payments", tab: "tuition", label: "Tuition & Billing" },
       { id: "subsidy", label: "Subsidy Programs" },
@@ -268,6 +278,17 @@ const NAV_GROUPS = [
       { id: "payments", tab: "refunds", label: "Refunds" },
       { id: "payments", tab: "payroll", label: "Payroll", extended: true },
       { id: "payments", tab: "business", label: "Business Expenses", extended: true },
+    ],
+  },
+  {
+    id: "grp-more", label: "More", icon: Menu,
+    children: [
+      { id: "staff", label: "Staff & Ratios", extended: true },
+      { id: "analytics", label: "Analytics", extended: true },
+      { id: "growth", label: "Growth", extended: true },
+      { id: "security", label: "Privacy & Security", extended: true },
+      { id: "support", label: "Support" },
+      { id: "settings", label: "Settings" },
     ],
   },
 ];
@@ -972,7 +993,7 @@ const T = {
   "Check out": { es: "Registrar salida", tl: "Check out", zh: "签退", vi: "Điểm danh ra", ko: "하원" },
   "In": { es: "Entrada", tl: "Pasok", zh: "到园", vi: "Vào", ko: "등원" },
   "Undo check-out": { es: "Deshacer salida", tl: "I-undo ang check-out", zh: "撤销签退", vi: "Hoàn tác điểm danh ra", ko: "하원 취소" },
-  "Fees are estimated from your hourly rates in Finances → Tuition. Confirm you have staff coverage before approving.": { es: "Las tarifas se estiman con sus tarifas por hora en Finanzas → Colegiatura. Confirme que tiene personal antes de aprobar.", tl: "Tinantiya ang bayad mula sa hourly rates mo sa Finances → Tuition. Siguraduhing may staff bago mag-approve.", zh: "费用按“财务 → 学费”中的小时费率估算。批准前请确认人手充足。", vi: "Phí được ước tính theo giá theo giờ trong Tài chính → Học phí. Hãy xác nhận đủ nhân sự trước khi duyệt.", ko: "요금은 재무 → 수업료의 시간당 요금으로 계산됩니다. 승인 전 인력을 확인하세요." },
+  "Fees are estimated from your hourly rates in Money → Tuition. Confirm you have staff coverage before approving.": { es: "Las tarifas se estiman con sus tarifas por hora en Finanzas → Colegiatura. Confirme que tiene personal antes de aprobar.", tl: "Tinantiya ang bayad mula sa hourly rates mo sa Money → Tuition. Siguraduhing may staff bago mag-approve.", zh: "费用按“财务 → 学费”中的小时费率估算。批准前请确认人手充足。", vi: "Phí được ước tính theo giá theo giờ trong Tài chính → Học phí. Hãy xác nhận đủ nhân sự trước khi duyệt.", ko: "요금은 재무 → 수업료의 시간당 요금으로 계산됩니다. 승인 전 인력을 확인하세요." },
   "Care type": { es: "Tipo de cuidado", tl: "Uri ng pag-aalaga", zh: "托育类型", vi: "Loại chăm sóc", ko: "돌봄 유형" },
   "e.g. Full-day": { es: "ej. Día completo", tl: "hal. Buong araw", zh: "例如：全日", vi: "vd: Cả ngày", ko: "예: 종일" },
   "Children that day": { es: "Niños ese día", tl: "Mga bata sa araw na iyon", zh: "当日人数", vi: "Số trẻ ngày đó", ko: "당일 인원" },
@@ -1176,7 +1197,7 @@ const T = {
   "Closing your child care business? Also tell your Licensing Program Analyst and every subsidy agency you work with, and keep children's records for at least 3 years after care ends.": { es: "¿Vas a cerrar tu negocio de cuidado infantil? Avisa también a tu Analista del Programa de Licencias y a cada agencia de subsidio, y conserva los registros de los niños al menos 3 años después de terminar el cuidado.", tl: "Isasara mo ba ang child care business mo? Ipaalam din sa Licensing Program Analyst mo at sa bawat subsidy agency, at itago ang records ng mga bata nang hindi bababa sa 3 taon pagkatapos ng pag-aalaga.", zh: "要关闭托育业务？请同时通知您的执照项目分析员和所有合作的补助机构，并在照护结束后至少保留儿童记录3年。", vi: "Đóng cửa cơ sở giữ trẻ? Hãy báo cho Chuyên viên Cấp phép và mọi cơ quan trợ cấp bạn làm việc cùng, và giữ hồ sơ trẻ ít nhất 3 năm sau khi kết thúc chăm sóc.", ko: "보육 사업을 종료하시나요? 면허 담당관(LPA)과 협력 중인 모든 보조금 기관에도 알리고, 보육 종료 후 최소 3년간 아동 기록을 보관하세요." },
   "Need a report for an agency, your accountant or taxes? Attendance, payments and year-end summaries download from Settings.": { es: "¿Necesitas un informe para una agencia, tu contador o impuestos? La asistencia, los pagos y los resúmenes anuales se descargan en Configuración.", tl: "Kailangan ng ulat para sa ahensya, accountant o buwis? Ang attendance, bayad at year-end summary ay nada-download sa Settings.", zh: "需要给机构、会计或报税用的报告？出勤、收款和年度汇总可在设置中下载。", vi: "Cần báo cáo cho cơ quan, kế toán hoặc thuế? Tải điểm danh, thanh toán và tổng kết năm trong Cài đặt.", ko: "기관, 회계사, 세금용 보고서가 필요하신가요? 출석, 결제, 연말 요약은 설정에서 다운로드하세요." },
   "One .zip file with every report above, past families, staff, facility documents, messages, tours, 12 months of attendance, and a complete backup of your records. Uploaded scans and photos are listed by file name.": { es: "Un archivo .zip con todos los informes anteriores, familias anteriores, personal, documentos del centro, mensajes, visitas, 12 meses de asistencia y una copia completa de tus registros. Los escaneos y fotos subidos aparecen por nombre de archivo.", tl: "Isang .zip na may lahat ng ulat sa itaas, dating pamilya, staff, dokumento ng pasilidad, mensahe, tour, 12 buwang attendance, at kumpletong backup ng records mo. Nakalista ayon sa pangalan ang mga na-upload na scan at larawan.", zh: "一个 .zip 文件，包含上述所有报告、过往家庭、员工、机构文件、消息、参观记录、12个月出勤和完整的记录备份。已上传的扫描件和照片按文件名列出。", vi: "Một tệp .zip gồm mọi báo cáo trên, gia đình cũ, nhân viên, giấy tờ cơ sở, tin nhắn, lịch tham quan, 12 tháng điểm danh và bản sao đầy đủ hồ sơ. Bản quét và ảnh đã tải lên được liệt kê theo tên tệp.", ko: "위의 모든 보고서, 이전 가족, 직원, 시설 서류, 메시지, 견학, 12개월 출석, 전체 기록 백업이 담긴 .zip 파일 하나. 업로드한 스캔본과 사진은 파일 이름으로 표시됩니다." },
-  "Printable monthly sign-in sheets are in Bookings. Receipts for families are in Finances → Receipts.": { es: "Las hojas de entrada mensuales imprimibles están en Reservas. Los recibos para las familias están en Finanzas → Recibos.", tl: "Nasa Bookings ang printable na buwanang sign-in sheet. Nasa Finances → Receipts ang mga resibo ng pamilya.", zh: "可打印的月度签到表在“预订”中。家庭收据在“财务 → 收据”中。", vi: "Bảng ký đến/về hàng tháng có trong Đặt chỗ. Biên nhận cho gia đình ở Tài chính → Biên nhận.", ko: "인쇄용 월별 출석부는 예약에, 가족용 영수증은 재무 → 영수증에 있습니다." },
+  "Printable monthly sign-in sheets are in Attendance. Receipts for families are in Money → Receipts.": { es: "Las hojas de entrada mensuales imprimibles están en Reservas. Los recibos para las familias están en Finanzas → Recibos.", tl: "Nasa Bookings ang printable na buwanang sign-in sheet. Nasa Money → Receipts ang mga resibo ng pamilya.", zh: "可打印的月度签到表在“预订”中。家庭收据在“财务 → 收据”中。", vi: "Bảng ký đến/về hàng tháng có trong Đặt chỗ. Biên nhận cho gia đình ở Tài chính → Biên nhận.", ko: "인쇄용 월별 출석부는 예약에, 가족용 영수증은 재무 → 영수증에 있습니다." },
   "Hi families — a quick update: we're changing how we keep records and messages. Starting [date], please reach us at [phone/email]. Thank you!": { es: "Hola, familias — una breve actualización: estamos cambiando cómo guardamos registros y mensajes. A partir del [fecha], comuníquense con nosotros al [teléfono/correo]. ¡Gracias!", tl: "Hi mga pamilya — maikling update: binabago namin kung paano namin itinatago ang records at mensahe. Simula [petsa], kontakin kami sa [telepono/email]. Salamat!", zh: "各位家长好——简短通知：我们将更改记录和消息的管理方式。自[日期]起，请通过[电话/邮箱]联系我们。谢谢！", vi: "Chào các gia đình — cập nhật nhanh: chúng tôi đang thay đổi cách lưu hồ sơ và tin nhắn. Từ [ngày], vui lòng liên hệ qua [điện thoại/email]. Cảm ơn!", ko: "가족 여러분 안녕하세요 — 기록과 메시지 관리 방식이 바뀝니다. [날짜]부터는 [전화/이메일]로 연락해 주세요. 감사합니다!" },
   "Add a birth date": { es: "Agrega la fecha de nacimiento", tl: "Idagdag ang kaarawan", zh: "添加出生日期", vi: "Thêm ngày sinh", ko: "생년월일 추가" },
   "Alerts off": { es: "Alertas desactivadas", tl: "Naka-off ang alerto", zh: "提醒已关闭", vi: "Tắt thông báo", ko: "알림 끔" },
@@ -1372,6 +1393,24 @@ const T = {
   "I'm a parent": { es: "Soy padre o madre", tl: "Magulang ako", zh: "我是家长", vi: "Tôi là phụ huynh", ko: "학부모입니다" },
   "See what families see — check-in, receipts, FSA/HSA, messages.": { es: "Mira lo que ven las familias — entradas, recibos, FSA/HSA, mensajes.", tl: "Tingnan ang nakikita ng pamilya — check-in, resibo, FSA/HSA, mensahe.", zh: "查看家庭看到的内容 — 入园、收据、FSA/HSA、消息。", vi: "Xem những gì gia đình thấy — điểm danh, biên nhận, FSA/HSA, tin nhắn.", ko: "가족이 보는 화면 — 등원, 영수증, FSA/HSA, 메시지." },
   "Built for licensed home-based Family Child Care providers in California.": { es: "Hecho para proveedores de cuidado infantil familiar con licencia en California.", tl: "Ginawa para sa lisensyadong home-based Family Child Care provider sa California.", zh: "专为加州持照家庭式托育者打造。", vi: "Dành cho nhà giữ trẻ tại gia có giấy phép ở California.", ko: "캘리포니아 면허 가정 보육 제공자를 위해 만들었습니다." },
+  "At appointment — tap when back": { es: "En una cita — toca cuando regrese", tl: "Nasa appointment — i-tap pagbalik", zh: "外出预约 — 回来时点一下", vi: "Đi hẹn — chạm khi quay lại", ko: "외출 중 — 복귀 시 누르세요" },
+  "Clear today's record": { es: "Borrar el registro de hoy", tl: "Burahin ang record ngayon", zh: "清除今天的记录", vi: "Xóa ghi nhận hôm nay", ko: "오늘 기록 지우기" },
+  "Full list": { es: "Lista completa", tl: "Buong listahan", zh: "完整列表", vi: "Danh sách đầy đủ", ko: "전체 목록" },
+  "Here since": { es: "Aquí desde", tl: "Narito mula", zh: "入园时间", vi: "Có mặt từ", ko: "등원 시각" },
+  "Leaving for an appointment": { es: "Sale a una cita", tl: "Aalis para sa appointment", zh: "外出预约", vi: "Đi hẹn", ko: "외출(진료)" },
+  "Mark absent": { es: "Marcar ausente", tl: "Markahan na absent", zh: "标记缺勤", vi: "Đánh dấu vắng", ko: "결석 표시" },
+  "More": { es: "Más", tl: "Iba pa", zh: "更多", vi: "Thêm", ko: "더보기" },
+  "More options": { es: "Más opciones", tl: "Iba pang opsyon", zh: "更多选项", vi: "Tùy chọn khác", ko: "더보기" },
+  "Move": { es: "Mover", tl: "Ilipat", zh: "移动", vi: "Chuyển", ko: "이동" },
+  "Not coming back today": { es: "No regresa hoy", tl: "Hindi na babalik ngayon", zh: "今天不回来了", vi: "Hôm nay không quay lại", ko: "오늘은 복귀 안 함" },
+  "Paperwork": { es: "Papeleo", tl: "Mga papeles", zh: "文书", vi: "Giấy tờ", ko: "서류" },
+  "Quick check-in": { es: "Entrada rápida", tl: "Mabilis na check-in", zh: "快速签到", vi: "Điểm danh nhanh", ko: "빠른 등원 체크" },
+  "Tap a child when they arrive, and again when they're picked up.": { es: "Toca a cada niño cuando llegue, y otra vez cuando lo recojan.", tl: "I-tap ang bata pagdating, at ulit kapag sinundo.", zh: "孩子到园时点一下，接走时再点一下。", vi: "Chạm vào trẻ khi đến, và chạm lần nữa khi được đón.", ko: "도착하면 한 번, 하원할 때 다시 한 번 누르세요." },
+  "Tap to check in": { es: "Toca para registrar entrada", tl: "I-tap para mag-check in", zh: "点击签到", vi: "Chạm để điểm danh", ko: "눌러서 등원" },
+  "Undo pickup": { es: "Deshacer salida", tl: "I-undo ang pagsundo", zh: "撤销接走", vi: "Hoàn tác đón về", ko: "하원 취소" },
+  "is back": { es: "regresó", tl: "nakabalik na", zh: "已返回", vi: "đã quay lại", ko: "복귀함" },
+  "No default sibling discount rate is configured — set one up in Money → Tuition & Subsidies, or force-apply one just for this child above.": { es: "No hay descuento por hermanos configurado — configúralo en Dinero → Colegiatura y subsidios, o aplícalo solo a este niño arriba.", tl: "Walang default na sibling discount — i-set sa Money → Tuition & Subsidies, o i-apply para sa batang ito sa itaas.", zh: "尚未设置默认兄弟姐妹折扣 — 请在“财务 → 学费与补助”中设置，或在上方仅为此孩子应用。", vi: "Chưa có giảm giá anh chị em mặc định — đặt trong Tài chính → Học phí & Trợ cấp, hoặc áp dụng riêng cho trẻ này ở trên.", ko: "기본 형제 할인이 없습니다 — 재정 → 수업료 및 보조금에서 설정하거나 위에서 이 아동에게만 적용하세요." },
+  "No default sibling discount rate is configured — set one up in Money → Tuition & Subsidies, or open a child's profile to force-apply one just for them.": { es: "No hay descuento por hermanos configurado — configúralo en Dinero → Colegiatura y subsidios, o ábrelo desde el perfil del niño.", tl: "Walang default na sibling discount — i-set sa Money → Tuition & Subsidies, o buksan ang profile ng bata.", zh: "尚未设置默认兄弟姐妹折扣 — 请在“财务 → 学费与补助”中设置，或打开孩子档案单独应用。", vi: "Chưa có giảm giá anh chị em mặc định — đặt trong Tài chính → Học phí & Trợ cấp, hoặc mở hồ sơ của trẻ để áp dụng riêng.", ko: "기본 형제 할인이 없습니다 — 재정 → 수업료 및 보조금에서 설정하거나 아동 프로필에서 적용하세요." },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -1408,7 +1447,7 @@ const T = {
   "Needs attention": { es: "Necesita atención", tl: "Kailangan ng pansin", zh: "需要关注", vi: "Cần lưu ý", ko: "주의 필요" },
   "Flex care to address": { es: "Cuidado flexible por atender", tl: "Flex care na dapat asikasuhin", zh: "待处理的弹性照护", vi: "Chăm sóc linh hoạt cần xử lý", ko: "처리할 탄력 돌봄" },
   "New flex care request": { es: "Nueva solicitud de cuidado flexible", tl: "Bagong kahilingan sa flex care", zh: "新的弹性照护申请", vi: "Yêu cầu chăm sóc linh hoạt mới", ko: "새 탄력 돌봄 요청" },
-  "view and respond in Bookings": { es: "vea y responda en Reservas", tl: "tingnan at tumugon sa Bookings", zh: "请在预约中查看并回复", vi: "xem và phản hồi trong Lịch đặt", ko: "예약에서 확인 후 응답하세요" },
+  "view and respond in Attendance": { es: "vea y responda en Reservas", tl: "tingnan at tumugon sa Bookings", zh: "请在预约中查看并回复", vi: "xem và phản hồi trong Lịch đặt", ko: "예약에서 확인 후 응답하세요" },
   "Unpaid": { es: "Sin pagar", tl: "Hindi bayad", zh: "未付款", vi: "Chưa thanh toán", ko: "미결제" },
   "Today's checklist": { es: "Lista de tareas de hoy", tl: "Checklist ngayon", zh: "今日待办清单", vi: "Danh sách việc hôm nay", ko: "오늘의 체크리스트" },
   "Getting your account fully set up": { es: "Completando la configuración de su cuenta", tl: "Kinukumpleto ang setup ng account mo", zh: "完善您的账户设置", vi: "Hoàn tất thiết lập tài khoản của bạn", ko: "계정 설정 완료하기" },
@@ -4423,51 +4462,51 @@ function Topbar({ screen, setScreen, provider, families, staff, goBack, canGoBac
 // Plain-language "How do I…" answers. Each one points at the screen where it's
 // done. The search bar and Support → How do I… both use this list.
 const HELP_TOPICS = [
-  { cat: "Families & enrollment", q: "Add a new family", go: { screen: "tours" }, k: "new family enroll sign up register child add start", a: ["Go to Enrollment → Tours and click Add family.", "Fill in the family's details.", "When they're ready, click Enroll family. Add each child's start date, schedule and how care is paid for.", "They show up in Families right away."] },
-  { cat: "Families & enrollment", q: "Change a child's details or schedule", go: { screen: "families" }, k: "edit update change days hours schedule classroom age birthday", a: ["Go to Enrollment → Families and click the family.", "Click the child's name.", "Click Edit next to Details (name, age group, start date, birth date) or Session (days and hours)."] },
+  { cat: "Families & enrollment", q: "Add a new family", go: { screen: "tours" }, k: "new family enroll sign up register child add start", a: ["Go to Families → Tours and click Add family.", "Fill in the family's details.", "When they're ready, click Enroll family. Add each child's start date, schedule and how care is paid for.", "They show up in Families right away."] },
+  { cat: "Families & enrollment", q: "Change a child's details or schedule", go: { screen: "families" }, k: "edit update change days hours schedule classroom age birthday", a: ["Go to Families and click the family.", "Click the child's name.", "Click Edit next to Details (name, age group, start date, birth date) or Session (days and hours)."] },
   { cat: "Families & enrollment", q: "Withdraw a child who is leaving", go: { screen: "families" }, k: "leaving withdraw drop remove quit last day moving switching deenroll unenroll", a: ["Open the child's record from Families.", "Click Withdraw at the bottom, pick their last day and the reason.", "They stay on your roster through that day, then move to Withdrawn. Their record is kept."] },
   { cat: "Families & enrollment", q: "Plan a graduation to kindergarten", go: { screen: "families" }, k: "graduate graduation kindergarten aging out school", a: ["Open the child's record from Families.", "Add their birth date under Details — Alaga shows the fall they can start kindergarten.", "Click Plan graduation and choose their last day. It shows on your briefing the week before."] },
   { cat: "Families & enrollment", q: "Add a brother or sister who starts later", go: { screen: "tours" }, k: "sibling brother sister second child pending start later", a: ["Enroll the family (or add the child) with their real start date.", "Until then they show as \"starts\" with the date in Families.", "They become active on that date automatically."] },
   { cat: "Families & enrollment", q: "Mark a paper document as on file, or upload a scan", go: { screen: "families" }, k: "document paper immunization form upload scan file on file missing", a: ["Open the child's record from Families.", "Under Enrollment documents, click Mark on file for paper copies, or the upload button for a scan or photo."] },
   { cat: "Families & enrollment", q: "Print a child's information sheet", go: { screen: "families" }, k: "print child information sheet contacts allergies", a: ["Open the family or the child from Families.", "Click Print at the top. Each child prints on their own page."] },
-  { cat: "Families & enrollment", q: "Get an emergency contact list", go: { screen: "families" }, k: "emergency contacts phone list sheet", a: ["Go to Enrollment → Families.", "Click Emergency contact sheet at the top. It downloads a list you can print or keep on your phone."] },
+  { cat: "Families & enrollment", q: "Get an emergency contact list", go: { screen: "families" }, k: "emergency contacts phone list sheet", a: ["Go to Families.", "Click Emergency contact sheet at the top. It downloads a list you can print or keep on your phone."] },
 
-  { cat: "Each day", q: "Check children in and out", go: { screen: "bookings" }, k: "check in check out sign in sign out arrive drop off pick up pickup attendance absent here today", a: ["Go to Bookings.", "Click Check in when a child arrives and Check out when they're picked up.", "Click Absent if they don't come. The \"Here right now\" count updates as you go."] },
+  { cat: "Each day", q: "Check children in and out", go: { screen: "bookings" }, k: "check in check out sign in sign out arrive drop off pick up pickup attendance absent here today", a: ["Go to Attendance.", "Click Check in when a child arrives and Check out when they're picked up.", "Click Absent if they don't come. The \"Here right now\" count updates as you go."] },
   { cat: "Each day", q: "A child leaves for an appointment and comes back", go: { screen: "bookings" }, k: "appointment doctor dentist leave early come back return step out", a: ["In Bookings, click Appointment next to the child when they leave.", "Click Back in when they return. If they don't come back that day, click Not returning.", "The times show on their sign-in sheet."] },
-  { cat: "Each day", q: "Print monthly sign-in sheets", go: { screen: "bookings" }, k: "sign in sheet print attendance paper monthly subsidy", a: ["Go to Bookings and click Sign-in sheets.", "Pick the month. Each child gets a page with their days, times already recorded, and lines for signatures."] },
-  { cat: "Each day", q: "See who's booked on another day", go: { screen: "bookings" }, k: "tomorrow next week another day date bookings schedule", a: ["Go to Bookings and click Change date.", "Pick Today, Tomorrow, Next week, or any date."] },
-  { cat: "Each day", q: "Approve a request for extra care", go: { screen: "bookings" }, k: "extra care flex early drop off late pickup weekend extra day request approve", a: ["Go to Bookings and click the Extra care tab.", "Approve or decline each request, and mark it paid when the family pays."] },
+  { cat: "Each day", q: "Print monthly sign-in sheets", go: { screen: "bookings" }, k: "sign in sheet print attendance paper monthly subsidy", a: ["Go to Attendance and click Sign-in sheets.", "Pick the month. Each child gets a page with their days, times already recorded, and lines for signatures."] },
+  { cat: "Each day", q: "See who's booked on another day", go: { screen: "bookings" }, k: "tomorrow next week another day date bookings schedule", a: ["Go to Attendance and click Change date.", "Pick Today, Tomorrow, Next week, or any date."] },
+  { cat: "Each day", q: "Approve a request for extra care", go: { screen: "bookings" }, k: "extra care flex early drop off late pickup weekend extra day request approve", a: ["Go to Attendance and click the Extra care tab.", "Approve or decline each request, and mark it paid when the family pays."] },
 
   { cat: "Calendar", q: "Add a holiday or closure", go: { screen: "calendar" }, k: "closed closure holiday vacation day off break", a: ["Go to Calendar and open Closures.", "Pick the dates, name it, and check the box to tell families.", "Closed days come off Bookings automatically."] },
   { cat: "Calendar", q: "Add an event like a field trip or photo day", go: { screen: "calendar" }, k: "event field trip photo day picture day carnival party meeting conference", a: ["Go to Calendar and open Events & Meetings.", "Click Add event, pick the type and date, and add anything families should bring.", "Check the box to tell families. It shows under Coming up on your dashboard."] },
   { cat: "Calendar", q: "Change your hours or the schedules you offer", go: { screen: "calendar" }, k: "hours open close weekend saturday schedule full day half day part time", a: ["Go to Calendar.", "Edit Weekly Hours for the days you're open, or Care schedules you offer for full-day, part-day and other options."] },
 
-  { cat: "Money", q: "Record a tuition payment", go: { screen: "payments", tab: "tuition" }, k: "payment paid record tuition copay cash zelle venmo check", a: ["Go to Finances → Tuition & Billing.", "Click the family's Unpaid or Overdue status, then Record payment."] },
-  { cat: "Money", q: "Print a receipt for a family (FSA or dependent care)", go: { screen: "payments", tab: "receipts" }, k: "receipt fsa hsa dependent care tax statement proof of payment", a: ["Go to Finances → Receipts.", "Click the month for that child.", "Click Dates of care first if the family needs exact dates listed."] },
-  { cat: "Money", q: "Set the due date or a late fee", go: { screen: "payments", tab: "tuition" }, k: "due date late fee reminder billing", a: ["Go to Finances → Tuition & Billing.", "Set the Billing due date, and turn on a Late fee if you charge one."] },
+  { cat: "Money", q: "Record a tuition payment", go: { screen: "payments", tab: "tuition" }, k: "payment paid record tuition copay cash zelle venmo check", a: ["Go to Money → Tuition & Billing.", "Click the family's Unpaid or Overdue status, then Record payment."] },
+  { cat: "Money", q: "Print a receipt for a family (FSA or dependent care)", go: { screen: "payments", tab: "receipts" }, k: "receipt fsa hsa dependent care tax statement proof of payment", a: ["Go to Money → Receipts.", "Click the month for that child.", "Click Dates of care first if the family needs exact dates listed."] },
+  { cat: "Money", q: "Set the due date or a late fee", go: { screen: "payments", tab: "tuition" }, k: "due date late fee reminder billing", a: ["Go to Money → Tuition & Billing.", "Set the Billing due date, and turn on a Late fee if you charge one."] },
   { cat: "Money", q: "Split tuition between two parents", go: { screen: "families" }, k: "split tuition two parents guardians divorced shared custody", a: ["Open the child's record from Families.", "Under Funding, click Split tuition between guardians and set each person's share."] },
-  { cat: "Money", q: "Update a child's subsidy or caseworker", go: { screen: "subsidy" }, k: "subsidy calworks ccap voucher caseworker agency authorization recert", a: ["Go to Finances → Subsidy Programs and click the child.", "Update the program, amounts, end date and caseworker, then Save changes."] },
-  { cat: "Money", q: "Log a refund", go: { screen: "payments", tab: "refunds" }, k: "refund money back credit", a: ["Go to Finances → Refunds.", "Fill in the child, amount and reason, then Log refund."] },
+  { cat: "Money", q: "Update a child's subsidy or caseworker", go: { screen: "subsidy" }, k: "subsidy calworks ccap voucher caseworker agency authorization recert", a: ["Go to Money → Subsidy Programs and click the child.", "Update the program, amounts, end date and caseworker, then Save changes."] },
+  { cat: "Money", q: "Log a refund", go: { screen: "payments", tab: "refunds" }, k: "refund money back credit", a: ["Go to Money → Refunds.", "Fill in the child, amount and reason, then Log refund."] },
 
   { cat: "Messages", q: "Message one family or everyone", go: { screen: "messages" }, k: "message text announce send families parents everyone all", a: ["Go to Messages and click New message.", "Choose who it's for — one family, a group, or all families — and write your message."] },
   { cat: "Messages", q: "Message a caseworker, agency or someone else", go: { screen: "messages" }, k: "caseworker agency vendor landlord substitute other", a: ["Go to Messages and click New message.", "Choose \"A subsidy agency or caseworker\" or \"Someone else\"."] },
   { cat: "Messages", q: "Turn new-message alerts on or off", go: { screen: "messages" }, k: "notification alert sound push", a: ["Go to Messages and click Alerts on / Alerts off at the top of the list."] },
 
-  { cat: "Tours & waitlist", q: "Follow up with a family who toured", go: { screen: "tours" }, k: "follow up tour call back email text reminder", a: ["Go to Enrollment → Tours and click the family.", "Set a Follow up by date — it shows on your briefing when it's due.", "Use Email, Text or Call to open your own app with a message ready."] },
-  { cat: "Tours & waitlist", q: "A waitlist family isn't moving forward", go: { screen: "waitlist" }, k: "waitlist decline not interested remove cancel", a: ["Go to Enrollment → Waitlist.", "Click Not moving forward, pick a reason, and click Remove from waitlist."] },
-  { cat: "Tours & waitlist", q: "Find families who didn't move forward", go: { screen: "tours" }, k: "declined not interested past tours history", a: ["Go to Enrollment → Tours and click Didn't move forward at the top."] },
+  { cat: "Tours & waitlist", q: "Follow up with a family who toured", go: { screen: "tours" }, k: "follow up tour call back email text reminder", a: ["Go to Families → Tours and click the family.", "Set a Follow up by date — it shows on your briefing when it's due.", "Use Email, Text or Call to open your own app with a message ready."] },
+  { cat: "Tours & waitlist", q: "A waitlist family isn't moving forward", go: { screen: "waitlist" }, k: "waitlist decline not interested remove cancel", a: ["Go to Families → Waitlist.", "Click Not moving forward, pick a reason, and click Remove from waitlist."] },
+  { cat: "Tours & waitlist", q: "Find families who didn't move forward", go: { screen: "tours" }, k: "declined not interested past tours history", a: ["Go to Families → Tours and click Didn't move forward at the top."] },
 
-  { cat: "Licensing & paperwork", q: "Get ready for a licensing visit", go: { screen: "compliance" }, k: "licensing visit inspection audit packet ccld lpa", a: ["Go to Compliance and click Enter Licensing Visit Mode.", "Check that everything looks right, then click Print packet."] },
-  { cat: "Licensing & paperwork", q: "Write up an incident or injury", go: { screen: "compliance" }, k: "incident injury accident bump fall report", a: ["Go to Compliance → Incident Reports.", "Fill in what happened and click Log incident. You can print it for the family to sign."] },
-  { cat: "Licensing & paperwork", q: "Update your license renewal or inspection", go: { screen: "compliance" }, k: "license renewal inspection citation", a: ["Go to Compliance → Licensing & Ratios and click Edit."] },
-  { cat: "Licensing & paperwork", q: "Find official state forms", go: { screen: "compliance" }, k: "forms cdss lic state official blank", a: ["Go to Compliance → Blank Forms and click Official CDSS forms."] },
-  { cat: "Licensing & paperwork", q: "Add a staff member", go: { screen: "staff" }, k: "staff employee assistant aide hire", a: ["Go to Staff & Ratios (Extended plan) and click Add staff member."] },
+  { cat: "Licensing & paperwork", q: "Get ready for a licensing visit", go: { screen: "compliance" }, k: "licensing visit inspection audit packet ccld lpa", a: ["Go to Paperwork and click Enter Licensing Visit Mode.", "Check that everything looks right, then click Print packet."] },
+  { cat: "Licensing & paperwork", q: "Write up an incident or injury", go: { screen: "compliance" }, k: "incident injury accident bump fall report", a: ["Go to Paperwork → Incident Reports.", "Fill in what happened and click Log incident. You can print it for the family to sign."] },
+  { cat: "Licensing & paperwork", q: "Update your license renewal or inspection", go: { screen: "compliance" }, k: "license renewal inspection citation", a: ["Go to Paperwork → Licensing & Ratios and click Edit."] },
+  { cat: "Licensing & paperwork", q: "Find official state forms", go: { screen: "compliance" }, k: "forms cdss lic state official blank", a: ["Go to Paperwork → Blank Forms and click Official CDSS forms."] },
+  { cat: "Licensing & paperwork", q: "Add a staff member", go: { screen: "staff" }, k: "staff employee assistant aide hire", a: ["Go to More → Staff & Ratios (Extended plan) and click Add staff member."] },
 
-  { cat: "Reports & settings", q: "Download attendance or payment reports", go: { screen: "settings", tab: "data" }, k: "report download attendance payments taxes accountant spreadsheet excel csv", a: ["Go to Settings → Reports & your data.", "Pick the month or year and click CSV. It opens in Excel or Google Sheets."] },
-  { cat: "Reports & settings", q: "Change the language or text size", go: { screen: "settings", tab: "language" }, k: "language spanish tagalog text size bigger dark mode", a: ["Go to Settings → Language & Accessibility."] },
-  { cat: "Reports & settings", q: "Update the address and phone on receipts", go: { screen: "settings", tab: "profile" }, k: "address phone email business name receipts", a: ["Go to Settings → Business Profile and click Edit."] },
-  { cat: "Reports & settings", q: "Sign out or change your password", go: { screen: "settings", tab: "account" }, k: "sign out log out logout password", a: ["Go to Settings → Account."] },
-  { cat: "Reports & settings", q: "Get help from the Alaga team", go: { screen: "support" }, k: "help support question problem contact", a: ["Go to Support → Contact Us and send us a message. Replies show in My Requests."] },
+  { cat: "Reports & settings", q: "Download attendance or payment reports", go: { screen: "settings", tab: "data" }, k: "report download attendance payments taxes accountant spreadsheet excel csv", a: ["Go to More → Settings → Reports & your data.", "Pick the month or year and click CSV. It opens in Excel or Google Sheets."] },
+  { cat: "Reports & settings", q: "Change the language or text size", go: { screen: "settings", tab: "language" }, k: "language spanish tagalog text size bigger dark mode", a: ["Go to More → Settings → Language & Accessibility."] },
+  { cat: "Reports & settings", q: "Update the address and phone on receipts", go: { screen: "settings", tab: "profile" }, k: "address phone email business name receipts", a: ["Go to More → Settings → Business Profile and click Edit."] },
+  { cat: "Reports & settings", q: "Sign out or change your password", go: { screen: "settings", tab: "account" }, k: "sign out log out logout password", a: ["Go to More → Settings → Account."] },
+  { cat: "Reports & settings", q: "Get help from the Alaga team", go: { screen: "support" }, k: "help support question problem contact", a: ["Go to More → Support → Contact Us and send us a message. Replies show in My Requests."] },
 ];
 // Finds help topics for whatever someone types, in their own words.
 function searchHelp(query, t = (x) => x, limit = 4) {
@@ -4796,7 +4835,7 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
                 </span>
                 {!closed && <ChevronDown size={15} color={C.inkSoft} style={{ transform: scheduleOpen ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />}
               </button>
-              {!closed && <button onClick={() => setScreen("bookings")} style={{ padding: "6px 12px", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12, fontWeight: 700 }}>{t("Check in / out")}</button>}
+              {!closed && <button onClick={() => setScreen("bookings")} style={{ padding: "9px 14px", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontSize: 13, fontWeight: 700 }}>{t("Check in / out")}</button>}
             </div>
             {scheduleOpen && !closed && booked.map((f) => (
               <Row key={f.id} left={<><Dot c={f.color} /><b>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>{childHours(f)}</span></>}
@@ -5321,7 +5360,7 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
                 )}
                 {privatePayChildren.length > 1 && anyEligibleUndiscounted && (!tuitionRates.siblingDiscount || !tuitionRates.siblingDiscount.enabled) && (
                   <div style={{ fontSize: 11.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 5, marginTop: 4 }}>
-                    <Info size={11} /> {t("No default sibling discount rate is configured — set one up in Finances → Tuition & Subsidies, or open a child's profile to force-apply one just for them.")}
+                    <Info size={11} /> {t("No default sibling discount rate is configured — set one up in Money → Tuition & Subsidies, or open a child's profile to force-apply one just for them.")}
                   </div>
                 )}
               </Section>
@@ -5691,7 +5730,7 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
               )}
               {(!siblingDiscount || !siblingDiscount.enabled) && child.siblingDiscountOverride !== true && (
                 <div style={{ fontSize: 11, color: C.inkSoft, marginTop: 8, display: "flex", alignItems: "center", gap: 5 }}>
-                  <Info size={10} /> {t("No default sibling discount rate is configured — set one up in Finances → Tuition & Subsidies, or force-apply one just for this child above.")}
+                  <Info size={10} /> {t("No default sibling discount rate is configured — set one up in Money → Tuition & Subsidies, or force-apply one just for this child above.")}
                 </div>
               )}
             </Section>
@@ -5960,6 +5999,27 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
   const awayCount = dayFamilies.filter((f) => { const r = recordOf(f.id); return r.in && !r.out && isAway(r); }).length;
   const pickedUpCount = dayFamilies.filter((f) => { const r = recordOf(f.id); return r.in && r.out; }).length;
   const presentCount = arrivedCount - awayCount - pickedUpCount;
+  // Quick view: one big button per child for drop-off and pickup.
+  const [quickView, setQuickView] = useState(() => { try { const v = localStorage.getItem("attendance-quick-view"); return v === null ? true : v === "1"; } catch (e) { return true; } });
+  const setQuick = (v) => { setQuickView(v); try { localStorage.setItem("attendance-quick-view", v ? "1" : "0"); } catch (e) { /* ignore */ } };
+  const [quickMenu, setQuickMenu] = useState(null);
+  const quickState = (f) => { const r = recordOf(f.id); return r.absent ? "absent" : r.out ? "gone" : r.in && isAway(r) ? "away" : r.in ? "here" : "expected"; };
+  const [undo, setUndo] = useState(null);
+  const undoTimer = React.useRef(null);
+  const quickTap = (f) => {
+    const st = quickState(f);
+    const before = (attendanceLog[dateFull] || {})[f.id];
+    const msg = { expected: t("checked in"), here: t("checked out"), away: t("is back") }[st];
+    if (msg) {
+      clearTimeout(undoTimer.current);
+      setUndo({ id: f.id, before: before === undefined ? null : before, text: `${f.child.split(" ")[0]} ${msg}` });
+      undoTimer.current = setTimeout(() => setUndo(null), 7000);
+    }
+    if (st === "expected") checkIn(f.id);
+    else if (st === "here") checkOut(f.id);
+    else if (st === "away") backFromOuting(f.id);
+    else setQuickMenu(f.id);
+  };
   const absentCount = dayFamilies.filter((f) => recordOf(f.id).absent).length;
 
   const CURRENT_TIME = nowTime();
@@ -6050,6 +6110,63 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
             pickedUpCount ? `${pickedUpCount} ${t("picked up")}` : "", awayCount ? `${awayCount} ${t("at an appointment")}` : "", absentCount ? `${absentCount} ${t("absent")}` : ""].filter(Boolean).join(" · ")} accent={C.sky} />
       </div>
 
+      {isToday && !closedToday && dayFamilies.length > 0 && (
+        <div style={{ display: "flex", gap: 6, alignSelf: "flex-start", background: C.cream, borderRadius: 10, padding: 3 }}>
+          {[[true, t("Quick check-in")], [false, t("Full list")]].map(([v, label]) => (
+            <button key={String(v)} onClick={() => setQuick(v)} style={{ padding: "9px 16px", borderRadius: 8, border: "none", fontSize: 13.5, fontWeight: 700, background: quickView === v ? "#fff" : "transparent", color: quickView === v ? C.tealDark : C.inkSoft, boxShadow: quickView === v ? "0 1px 3px rgba(0,0,0,0.08)" : "none" }}>{label}</button>
+          ))}
+        </div>
+      )}
+      {isToday && !closedToday && quickView && dayFamilies.length > 0 && (
+        <div>
+          <div style={{ fontSize: 13, color: C.inkSoft, marginBottom: 10 }}>{t("Tap a child when they arrive, and again when they're picked up.")}</div>
+          {undo && (
+            <div style={{ position: "sticky", top: 70, zIndex: 25, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "11px 14px", marginBottom: 10, borderRadius: 12, background: C.ink, color: "#fff", fontSize: 14, fontWeight: 600 }}>
+              <span>{undo.text}</span>
+              <button onClick={() => { setRecord(undo.id, undo.before); setUndo(null); }} style={{ padding: "7px 14px", borderRadius: 8, border: "none", background: "#fff", color: C.ink, fontSize: 13.5, fontWeight: 700 }}>{t("Undo")}</button>
+            </div>
+          )}
+          <div className="quick-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 12 }}>
+            {dayFamilies.map((f) => {
+              const st = quickState(f); const r = recordOf(f.id);
+              const look = {
+                expected: { bg: "#fff", border: C.line, label: t("Tap to check in"), color: C.inkSoft },
+                here: { bg: C.tealTint, border: C.teal, label: `${t("Here since")} ${r.in && r.in !== "—" ? r.in : ""}`, color: C.tealDark },
+                away: { bg: C.amberTint, border: C.amber, label: t("At appointment — tap when back"), color: "#7A5620" },
+                gone: { bg: "#F1EEE5", border: C.line, label: `${t("Picked up")} ${r.out || ""}`, color: C.inkSoft },
+                absent: { bg: "#F1EEE5", border: C.line, label: t("Absent"), color: C.inkSoft },
+              }[st];
+              return (
+                <div key={f.id} style={{ position: "relative" }}>
+                  <button onClick={() => quickTap(f)} style={{ width: "100%", minHeight: 150, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, padding: "16px 10px", borderRadius: 16, border: `2px solid ${look.border}`, background: look.bg, textAlign: "center" }}>
+                    <div style={{ width: 58, height: 58, borderRadius: "50%", background: f.photoUrl ? `center/cover no-repeat url(${f.photoUrl})` : f.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 22, opacity: st === "gone" || st === "absent" ? 0.55 : 1 }}>
+                      {!f.photoUrl && f.child[0]}
+                    </div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: C.ink, lineHeight: 1.2 }}>{f.child.split(" ")[0]}<div style={{ fontSize: 12, fontWeight: 500, color: C.inkSoft }}>{f.child.split(" ").slice(1).join(" ")}</div></div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: look.color }}>{look.label}</div>
+                  </button>
+                  <button onClick={() => setQuickMenu(quickMenu === f.id ? null : f.id)} aria-label={t("More options")} style={{ position: "absolute", top: 6, right: 6, width: 34, height: 34, borderRadius: 10, border: "none", background: "rgba(255,255,255,0.85)", color: C.inkSoft, fontSize: 18, fontWeight: 700, lineHeight: 1 }}>⋯</button>
+                  {quickMenu === f.id && (
+                    <div style={{ position: "absolute", top: 42, right: 6, zIndex: 20, background: "#fff", border: `1px solid ${C.line}`, borderRadius: 12, boxShadow: "0 10px 30px rgba(0,0,0,0.12)", padding: 6, minWidth: 180 }}>
+                      {[
+                        st === "expected" && [t("Mark absent"), () => markAbsent(f.id)],
+                        st === "here" && [t("Leaving for an appointment"), () => stepOut(f.id)],
+                        st === "away" && [t("Not coming back today"), () => notReturning(f.id)],
+                        st === "gone" && [t("Undo pickup"), () => { const { out, outReason, ...rest } = r; setRecord(f.id, rest); }],
+                        st !== "expected" && [t("Clear today's record"), () => clearRecord(f.id)],
+                      ].filter(Boolean).map(([label, fn]) => (
+                        <button key={label} onClick={() => { fn(); setQuickMenu(null); }} style={{ width: "100%", textAlign: "left", padding: "11px 12px", borderRadius: 8, border: "none", background: "none", fontSize: 14, fontWeight: 600, color: C.ink }}>{label}</button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {(!isToday || closedToday || !quickView || dayFamilies.length === 0) && (
       <Card title={isToday ? t("Today's bookings") : `${t(selectedWeekday || "Weekend")}'s ${t("bookings")}`} icon={CalendarClock}
         right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{dateShort}, {selectedDate.getFullYear()}</span>}>
         {closedToday && (
@@ -6098,7 +6215,7 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
                         <button onClick={() => (isMoving ? setMovingId(null) : startMove(f))} title={t("Move classroom")} style={{
                           display: "flex", alignItems: "center", gap: 5, padding: "5px 8px", borderRadius: 7, border: `1px solid ${C.line}`, background: isMoving ? C.tealTint : "#fff", fontSize: 11, fontWeight: 700, color: C.tealDark,
                         }}>
-                          <ArrowLeftRight size={12} />
+                          <ArrowLeftRight size={12} /> <span className="icon-btn-label">{t("Move")}</span>
                         </button>
                         {rec.absent ? (
                           <>
@@ -6161,6 +6278,7 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
           <Info size={10} /> {t("Days shown are based on each child's approved schedule — adjust in their profile if it changes.")}
         </div>
       </Card>
+      )}
       </>
       )}
 
@@ -6286,7 +6404,7 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
             );
           })}
           <div style={{ padding: "10px 18px", fontSize: 10.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
-            <Info size={10} /> {t("Fees are estimated from your hourly rates in Finances → Tuition. Confirm you have staff coverage before approving.")}
+            <Info size={10} /> {t("Fees are estimated from your hourly rates in Money → Tuition. Confirm you have staff coverage before approving.")}
           </div>
         </Card>
       </div>
@@ -7615,7 +7733,7 @@ function printAuditPacket({ provider = {}, licensing = {}, docs = [], families =
 }
 
 // Monthly sign-in / sign-out sheets, one page per child, for subsidy
-// attendance records. Pre-fills times already recorded in Bookings and leaves
+// attendance records. Pre-fills times already recorded in Attendance and leaves
 // signature lines for parents. Days the child isn't scheduled, or the program
 // is closed, are left off.
 function printSignInSheets(children, { year, month, attendanceLog = {}, schedule = [], closures = [], provider = {}, t = (x) => x }) {
@@ -11247,7 +11365,7 @@ function YourDataTab({ ctx, downloadBackup, goToBilling, billing, threads, saveT
         {reportRow(t("Children's documents"), t("Which documents are on file for each child, and when they renew."), null, () => dl("childDocs"))}
         {reportRow(t("Incident log"), t("Every incident you've logged, with how parents were notified."), null, () => dl("incidents"))}
         {reportRow(t("Business expenses"), t("Every expense you've logged, by category."), null, () => dl("expenses"))}
-        <div style={{ padding: "10px 18px", fontSize: 11.5, color: C.inkSoft }}>{t("Printable monthly sign-in sheets are in Bookings. Receipts for families are in Finances → Receipts.")}</div>
+        <div style={{ padding: "10px 18px", fontSize: 11.5, color: C.inkSoft }}>{t("Printable monthly sign-in sheets are in Attendance. Receipts for families are in Money → Receipts.")}</div>
       </Card>
 
       <Card title={t("Download everything")} icon={Download}>
@@ -11743,12 +11861,14 @@ function Redacted({ width = 64 }) {
   );
 }
 function IconBtn({ icon: Icon, title, accent, onClick }) {
+  // On phones the button grows and shows its name next to the icon.
   return (
-    <button title={title} onClick={onClick} style={{
-      width: 28, height: 28, borderRadius: 8, border: `1px solid ${accent ? C.amber : C.line}`,
-      background: accent ? C.amberTint : "#fff", display: "flex", alignItems: "center", justifyContent: "center",
+    <button title={title} aria-label={title} onClick={onClick} className="icon-btn" style={{
+      minWidth: 28, height: 28, borderRadius: 8, border: `1px solid ${accent ? C.amber : C.line}`, gap: 5, padding: "0 7px",
+      background: accent ? C.amberTint : "#fff", display: "flex", alignItems: "center", justifyContent: "center", color: accent ? "#7A5620" : C.inkSoft,
     }}>
       <Icon size={13} color={accent ? "#7A5620" : C.inkSoft} />
+      <span className="icon-btn-label" style={{ fontSize: 12, fontWeight: 600 }}>{title}</span>
     </button>
   );
 }
@@ -11798,7 +11918,7 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, statu
     flexSeq += 1;
     saveFlexCare([{ id: `fc${flexSeq}`, child: fam.child, classroom: fam.classroom, type: flexForm.type, date: flexForm.date, hours: Number(flexForm.hours), notes: flexForm.notes, status: "pending", requestedBy: "parent", parentPaymentMethod: flexForm.paymentMethod, paymentConfirmed: false }, ...flexCareRequests]);
     const threadName = fam.householdName || fam.child;
-    const noteText = `${t("New flex care request")}: ${t(flexForm.type)}, ${flexForm.date} — ${t("view and respond in Bookings")}.`;
+    const noteText = `${t("New flex care request")}: ${t(flexForm.type)}, ${flexForm.date} — ${t("view and respond in Attendance")}.`;
     const existingThread = findThread(threads, { household: fam.household, name: threadName });
     if (existingThread) {
       saveThreads(threads.map((th) => th.id === existingThread.id
