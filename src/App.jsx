@@ -1372,6 +1372,45 @@ const T = {
   "I'm a parent": { es: "Soy padre o madre", tl: "Magulang ako", zh: "我是家长", vi: "Tôi là phụ huynh", ko: "학부모입니다" },
   "See what families see — check-in, receipts, FSA/HSA, messages.": { es: "Mira lo que ven las familias — entradas, recibos, FSA/HSA, mensajes.", tl: "Tingnan ang nakikita ng pamilya — check-in, resibo, FSA/HSA, mensahe.", zh: "查看家庭看到的内容 — 入园、收据、FSA/HSA、消息。", vi: "Xem những gì gia đình thấy — điểm danh, biên nhận, FSA/HSA, tin nhắn.", ko: "가족이 보는 화면 — 등원, 영수증, FSA/HSA, 메시지." },
   "Built for licensed home-based Family Child Care providers in California.": { es: "Hecho para proveedores de cuidado infantil familiar con licencia en California.", tl: "Ginawa para sa lisensyadong home-based Family Child Care provider sa California.", zh: "专为加州持照家庭式托育者打造。", vi: "Dành cho nhà giữ trẻ tại gia có giấy phép ở California.", ko: "캘리포니아 면허 가정 보육 제공자를 위해 만들었습니다." },
+  "Request early access": { es: "Solicitar acceso anticipado", tl: "Humiling ng early access", zh: "申请抢先体验", vi: "Đăng ký dùng sớm", ko: "얼리 액세스 신청" },
+  "Already have an account?": { es: "¿Ya tienes una cuenta?", tl: "May account ka na?", zh: "已有账户？", vi: "Đã có tài khoản?", ko: "이미 계정이 있으신가요?" },
+  "I'm a provider and want to use Alaga": { es: "Soy proveedor y quiero usar Alaga", tl: "Provider ako at gusto kong gamitin ang Alaga", zh: "我是托育者，想使用Alaga", vi: "Tôi là nhà cung cấp và muốn dùng Alaga", ko: "Alaga를 사용하고 싶은 제공자입니다" },
+  "Request early access and a short demo — founding providers get setup help.": { es: "Solicita acceso anticipado y una demostración — los primeros proveedores reciben ayuda para empezar.", tl: "Humiling ng early access at maikling demo — may tulong sa setup ang mga founding provider.", zh: "申请抢先体验和简短演示 — 首批托育者可获得设置帮助。", vi: "Đăng ký dùng sớm và xem demo ngắn — nhà cung cấp đầu tiên được hỗ trợ thiết lập.", ko: "얼리 액세스와 짧은 데모를 신청하세요 — 초기 제공자는 설정 지원을 받습니다." },
+  "Please enter a valid email.": { es: "Escribe un correo válido.", tl: "Maglagay ng wastong email.", zh: "请输入有效的邮箱。", vi: "Vui lòng nhập email hợp lệ.", ko: "올바른 이메일을 입력하세요." },
+  "Please fill in your name, email and city.": { es: "Escribe tu nombre, correo y ciudad.", tl: "Ilagay ang pangalan, email at lungsod.", zh: "请填写姓名、邮箱和城市。", vi: "Vui lòng nhập tên, email và thành phố.", ko: "이름, 이메일, 도시를 입력하세요." },
+  "Something went wrong saving your request. Please try again in a moment, or email us and we'll add you.": { es: "No pudimos guardar tu solicitud. Inténtalo de nuevo en un momento o escríbenos y te agregamos.", tl: "Hindi na-save ang hiling mo. Subukan ulit mamaya, o i-email kami at idadagdag ka namin.", zh: "保存申请时出错。请稍后再试，或发邮件给我们，我们帮您添加。", vi: "Không lưu được yêu cầu. Vui lòng thử lại sau, hoặc email cho chúng tôi để được thêm vào.", ko: "신청을 저장하지 못했습니다. 잠시 후 다시 시도하시거나 이메일을 보내 주시면 추가해 드리겠습니다." },
+  "You're on the list!": { es: "¡Ya estás en la lista!", tl: "Nasa listahan ka na!", zh: "您已加入名单！", vi: "Bạn đã có trong danh sách!", ko: "명단에 등록되었습니다!" },
+  "Thank you": { es: "Gracias", tl: "Salamat", zh: "谢谢", vi: "Cảm ơn", ko: "감사합니다" },
+  "We'll reach out within two business days to set up a short demo at a time that works for you.": { es: "Te contactaremos en dos días hábiles para agendar una demostración breve cuando te convenga.", tl: "Makikipag-ugnayan kami sa loob ng dalawang araw ng trabaho para mag-set ng maikling demo sa oras na bagay sa iyo.", zh: "我们会在两个工作日内联系您，安排方便的时间进行简短演示。", vi: "Chúng tôi sẽ liên hệ trong hai ngày làm việc để hẹn buổi demo ngắn vào giờ phù hợp với bạn.", ko: "영업일 기준 2일 이내에 연락드려 편한 시간에 짧은 데모를 잡아 드리겠습니다." },
+  "We'll email you as soon as early access opens.": { es: "Te escribiremos en cuanto abra el acceso anticipado.", tl: "I-email ka namin pagbukas ng early access.", zh: "抢先体验开放时我们会第一时间发邮件通知您。", vi: "Chúng tôi sẽ email ngay khi mở đăng ký dùng sớm.", ko: "얼리 액세스가 열리면 바로 이메일로 알려 드리겠습니다." },
+  "Explore the sample daycare while you wait": { es: "Explora la guardería de ejemplo mientras esperas", tl: "Tingnan ang sample na daycare habang naghihintay", zh: "等待期间先看看示例托育中心", vi: "Xem nhà trẻ mẫu trong lúc chờ", ko: "기다리는 동안 샘플 보육원을 둘러보세요" },
+  "Or explore the sample daycare first": { es: "O explora primero la guardería de ejemplo", tl: "O tingnan muna ang sample na daycare", zh: "或先看看示例托育中心", vi: "Hoặc xem nhà trẻ mẫu trước", ko: "또는 먼저 샘플 보육원을 둘러보세요" },
+  "Alaga keeps attendance, families, tuition, subsidy paperwork and licensing in one simple place — built for home-based child care providers, in six languages. Founding providers get hands-on setup help and founding pricing.": { es: "Alaga reúne asistencia, familias, colegiaturas, papeleo de subsidios y licencias en un solo lugar sencillo — hecho para proveedores de cuidado infantil en casa, en seis idiomas. Los primeros proveedores reciben ayuda personal para empezar y precio de fundador.", tl: "Pinagsasama ng Alaga ang attendance, pamilya, tuition, papeles ng subsidy at lisensya sa isang simpleng lugar — para sa home-based child care provider, sa anim na wika. May personal na tulong sa setup at founding pricing ang mga founding provider.", zh: "Alaga把出勤、家庭、学费、补助文件和执照集中在一个简单的地方 — 专为家庭式托育者打造，支持六种语言。首批托育者可获得一对一设置帮助和创始价格。", vi: "Alaga gom điểm danh, gia đình, học phí, giấy tờ trợ cấp và giấy phép vào một nơi đơn giản — dành cho nhà giữ trẻ tại gia, bằng sáu ngôn ngữ. Nhà cung cấp đầu tiên được hỗ trợ thiết lập trực tiếp và giá ưu đãi sáng lập.", ko: "Alaga는 출석, 가족, 수업료, 보조금 서류, 면허를 한곳에서 간단하게 관리합니다 — 가정 보육 제공자를 위해 6개 언어로 만들었습니다. 초기 제공자는 직접 설정 지원과 창립 회원 요금을 받습니다." },
+  "Your name": { es: "Tu nombre", tl: "Pangalan mo", zh: "您的姓名", vi: "Tên của bạn", ko: "이름" },
+  "Phone (optional)": { es: "Teléfono (opcional)", tl: "Telepono (opsyonal)", zh: "电话（可选）", vi: "Điện thoại (tùy chọn)", ko: "전화번호 (선택)" },
+  "Child care business name (optional)": { es: "Nombre de tu negocio de cuidado infantil (opcional)", tl: "Pangalan ng child care business (opsyonal)", zh: "托育机构名称（可选）", vi: "Tên cơ sở giữ trẻ (tùy chọn)", ko: "보육 사업장 이름 (선택)" },
+  "e.g. Culver City": { es: "p. ej. Culver City", tl: "hal. Culver City", zh: "例如：Culver City", vi: "vd: Culver City", ko: "예: Culver City" },
+  "What kind of program?": { es: "¿Qué tipo de programa?", tl: "Anong uri ng programa?", zh: "哪种类型的托育？", vi: "Loại hình nào?", ko: "어떤 형태의 프로그램인가요?" },
+  "Small family child care home (up to 8)": { es: "Hogar de cuidado infantil familiar pequeño (hasta 8)", tl: "Maliit na family child care home (hanggang 8)", zh: "小型家庭托育（最多8名）", vi: "Nhà giữ trẻ gia đình nhỏ (tối đa 8)", ko: "소규모 가정 보육 (최대 8명)" },
+  "Large family child care home (up to 14)": { es: "Hogar de cuidado infantil familiar grande (hasta 14)", tl: "Malaking family child care home (hanggang 14)", zh: "大型家庭托育（最多14名）", vi: "Nhà giữ trẻ gia đình lớn (tối đa 14)", ko: "대규모 가정 보육 (최대 14명)" },
+  "Child care center": { es: "Centro de cuidado infantil", tl: "Child care center", zh: "托育中心", vi: "Trung tâm giữ trẻ", ko: "어린이집" },
+  "License-exempt / family, friend & neighbor": { es: "Exento de licencia / familia, amigos y vecinos", tl: "License-exempt / pamilya, kaibigan at kapitbahay", zh: "免执照 / 亲友邻居照护", vi: "Miễn giấy phép / gia đình, bạn bè và hàng xóm", ko: "면허 면제 / 가족·친구·이웃 돌봄" },
+  "Getting licensed": { es: "Tramitando la licencia", tl: "Nag-aapply ng lisensya", zh: "正在申请执照", vi: "Đang xin giấy phép", ko: "면허 취득 중" },
+  "How many children?": { es: "¿Cuántos niños?", tl: "Ilang bata?", zh: "多少个孩子？", vi: "Bao nhiêu trẻ?", ko: "아동 수" },
+  "Work with subsidies?": { es: "¿Trabajas con subsidios?", tl: "May subsidy ka ba?", zh: "是否接受补助？", vi: "Có nhận trợ cấp không?", ko: "보조금을 받나요?" },
+  "Yes": { es: "Sí", tl: "Oo", zh: "是", vi: "Có", ko: "예" },
+  "No": { es: "No", tl: "Hindi", zh: "否", vi: "Không", ko: "아니요" },
+  "Not sure": { es: "No estoy seguro", tl: "Hindi sigurado", zh: "不确定", vi: "Không chắc", ko: "잘 모르겠음" },
+  "How do you keep track of things today?": { es: "¿Cómo llevas el control hoy?", tl: "Paano mo itinatala ang lahat ngayon?", zh: "您现在用什么方式记录？", vi: "Hiện bạn theo dõi mọi thứ bằng cách nào?", ko: "지금은 어떻게 기록하고 계신가요?" },
+  "Paper and binders": { es: "Papel y carpetas", tl: "Papel at binder", zh: "纸张和文件夹", vi: "Giấy và bìa hồ sơ", ko: "종이와 바인더" },
+  "Excel or Google Sheets": { es: "Excel o Google Sheets", tl: "Excel o Google Sheets", zh: "Excel或Google表格", vi: "Excel hoặc Google Sheets", ko: "엑셀 또는 구글 시트" },
+  "Another app": { es: "Otra aplicación", tl: "Ibang app", zh: "其他应用", vi: "Ứng dụng khác", ko: "다른 앱" },
+  "A mix of these": { es: "Una combinación", tl: "Halo-halo", zh: "以上混合", vi: "Kết hợp các cách trên", ko: "여러 방법 혼용" },
+  "Anything you'd like us to know? (optional)": { es: "¿Algo que quieras contarnos? (opcional)", tl: "May gusto ka bang sabihin? (opsyonal)", zh: "还有什么想告诉我们的？（可选）", vi: "Bạn muốn chia sẻ gì thêm? (tùy chọn)", ko: "더 알려 주실 내용이 있나요? (선택)" },
+  "What takes up the most time each week?": { es: "¿Qué te quita más tiempo cada semana?", tl: "Ano ang pinakamatagal mong ginagawa bawat linggo?", zh: "每周最花时间的是什么？", vi: "Việc gì tốn thời gian nhất mỗi tuần?", ko: "매주 가장 시간이 많이 드는 일은 무엇인가요?" },
+  "I'd like a short demo (about 15 minutes)": { es: "Quiero una demostración breve (unos 15 minutos)", tl: "Gusto ko ng maikling demo (mga 15 minuto)", zh: "我想看简短演示（约15分钟）", vi: "Tôi muốn xem demo ngắn (khoảng 15 phút)", ko: "짧은 데모를 원합니다 (약 15분)" },
+  "Sending…": { es: "Enviando…", tl: "Ipinapadala…", zh: "发送中…", vi: "Đang gửi…", ko: "전송 중…" },
+  "We'll only use this to contact you about Alaga. We never sell your information.": { es: "Solo usaremos esto para contactarte sobre Alaga. Nunca vendemos tu información.", tl: "Gagamitin lang namin ito para kontakin ka tungkol sa Alaga. Hindi namin ibinebenta ang impormasyon mo.", zh: "我们只会用这些信息联系您关于Alaga的事，绝不出售您的信息。", vi: "Chúng tôi chỉ dùng thông tin này để liên hệ về Alaga. Chúng tôi không bao giờ bán thông tin của bạn.", ko: "Alaga 관련 연락에만 사용하며, 정보를 절대 판매하지 않습니다." },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -2748,7 +2787,7 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language
   );
 }
 
-function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, language, setLanguage }) {
+function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, onEarlyAccess, language, setLanguage }) {
   const t = useT();
   // The cross-account admin view stays off the public page; open the site with
   // ?admin=1 at the end of the URL to see it.
@@ -2768,11 +2807,14 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, lan
         {t("Nurturing the foundation for your childcare business")}.
       </div>
 
-      <button onClick={onSignIn} style={{
-        marginBottom: 36, background: C.teal, color: "#fff", border: "none", borderRadius: 12,
-        padding: "13px 28px", fontWeight: 700, fontSize: 15.5,
+      <button onClick={onEarlyAccess} style={{
+        marginBottom: 10, background: C.teal, color: "#fff", border: "none", borderRadius: 12,
+        padding: "14px 30px", fontWeight: 700, fontSize: 16,
       }}>
-        {t("Sign in to your account")}
+        {t("Request early access")}
+      </button>
+      <button onClick={onSignIn} style={{ marginBottom: 32, background: "none", border: "none", color: C.inkSoft, fontSize: 13, fontWeight: 600 }}>
+        {t("Already have an account?")} <span style={{ color: C.teal, fontWeight: 700 }}>{t("Sign in")}</span>
       </button>
 
       <div style={{ maxWidth: 980, width: "100%" }}>
@@ -2824,13 +2866,13 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, lan
           {t("Other ways in")}
         </div>
         <div style={{ display: "grid", gridTemplateColumns: showAdmin ? "1fr 1fr 1fr" : "1fr 1fr", gap: 18 }}>
-          <button onClick={onSignUp} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
+          <button onClick={onEarlyAccess} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
             <div style={{ width: 46, height: 46, borderRadius: 12, background: C.skyTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <Rocket size={22} color={C.sky} />
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>{t("I'm a new provider signing up")}</div>
-              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>{t("Create your account, then set up your own empty workspace.")}</div>
+              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>{t("I'm a provider and want to use Alaga")}</div>
+              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>{t("Request early access and a short demo — founding providers get setup help.")}</div>
             </div>
             <ArrowRight size={16} color={C.sky} />
           </button>
@@ -3197,6 +3239,7 @@ function AdminScreen({ onBack }) {
 
       <div style={{ maxWidth: 1180, margin: "0 auto", padding: "28px 32px 60px", display: "flex", flexDirection: "column", gap: 20 }}>
         <div>
+        <EarlyAccessAdmin />
           <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, color: C.ink }}>Providers on the platform</div>
           <div style={{ fontSize: 13, color: C.inkSoft, marginTop: 3 }}>A cross-account view for the Alaga team — not visible to individual providers.</div>
         </div>
@@ -4080,7 +4123,11 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
 }
 
 export default function AlagaMockup() {
-  const [entry, setEntry] = useState("landing"); // "landing" | "wizard" | "workspace" | "admin"
+  const [entry, setEntry] = useState(() => {
+    if (typeof window === "undefined") return "landing";
+    const pth = window.location.pathname.replace(/\/+$/, "");
+    return pth === "/early-access" || new URLSearchParams(window.location.search).has("early-access") ? "early" : "landing";
+  }); // "landing" | "early" | "wizard" | "workspace" | "admin"
   const [isEmptyWorkspace, setIsEmptyWorkspace] = useState(false);
   const [forcedTier, setForcedTier] = useState(null);
   const [meetingMode, setMeetingMode] = useState(false);
@@ -4126,9 +4173,16 @@ export default function AlagaMockup() {
     return <LanguageContext.Provider value={publicCtx}><LandingChooser language={publicLanguage} setLanguage={setPublicLanguage}
       onDemo={(demoTier, isMeeting) => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier(demoTier); setMeetingMode(!!isMeeting); setStartInParent(false); setEntry("workspace"); }}
       onSignUp={() => { setAuthMode("signup"); setEntry("auth"); }}
+      onEarlyAccess={() => setEntry("early")}
       onAdmin={() => setEntry("admin")}
       onSignIn={() => { setAuthMode("signin"); setEntry("auth"); }}
       onParentDemo={() => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier("extended"); setMeetingMode(false); setStartInParent(true); setEntry("workspace"); }}
+    /></LanguageContext.Provider>;
+  }
+  if (entry === "early") {
+    return <LanguageContext.Provider value={publicCtx}><EarlyAccessScreen language={publicLanguage} setLanguage={setPublicLanguage}
+      onBack={() => { if (window.location.pathname !== "/") window.history.replaceState(null, "", "/"); setEntry("landing"); }}
+      onDemo={() => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier("extended"); setMeetingMode(false); setStartInParent(false); setEntry("workspace"); }}
     /></LanguageContext.Provider>;
   }
   if (entry === "auth") {
@@ -4156,6 +4210,203 @@ export default function AlagaMockup() {
     /></LanguageContext.Provider>;
   }
   return <Workspace initialLanguage={publicLanguage} onLanguageChange={setPublicLanguage} isEmpty={isEmptyWorkspace} providerInfo={providerInfo} onboardingData={onboardingData} onExitToLanding={() => setEntry("landing")} forceTier={forcedTier} meetingMode={meetingMode} startInParentMode={startInParent} />;
+}
+
+/* ------------------------------ early access ------------------------------------ */
+// Public "Request early access" form. Each request is saved to Firestore
+// (collection early_access). Only the Alaga admin account can read them.
+const EARLY_ACCESS_ADMIN = "sarahallisondiaz@gmail.com";
+const EA_PROVIDER_TYPES = ["Small family child care home (up to 8)", "Large family child care home (up to 14)", "Child care center", "License-exempt / family, friend & neighbor", "Getting licensed"];
+const EA_TRACKING = ["Paper and binders", "Excel or Google Sheets", "Another app", "A mix of these"];
+const EA_LANGS = ["English", "Español", "Tagalog", "中文", "Tiếng Việt", "한국어"];
+async function eaDb() {
+  const { getFirestore } = await import("firebase/firestore");
+  const { app } = await import("./firebase.js");
+  return getFirestore(app);
+}
+function EarlyAccessScreen({ onBack, onDemo, language = "English", setLanguage }) {
+  const t = useT();
+  const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : new URLSearchParams();
+  const source = [params.get("utm_source"), params.get("utm_medium"), params.get("utm_campaign"), params.get("ref")].filter(Boolean).join(" / ") || (typeof document !== "undefined" && document.referrer ? new URL(document.referrer).hostname : "direct");
+  const [f, setF] = useState({ name: "", email: "", phone: "", business: "", city: "", providerType: EA_PROVIDER_TYPES[0], children: "", tracking: EA_TRACKING[0], subsidy: "Yes", language: LANG_OPTIONS.includes(language) ? language : "English", wantsDemo: true, notes: "", website: "" });
+  const [state, setState] = useState("idle"); // idle | sending | done | error
+  const [err, setErr] = useState("");
+  const set = (k) => (e) => setF({ ...f, [k]: e && e.target ? (e.target.type === "checkbox" ? e.target.checked : e.target.value) : e });
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim());
+  const canSend = f.name.trim() && emailOk && f.city.trim() && state !== "sending";
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!canSend) { setErr(!emailOk ? t("Please enter a valid email.") : t("Please fill in your name, email and city.")); return; }
+    if (f.website) { setState("done"); return; } // bots fill hidden fields
+    setState("sending"); setErr("");
+    try {
+      const db = await eaDb();
+      const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
+      const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 15000));
+      await Promise.race([timeout, addDoc(collection(db, "early_access"), {
+        name: f.name.trim().slice(0, 119), email: f.email.trim().toLowerCase().slice(0, 199), phone: f.phone.trim().slice(0, 40),
+        business: f.business.trim().slice(0, 150), city: f.city.trim().slice(0, 100), providerType: f.providerType,
+        children: String(f.children).slice(0, 10), tracking: f.tracking, subsidy: f.subsidy, language: f.language,
+        wantsDemo: !!f.wantsDemo, notes: f.notes.trim().slice(0, 1999), source: source.slice(0, 200), createdAt: serverTimestamp(),
+      })]);
+      setState("done");
+    } catch (ex) {
+      setState("error");
+      setErr(t("Something went wrong saving your request. Please try again in a moment, or email us and we'll add you."));
+    }
+  };
+  const input = { width: "100%", boxSizing: "border-box", border: `1px solid ${C.line}`, borderRadius: 10, padding: "11px 12px", fontSize: 14.5, fontFamily: "inherit", background: "#fff", color: C.ink };
+  const label = (txt, req) => <div style={{ fontSize: 12.5, fontWeight: 700, color: C.inkSoft, marginBottom: 5 }}>{txt}{req && <span style={{ color: C.teal }}> *</span>}</div>;
+  return (
+    <div style={{ minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", color: C.ink, backgroundImage: BANIG_PATTERN(C.line, 0.5), backgroundSize: "16px 16px", padding: "32px 16px 60px" }}>
+      <style>{FONTS}</style>
+      <div style={{ maxWidth: 560, margin: "0 auto" }}>
+        {setLanguage && <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: -8 }}><LanguagePicker language={language} setLanguage={(l) => { setLanguage(l); setF((x) => ({ ...x, language: l })); }} /></div>}
+        <button onClick={onBack} style={{ background: "none", border: "none", color: C.inkSoft, fontSize: 13, fontWeight: 600, padding: 0, marginBottom: 18, display: "flex", alignItems: "center", gap: 6 }}><ArrowLeft size={14} /> {t("Back")}</button>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+          <AlagaMark size={44} color={C.tealDark} />
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 34, fontWeight: 900, color: C.tealDark }}>alaga</div>
+        </div>
+        {state === "done" ? (
+          <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderLeft: `4px solid ${C.teal}`, borderRadius: 16, padding: "26px 24px", marginTop: 18 }}>
+            <CheckCircle2 size={28} color={C.teal} />
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, marginTop: 10 }}>{t("You're on the list!")}</div>
+            <div style={{ fontSize: 14.5, color: C.inkSoft, lineHeight: 1.6, marginTop: 8 }}>
+              {t("Thank you")}{f.name ? `, ${f.name.split(" ")[0]}` : ""}. {f.wantsDemo ? t("We'll reach out within two business days to set up a short demo at a time that works for you.") : t("We'll email you as soon as early access opens.")}
+            </div>
+            {onDemo && <button onClick={onDemo} style={{ marginTop: 18, padding: "12px 18px", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 14.5 }}>{t("Explore the sample daycare while you wait")} →</button>}
+          </div>
+        ) : (
+          <>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 28, fontWeight: 600, lineHeight: 1.25, marginTop: 8 }}>{t("Request early access")}</div>
+            <div style={{ fontSize: 14.5, color: C.inkSoft, lineHeight: 1.6, marginTop: 8 }}>
+              {t("Alaga keeps attendance, families, tuition, subsidy paperwork and licensing in one simple place — built for home-based child care providers, in six languages. Founding providers get hands-on setup help and founding pricing.")}
+            </div>
+            <form onSubmit={submit} style={{ boxSizing: "border-box", background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, padding: "22px 20px", marginTop: 20, display: "flex", flexDirection: "column", gap: 14 }}>
+              <div>{label(t("Your name"), true)}<input value={f.name} onChange={set("name")} autoComplete="name" style={input} /></div>
+              <div>{label(t("Email"), true)}<input type="email" value={f.email} onChange={set("email")} autoComplete="email" inputMode="email" style={input} /></div>
+              <div>{label(t("Phone (optional)"))}<input type="tel" value={f.phone} onChange={set("phone")} autoComplete="tel" style={input} /></div>
+              <div>{label(t("Child care business name (optional)"))}<input value={f.business} onChange={set("business")} style={input} /></div>
+              <div>{label(t("City"), true)}<input value={f.city} onChange={set("city")} autoComplete="address-level2" placeholder={t("e.g. Culver City")} style={input} /></div>
+              <div>{label(t("What kind of program?"))}<select value={f.providerType} onChange={set("providerType")} style={input}>{EA_PROVIDER_TYPES.map((x) => <option key={x} value={x}>{t(x)}</option>)}</select></div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>{label(t("How many children?"))}<input type="number" min={0} max={200} value={f.children} onChange={set("children")} inputMode="numeric" style={input} /></div>
+                <div>{label(t("Work with subsidies?"))}<select value={f.subsidy} onChange={set("subsidy")} style={input}>{["Yes", "No", "Not sure"].map((x) => <option key={x} value={x}>{t(x)}</option>)}</select></div>
+              </div>
+              <div>{label(t("How do you keep track of things today?"))}<select value={f.tracking} onChange={set("tracking")} style={input}>{EA_TRACKING.map((x) => <option key={x} value={x}>{t(x)}</option>)}</select></div>
+              <div>{label(t("Preferred language"))}<select value={f.language} onChange={set("language")} style={input}>{EA_LANGS.map((x) => <option key={x}>{x}</option>)}</select></div>
+              <div>{label(t("Anything you'd like us to know? (optional)"))}<textarea value={f.notes} onChange={set("notes")} rows={3} placeholder={t("What takes up the most time each week?")} style={{ ...input, resize: "vertical" }} /></div>
+              <input value={f.website} onChange={set("website")} tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: -9999, width: 1, height: 1, opacity: 0 }} />
+              <label style={{ display: "flex", gap: 10, alignItems: "flex-start", fontSize: 14, cursor: "pointer" }}>
+                <input type="checkbox" checked={f.wantsDemo} onChange={set("wantsDemo")} style={{ width: 18, height: 18, accentColor: C.teal, marginTop: 1, flexShrink: 0 }} />
+                <span>{t("I'd like a short demo (about 15 minutes)")}</span>
+              </label>
+              {err && <div style={{ fontSize: 13, color: C.danger }}>{err}</div>}
+              <button type="submit" disabled={state === "sending"} style={{ padding: "13px 0", borderRadius: 11, border: "none", background: canSend ? C.teal : "#D9D2C5", color: "#fff", fontWeight: 700, fontSize: 15.5 }}>
+                {state === "sending" ? t("Sending…") : t("Request early access")}
+              </button>
+              <div style={{ fontSize: 11.5, color: C.inkSoft, lineHeight: 1.5 }}>{t("We'll only use this to contact you about Alaga. We never sell your information.")}</div>
+            </form>
+            {onDemo && <button onClick={onDemo} style={{ marginTop: 14, background: "none", border: "none", color: C.teal, fontWeight: 700, fontSize: 14, padding: 0 }}>{t("Or explore the sample daycare first")} →</button>}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+// Private list of early-access requests for the Alaga admin account.
+function EarlyAccessAdmin() {
+  const [user, setUser] = useState(undefined);
+  const [rows, setRows] = useState(null);
+  const [msg, setMsg] = useState("");
+  const [cred, setCred] = useState({ email: EARLY_ACCESS_ADMIN, password: "" });
+  useEffect(() => {
+    let unsub = () => {};
+    (async () => {
+      const { onAuthStateChanged } = await import("firebase/auth");
+      const { auth } = await import("./firebase.js");
+      unsub = onAuthStateChanged(auth, (u) => setUser(u || null));
+    })();
+    return () => unsub();
+  }, []);
+  const isAdmin = user && user.email === EARLY_ACCESS_ADMIN && user.emailVerified;
+  const load = async () => {
+    try {
+      const db = await eaDb();
+      const { collection, getDocs, query, orderBy } = await import("firebase/firestore");
+      const snap = await getDocs(query(collection(db, "early_access"), orderBy("createdAt", "desc")));
+      setRows(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      setMsg("");
+    } catch (e) { setMsg("Couldn't load requests. Check that the Firestore database and rules are set up."); }
+  };
+  useEffect(() => { if (isAdmin) load(); }, [isAdmin]);
+  const signIn = async (e) => {
+    e.preventDefault();
+    try { const { signInWithEmailAndPassword } = await import("firebase/auth"); const { auth } = await import("./firebase.js"); await signInWithEmailAndPassword(auth, cred.email, cred.password); setMsg(""); }
+    catch (ex) { setMsg("Sign-in didn't work. Check the email and password."); }
+  };
+  const verify = async () => {
+    try { const { sendEmailVerification } = await import("firebase/auth"); await sendEmailVerification(user); setMsg(`Verification email sent to ${user.email}. Open it, then reload this page.`); }
+    catch (e) { setMsg("Couldn't send the verification email. Try again in a minute."); }
+  };
+  const markContacted = async (r) => {
+    try {
+      const db = await eaDb();
+      const { doc, updateDoc, serverTimestamp } = await import("firebase/firestore");
+      const next = r.status === "contacted" ? "new" : "contacted";
+      await updateDoc(doc(db, "early_access", r.id), { status: next, contactedAt: serverTimestamp() });
+      setRows(rows.map((x) => (x.id === r.id ? { ...x, status: next } : x)));
+    } catch (e) { setMsg("Couldn't update that request."); }
+  };
+  const when = (r) => (r.createdAt && r.createdAt.toDate ? r.createdAt.toDate().toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "");
+  const exportCsv = () => downloadCSV("alaga-early-access.csv", ["Received", "Name", "Email", "Phone", "Business", "City", "Program", "Children", "Subsidies", "Tracks with", "Language", "Wants demo", "Notes", "Source", "Status"],
+    (rows || []).map((r) => [when(r), r.name, r.email, r.phone, r.business, r.city, r.providerType, r.children, r.subsidy, r.tracking, r.language, r.wantsDemo ? "Yes" : "No", r.notes, r.source, r.status || "new"]));
+  const box = { background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, padding: 18, marginBottom: 22 };
+  return (
+    <div style={box}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 10 }}>
+        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>Early access requests {rows ? `(${rows.length})` : ""}</div>
+        {isAdmin && rows && (
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={load} style={{ padding: "7px 12px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12.5, fontWeight: 700, color: C.tealDark }}>Refresh</button>
+            <button onClick={exportCsv} style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 12px", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12.5, fontWeight: 700 }}><Download size={13} /> CSV</button>
+          </div>
+        )}
+      </div>
+      {user === undefined && <div style={{ fontSize: 13, color: C.inkSoft }}>Loading…</div>}
+      {user === null && (
+        <form onSubmit={signIn} style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 360 }}>
+          <div style={{ fontSize: 13, color: C.inkSoft }}>Sign in with the Alaga admin account to see requests.</div>
+          <input type="email" value={cred.email} onChange={(e) => setCred({ ...cred, email: e.target.value })} style={{ ...inputStyle, padding: "9px 11px" }} />
+          <input type="password" value={cred.password} onChange={(e) => setCred({ ...cred, password: e.target.value })} placeholder="Password" style={{ ...inputStyle, padding: "9px 11px" }} />
+          <button type="submit" style={{ padding: "9px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 700 }}>Sign in</button>
+        </form>
+      )}
+      {user && user.email !== EARLY_ACCESS_ADMIN && <div style={{ fontSize: 13, color: C.inkSoft }}>Signed in as {user.email}. This list is only for the Alaga admin account.</div>}
+      {user && user.email === EARLY_ACCESS_ADMIN && !user.emailVerified && (
+        <div style={{ fontSize: 13, color: C.inkSoft, display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-start" }}>
+          For privacy, the request list opens only after your email is verified.
+          <button onClick={verify} style={{ padding: "8px 14px", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 13 }}>Send verification email</button>
+        </div>
+      )}
+      {msg && <div style={{ fontSize: 13, color: C.danger, marginTop: 8 }}>{msg}</div>}
+      {isAdmin && rows && rows.length === 0 && <div style={{ fontSize: 13, color: C.inkSoft }}>No requests yet. Share yoursite.com/early-access to start collecting them.</div>}
+      {isAdmin && rows && rows.map((r) => (
+        <div key={r.id} style={{ borderTop: `1px solid ${C.line}`, padding: "12px 0", display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ fontWeight: 700, fontSize: 14 }}>{r.name} {r.wantsDemo && <span style={{ fontSize: 11, fontWeight: 700, color: C.teal, background: C.tealTint, borderRadius: 999, padding: "2px 8px", marginLeft: 6 }}>Wants demo</span>}</div>
+            <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}><a href={`mailto:${r.email}`} style={{ color: C.tealDark }}>{r.email}</a>{r.phone ? ` · ${r.phone}` : ""} · {r.city}</div>
+            <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{[r.business, r.providerType, r.children ? `${r.children} children` : "", `Subsidies: ${r.subsidy}`, r.tracking, r.language].filter(Boolean).join(" · ")}</div>
+            {r.notes && <div style={{ fontSize: 12.5, marginTop: 4, fontStyle: "italic" }}>"{r.notes}"</div>}
+            <div style={{ fontSize: 11, color: C.inkSoft, marginTop: 3 }}>{when(r)}{r.source ? ` · from ${r.source}` : ""}</div>
+          </div>
+          <button onClick={() => markContacted(r)} style={{ alignSelf: "flex-start", padding: "6px 10px", borderRadius: 8, border: `1px solid ${r.status === "contacted" ? C.teal : C.line}`, background: r.status === "contacted" ? C.tealTint : "#fff", fontSize: 12, fontWeight: 700, color: r.status === "contacted" ? C.tealDark : C.inkSoft }}>
+            {r.status === "contacted" ? "Contacted ✓" : "Mark contacted"}
+          </button>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 /* --------------------------------- sidebar ------------------------------------ */
