@@ -2432,7 +2432,7 @@ function buildExpansionChecklist(currentCapacity, targetCapacity) {
 const EXPANSION_STATUS_META = {
   "not-started": { label: "Not started", fg: "#8A8578", bg: "#F1EEE5" },
   "in-progress": { label: "In progress", fg: "#C0863B", bg: "#F6E9D6" },
-  "complete": { label: "Complete", fg: "#1F6F60", bg: "#E3F0EB" },
+  "complete": { label: "Complete", fg: C.tealDark, bg: C.tealTint },
 };
 
 const LanguageContext = React.createContext({ lang: "en", t: (s) => s });
@@ -2595,7 +2595,7 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin" }) {
 
         <button type="submit" disabled={busy} style={{
           width: "100%", marginTop: 14, padding: "12px 0", borderRadius: 10, border: "none",
-          background: C.tealDark, color: "#fff", fontWeight: 700, fontSize: 14.5, opacity: busy ? 0.7 : 1,
+          background: C.teal, color: "#fff", fontWeight: 700, fontSize: 14.5, opacity: busy ? 0.7 : 1,
         }}>
           {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
         </button>
@@ -2627,7 +2627,7 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo }) {
       </div>
 
       <button onClick={onSignIn} style={{
-        marginBottom: 36, background: C.tealDark, color: "#fff", border: "none", borderRadius: 12,
+        marginBottom: 36, background: C.teal, color: "#fff", border: "none", borderRadius: 12,
         padding: "13px 28px", fontWeight: 700, fontSize: 15.5,
       }}>
         Sign in to your account
@@ -3021,16 +3021,16 @@ function AdminScreen({ onBack }) {
   return (
     <div style={{ minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif" }}>
       <style>{FONTS}</style>
-      <div style={{ background: C.tealDark, padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", backgroundImage: BANIG_PATTERN("#FFFFFF", 0.05), backgroundSize: "16px 16px" }}>
+      <div style={{ background: C.side, borderBottom: `1px solid ${C.line}`, padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <AlagaMark size={26} color="#fff" arch={false} />
+          <AlagaMark size={26} color={C.teal} arch={false} />
           <div>
-            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 15, fontWeight: 500, color: "#fff" }}><span style={{ fontFamily: "'Fraunces', serif", fontSize: 17, fontWeight: 900 }}>alaga</span> <span style={{ color: "#B9CFC6", fontWeight: 400 }}>admin</span></div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 15, fontWeight: 500, color: C.ink }}><span style={{ fontFamily: "'Fraunces', serif", fontSize: 17, fontWeight: 900 }}>alaga</span> <span style={{ color: C.tealDark, fontWeight: 400 }}>admin</span></div>
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <div style={{ position: "relative", display: "flex" }}>
-            <LifeBuoy size={19} color="#CBDAD2" />
+            <LifeBuoy size={19} color={C.inkSoft} />
             {openTicketCount > 0 && (
               <span style={{
                 position: "absolute", top: -6, right: -7, minWidth: 16, height: 16, borderRadius: 999, background: C.coral,
@@ -3038,7 +3038,7 @@ function AdminScreen({ onBack }) {
               }}>{openTicketCount}</span>
             )}
           </div>
-          <button onClick={onBack} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: "#CBDAD2", background: "none", border: "1px solid rgba(255,255,255,0.25)", borderRadius: 8, padding: "7px 12px" }}>
+          <button onClick={onBack} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: C.inkSoft, background: "none", border: `1px solid ${C.line}`, borderRadius: 8, padding: "7px 12px" }}>
             <ArrowLeft size={13} /> Back to start
           </button>
         </div>
@@ -3511,7 +3511,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
 
         <button onClick={onEnter} style={{
           width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-          padding: "15px 20px", borderRadius: 12, border: "none", background: C.tealDark, color: "#fff",
+          padding: "15px 20px", borderRadius: 12, border: "none", background: C.teal, color: "#fff",
           fontWeight: 700, fontSize: 15.5, marginBottom: 10,
         }}>
           {isEs ? "Comenzar el día" : "Step into the day"} <ArrowRight size={16} />
@@ -4723,16 +4723,16 @@ function CheckIn({ families, status, log, setChildStatus }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       {/* parent self-check-in QR */}
-      <div style={{ display: "flex", gap: 18, alignItems: "center", background: C.tealDark, borderRadius: 16, padding: "20px 24px", color: "#fff" }}>
+      <div style={{ display: "flex", gap: 18, alignItems: "center", background: C.paper, border: `1px solid ${C.line}`, borderLeft: `4px solid ${C.teal}`, borderRadius: 16, padding: "20px 24px", color: C.ink }}>
         <div style={{ background: "#fff", borderRadius: 12, padding: 8, flexShrink: 0, lineHeight: 0 }}>
           <img src={QR_DATA_URI} alt="QR code for parent self check-in" width={110} height={110} style={{ display: "block", borderRadius: 4 }} />
         </div>
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "#9DB5AA" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: C.tealDark }}>
             <ScanLine size={13} /> {t("Parent self-check-in")}
           </div>
           <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600, marginTop: 4 }}>{t("Scan to check your child in or out")}</div>
-          <div style={{ fontSize: 13, color: "#CBDAD2", marginTop: 4, maxWidth: 420, lineHeight: 1.5 }}>
+          <div style={{ fontSize: 13, color: C.inkSoft, marginTop: 4, maxWidth: 420, lineHeight: 1.5 }}>
             {t("Parents scan this code with their phone at drop-off or pickup — no app required. It links to")} {QR_CHECKIN_URL}{t(", and works the same way as the check-in tab in the parent app. Staff can still check families in manually below.")}
           </div>
         </div>
@@ -8505,7 +8505,7 @@ function BudgetPlanner({ budgetPlan, saveBudgetPlan, meetingMode = false }) {
                   </div>
                 </div>
               </div>
-              <div style={{ width: "100%", height: 10, borderRadius: 999, background: "#EFEAE0", overflow: "hidden" }}>
+              <div style={{ width: "100%", height: 10, borderRadius: 999, background: C.cream, overflow: "hidden" }}>
                 <div style={{ width: `${overallPct}%`, height: "100%", background: overBudget ? C.danger : C.teal, borderRadius: 999 }} />
               </div>
             </div>
@@ -8515,7 +8515,7 @@ function BudgetPlanner({ budgetPlan, saveBudgetPlan, meetingMode = false }) {
               if (!insight || meetingMode) return null;
               const toneStyle = {
                 celebrate: { bg: C.tealTint, fg: C.tealDark, icon: Sparkles },
-                steady: { bg: C.skyTint, fg: "#3D5A78", icon: CheckCircle2 },
+                steady: { bg: C.skyTint, fg: C.sky, icon: CheckCircle2 },
                 nudge: { bg: C.amberTint, fg: "#7A5620", icon: Wand2 },
               }[insight.tone];
               const Icon = toneStyle.icon;
@@ -8590,7 +8590,7 @@ function BudgetPlanner({ budgetPlan, saveBudgetPlan, meetingMode = false }) {
                       </div>
                     )}
                   </div>
-                  <div style={{ width: "100%", height: 6, borderRadius: 999, background: "#EFEAE0", overflow: "hidden" }}>
+                  <div style={{ width: "100%", height: 6, borderRadius: 999, background: C.cream, overflow: "hidden" }}>
                     <div style={{ width: `${pct}%`, height: "100%", background: over ? C.danger : C.teal, borderRadius: 999 }} />
                   </div>
                 </div>
@@ -8849,14 +8849,14 @@ function BusinessExpenses({ expenses, saveExpenses, incomeTotal, expenseTotal, o
             {scanState === "scanning" && (
               <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 14px", borderRadius: 10, background: C.skyTint }}>
                 <div style={{ width: 16, height: 16, border: `2px solid ${C.sky}`, borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-                <span style={{ fontSize: 12.5, color: "#2E5A78" }}>{t("Reading receipt…")}</span>
+                <span style={{ fontSize: 12.5, color: C.sky }}>{t("Reading receipt…")}</span>
                 <style>{"@keyframes spin { to { transform: rotate(360deg); } }"}</style>
               </div>
             )}
             {scanState === "review" && (
               <div style={{ padding: "10px 12px", borderRadius: 10, background: C.skyTint, display: "flex", gap: 8, alignItems: "flex-start" }}>
                 <Info size={13} color={C.sky} style={{ marginTop: 2, flexShrink: 0 }} />
-                <div style={{ fontSize: 11.5, color: "#2E5A78", lineHeight: 1.5 }}>
+                <div style={{ fontSize: 11.5, color: C.sky, lineHeight: 1.5 }}>
                   {t("Detected from your receipt — this is a preview of automatic categorization. Please review before saving; nothing is added yet.")}
                 </div>
               </div>
@@ -9212,15 +9212,15 @@ function AuditMode({ licensing = {}, docs, families, onClose, provider, staff })
   const withinRatio = qualified >= required;
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 60, background: "#fff", overflowY: "auto" }}>
-      <div className="audit-no-print" style={{ position: "sticky", top: 0, background: C.tealDark, padding: "14px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", zIndex: 1 }}>
-        <div style={{ color: "#fff", fontWeight: 700, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }}>
+      <div className="audit-no-print" style={{ position: "sticky", top: 0, background: C.side, borderBottom: `1px solid ${C.line}`, padding: "14px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", zIndex: 1 }}>
+        <div style={{ color: C.ink, fontWeight: 700, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }}>
           <ClipboardCheck size={16} /> {t("Audit Mode")}
         </div>
         <div style={{ display: "flex", gap: 10 }}>
-          <button onClick={() => printAuditPacket({ provider, licensing, docs, families, staff, ratio: { required, qualified }, t })} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: "none", background: C.amber, color: "#fff", fontWeight: 700, fontSize: 12.5 }}>
+          <button onClick={() => printAuditPacket({ provider, licensing, docs, families, staff, ratio: { required, qualified }, t })} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 12.5 }}>
             <Printer size={13} /> {t("Print packet")}
           </button>
-          <button onClick={onClose} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.3)", background: "none", color: "#fff", fontWeight: 600, fontSize: 12.5 }}>
+          <button onClick={onClose} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", color: C.ink, fontWeight: 600, fontSize: 12.5 }}>
             <X size={13} /> {t("Exit Audit Mode")}
           </button>
         </div>
@@ -9899,7 +9899,7 @@ function ComposeModal({ families, staff, onClose, onSend, agencies = [], onSuppo
           </Field>
 
           <button onClick={() => (recipientType === "support" ? onSupport(text) : onSend(names, text, recipientType.includes("staff") ? "staff" : recipientType === "agency" ? "agency" : recipientType === "other" ? "other" : recipientType.includes("all") ? "broadcast" : "direct"))} disabled={!canSend} style={{
-            padding: "11px 0", borderRadius: 10, border: "none", background: canSend ? C.teal : "#D8DFD8", color: "#fff", fontWeight: 600, fontSize: 13.5,
+            padding: "11px 0", borderRadius: 10, border: "none", background: canSend ? C.teal : "#D9D2C5", color: "#fff", fontWeight: 600, fontSize: 13.5,
           }}>
             {t("Send")} {names.length > 1 ? `(${names.length} ${t("recipients")})` : ""}
           </button>
@@ -10351,15 +10351,15 @@ function GrowthPacket({ growth, families, provider, currentCapacity, onClose }) 
   const completeCount = growth.checklist.filter((i) => i.status === "complete").length;
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 60, background: "#fff", overflowY: "auto" }}>
-      <div className="audit-no-print" style={{ position: "sticky", top: 0, background: C.tealDark, padding: "14px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", zIndex: 1 }}>
-        <div style={{ color: "#fff", fontWeight: 700, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }}>
+      <div className="audit-no-print" style={{ position: "sticky", top: 0, background: C.side, borderBottom: `1px solid ${C.line}`, padding: "14px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", zIndex: 1 }}>
+        <div style={{ color: C.ink, fontWeight: 700, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }}>
           <TrendingUp size={16} /> {t("Growth Submission Packet")}
         </div>
         <div style={{ display: "flex", gap: 10 }}>
-          <button onClick={() => window.print()} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: "none", background: C.amber, color: "#fff", fontWeight: 700, fontSize: 12.5 }}>
+          <button onClick={() => window.print()} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 12.5 }}>
             <Printer size={13} /> {t("Print packet")}
           </button>
-          <button onClick={onClose} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.3)", background: "none", color: "#fff", fontWeight: 600, fontSize: 12.5 }}>
+          <button onClick={onClose} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", color: C.ink, fontWeight: 600, fontSize: 12.5 }}>
             <X size={13} /> {t("Close")}
           </button>
         </div>
@@ -11614,7 +11614,7 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, statu
 
         {events.filter((e) => e.notify && !eventHasPassed(e)).length > 0 && (
           <div style={{ background: C.tealTint, border: `1px solid ${C.teal}`, borderRadius: 16, overflow: "hidden" }}>
-            <div style={{ padding: "13px 18px", borderBottom: `1px solid rgba(31,94,90,0.15)`, fontWeight: 700, fontSize: 13.5, color: C.tealDark, display: "flex", alignItems: "center", gap: 7 }}>
+            <div style={{ padding: "13px 18px", borderBottom: `1px solid ${C.line}`, fontWeight: 700, fontSize: 13.5, color: C.tealDark, display: "flex", alignItems: "center", gap: 7 }}>
               <Sparkles size={15} /> {t("Announcements")}
             </div>
             {events.filter((e) => e.notify && !eventHasPassed(e)).slice(0, 6).map((e) => {
@@ -11622,7 +11622,7 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, statu
               const isExpanded = expandedEventId === e.id;
               const hasDetails = e.bringItems || e.notes;
               return (
-                <div key={e.id} style={{ borderBottom: `1px solid rgba(31,94,90,0.1)` }}>
+                <div key={e.id} style={{ borderBottom: `1px solid ${C.line}` }}>
                   <button onClick={() => hasDetails && setExpandedEventId(isExpanded ? null : e.id)} style={{
                     width: "100%", textAlign: "left", background: "none", border: "none", padding: "12px 18px",
                     display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, cursor: hasDetails ? "pointer" : "default",
