@@ -3687,7 +3687,8 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   }, [isEmpty, addedFamilies, navigateToScreen]);
   const [overrides, setOverrides] = useState({});
   const [loaded, setLoaded] = useState(false);
-  const [language, setLanguage] = useState(onboardingData?.language || "English");
+  // Saved on this device, so the chosen language stays until it's changed.
+  const [language, setLanguage] = usePersistentState(`app-language${sfx}`, onboardingData?.language || "English");
   const [tier, saveTier] = usePersistentState(forceTier ? `platform-tier-demo-${forceTier}` : "platform-tier", forceTier || "simple");
   const tierLocked = !!forceTier;
   const [billing, saveBilling] = usePersistentState(`plan-billing${sfx}`, { cycle: "monthly", status: "active", canceledAt: null, startedOn: todayMDY() });
