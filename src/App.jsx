@@ -9,6 +9,7 @@ import {
   Moon, Contrast, Type, ZapOff, Lock, ListChecks, UserPlus, Settings as Gear, LifeBuoy, Paperclip, Image as ImageIcon,
   ArrowRight, Building2, Rocket, PlayCircle, UploadCloud, TrendingUp, Wand2, UserCog, Scale, ArrowLeftRight, Volume2, Square, Hourglass,
   Wallet, Baby, Cookie, Puzzle, SprayCan, Palette, LogOut, Check, GraduationCap, Bell, BellOff, Menu, Globe,
+  Home as HomeIcon, FolderOpen, Receipt,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell,
@@ -1439,6 +1440,83 @@ const T = {
   "Cash App": { es: "Cash App", tl: "Cash App", zh: "Cash App", vi: "Cash App", ko: "Cash App" },
   "Money order": { es: "Giro postal", tl: "Money order", zh: "汇票", vi: "Lệnh chuyển tiền", ko: "우편환" },
   "Due": { es: "Se debe", tl: "Dapat bayaran", zh: "应付", vi: "Phải trả", ko: "청구액" },
+  "Care benefit ends in": { es: "El beneficio de cuidado termina en", tl: "Matatapos ang care benefit sa loob ng", zh: "托育补助将在", vi: "Trợ cấp giữ trẻ kết thúc sau", ko: "보육 지원 종료까지" },
+  "Care benefit has ended": { es: "El beneficio de cuidado terminó", tl: "Natapos na ang care benefit", zh: "托育补助已结束", vi: "Trợ cấp giữ trẻ đã kết thúc", ko: "보육 지원이 종료됨" },
+  "A photo or PDF works. Your provider checks each document before marking it on file.": { es: "Sirve una foto o un PDF. Su proveedor revisa cada documento antes de archivarlo.", tl: "Puwede ang litrato o PDF. Sinusuri ng provider ang bawat dokumento bago ito i-file.", zh: "照片或 PDF 均可。托育者会先审核每份文件再归档。", vi: "Ảnh chụp hoặc PDF đều được. Người giữ trẻ sẽ kiểm tra từng giấy tờ trước khi lưu.", ko: "사진이나 PDF 모두 가능합니다. 운영자가 확인한 후 보관 처리합니다." },
+  "Ask for a copy": { es: "Pedir una copia", tl: "Humingi ng kopya", zh: "索取副本", vi: "Xin bản sao", ko: "사본 요청" },
+  "Billing": { es: "Pagos", tl: "Bayarin", zh: "账单", vi: "Thanh toán", ko: "청구" },
+  "Bring": { es: "Traer", tl: "Dalhin", zh: "请带", vi: "Mang theo", ko: "준비물" },
+  "Care benefit paperwork": { es: "Papeles del beneficio de cuidado", tl: "Mga papeles ng care benefit", zh: "托育补助文件", vi: "Giấy tờ trợ cấp giữ trẻ", ko: "보육 지원 서류" },
+  "Choose how you'll pay": { es: "Elija cómo pagará", tl: "Piliin kung paano ka magbabayad", zh: "选择付款方式", vi: "Chọn cách thanh toán", ko: "결제 방법 선택" },
+  "Couldn't save — try again": { es: "No se pudo guardar; inténtelo de nuevo", tl: "Hindi na-save — subukan ulit", zh: "保存失败，请重试", vi: "Không lưu được — thử lại", ko: "저장 실패 — 다시 시도하세요" },
+  "Demo: viewing as": { es: "Demo: viendo como", tl: "Demo: tinitingnan bilang", zh: "演示：查看身份", vi: "Demo: xem với tư cách", ko: "데모: 보는 사용자" },
+  "Early drop-off, a late pickup, or an extra day. Your provider approves it before it's confirmed.": { es: "Entrega temprana, recogida tarde o un día extra. Su proveedor lo aprueba antes de confirmarlo.", tl: "Maagang hatid, late na sundo, o dagdag na araw. Aaprubahan muna ito ng provider bago makumpirma.", zh: "提前送托、延迟接走或加托一天。托育者批准后才算确认。", vi: "Gửi sớm, đón muộn hoặc thêm một ngày. Người giữ trẻ duyệt trước khi xác nhận.", ko: "일찍 맡기기, 늦게 데려가기, 추가 하루. 운영자가 승인해야 확정됩니다." },
+  "Exit": { es: "Salir", tl: "Lumabas", zh: "退出", vi: "Thoát", ko: "나가기" },
+  "Extra care": { es: "Cuidado extra", tl: "Dagdag na alaga", zh: "额外托育", vi: "Giữ trẻ thêm", ko: "추가 보육" },
+  "Extra care approved": { es: "Cuidado extra aprobado", tl: "Naaprubahan ang dagdag na alaga", zh: "额外托育已批准", vi: "Đã duyệt giữ trẻ thêm", ko: "추가 보육 승인됨" },
+  "FSA / HSA": { es: "FSA / HSA", tl: "FSA / HSA", zh: "FSA / HSA", vi: "FSA / HSA", ko: "FSA / HSA" },
+  "For a Dependent Care FSA, submit these receipts to your plan administrator — Alaga doesn't file claims for you.": { es: "Para una FSA de cuidado de dependientes, envíe estos recibos al administrador de su plan; Alaga no presenta reclamos por usted.", tl: "Para sa Dependent Care FSA, ipasa ang mga resibong ito sa plan administrator mo — hindi nagfa-file ng claim ang Alaga para sa iyo.", zh: "如使用受抚养人护理 FSA，请将这些收据提交给计划管理方——Alaga 不代您报销。", vi: "Với Dependent Care FSA, hãy nộp các biên lai này cho đơn vị quản lý — Alaga không nộp yêu cầu thay bạn.", ko: "부양가족 돌봄 FSA는 이 영수증을 플랜 관리자에게 제출하세요 — Alaga가 대신 청구하지 않습니다." },
+  "Hi": { es: "Hola", tl: "Hi", zh: "你好", vi: "Xin chào", ko: "안녕하세요" },
+  "Hi! Could I get a copy of this for": { es: "¡Hola! ¿Me podría dar una copia de esto para", tl: "Hi! Puwede po ba akong humingi ng kopya nito para kay", zh: "您好！可以给我一份这个文件的副本吗？孩子：", vi: "Chào cô! Cho tôi xin bản sao giấy này của", ko: "안녕하세요! 이 서류 사본을 받을 수 있을까요? 아이:" },
+  "Hi! I sent the tuition payment for": { es: "¡Hola! Envié el pago de colegiatura de", tl: "Hi! Naipadala ko na ang bayad sa tuition ni", zh: "您好！我已支付学费，孩子：", vi: "Chào cô! Tôi đã gửi học phí cho", ko: "안녕하세요! 수업료를 보냈습니다. 아이:" },
+  "Home": { es: "Inicio", tl: "Home", zh: "首页", vi: "Trang chủ", ko: "홈" },
+  "I sent this payment": { es: "Ya envié este pago", tl: "Naipadala ko na ang bayad", zh: "我已付款", vi: "Tôi đã gửi khoản này", ko: "이 금액을 보냈어요" },
+  "I use employer FSA/HSA benefits for childcare": { es: "Uso beneficios FSA/HSA del empleador para el cuidado infantil", tl: "Gumagamit ako ng FSA/HSA ng employer para sa childcare", zh: "我用雇主的 FSA/HSA 支付托育", vi: "Tôi dùng FSA/HSA của chỗ làm cho việc giữ trẻ", ko: "직장 FSA/HSA로 보육비를 냅니다" },
+  "Includes late fee": { es: "Incluye cargo por atraso", tl: "Kasama ang late fee", zh: "含滞纳金", vi: "Gồm phí trễ hạn", ko: "연체료 포함" },
+  "Includes sibling discount": { es: "Incluye descuento por hermanos", tl: "Kasama ang sibling discount", zh: "含兄弟姐妹折扣", vi: "Gồm giảm giá anh chị em", ko: "형제 할인 포함" },
+  "New extra care request": { es: "Nueva solicitud de cuidado extra", tl: "Bagong request para sa dagdag na alaga", zh: "新的额外托育申请", vi: "Yêu cầu giữ trẻ thêm mới", ko: "새 추가 보육 요청" },
+  "New message from your provider": { es: "Nuevo mensaje de su proveedor", tl: "Bagong mensahe mula sa provider", zh: "托育者发来新消息", vi: "Tin nhắn mới từ người giữ trẻ", ko: "운영자의 새 메시지" },
+  "No care today": { es: "Sin cuidado hoy", tl: "Walang alaga ngayon", zh: "今天无托育", vi: "Hôm nay không giữ trẻ", ko: "오늘은 보육 없음" },
+  "No families enrolled yet.": { es: "Aún no hay familias inscritas.", tl: "Wala pang naka-enroll na pamilya.", zh: "尚无登记的家庭。", vi: "Chưa có gia đình nào ghi danh.", ko: "등록된 가족이 아직 없습니다." },
+  "No messages yet — say hello!": { es: "Aún no hay mensajes. ¡Salude!", tl: "Wala pang mensahe — mag-hello ka!", zh: "还没有消息——打个招呼吧！", vi: "Chưa có tin nhắn — gửi lời chào nhé!", ko: "아직 메시지가 없어요 — 인사해 보세요!" },
+  "No requests yet.": { es: "Aún no hay solicitudes.", tl: "Wala pang request.", zh: "暂无申请。", vi: "Chưa có yêu cầu.", ko: "요청이 없습니다." },
+  "Not checked in yet": { es: "Aún no registra entrada", tl: "Hindi pa naka-check in", zh: "尚未签到", vi: "Chưa điểm danh vào", ko: "아직 등원 안 함" },
+  "Nothing scheduled yet.": { es: "Nada programado aún.", tl: "Wala pang naka-iskedyul.", zh: "暂无安排。", vi: "Chưa có lịch.", ko: "예정된 일정이 없습니다." },
+  "Nothing to pay — fully covered": { es: "Nada que pagar: cubierto por completo", tl: "Walang babayaran — sakop lahat", zh: "无需付款——全额补助", vi: "Không phải trả — được chi trả toàn bộ", ko: "낼 금액 없음 — 전액 지원" },
+  "Payments & receipts": { es: "Pagos y recibos", tl: "Mga bayad at resibo", zh: "付款与收据", vi: "Thanh toán & biên lai", ko: "납부 및 영수증" },
+  "Pick a date": { es: "Elija una fecha", tl: "Pumili ng petsa", zh: "选择日期", vi: "Chọn ngày", ko: "날짜 선택" },
+  "Receipt": { es: "Recibo", tl: "Resibo", zh: "收据", vi: "Biên lai", ko: "영수증" },
+  "Recertify with": { es: "Recertifíquese con", tl: "Mag-recertify sa", zh: "请向以下机构重新认证：", vi: "Tái xác nhận với", ko: "재인증 기관:" },
+  "Refund": { es: "Reembolso", tl: "Refund", zh: "退款", vi: "Hoàn tiền", ko: "환불" },
+  "Request extra care": { es: "Solicitar cuidado extra", tl: "Mag-request ng dagdag na alaga", zh: "申请额外托育", vi: "Yêu cầu giữ trẻ thêm", ko: "추가 보육 요청" },
+  "Request sent": { es: "Solicitud enviada", tl: "Naipadala ang request", zh: "申请已发送", vi: "Đã gửi yêu cầu", ko: "요청을 보냈어요" },
+  "Send request": { es: "Enviar solicitud", tl: "Ipadala ang request", zh: "发送申请", vi: "Gửi yêu cầu", ko: "요청 보내기" },
+  "Sent": { es: "Enviado", tl: "Naipadala", zh: "已发送", vi: "Đã gửi", ko: "보냄" },
+  "Sent — your provider is reviewing it": { es: "Enviado: su proveedor lo está revisando", tl: "Naipadala — sinusuri ng provider", zh: "已发送——托育者正在审核", vi: "Đã gửi — người giữ trẻ đang xem", ko: "보냄 — 운영자가 확인 중" },
+  "Submit to": { es: "Entregar a", tl: "Ipasa sa", zh: "提交给", vi: "Nộp cho", ko: "제출처:" },
+  "Thank you! Your provider recorded this payment.": { es: "¡Gracias! Su proveedor registró este pago.", tl: "Salamat! Naitala na ng provider ang bayad.", zh: "谢谢！托育者已记录这笔付款。", vi: "Cảm ơn! Người giữ trẻ đã ghi nhận khoản này.", ko: "감사합니다! 운영자가 납부를 기록했습니다." },
+  "The other parent's payments are private to them.": { es: "Los pagos del otro padre o madre son privados.", tl: "Pribado ang mga bayad ng kabilang magulang.", zh: "另一位家长的付款信息对您不可见。", vi: "Khoản thanh toán của phụ huynh kia được giữ riêng tư.", ko: "다른 부모의 납부 내역은 비공개입니다." },
+  "This month": { es: "Este mes", tl: "Ngayong buwan", zh: "本月", vi: "Tháng này", ko: "이번 달" },
+  "To do": { es: "Pendientes", tl: "Gagawin", zh: "待办", vi: "Việc cần làm", ko: "할 일" },
+  "Type": { es: "Tipo", tl: "Uri", zh: "类型", vi: "Loại", ko: "종류" },
+  "Type a message…": { es: "Escriba un mensaje…", tl: "Mag-type ng mensahe…", zh: "输入消息…", vi: "Nhập tin nhắn…", ko: "메시지 입력…" },
+  "You told your provider you paid on": { es: "Le avisó a su proveedor que pagó el", tl: "Sinabi mo sa provider na nagbayad ka noong", zh: "您已告知托育者付款日期：", vi: "Bạn đã báo người giữ trẻ là đã trả ngày", ko: "운영자에게 납부했다고 알린 날짜:" },
+  "You're all set — nothing needs your attention.": { es: "Todo listo: nada requiere su atención.", tl: "Ayos na — wala kang kailangang gawin.", zh: "一切就绪——暂无需要处理的事项。", vi: "Mọi thứ ổn — không có việc gì cần làm.", ko: "모두 완료 — 처리할 일이 없습니다." },
+  "Your share of": { es: "Su parte de", tl: "Bahagi mo sa", zh: "您承担的部分，总额", vi: "Phần của bạn trong", ko: "총액 중 본인 부담:" },
+  "document needed": { es: "documento pendiente", tl: "dokumentong kailangan", zh: "份文件待交", vi: "giấy tờ cần nộp", ko: "개 서류 필요" },
+  "documents needed": { es: "documentos pendientes", tl: "dokumentong kailangan", zh: "份文件待交", vi: "giấy tờ cần nộp", ko: "개 서류 필요" },
+  "for": { es: "de", tl: "para kay", zh: "—", vi: "cho", ko: "—" },
+  "my share": { es: "mi parte", tl: "bahagi ko", zh: "我承担的部分", vi: "phần của tôi", ko: "제 부담분" },
+  "not set up": { es: "sin configurar", tl: "hindi pa naka-set up", zh: "未设置", vi: "chưa thiết lập", ko: "설정 안 됨" },
+  "overdue since": { es: "vencido desde", tl: "lampas na mula", zh: "逾期自", vi: "quá hạn từ", ko: "연체 시작:" },
+  "tuition": { es: "colegiatura", tl: "tuition", zh: "学费", vi: "học phí", ko: "수업료" },
+  "waiting for them to confirm.": { es: "esperando su confirmación.", tl: "hinihintay ang kumpirmasyon.", zh: "等待对方确认。", vi: "đang chờ xác nhận.", ko: "확인 대기 중입니다." },
+  "your agency": { es: "su agencia", tl: "ang iyong agency", zh: "您的机构", vi: "cơ quan của bạn", ko: "담당 기관" },
+  "your share": { es: "su parte", tl: "bahagi mo", zh: "您承担的部分", vi: "phần của bạn", ko: "본인 부담분" },
+  "your share of": { es: "su parte de", tl: "bahagi mo sa", zh: "您承担的部分，总额", vi: "phần của bạn trong", ko: "총액 중 본인 부담:" },
+  "Show & Tell is coming up!": { es: "¡Se acerca Show & Tell!", tl: "Malapit na ang Show & Tell!", zh: "展示分享日快到了！", vi: "Sắp đến giờ Show & Tell!", ko: "발표 시간이 다가와요!" },
+  "Quick note:": { es: "Nota rápida:", tl: "Paalala:", zh: "简短通知：", vi: "Lưu ý nhanh:", ko: "간단 안내:" },
+  "It's going to be a fun one!": { es: "¡Va a ser muy divertido!", tl: "Siguradong masaya ito!", zh: "一定会很有趣！", vi: "Sẽ vui lắm đây!", ko: "정말 즐거울 거예요!" },
+  "Friendly reminder:": { es: "Recordatorio:", tl: "Paalala lang:", zh: "温馨提醒：", vi: "Nhắc nhẹ:", ko: "알림:" },
+  "Adventure time!": { es: "¡Hora de aventura!", tl: "Adventure time!", zh: "探险时间到！", vi: "Đi phiêu lưu nào!", ko: "모험 시간!" },
+  "Smile — picture day is almost here!": { es: "¡Sonrían, ya casi es el día de fotos!", tl: "Ngiti — malapit na ang picture day!", zh: "微笑——拍照日快到了！", vi: "Cười lên — sắp đến ngày chụp ảnh!", ko: "스마일 — 사진 촬영일이 곧이에요!" },
+  "We can't wait to see you there!": { es: "¡Los esperamos!", tl: "Excited na kaming makita kayo!", zh: "期待与您相见！", vi: "Rất mong gặp bạn!", ko: "곧 만나요!" },
+  "We could use your help!": { es: "¡Nos vendría bien su ayuda!", tl: "Kailangan namin ang tulong mo!", zh: "需要您的帮助！", vi: "Chúng tôi cần bạn giúp!", ko: "도움이 필요해요!" },
+  "Time to smile for the camera!": { es: "¡A sonreír para la cámara!", tl: "Ngiti para sa camera!", zh: "对着镜头笑一笑！", vi: "Cười thật tươi nào!", ko: "카메라 보고 웃어요!" },
+  "Labor Day": { es: "Día del Trabajo", tl: "Labor Day", zh: "劳动节", vi: "Lễ Lao động", ko: "노동절" },
+  "Thanksgiving Break": { es: "Vacaciones de Acción de Gracias", tl: "Thanksgiving Break", zh: "感恩节假期", vi: "Nghỉ lễ Tạ ơn", ko: "추수감사절 휴원" },
+  "Winter Break": { es: "Vacaciones de invierno", tl: "Winter Break", zh: "寒假", vi: "Nghỉ đông", ko: "겨울 방학" },
+  "Provider Professional Development Day": { es: "Día de capacitación del proveedor", tl: "Professional Development Day ng provider", zh: "托育者培训日", vi: "Ngày bồi dưỡng chuyên môn", ko: "운영자 연수일" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -4139,7 +4217,7 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
           )}
         </>
       ) : (
-        <ParentApp careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} events={events} />
+        <ParentApp careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} events={events} reminderSettings={reminderSettings} />
       )}
     </div>
     </LanguageContext.Provider>
@@ -12016,439 +12094,644 @@ function SmallBtn({ icon: Icon, label }) {
 /* ===================================================================
    PARENT APP — read-only subsidy view for the family
    =================================================================== */
-function ParentApp({ careCtx, families, onExit, showBackToProvider = true, status, setChildStatus, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage, events = [] }) {
+// Parent / family app. A parent account covers their whole household, so
+// siblings show together. Five areas: Home (today, to-do, coming up),
+// Messages, Billing, Documents and Extra care. Phones get a bottom tab bar;
+// wider screens get tabs under the header and a two-column home.
+const PARENT_TABS = [
+  { id: "home", label: "Home", icon: HomeIcon },
+  { id: "messages", label: "Messages", icon: MessageSquare },
+  { id: "billing", label: "Billing", icon: Wallet },
+  { id: "docs", label: "Documents", icon: FolderOpen },
+  { id: "care", label: "Extra care", icon: Clock },
+];
+
+// Is "MM/DD/YYYY" (today by default) inside a closure's "a – b" date range?
+function inDateRange(dates, day = startOfToday()) {
+  const parts = String(dates || "").split("–").map((s) => parseAnyDate(s.trim())).filter(Boolean);
+  if (!parts.length) return false;
+  const start = parts[0], end = parts[parts.length - 1];
+  return day >= new Date(start.getFullYear(), start.getMonth(), start.getDate()) && day <= new Date(end.getFullYear(), end.getMonth(), end.getDate());
+}
+
+function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage, events = [], reminderSettings }) {
   const t = useT();
-  const [famId, setFamId] = useState(families[0]?.id);
-  const fam = families.find((f) => f.id === famId) || families[0];
+  const lang = React.useContext(LanguageContext).lang;
+  // Dates and month names in the parent's chosen language.
+  const locale = { en: "en-US", es: "es-US", tl: "fil-PH", zh: "zh-CN", vi: "vi-VN", ko: "ko-KR" }[lang] || "en-US";
+  const monthName = (key) => { const [y, m] = key.split("-").map(Number); return new Date(y, m - 1, 1).toLocaleDateString(locale, { month: "long", year: "numeric" }); };
+  const isMobile = useIsMobile();
   const PARENT_LANGS = ["English", "Español", "Tagalog", "中文", "Tiếng Việt", "한국어"];
-  const prog = fam.subsidized ? programOf(fam.programId) : null;
-  const dLeft = fam.subsidized ? daysUntil(fam.authEnd) : null;
-  const parentDocs = fam.forms.filter((f) => ["notice", "attend", "recert"].includes(f.id));
 
-  const [fsaEnrolled, setFsaEnrolled] = useState(!!(fam.fsaHsa && fam.fsaHsa.enrolled));
-  const [fsaType, setFsaType] = useState((fam.fsaHsa && fam.fsaHsa.accountType) || "Dependent Care FSA");
-  const [fsaEmployer, setFsaEmployer] = useState((fam.fsaHsa && fam.fsaHsa.employerName) || "");
-  const [fsaSaveState, setFsaSaveState] = useState("idle");
-  const [flexForm, setFlexForm] = useState({ type: FLEX_CARE_TYPES[0], date: "", hours: 1, notes: "", paymentMethod: PAYMENT_METHODS[0] });
+  // ---- which household is signed in (the demo lets you switch)
+  const households = groupByHousehold(families);
+  const [hhId, setHhId] = useState(households[0]?.household);
+  const hh = households.find((h) => h.household === hhId) || households[0];
+  const kids = hh ? hh.children : [];
+  const parentName = (kids[0] && (kids[0].parent || kids[0].parents?.[0]?.name)) || "";
+  const firstName = parentName.split(" ")[0];
+  const [tab, setTab] = useState("home");
+  const go = (id) => { setTab(id); if (typeof window !== "undefined") window.scrollTo({ top: 0 }); };
+  useEffect(() => { setTab("home"); }, [hhId]);
 
-  useEffect(() => {
-    setFsaEnrolled(!!(fam.fsaHsa && fam.fsaHsa.enrolled));
-    setFsaType((fam.fsaHsa && fam.fsaHsa.accountType) || "Dependent Care FSA");
-    setFsaEmployer((fam.fsaHsa && fam.fsaHsa.employerName) || "");
-  }, [fam.id]);
+  // ---- billing
+  const billing = reminderSettings ? currentBilling(reminderSettings) : null;
+  const amountFor = (f) => (f.copay > 0 ? effectiveTuition(f, families, tuitionRates).discounted : 0);
+  const lateFeeFor = (f) => (reminderSettings && billing && !f.copaySplit ? computeLateFee(f, reminderSettings, (x) => paidFor(x, billing.key)) : 0);
+  // Separated families: the signed-in parent sees only their own share; the
+  // other parent's payments stay private to them.
+  const shareOf = (f) => (f.copaySplit ? f.copaySplit.find((x) => x.parent === parentName) || null : null);
+  const dueAmount = (f) => { const sh = shareOf(f); return sh ? sh.amount : amountFor(f) + lateFeeFor(f); };
+  const paidMine = (f) => { const sh = shareOf(f); return sh ? !!sh.paidPeriods?.[billing.key] : paidFor(f, billing.key); };
+  const owes = (f) => !!(billing && f.copay > 0 && !paidMine(f));
+  const reportKey = (f) => (billing ? (shareOf(f) ? `${billing.key}:${parentName}` : billing.key) : "");
+  const reportedOf = (f) => f.parentReportedPaid?.[reportKey(f)];
 
-  const saveFsa = async () => {
-    setFsaSaveState("saving");
-    const ok = await onSave(fam.id, { fsaHsa: { enrolled: fsaEnrolled, accountType: fsaType, employerName: fsaEmployer } });
-    setFsaSaveState(ok ? "saved" : "error");
-    if (ok) setTimeout(() => setFsaSaveState("idle"), 1500);
-  };
-
-  const myFlexRequests = flexCareRequests.filter((r) => r.child === fam.child);
-  const flexFee = (hours) => Math.round((tuitionRates[fam.classroom]?.hourly || 0) * hours);
-  const submitFlexRequest = () => {
-    if (!flexForm.date) return;
-    flexSeq += 1;
-    saveFlexCare([{ id: `fc${flexSeq}`, child: fam.child, classroom: fam.classroom, type: flexForm.type, date: flexForm.date, hours: Number(flexForm.hours), notes: flexForm.notes, status: "pending", requestedBy: "parent", parentPaymentMethod: flexForm.paymentMethod, paymentConfirmed: false }, ...flexCareRequests]);
-    const threadName = fam.householdName || fam.child;
-    const noteText = `${t("New flex care request")}: ${t(flexForm.type)}, ${flexForm.date} — ${t("view and respond in Attendance")}.`;
-    const existingThread = findThread(threads, { household: fam.household, name: threadName });
-    if (existingThread) {
-      saveThreads(threads.map((th) => th.id === existingThread.id
-        ? { ...th, unread: true, messages: [...th.messages, { from: "them", text: noteText, ...msgNow() }] }
-        : th));
-    } else {
-      saveThreads([{ id: `th-flex-${Date.now()}`, name: threadName, household: fam.household, unread: true, messages: [{ from: "them", text: noteText, ...msgNow() }] }, ...threads]);
-    }
-    setFlexForm({ type: FLEX_CARE_TYPES[0], date: "", hours: 1, notes: "", paymentMethod: PAYMENT_METHODS[0] });
-  };
-  const setMyFlexPaymentMethod = (id, method) => saveFlexCare(flexCareRequests.map((r) => (r.id === id ? { ...r, parentPaymentMethod: method } : r)));
-
-  // The parent's own conversation with the provider — a single thread, not a
-  // full inbox, since a family only talks to one provider.
-  const myThreadName = fam.householdName || fam.child;
-  const myThread = findThread(threads, { household: fam.household, name: myThreadName });
-  const [myDraft, setMyDraft] = useState("");
-  const [expandedEventId, setExpandedEventId] = useState(null);
-  const sendToProvider = () => {
-    if (!myDraft.trim()) return;
+  // ---- messages: one conversation per household
+  const threadName = hh?.householdName || kids[0]?.child || "";
+  const myThread = hh ? findThread(threads, { household: hh.household, name: threadName }) : null;
+  const sendMessage = (text) => {
+    if (!text.trim() || !hh) return;
     if (myThread) {
-      saveThreads(threads.map((th) => (th.id === myThread.id ? { ...th, unread: true, messages: [...th.messages, { from: "them", text: myDraft, ...msgNow() }] } : th)));
+      saveThreads(threads.map((th) => (th.id === myThread.id ? { ...th, unread: true, messages: [...th.messages, { from: "them", text, ...msgNow() }] } : th)));
     } else {
-      saveThreads([{ id: `th-parent-${Date.now()}`, name: myThreadName, household: fam.household, unread: true, messages: [{ from: "them", text: myDraft, ...msgNow() }] }, ...threads]);
+      saveThreads([{ id: `th-parent-${Date.now()}`, name: threadName, household: hh.household, unread: true, messages: [{ from: "them", text, ...msgNow() }] }, ...threads]);
     }
-    setMyDraft("");
+  };
+  const lastMsg = myThread?.messages[myThread.messages.length - 1];
+  const newReply = !!(lastMsg && lastMsg.from !== "them");
+
+  // ---- today
+  const today = todayMDY();
+  const closedToday = (careCtx?.closures || []).find((c) => inDateRange(c.dates));
+  const todayFor = (f) => {
+    const rec0 = ((careCtx?.attendanceLog || {})[today] || {})[f.id];
+    if (!rec0) {
+      if (closedToday) return { label: `${t("Closed today")} — ${t(closedToday.name)}`, color: C.inkSoft };
+      const dow = startOfToday().getDay();
+      if (dow === 0 || dow === 6) return { label: t("No care today"), color: C.inkSoft };
+      return { label: t("Not checked in yet"), color: C.inkSoft };
+    }
+    const rec = rec0 === true ? { in: "—" } : rec0;
+    const away = !rec.out && isAway(rec);
+    if (rec.absent) return { label: t("Marked absent today"), color: C.inkSoft };
+    if (rec.out) return { label: `${t("Picked up at")} ${rec.out}`, color: C.inkSoft, sub: outingsText(rec, t) };
+    if (away) return { label: `${t("Out for an appointment since")} ${(rec.outings || []).find((o) => !o.back)?.out}`, color: C.amber };
+    return { label: `${t("Checked in at")} ${rec.in}`, color: C.teal, sub: outingsText(rec, t), here: true };
   };
 
-  // Receipts list only months the provider has recorded as paid.
-  const paidMonths = paymentsOf(fam).slice(0, 12);
-  const receiptDates = (key) => receiptDatesText(fam, key, careCtx);
-  const downloadReceipt = (p) => printReceipt(fam, [p], { provider, t, datesFor: receiptDates });
-  const downloadYearSummary = () => printReceipt(fam, paidMonths.filter((p) => p.key.startsWith(String(startOfToday().getFullYear()))).reverse(), { provider, t, datesFor: receiptDates, title: `${t("Annual childcare payment summary")} ${startOfToday().getFullYear()}` });
+  // ---- documents
+  const docsOf = (f) => defaultChildDocs(f).map((d) => ({ ...d, eff: docEffectiveStatus(d, 30), name: CHILD_DOC_TEMPLATES.find((x) => x.id === d.id)?.name || d.id }));
+  const docNeedsParent = (d) => !d.sentByParent && ["missing", "expired", "expiring"].includes(d.eff);
+  const benefitFormsOf = (f) => (f.subsidized ? (f.forms || []).filter((x) => ["notice", "attend", "recert", "income"].includes(x.id)) : []);
+
+  // ---- extra care
+  const kidNames = kids.map((k) => k.child);
+  const myRequests = flexCareRequests.filter((r) => kidNames.includes(r.child));
+  const needsPayMethod = myRequests.filter((r) => r.status === "approved" && !r.paymentConfirmed && !isPastDate(r.date));
+
+  // ---- to-do list for Home (each item opens the tab that resolves it)
+  const todos = [];
+  kids.forEach((f) => {
+    if (owes(f)) {
+      if (!reportedOf(f)) todos.push({ key: `pay-${f.id}`, tab: "billing", tone: billing.overdue ? "danger" : "warn", icon: Wallet,
+        text: `${billing.overdue ? t("Overdue") : t("Due")} ${billing.dueDate}: ${money(dueAmount(f))} ${t("for")} ${f.child}`, sub: `${monthName(billing.key)} ${t("tuition")}${shareOf(f) ? ` · ${t("your share")}` : ""}` });
+    }
+    const need = docsOf(f).filter(docNeedsParent);
+    if (need.length) todos.push({ key: `docs-${f.id}`, tab: "docs", tone: "warn", icon: FileText,
+      text: `${need.length} ${need.length === 1 ? t("document needed") : t("documents needed")} ${t("for")} ${f.child}`, sub: need.map((d) => t(d.name)).join(", ") });
+    if (f.subsidized && f.authEnd) {
+      const left = daysUntil(f.authEnd);
+      if (left !== 9999 && left <= 30) todos.push({ key: `benefit-${f.id}`, tab: "billing", tone: left <= 7 ? "danger" : "warn", icon: AlertTriangle,
+        text: left >= 0 ? `${t("Care benefit ends in")} ${left} ${t("days")} — ${f.child}` : `${t("Care benefit has ended")} — ${f.child}`,
+        sub: `${t("Recertify with")} ${programOf(f.programId)?.agency || t("your agency")}` });
+    }
+  });
+  needsPayMethod.forEach((r) => todos.push({ key: `flex-${r.id}`, tab: "care", tone: "warn", icon: Clock,
+    text: `${t("Extra care approved")}: ${t(r.type)} · ${r.date}`, sub: t("Choose how you'll pay") }));
+  if (newReply) todos.unshift({ key: "msg", tab: "messages", tone: "info", icon: MessageSquare, text: t("New message from your provider"), sub: lastMsg.text });
+
+  // ---- coming up: announcements + closures in the next 45 days
+  const [openEvent, setOpenEvent] = useState(null);
+  const comingUp = [
+    ...events.filter((e) => e.notify && !eventHasPassed(e)).map((e) => { const o = eventAnnouncementOpener(e.type, e.name); return { id: e.id, title: `${o.emoji} ${e.name}`, lead: o.lead, dates: e.dates, details: [e.bringItems ? `${t("Bring")}: ${e.bringItems}` : "", e.notes || ""].filter(Boolean) }; }),
+    ...(careCtx?.closures || []).filter((c) => { const left = daysUntil(String(c.dates).split("–").pop().trim()); return left >= 0 && daysUntil(String(c.dates).split("–")[0].trim()) <= 45; })
+      .map((c) => ({ id: `cl-${c.name}-${c.dates}`, title: `🚪 ${t("Closed")}: ${t(c.name)}`, dates: c.dates, closure: true, details: [] })),
+  ].sort((a, b) => (parseAnyDate(String(a.dates).split("–")[0].trim())?.getTime() || 0) - (parseAnyDate(String(b.dates).split("–")[0].trim())?.getTime() || 0));
+
+  // ---- shared bits
+  const card = { background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" };
+  const cardHead = { padding: "13px 18px", borderBottom: `1px solid ${C.line}`, fontWeight: 700, fontSize: 14, display: "flex", alignItems: "center", gap: 8 };
+  const row = { padding: "12px 18px", borderBottom: `1px solid ${C.line}` };
+  const btnSoft = { display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12.5, fontWeight: 600, color: C.tealDark, background: C.tealTint, border: "none", borderRadius: 9, padding: "8px 12px", minHeight: 36 };
+  const btnMain = { display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "11px 14px", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 13.5, minHeight: 44 };
+  const toneColors = { danger: [C.danger, C.dangerTint], warn: ["#7A5620", C.amberTint], info: [C.tealDark, C.tealTint] };
+  const Avatar = ({ f, size = 40 }) => <div style={{ width: size, height: size, borderRadius: "50%", background: f.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: size * 0.4, flexShrink: 0 }}>{f.child[0]}</div>;
+  const unreadCount = newReply ? 1 : 0;
+  const badges = { messages: unreadCount, billing: kids.filter((f) => owes(f) && !reportedOf(f)).length, docs: kids.reduce((n, f) => n + docsOf(f).filter(docNeedsParent).length, 0), care: needsPayMethod.length };
+
+  /* ================================ HOME ================================ */
+  const TodayCard = (
+    <div style={card}>
+      <div style={cardHead}><CalendarClock size={15} color={C.teal} /> {t("Today")} <span style={{ fontWeight: 500, color: C.inkSoft, fontSize: 12.5 }}>· {startOfToday().toLocaleDateString(locale, { weekday: "long", month: "short", day: "numeric" })}</span></div>
+      {kids.map((f) => {
+        const s = todayFor(f);
+        return (
+          <div key={f.id} style={{ ...row, display: "flex", alignItems: "center", gap: 12 }}>
+            <Avatar f={f} />
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: 13.5, fontWeight: 700 }}>{f.child}</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: s.color, display: "flex", alignItems: "center", gap: 6 }}>{s.here && <Dot c={C.teal} />}{s.label}</div>
+              {s.sub && <div style={{ fontSize: 11.5, color: C.inkSoft }}>{s.sub}</div>}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+
+  const TodoCard = (
+    <div style={card}>
+      <div style={cardHead}><ListChecks size={15} color={C.teal} /> {t("To do")}</div>
+      {todos.length === 0 && (
+        <div style={{ ...row, borderBottom: "none", display: "flex", alignItems: "center", gap: 10, color: C.tealDark, fontSize: 13.5, fontWeight: 600 }}>
+          <CheckCircle2 size={18} /> {t("You're all set — nothing needs your attention.")}
+        </div>
+      )}
+      {todos.map((x) => {
+        const [fg, bg] = toneColors[x.tone];
+        return (
+          <button key={x.key} onClick={() => go(x.tab)} style={{ width: "100%", textAlign: "left", background: "none", border: "none", borderBottom: `1px solid ${C.line}`, padding: "12px 18px", display: "flex", alignItems: "center", gap: 12, minHeight: 56 }}>
+            <div style={{ width: 34, height: 34, borderRadius: 10, background: bg, color: fg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><x.icon size={16} /></div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13.5, fontWeight: 600, color: x.tone === "danger" ? C.danger : C.ink }}>{x.text}</div>
+              {x.sub && <div style={{ fontSize: 12, color: C.inkSoft, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{x.sub}</div>}
+            </div>
+            <ChevronRight size={16} color={C.inkSoft} style={{ flexShrink: 0 }} />
+          </button>
+        );
+      })}
+    </div>
+  );
+
+  const ComingUpCard = (
+    <div style={card}>
+      <div style={cardHead}><Sparkles size={15} color={C.teal} /> {t("Coming up")}</div>
+      {comingUp.length === 0 && <div style={{ ...row, borderBottom: "none", fontSize: 12.5, color: C.inkSoft }}>{t("Nothing scheduled yet.")}</div>}
+      {comingUp.slice(0, 6).map((e) => {
+        const open = openEvent === e.id; const has = e.details.length > 0;
+        return (
+          <div key={e.id} style={{ borderBottom: `1px solid ${C.line}` }}>
+            <button onClick={() => has && setOpenEvent(open ? null : e.id)} style={{ width: "100%", textAlign: "left", background: "none", border: "none", padding: "11px 18px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, cursor: has ? "pointer" : "default" }}>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: 13.5, fontWeight: 600, color: e.closure ? C.danger : C.ink }}>{e.title}</div>
+                <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 2 }}>{e.dates}{e.lead ? ` · ${t(e.lead)}` : ""}</div>
+              </div>
+              {has && <ChevronDown size={15} color={C.inkSoft} style={{ flexShrink: 0, marginTop: 2, transform: open ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />}
+            </button>
+            {open && <div style={{ padding: "0 18px 12px", fontSize: 12.5, color: C.inkSoft, lineHeight: 1.5 }}>{e.details.map((d, i) => <div key={i}>{d}</div>)}</div>}
+          </div>
+        );
+      })}
+    </div>
+  );
+
+  const LatestMessageCard = (
+    <button onClick={() => go("messages")} style={{ ...card, width: "100%", textAlign: "left", padding: "14px 18px", display: "flex", alignItems: "center", gap: 12 }}>
+      <MessageSquare size={18} color={C.teal} style={{ flexShrink: 0 }} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 13.5, fontWeight: 700 }}>{t("Message")} {provider.name}</div>
+        <div style={{ fontSize: 12, color: C.inkSoft, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          {lastMsg ? `${lastMsg.from === "them" ? `${t("You")}: ` : ""}${lastMsg.text}` : t("No messages yet — say hello!")}
+        </div>
+      </div>
+      <ChevronRight size={16} color={C.inkSoft} />
+    </button>
+  );
+
+  const Home = (
+    <>
+      <div style={{ fontFamily: "'Fraunces', serif", fontSize: isMobile ? 22 : 26, fontWeight: 600 }}>{t("Hi")}, {firstName}</div>
+      {isMobile ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>{TodayCard}{TodoCard}{LatestMessageCard}{ComingUpCard}</div>
+      ) : (
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.1fr) minmax(0, 0.9fr)", gap: 16, alignItems: "start" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>{TodayCard}{TodoCard}</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>{LatestMessageCard}{ComingUpCard}</div>
+        </div>
+      )}
+    </>
+  );
+
+  /* ============================== MESSAGES ============================== */
+  const Messages = <ParentMessages t={t} thread={myThread} provider={provider} onSend={sendMessage} isMobile={isMobile} />;
+
+  /* =============================== BILLING ============================== */
+  const [payMethod, setPayMethod] = useState(PAYMENT_METHODS[0]);
+  const reportPaid = (f) => {
+    sendMessage(`${t("Hi! I sent the tuition payment for")} ${f.child} — ${monthName(billing.key)}${shareOf(f) ? ` (${t("my share")})` : ""}: ${money(dueAmount(f))}, ${t(payMethod)}.`);
+    onSave(f.id, { parentReportedPaid: { ...(f.parentReportedPaid || {}), [reportKey(f)]: { date: today, method: payMethod } } });
+  };
+  const Billing = (
+    <>
+      {kids.map((f) => {
+        const prog = f.subsidized ? programOf(f.programId) : null;
+        const amt = amountFor(f); const fee = lateFeeFor(f);
+        const share = shareOf(f);
+        const paid = billing && f.copay > 0 && paidMine(f);
+        const reported = billing && reportedOf(f);
+        const disc = f.copay > 0 ? effectiveTuition(f, families, tuitionRates) : null;
+        const paidMonths = paymentsOf(f).map((p) => (share ? { ...p, entries: p.entries.filter((e) => e.who === parentName) } : p))
+          .map((p) => ({ ...p, total: p.entries.reduce((n, e) => n + (Number(e.amount) || 0), 0) })).filter((p) => p.entries.length).slice(0, 12);
+        const datesFor = (key) => receiptDatesText(f, key, careCtx);
+        const year = String(startOfToday().getFullYear());
+        return (
+          <div key={f.id} style={card}>
+            <div style={{ ...cardHead, justifyContent: "space-between" }}>
+              <span style={{ display: "flex", alignItems: "center", gap: 10 }}><Avatar f={f} size={30} /> {f.child}</span>
+              <span style={{ fontSize: 12, fontWeight: 500, color: C.inkSoft }}>{prog ? prog.label : t("Private pay")}</span>
+            </div>
+            {/* this month */}
+            <div style={{ ...row }}>
+              <div style={{ fontSize: 11.5, color: C.inkSoft, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em" }}>{billing ? monthName(billing.key) : t("This month")}</div>
+              {f.copay <= 0 ? (
+                <div style={{ fontSize: 15, fontWeight: 700, color: C.teal, marginTop: 4, display: "flex", alignItems: "center", gap: 6 }}><CheckCircle2 size={16} /> {t("Nothing to pay — fully covered")}</div>
+              ) : paid ? (
+                <div style={{ marginTop: 4 }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: C.teal, display: "flex", alignItems: "center", gap: 6 }}><CheckCircle2 size={16} /> {t("Paid")} · {money(share ? share.paidPeriods[billing.key].amount || share.amount : paymentsOf(f).find((p) => p.key === billing.key)?.total || amt)}</div>
+                  <div style={{ fontSize: 12, color: C.inkSoft }}>{t("Thank you! Your provider recorded this payment.")}</div>
+                </div>
+              ) : (
+                <div style={{ marginTop: 4 }}>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+                    <span style={{ fontFamily: "'Fraunces', serif", fontSize: 26, fontWeight: 600, color: billing?.overdue ? C.danger : C.ink }}>{money(dueAmount(f))}</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: billing?.overdue ? C.danger : "#7A5620" }}>{billing?.overdue ? `${t("overdue since")} ${billing.dueDate}` : `${t("due")} ${billing?.dueDate}`}</span>
+                  </div>
+                  {disc?.discountApplied && <div style={{ fontSize: 12, color: C.tealDark }}>{t("Includes sibling discount")} ({money(disc.base)} → {money(disc.discounted)})</div>}
+                  {fee > 0 && <div style={{ fontSize: 12, color: C.danger }}>{t("Includes late fee")} {money(fee)}</div>}
+                  {share && <div style={{ fontSize: 12, color: C.inkSoft }}>{t("Your share of")} {money(f.copay)}. {t("The other parent's payments are private to them.")}</div>}
+                  {reported ? (
+                    <div style={{ marginTop: 10, fontSize: 12.5, color: C.tealDark, display: "flex", alignItems: "center", gap: 6 }}><Clock size={13} /> {t("You told your provider you paid on")} {reported.date} — {t("waiting for them to confirm.")}</div>
+                  ) : (
+                    <div style={{ marginTop: 10, display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+                      <div style={{ minWidth: 130 }}><Select value={payMethod} onChange={setPayMethod} options={PAYMENT_METHODS} labels={PAYMENT_METHODS.map((m) => t(m))} /></div>
+                      <button onClick={() => reportPaid(f)} style={{ ...btnMain, padding: "9px 14px", minHeight: 38, fontSize: 12.5 }}><Send size={13} /> {t("I sent this payment")}</button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            {/* subsidy benefit */}
+            {f.subsidized && prog && (
+              <div style={{ ...row, display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 10 }}>
+                <ParentStat label={t("Covered by your benefit")} value={money(f.coverageAmount)} sub={f.coverageBasis === "monthly" ? t("per month") : f.coverageBasis} accent={C.teal} />
+                <ParentStat label={t("Your cost")} value={f.copay > 0 ? money(share ? share.amount : f.copay) : "$0"} sub={f.copay > 0 ? (share ? `${t("your share of")} ${money(f.copay)}` : t("due monthly")) : t("no out-of-pocket cost")} accent={f.copay > 0 ? C.amber : C.teal} />
+                <ParentStat label={t("Approved schedule")} value={f.sessionsApproved} sub={f.sessionLength} />
+                <ParentStat label={t("Benefit period")} value={f.authEnd ? `${t("Ends")} ${f.authEnd}` : "—"} sub={f.authStart ? `${t("started")} ${f.authStart}` : ""} />
+                <div style={{ gridColumn: "1 / -1", fontSize: 11.5, color: C.inkSoft, lineHeight: 1.5 }}>{t("Questions about eligibility or your benefit amount go to")} {prog.agency}{lang === "en" ? ", " : ""}{t("not your provider.")}</div>
+              </div>
+            )}
+            {/* history + receipts */}
+            {f.copay > 0 && (
+              <details style={{ borderBottom: `1px solid ${C.line}` }}>
+                <summary style={{ padding: "12px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, minHeight: 44 }}>
+                  <Receipt size={14} color={C.teal} /> {t("Payments & receipts")} <span style={{ color: C.inkSoft, fontWeight: 500 }}>({paidMonths.length})</span>
+                </summary>
+                {paidMonths.length === 0 && <div style={{ padding: "0 18px 12px", fontSize: 12.5, color: C.inkSoft }}>{t("No payments recorded yet.")}</div>}
+                {paidMonths.map((p) => (
+                  <div key={p.key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "10px 18px", borderTop: `1px solid ${C.line}` }}>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600 }}>{monthName(p.key)} · {money(p.total)}</div>
+                      <div style={{ fontSize: 11.5, color: C.inkSoft }}>{p.entries.map((e) => `${t(e.method || "")} ${e.date}`).join(", ")}</div>
+                    </div>
+                    <button onClick={() => printReceipt(share ? { ...f, copaySplit: null, parents: [{ name: parentName }] } : f, [p], { provider, t, datesFor })} style={btnSoft}><Printer size={13} /> {t("Receipt")}</button>
+                  </div>
+                ))}
+                {paidMonths.some((p) => p.key.startsWith(year)) && (
+                  <div style={{ padding: "10px 18px", borderTop: `1px solid ${C.line}` }}>
+                    <button onClick={() => printReceipt(share ? { ...f, copaySplit: null, parents: [{ name: parentName }] } : f, paidMonths.filter((p) => p.key.startsWith(year)).reverse(), { provider, t, datesFor, title: `${t("Annual childcare payment summary")} ${year}` })} style={btnSoft}><Printer size={13} /> {t("Year summary")} {year}</button>
+                  </div>
+                )}
+                <div style={{ padding: "8px 18px 12px", fontSize: 11, color: C.inkSoft, display: "flex", gap: 6 }}><Info size={11} style={{ flexShrink: 0, marginTop: 2 }} /> {t("For a Dependent Care FSA, submit these receipts to your plan administrator — Alaga doesn't file claims for you.")}</div>
+              </details>
+            )}
+            {refunds && refunds.filter((r) => r.child === f.child).map((r) => (
+              <div key={r.id} style={{ ...row, display: "flex", justifyContent: "space-between", gap: 10 }}>
+                <div><div style={{ fontSize: 13, fontWeight: 600 }}>{t("Refund")}: {t(r.reason)}</div><div style={{ fontSize: 11.5, color: C.inkSoft }}>{r.date} · {t(r.method)}</div></div>
+                <span style={{ fontSize: 13.5, fontWeight: 700, color: C.tealDark }}>+{money(r.amount)}</span>
+              </div>
+            ))}
+          </div>
+        );
+      })}
+      <ParentFsaCard t={t} kids={kids} onSave={onSave} />
+    </>
+  );
+
+  /* ============================== DOCUMENTS ============================= */
+  const fileRef = React.useRef(null);
+  const [sending, setSending] = useState(null); // { famId, docId }
+  const pickFile = (f, d) => { setSending({ famId: f.id, docId: d.id }); if (fileRef.current) { fileRef.current.value = ""; fileRef.current.click(); } };
+  const onFile = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file || !sending) return;
+    const f = kids.find((k) => k.id === sending.famId); if (!f) return;
+    const docs = defaultChildDocs(f).map((d) => (d.id === sending.docId ? { ...d, status: "pending", sentByParent: true, sentOn: today, fileName: file.name } : d));
+    onSave(f.id, { documents: docs });
+    const name = CHILD_DOC_TEMPLATES.find((x) => x.id === sending.docId)?.name || sending.docId;
+    sendMessage(`📎 ${t("Sent")} ${t(name)} ${t("for")} ${f.child}: ${file.name}`);
+    setSending(null);
+  };
+  const requestCopy = (f, name) => { sendMessage(`${t("Hi! Could I get a copy of this for")} ${f.child}: ${t(name)}?`); go("messages"); };
+  const Documents = (
+    <>
+      <input ref={fileRef} type="file" accept="image/*,application/pdf" onChange={onFile} style={{ display: "none" }} />
+      {kids.map((f) => {
+        const docs = docsOf(f);
+        const forms = benefitFormsOf(f);
+        const sorted = [...docs.filter(docNeedsParent), ...docs.filter((d) => !docNeedsParent(d))];
+        return (
+          <div key={f.id} style={card}>
+            <div style={cardHead}><Avatar f={f} size={30} /> {f.child}</div>
+            {sorted.map((d) => {
+              const need = docNeedsParent(d);
+              const meta = d.sentByParent && d.status === "pending" ? { label: t("Sent — your provider is reviewing it"), color: C.amber, icon: Clock } : trForm(t, d.eff);
+              return (
+                <div key={d.id} style={{ ...row, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, background: need ? "#FFF8F0" : "transparent" }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: 8, minWidth: 0 }}>
+                    <meta.icon size={15} color={meta.color} style={{ flexShrink: 0, marginTop: 1 }} />
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: need ? 700 : 500 }}>{t(d.name)}</div>
+                      <div style={{ fontSize: 11.5, color: meta.color, fontWeight: 600 }}>{meta.label}{d.expiresOn && d.eff !== "missing" ? ` · ${t("renew by")} ${d.expiresOn}` : ""}{d.sentOn ? ` · ${d.sentOn}` : ""}</div>
+                    </div>
+                  </div>
+                  {need && <button onClick={() => pickFile(f, d)} style={{ ...btnMain, padding: "8px 12px", minHeight: 38, fontSize: 12.5, flexShrink: 0 }}><Upload size={13} /> {t("Send")}</button>}
+                </div>
+              );
+            })}
+            {forms.length > 0 && (
+              <>
+                <div style={{ padding: "10px 18px 6px", fontSize: 11, fontWeight: 700, color: C.inkSoft, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Care benefit paperwork")}</div>
+                {forms.map((x) => {
+                  const meta = trForm(t, x.status);
+                  const name = FORM_TEMPLATES.find((tpl) => tpl.id === x.id)?.name || x.id;
+                  return (
+                    <div key={x.id} style={{ ...row, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontSize: 13, fontWeight: 500 }}>{t(name)}</div>
+                        <div style={{ fontSize: 11.5, color: meta.color, fontWeight: 600 }}>{meta.label}{x.date ? ` · ${x.date}` : ""}</div>
+                      </div>
+                      {x.status === "submitted"
+                        ? <button onClick={() => requestCopy(f, name)} style={{ ...btnSoft, flexShrink: 0 }}><MessageSquare size={13} /> {t("Ask for a copy")}</button>
+                        : <span style={{ fontSize: 11.5, color: "#7A5620", fontWeight: 600, textAlign: "right", maxWidth: 150 }}>{t("Submit to")} {programOf(f.programId)?.agency || t("your agency")}</span>}
+                    </div>
+                  );
+                })}
+              </>
+            )}
+          </div>
+        );
+      })}
+      <div style={{ gridColumn: "1 / -1", fontSize: 11.5, color: C.inkSoft, display: "flex", gap: 6, lineHeight: 1.5 }}><Info size={12} style={{ flexShrink: 0, marginTop: 2 }} /> {t("A photo or PDF works. Your provider checks each document before marking it on file.")}</div>
+    </>
+  );
+
+  /* ============================== EXTRA CARE ============================ */
+  const [flexForm, setFlexForm] = useState({ childId: "", type: FLEX_CARE_TYPES[0], date: "", hours: 1, notes: "", paymentMethod: PAYMENT_METHODS[0] });
+  const flexChild = kids.find((k) => String(k.id) === String(flexForm.childId)) || kids[0];
+  const flexFee = (f, hours) => Math.round((tuitionRates[f?.classroom]?.hourly || 0) * hours);
+  const [flexSent, setFlexSent] = useState(false);
+  const submitFlex = () => {
+    if (!flexForm.date || !flexChild) return;
+    flexSeq += 1;
+    saveFlexCare([{ id: `fc${flexSeq}`, child: flexChild.child, classroom: flexChild.classroom, type: flexForm.type, date: flexForm.date, hours: Number(flexForm.hours) || 1, notes: flexForm.notes, status: "pending", requestedBy: "parent", parentPaymentMethod: flexForm.paymentMethod, paymentConfirmed: false }, ...flexCareRequests]);
+    sendMessage(`${t("New extra care request")}: ${flexChild.child} · ${t(flexForm.type)} · ${flexForm.date}${flexForm.notes ? ` — ${flexForm.notes}` : ""}`);
+    setFlexForm({ ...flexForm, date: "", hours: 1, notes: "" });
+    setFlexSent(true); setTimeout(() => setFlexSent(false), 2500);
+  };
+  const setReqMethod = (id, method) => saveFlexCare(flexCareRequests.map((r) => (r.id === id ? { ...r, parentPaymentMethod: method } : r)));
+  const ExtraCare = (
+    <>
+      <div style={card}>
+        <div style={cardHead}><Plus size={15} color={C.teal} /> {t("Request extra care")}</div>
+        <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ fontSize: 12, color: C.inkSoft, lineHeight: 1.5 }}>{t("Early drop-off, a late pickup, or an extra day. Your provider approves it before it's confirmed.")}</div>
+          {kids.length > 1 && (
+            <Field label={t("Child")}>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {kids.map((k) => {
+                  const on = flexChild?.id === k.id;
+                  return <button key={k.id} onClick={() => setFlexForm({ ...flexForm, childId: k.id })} style={{ padding: "8px 14px", borderRadius: 999, minHeight: 38, border: `1.5px solid ${on ? C.teal : C.line}`, background: on ? C.tealTint : "#fff", color: on ? C.tealDark : C.ink, fontWeight: 600, fontSize: 13 }}>{k.child.split(" ")[0]}</button>;
+                })}
+              </div>
+            </Field>
+          )}
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 12 }}>
+            <Field label={t("Type")}><Select value={flexForm.type} onChange={(v) => setFlexForm({ ...flexForm, type: v })} options={FLEX_CARE_TYPES} labels={FLEX_CARE_TYPES.map((x) => t(x))} /></Field>
+            <Field label={t("Date")}><DateField value={flexForm.date} onChange={(v) => setFlexForm({ ...flexForm, date: v })} placeholder={t("Pick a date")} /></Field>
+            <Field label={t("Extra hours")}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <button onClick={() => setFlexForm({ ...flexForm, hours: Math.max(0.5, (Number(flexForm.hours) || 1) - 0.5) })} aria-label="-" style={{ width: 38, height: 38, borderRadius: 9, border: `1px solid ${C.line}`, background: "#fff", fontSize: 18, fontWeight: 700, color: C.ink }}>−</button>
+                <div style={{ minWidth: 44, textAlign: "center", fontWeight: 700, fontSize: 15 }}>{flexForm.hours}</div>
+                <button onClick={() => setFlexForm({ ...flexForm, hours: (Number(flexForm.hours) || 0) + 0.5 })} aria-label="+" style={{ width: 38, height: 38, borderRadius: 9, border: `1px solid ${C.line}`, background: "#fff", fontSize: 18, fontWeight: 700, color: C.ink }}>+</button>
+              </div>
+            </Field>
+            <Field label={t("How will you pay?")}><Select value={flexForm.paymentMethod} onChange={(v) => setFlexForm({ ...flexForm, paymentMethod: v })} options={PAYMENT_METHODS} labels={PAYMENT_METHODS.map((m) => t(m))} /></Field>
+          </div>
+          <Field label={t("Notes (optional)")}><input value={flexForm.notes} onChange={(e) => setFlexForm({ ...flexForm, notes: e.target.value })} style={{ ...inputStyle, width: "100%", padding: "9px 11px", borderRadius: 9, boxSizing: "border-box" }} /></Field>
+          <div style={{ fontSize: 12.5, color: C.inkSoft }}>{t("Estimated fee")}: <b style={{ color: C.ink }}>{money(flexFee(flexChild, Number(flexForm.hours) || 0))}</b></div>
+          <button onClick={submitFlex} disabled={!flexForm.date} style={{ ...btnMain, opacity: flexForm.date ? 1 : 0.5 }}>{flexSent ? <><Check size={15} /> {t("Request sent")}</> : t("Send request")}</button>
+        </div>
+      </div>
+      <div style={card}>
+        <div style={cardHead}><Clock size={15} color={C.teal} /> {t("Your requests")}</div>
+        {myRequests.length === 0 && <div style={{ ...row, borderBottom: "none", fontSize: 12.5, color: C.inkSoft }}>{t("No requests yet.")}</div>}
+        {myRequests.map((r) => {
+          const kid = kids.find((k) => k.child === r.child);
+          const meta = r.status === "approved" ? { label: t("Approved"), fg: C.teal, bg: C.tealTint } : r.status === "denied" ? { label: t("Denied"), fg: C.danger, bg: C.dangerTint } : { label: t("Pending"), fg: C.amber, bg: C.amberTint };
+          const needs = r.status === "approved" && !r.paymentConfirmed && !isPastDate(r.date);
+          return (
+            <div key={r.id} style={{ ...row, background: needs ? "#FFF8F0" : "transparent" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600 }}>{kids.length > 1 ? `${r.child.split(" ")[0]} · ` : ""}{t(r.type)} · {r.date}</div>
+                  <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 2 }}>{r.hours} {t("hrs")} · {money(flexFee(kid, r.hours))}</div>
+                </div>
+                <Pill {...meta} />
+              </div>
+              {r.paymentConfirmed && <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, color: C.tealDark }}><CheckCircle2 size={12} /> {t("Payment confirmed received")}</div>}
+              {needs && (
+                <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 12, color: "#7A5620", fontWeight: 600 }}>{t("How will you pay?")}</span>
+                  <div style={{ minWidth: 130 }}><Select value={r.parentPaymentMethod || PAYMENT_METHODS[0]} onChange={(v) => setReqMethod(r.id, v)} options={PAYMENT_METHODS} labels={PAYMENT_METHODS.map((m) => t(m))} /></div>
+                </div>
+              )}
+              {needs && r.parentPaymentMethod === "Cash" && <div style={{ marginTop: 6, fontSize: 11.5, color: "#7A5620", display: "flex", alignItems: "center", gap: 5 }}><AlertTriangle size={11} /> {t("Please bring exact cash at pickup.")}</div>}
+              {r.status === "denied" && r.denyReason && <div style={{ marginTop: 6, fontSize: 11.5, color: C.inkSoft }}>{t("Reason")}: {t(r.denyReason)}</div>}
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+
+  if (!hh) {
+    return (
+      <div style={{ flex: 1, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: C.cream, padding: 24, textAlign: "center" }}>
+        <div>
+          <div style={{ fontSize: 14, color: C.inkSoft, marginBottom: 12 }}>{t("No families enrolled yet.")}</div>
+          <button onClick={onExit} style={btnSoft}>{showBackToProvider ? t("Exit parent view") : t("Exit demo")}</button>
+        </div>
+      </div>
+    );
+  }
+
+  const content = { home: Home, messages: Messages, billing: Billing, docs: Documents, care: ExtraCare }[tab];
+  const tabLabel = (x) => t(x.label);
 
   return (
     <div style={{ flex: 1, minWidth: 0, minHeight: "100vh", display: "flex", flexDirection: "column", background: C.cream }}>
       {/* header */}
-      <div style={{ background: C.side, color: C.ink, padding: "18px 26px", borderBottom: `1px solid ${C.line}` }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <AlagaMark size={28} color={C.teal} arch={false} />
-            <div>
-              <div style={{ fontFamily: "'Fraunces', serif", fontSize: 18, fontWeight: 900 }}>alaga</div>
+      <div style={{ background: C.side, borderBottom: `1px solid ${C.line}` }}>
+        <div style={{ maxWidth: 960, margin: "0 auto", padding: isMobile ? "10px 14px" : "14px 24px 0", display: "flex", flexWrap: "nowrap", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0, flex: 1 }}>
+            <AlagaMark size={isMobile ? 24 : 28} color={C.teal} arch={false} />
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontFamily: "'Fraunces', serif", fontSize: 16, fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{provider.name}</div>
               <div style={{ fontSize: 10.5, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.06em" }}>{t("Family app")}</div>
             </div>
           </div>
-          <button onClick={onExit} style={{ fontSize: 12, color: C.inkSoft, background: "none", border: `1px solid ${C.line}`, borderRadius: 8, padding: "7px 12px", fontWeight: 600 }}>
-            {showBackToProvider ? t("Exit parent view") : t("Exit demo")}
-          </button>
-        </div>
-        <div style={{ marginTop: 16, display: "flex", gap: 14, flexWrap: "wrap" }}>
-          <div>
-            <div style={{ fontSize: 11.5, color: C.inkSoft, fontWeight: 600, marginBottom: 5 }}>{t("Viewing as")}</div>
-            <select value={famId} onChange={(e) => setFamId(Number(e.target.value))} style={{
-              background: "#fff", color: C.ink, border: `1px solid ${C.line}`,
-              borderRadius: 9, padding: "8px 12px", fontSize: 13.5, fontFamily: "inherit",
-            }}>
-              {families.map((f) => <option key={f.id} value={f.id} style={{ color: C.ink }}>{f.parent} — {t("parent of")} {f.child}</option>)}
-            </select>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+            {setLanguage && (
+              <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                <Globe size={14} color={C.inkSoft} style={{ position: "absolute", left: 9, pointerEvents: "none" }} />
+                <select aria-label={t("Language")} value={language} onChange={(e) => setLanguage(e.target.value)} style={{ appearance: "none", background: "#fff", color: C.ink, border: `1px solid ${C.line}`, borderRadius: 9, padding: "7px 10px 7px 28px", fontSize: 12.5, fontFamily: "inherit", width: isMobile ? 100 : "auto" }}>
+                  {PARENT_LANGS.map((l) => <option key={l} value={l}>{l}</option>)}
+                </select>
+              </div>
+            )}
+            <button onClick={onExit} style={{ fontSize: 12, color: C.inkSoft, background: "none", border: `1px solid ${C.line}`, borderRadius: 9, padding: "7px 10px", fontWeight: 600, whiteSpace: "nowrap" }}>
+              {isMobile ? t("Exit") : showBackToProvider ? t("Exit parent view") : t("Exit demo")}
+            </button>
           </div>
-          {setLanguage && (
-            <div>
-              <div style={{ fontSize: 11.5, color: C.inkSoft, fontWeight: 600, marginBottom: 5 }}>{t("Language")}</div>
-              <select value={language} onChange={(e) => setLanguage(e.target.value)} style={{
-                background: "#fff", color: C.ink, border: `1px solid ${C.line}`,
-                borderRadius: 9, padding: "8px 12px", fontSize: 13.5, fontFamily: "inherit",
-              }}>
-                {PARENT_LANGS.map((l) => <option key={l} value={l} style={{ color: C.ink }}>{l}</option>)}
-              </select>
-            </div>
-          )}
         </div>
-      </div>
-
-      <div style={{ maxWidth: 560, margin: "0 auto", width: "100%", padding: "24px 20px 60px", display: "flex", flexDirection: "column", gap: 16 }}>
-
-        {events.filter((e) => e.notify && !eventHasPassed(e)).length > 0 && (
-          <div style={{ background: C.tealTint, border: `1px solid ${C.teal}`, borderRadius: 16, overflow: "hidden" }}>
-            <div style={{ padding: "13px 18px", borderBottom: `1px solid ${C.line}`, fontWeight: 700, fontSize: 13.5, color: C.tealDark, display: "flex", alignItems: "center", gap: 7 }}>
-              <Sparkles size={15} /> {t("Announcements")}
-            </div>
-            {events.filter((e) => e.notify && !eventHasPassed(e)).slice(0, 6).map((e) => {
-              const { emoji, lead } = eventAnnouncementOpener(e.type, e.name);
-              const isExpanded = expandedEventId === e.id;
-              const hasDetails = e.bringItems || e.notes;
+        {/* demo only: switch which parent is signed in */}
+        <div style={{ maxWidth: 960, margin: "0 auto", padding: isMobile ? "0 14px 10px" : "10px 24px 0", display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 11, fontWeight: 700, color: C.inkSoft, textTransform: "uppercase", letterSpacing: "0.04em", whiteSpace: "nowrap" }}>{t("Demo: viewing as")}</span>
+          <select value={hh.household} onChange={(e) => setHhId(e.target.value)} style={{ flex: isMobile ? 1 : "none", minWidth: 0, background: "#fff", color: C.ink, border: `1px dashed ${C.line}`, borderRadius: 9, padding: "6px 10px", fontSize: 12.5, fontFamily: "inherit" }}>
+            {households.map((h) => <option key={h.household} value={h.household}>{h.children[0].parent} — {h.children.map((c) => c.child.split(" ")[0]).join(" & ")}</option>)}
+          </select>
+        </div>
+        {!isMobile && (
+          <div role="tablist" style={{ maxWidth: 960, margin: "0 auto", padding: "8px 24px 0", display: "flex", gap: 4 }}>
+            {PARENT_TABS.map((x) => {
+              const on = tab === x.id;
               return (
-                <div key={e.id} style={{ borderBottom: `1px solid ${C.line}` }}>
-                  <button onClick={() => hasDetails && setExpandedEventId(isExpanded ? null : e.id)} style={{
-                    width: "100%", textAlign: "left", background: "none", border: "none", padding: "12px 18px",
-                    display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, cursor: hasDetails ? "pointer" : "default",
-                  }}>
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: 13.5, fontWeight: 600, color: C.tealDark }}>{emoji} {lead ? `${lead} ` : ""}{e.name}</div>
-                      <div style={{ fontSize: 12, color: C.tealDark, opacity: 0.8, marginTop: 2 }}>{e.dates}</div>
-                    </div>
-                    {hasDetails && (
-                      <ChevronDown size={15} color={C.tealDark} style={{ flexShrink: 0, marginTop: 2, transform: isExpanded ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />
-                    )}
-                  </button>
-                  {isExpanded && hasDetails && (
-                    <div style={{ padding: "0 18px 14px" }}>
-                      {e.bringItems && <div style={{ fontSize: 12.5, color: C.tealDark, marginTop: 2, display: "flex", alignItems: "center", gap: 5 }}><Paperclip size={11} /> {t("Bring")}: {e.bringItems}</div>}
-                      {e.notes && <div style={{ fontSize: 12.5, color: C.tealDark, opacity: 0.85, marginTop: 6 }}>{e.notes}</div>}
-                    </div>
-                  )}
-                </div>
+                <button key={x.id} role="tab" aria-selected={on} onClick={() => go(x.id)} style={{ display: "flex", alignItems: "center", gap: 7, padding: "10px 14px", background: "none", border: "none", borderBottom: `2.5px solid ${on ? C.teal : "transparent"}`, color: on ? C.tealDark : C.inkSoft, fontWeight: on ? 700 : 600, fontSize: 13.5 }}>
+                  <x.icon size={15} /> {tabLabel(x)}
+                  {badges[x.id] > 0 && <span style={{ background: C.coral, color: "#fff", fontSize: 10.5, fontWeight: 700, borderRadius: 999, padding: "1px 6px" }}>{badges[x.id]}</span>}
+                </button>
               );
             })}
           </div>
         )}
+      </div>
 
-        <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
-          <div style={{ padding: "13px 18px", borderBottom: `1px solid ${C.line}`, fontWeight: 700, fontSize: 13.5, display: "flex", alignItems: "center", gap: 7 }}>
-            <MessageSquare size={15} color={C.teal} /> {t("Messages with your provider")}
-          </div>
-          <div style={{ maxHeight: 260, overflowY: "auto", padding: "12px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
-            {(!myThread || myThread.messages.length === 0) && (
-              <div style={{ fontSize: 12.5, color: C.inkSoft, textAlign: "center", padding: "8px 0" }}>{t("No messages yet — say hello!")}</div>
-            )}
-            {myThread && myThread.messages.map((m, i) => (
-              <div key={i} style={{ display: "flex", justifyContent: m.from === "them" ? "flex-end" : "flex-start" }}>
-                <div style={{
-                  maxWidth: "80%", padding: "8px 12px", borderRadius: 12, fontSize: 13,
-                  background: m.from === "them" ? C.teal : C.cream, color: m.from === "them" ? "#fff" : C.ink,
-                }}>
-                  {m.text}
-                  <div style={{ fontSize: 10, opacity: 0.7, marginTop: 3 }}>{m.time}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div style={{ display: "flex", gap: 8, padding: "10px 18px 14px", borderTop: `1px solid ${C.line}` }}>
-            <input value={myDraft} onChange={(e) => setMyDraft(e.target.value)} onKeyDown={(e) => e.key === "Enter" && sendToProvider()}
-              placeholder={t("Type a message…")} style={{ ...inputStyle, borderRadius: 999 }} />
-            <button onClick={sendToProvider} style={{ width: 38, height: 38, borderRadius: "50%", border: "none", background: C.teal, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <Send size={15} />
-            </button>
-          </div>
-        </div>
-
-        {(() => {
-          const rec0 = ((careCtx?.attendanceLog || {})[todayMDY()] || {})[fam.id];
-          if (!rec0) return null;
-          const rec = rec0 === true ? { in: "—" } : rec0;
-          const away = !rec.out && isAway(rec);
-          const label = rec.absent ? t("Marked absent today") : rec.out ? `${t("Picked up at")} ${rec.out}` : away ? `${t("Out for an appointment since")} ${(rec.outings || []).find((o) => !o.back)?.out}` : `${t("Checked in at")} ${rec.in}`;
-          const color = rec.absent || rec.out ? C.inkSoft : away ? C.amber : C.teal;
-          return (
-            <div style={{ background: C.paper, border: `1px solid ${away ? C.amber : C.line}`, borderRadius: 16, padding: "14px 20px", display: "flex", alignItems: "center", gap: 12 }}>
-              <div style={{ width: 40, height: 40, borderRadius: "50%", background: fam.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, flexShrink: 0 }}>{fam.child[0]}</div>
-              <div>
-                <div style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Today")}</div>
-                <div style={{ fontSize: 14, fontWeight: 700, color }}>{label}</div>
-                {outingsText(rec, t) && <div style={{ fontSize: 11.5, color: C.inkSoft }}>{outingsText(rec, t)}</div>}
-              </div>
-            </div>
-          );
-        })()}
-
-        {fam.subsidized && dLeft !== null && dLeft <= 14 && (
-          <div style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: "13px 15px", borderRadius: 12, background: dLeft <= 7 ? C.dangerTint : C.amberTint, color: dLeft <= 7 ? C.danger : "#7A5620" }}>
-            <AlertTriangle size={17} style={{ flexShrink: 0, marginTop: 1 }} />
-            <div style={{ fontSize: 13, lineHeight: 1.45 }}>
-              <b>{dLeft > 0 ? `${t("Your child's care benefit expires in")} ${dLeft} ${t("days.")}` : t("Your child's care benefit has expired.")}</b>
-              <div style={{ marginTop: 2 }}>{t("To keep")} {fam.child}{t("'s spot funded, complete recertification with")} {prog.agency} {t("before")} {fam.authEnd}.</div>
-            </div>
-          </div>
-        )}
-
-        {fam.subsidized ? (
-          <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, padding: 20 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
-              <div style={{ width: 46, height: 46, borderRadius: "50%", background: fam.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 17 }}>{fam.child[0]}</div>
-              <div>
-                <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>{fam.child}{t("'s care benefit")}</div>
-                <div style={{ fontSize: 12.5, color: C.inkSoft }}>{prog.label} · {t("through")} {provider.name}</div>
-              </div>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <ParentStat label={t("Covered by your benefit")} value={money(fam.coverageAmount)} sub={fam.coverageBasis === "monthly" ? `${t("per month")}` : fam.coverageBasis} accent={C.teal} />
-              <ParentStat label={t("Your cost")} value={fam.copay > 0 ? money(fam.copay) : "$0"} sub={fam.copay > 0 ? t("due monthly") : t("no out-of-pocket cost")} accent={fam.copay > 0 ? C.amber : C.teal} />
-              <ParentStat label={t("Approved schedule")} value={fam.sessionsApproved} sub={fam.sessionLength} />
-              <ParentStat label={t("Benefit period")} value={`${t("Ends")} ${fam.authEnd}`} sub={`${t("started")} ${fam.authStart}`} />
-            </div>
-          </div>
-        ) : (
-          <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, padding: 20 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
-              <div style={{ width: 46, height: 46, borderRadius: "50%", background: fam.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 17 }}>{fam.child[0]}</div>
-              <div>
-                <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>{fam.child} — {t("Private pay")}</div>
-                <div style={{ fontSize: 12.5, color: C.inkSoft }}>{t("through")} {provider.name}</div>
-              </div>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <ParentStat label={t("Monthly tuition")} value={money(fam.copay)} sub={t("due monthly")} accent={C.amber} />
-              <ParentStat label={t("Approved schedule")} value={fam.sessionsApproved} sub={fam.sessionLength} />
-            </div>
-          </div>
-        )}
-
-        <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, padding: 20 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-            <DollarSign size={16} color={C.teal} />
-            <div style={{ fontWeight: 600, fontSize: 14.5 }}>{t("FSA / HSA benefits")}</div>
-          </div>
-          <div style={{ fontSize: 11.5, color: C.inkSoft, lineHeight: 1.5, marginBottom: 12 }}>
-            {t("If your employer offers a Dependent Care FSA, you can typically use it toward childcare tuition. Standard HSAs generally do not cover childcare — check your plan documents to confirm.")}
-          </div>
-          <label style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13, marginBottom: fsaEnrolled ? 12 : 0 }}>
-            <input type="checkbox" checked={fsaEnrolled} onChange={(e) => setFsaEnrolled(e.target.checked)} style={{ width: 16, height: 16, accentColor: C.teal }} />
-            {t("I use employer FSA/HSA benefits for this child's care")}
-          </label>
-          {fsaEnrolled && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <Field label={t("Account type")}>
-                <Select value={fsaType} onChange={setFsaType} options={["Dependent Care FSA", "Health FSA", "HSA"]} />
-              </Field>
-              <Field label={t("Employer name (optional)")}>
-                <input value={fsaEmployer} onChange={(e) => setFsaEmployer(e.target.value)} style={inputStyle} />
-              </Field>
-            </div>
-          )}
-          <button onClick={saveFsa} style={{ marginTop: 12, display: "flex", alignItems: "center", justifyContent: "center", gap: 7, width: "100%", padding: "9px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 12.5 }}>
-            {fsaSaveState === "saving" ? t("Saving…") : fsaSaveState === "saved" ? t("Saved") : t("Save changes")}
-          </button>
-        </div>
-
-        {fsaEnrolled && (
-          <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
-            <div style={{ padding: "13px 18px", borderBottom: `1px solid ${C.line}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <div style={{ fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }}>
-                <FileText size={15} color={C.teal} /> {t("Receipts for reimbursement")}
-              </div>
-              <button onClick={downloadYearSummary} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11.5, fontWeight: 700, color: C.tealDark, background: "none", border: "none" }}>
-                <Printer size={12} /> {t("Year summary")}
-              </button>
-            </div>
-            {paidMonths.length === 0 && <div style={{ padding: "12px 18px", fontSize: 12.5, color: C.inkSoft }}>{t("No payments recorded yet.")}</div>}
-            {paidMonths.map((m) => (
-              <div key={m.key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 18px", borderBottom: `1px solid ${C.line}` }}>
-                <div>
-                  <div style={{ fontSize: 13.5, fontWeight: 500 }}>{periodLabel(m.key)}</div>
-                  <div style={{ fontSize: 11.5, color: C.inkSoft }}>{money(m.total)} {t("paid")} · {m.entries.map((e) => e.date).join(", ")}</div>
-                </div>
-                <button onClick={() => downloadReceipt(m)} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: C.tealDark, background: C.tealTint, border: "none", borderRadius: 8, padding: "7px 11px" }}>
-                  <Download size={13} /> {t("Download")}
-                </button>
-              </div>
-            ))}
-            <div style={{ padding: "10px 18px", fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
-              <Info size={11} /> {t("Submit these to your FSA/HSA administrator — Alaga doesn't file claims on your behalf.")}
-            </div>
-          </div>
-        )}
-
-        {refunds && refunds.filter((r) => r.child === fam.child).length > 0 && (
-          <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
-            <div style={{ padding: "13px 18px", borderBottom: `1px solid ${C.line}`, fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }}>
-              <ArrowLeft size={15} color={C.danger} /> {t("Refund history")}
-            </div>
-            {refunds.filter((r) => r.child === fam.child).map((r) => (
-              <div key={r.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 18px", borderBottom: `1px solid ${C.line}` }}>
-                <div>
-                  <div style={{ fontSize: 13.5, fontWeight: 500 }}>{t(r.reason)}</div>
-                  <div style={{ fontSize: 11.5, color: C.inkSoft }}>{r.date} · {t(r.method)}</div>
-                </div>
-                <span style={{ fontSize: 13.5, fontWeight: 700, color: C.danger }}>-{money(r.amount)}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
-          <div style={{ padding: "13px 18px", borderBottom: `1px solid ${C.line}`, fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }}>
-            <FileText size={15} color={C.teal} /> {t("Enrollment documents")}
-          </div>
-          {defaultChildDocs(fam).map((d) => {
-            const meta = trForm(t, d.status);
-            const name = CHILD_DOC_TEMPLATES.find((tpl) => tpl.id === d.id).name;
-            return (
-              <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 18px", borderBottom: `1px solid ${C.line}` }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <meta.icon size={13} color={meta.color} />
-                  <span style={{ fontSize: 12.5 }}>{name}</span>
-                </div>
-                <span style={{ fontSize: 11, fontWeight: 700, color: meta.color }}>{meta.label}</span>
-              </div>
-            );
-          })}
-          <div style={{ padding: "10px 18px", fontSize: 11, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
-            <Info size={11} /> {t("Missing something? Reply to your provider's enrollment email with the document attached.")}
-          </div>
-        </div>
-
-        <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
-          <div style={{ padding: "13px 18px", borderBottom: `1px solid ${C.line}`, fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }}>
-            <Clock size={15} color={C.teal} /> {t("Flex care")}
-          </div>
-          <div style={{ padding: "12px 18px", fontSize: 11.5, color: C.inkSoft, lineHeight: 1.5, borderBottom: `1px solid ${C.line}` }}>
-            {t("Need early drop-off, a late pickup, or an extra day? Request it here — your provider approves before it's confirmed.")}
-          </div>
-          {myFlexRequests.length > 0 && myFlexRequests.map((r) => {
-            const fee = flexFee(r.hours);
-            const statusMeta = r.status === "approved" ? { label: t("Approved"), fg: C.teal, bg: C.tealTint } : r.status === "denied" ? { label: t("Denied"), fg: C.danger, bg: C.dangerTint } : { label: t("Pending"), fg: C.amber, bg: C.amberTint };
-            const needsMethod = r.status === "approved" && !r.paymentConfirmed;
-            return (
-              <div key={r.id} style={{ padding: "11px 18px", borderBottom: `1px solid ${C.line}` }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 500 }}>{t(r.type)} · {r.date}</div>
-                    <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 2 }}>{r.hours}{t("hrs")} · {money(fee)}</div>
-                  </div>
-                  <Pill {...statusMeta} />
-                </div>
-                {r.paymentConfirmed && (
-                  <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: C.tealDark }}>
-                    <CheckCircle2 size={11} /> {t("Payment confirmed received")}
-                  </div>
-                )}
-                {needsMethod && (
-                  <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ fontSize: 11, color: C.inkSoft }}>{t("How will you pay?")}</span>
-                    <Select value={r.parentPaymentMethod || PAYMENT_METHODS[0]} onChange={(v) => setMyFlexPaymentMethod(r.id, v)} options={PAYMENT_METHODS} labels={PAYMENT_METHODS.map((m) => t(m))} />
-                  </div>
-                )}
-                {needsMethod && r.parentPaymentMethod === "Cash" && (
-                  <div style={{ marginTop: 6, fontSize: 10.5, color: "#7A5620", display: "flex", alignItems: "center", gap: 5 }}>
-                    <AlertTriangle size={11} /> {t("Please bring exact cash at pickup.")}
-                  </div>
-                )}
-                {r.status === "denied" && r.denyReason && (
-                  <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: C.inkSoft }}>
-                    <Info size={11} /> {t("Reason")}: {t(r.denyReason)}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-          <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <Field label={t("Type")}>
-                <Select value={flexForm.type} onChange={(v) => setFlexForm({ ...flexForm, type: v })} options={FLEX_CARE_TYPES} labels={FLEX_CARE_TYPES.map((x) => t(x))} />
-              </Field>
-              <Field label={t("Date")}><input type="date" value={flexForm.date} onChange={(e) => setFlexForm({ ...flexForm, date: e.target.value })} style={inputStyle} /></Field>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <Field label={t("Extra hours")}><input type="number" step="0.5" value={flexForm.hours} onChange={(e) => setFlexForm({ ...flexForm, hours: e.target.value })} style={inputStyle} /></Field>
-              <Field label={t("How will you pay?")}>
-                <Select value={flexForm.paymentMethod} onChange={(v) => setFlexForm({ ...flexForm, paymentMethod: v })} options={PAYMENT_METHODS} labels={PAYMENT_METHODS.map((m) => t(m))} />
-              </Field>
-            </div>
-            <Field label={t("Notes (optional)")}><input value={flexForm.notes} onChange={(e) => setFlexForm({ ...flexForm, notes: e.target.value })} style={inputStyle} /></Field>
-            {flexForm.date && (
-              <div style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Estimated fee")}: <b style={{ color: C.ink }}>{money(flexFee(Number(flexForm.hours) || 0))}</b></div>
-            )}
-            <button onClick={submitFlexRequest} style={{ padding: "9px 0", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 12.5 }}>{t("Request flex care")}</button>
-          </div>
-        </div>
-
-        <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
-          <div style={{ padding: "13px 18px", borderBottom: `1px solid ${C.line}`, fontWeight: 600, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }}>
-            <FileText size={15} color={C.teal} /> {t("Your documents")}
-          </div>
-          {parentDocs.length === 0 && <div style={{ padding: "14px 18px", fontSize: 12, color: C.inkSoft }}>{t("Not yet available")}</div>}
-          {parentDocs.map((f) => {
-            const meta = trForm(t, f.status);
-            const name = FORM_TEMPLATES.find((tpl) => tpl.id === f.id).name;
-            return (
-              <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 18px", borderBottom: `1px solid ${C.line}` }}>
-                <div>
-                  <div style={{ fontSize: 13.5, fontWeight: 500 }}>{name}</div>
-                  <div style={{ fontSize: 11.5, color: meta.color, fontWeight: 600 }}>{meta.label}{f.date ? ` · ${f.date}` : ""}</div>
-                </div>
-                {f.status === "submitted" ? (
-                  <button style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, fontWeight: 600, color: C.tealDark, background: C.tealTint, border: "none", borderRadius: 8, padding: "7px 11px" }}>
-                    <Download size={13} /> {t("Download")}
-                  </button>
-                ) : (
-                  <span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Not yet available")}</span>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        <button style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "13px 0", borderRadius: 12, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 14 }}>
-          <MessageSquare size={16} /> {t("Message")} {provider.name.split(" ")[0]}{t("'s provider")}
-        </button>
-
-        {fam.subsidized && (
-          <div style={{ fontSize: 11.5, color: C.inkSoft, textAlign: "center", lineHeight: 1.5 }}>
-            {t("Questions about eligibility or your benefit amount go to")} {prog.agency}{t("not your provider.")}
-          </div>
+      <div style={{ maxWidth: 960, margin: "0 auto", width: "100%", boxSizing: "border-box", padding: isMobile ? "16px 14px 96px" : "24px 24px 60px", display: "flex", flexDirection: "column", gap: isMobile ? 14 : 16 }}>
+        {tab !== "home" && <div style={{ fontFamily: "'Fraunces', serif", fontSize: isMobile ? 21 : 24, fontWeight: 600 }}>{tabLabel(PARENT_TABS.find((x) => x.id === tab))}</div>}
+        {isMobile || tab === "home" || tab === "messages" ? content : (
+          <div className="parent-cols" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))", gap: 16, alignItems: "start" }}>{content}</div>
         )}
       </div>
+
+      {/* phone: bottom tab bar */}
+      {isMobile && (
+        <nav role="tablist" style={{ position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 40, background: C.paper, borderTop: `1px solid ${C.line}`, display: "flex", paddingBottom: "env(safe-area-inset-bottom)", boxShadow: "0 -4px 16px rgba(31,42,36,0.06)" }}>
+          {PARENT_TABS.map((x) => {
+            const on = tab === x.id;
+            return (
+              <button key={x.id} role="tab" aria-selected={on} onClick={() => go(x.id)} style={{ flex: 1, position: "relative", display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "9px 2px 8px", background: "none", border: "none", color: on ? C.teal : C.inkSoft, fontSize: 10.5, fontWeight: on ? 700 : 600, minHeight: 56 }}>
+                <x.icon size={20} strokeWidth={on ? 2.4 : 2} />
+                <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "100%" }}>{tabLabel(x)}</span>
+                {badges[x.id] > 0 && <span style={{ position: "absolute", top: 5, left: "calc(50% + 6px)", background: C.coral, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "1px 5px", lineHeight: 1.3 }}>{badges[x.id]}</span>}
+              </button>
+            );
+          })}
+        </nav>
+      )}
     </div>
+  );
+}
+
+// The household's single conversation with the provider; opens scrolled to
+// the newest message.
+function ParentMessages({ t, thread, provider, onSend, isMobile }) {
+  const [draft, setDraft] = useState("");
+  const endRef = React.useRef(null);
+  const count = thread ? thread.messages.length : 0;
+  useEffect(() => { if (endRef.current && endRef.current.scrollIntoView) endRef.current.scrollIntoView({ block: "end" }); }, [count]);
+  const send = () => { if (!draft.trim()) return; onSend(draft.trim()); setDraft(""); };
+  return (
+    <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden", display: "flex", flexDirection: "column", height: isMobile ? "calc(100dvh - 250px)" : "min(620px, calc(100vh - 260px))", minHeight: 320 }}>
+      <div style={{ padding: "11px 16px", borderBottom: `1px solid ${C.line}`, fontSize: 12.5, color: C.inkSoft }}>{t("With")} <b style={{ color: C.ink }}>{provider.name}</b></div>
+      <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
+        {count === 0 && <div style={{ fontSize: 13, color: C.inkSoft, textAlign: "center", padding: "20px 0" }}>{t("No messages yet — say hello!")}</div>}
+        {thread && thread.messages.map((m, i) => (
+          <div key={i} style={{ display: "flex", justifyContent: m.from === "them" ? "flex-end" : "flex-start" }}>
+            <div style={{ maxWidth: "82%", padding: "9px 13px", borderRadius: 14, fontSize: 13.5, lineHeight: 1.4, background: m.from === "them" ? C.teal : C.cream, color: m.from === "them" ? "#fff" : C.ink, wordBreak: "break-word" }}>
+              {m.text}
+              <div style={{ fontSize: 10.5, opacity: 0.75, marginTop: 3 }}>{fmtMsgTime(m, t)}</div>
+            </div>
+          </div>
+        ))}
+        <div ref={endRef} />
+      </div>
+      <div style={{ display: "flex", gap: 8, padding: "10px 12px", borderTop: `1px solid ${C.line}` }}>
+        <input value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} placeholder={t("Type a message…")} style={{ ...inputStyle, borderRadius: 999, padding: "10px 14px" }} />
+        <button onClick={send} aria-label={t("Send")} style={{ width: 42, height: 42, borderRadius: "50%", border: "none", background: C.teal, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><Send size={16} /></button>
+      </div>
+    </div>
+  );
+}
+
+// Optional: tell the provider the family pays with a Dependent Care FSA, so
+// receipts are expected. Folded away since most families never need it.
+function ParentFsaCard({ t, kids, onSave }) {
+  const first = kids[0];
+  const [on, setOn] = useState(!!first?.fsaHsa?.enrolled);
+  const [type, setType] = useState(first?.fsaHsa?.accountType || "Dependent Care FSA");
+  const [employer, setEmployer] = useState(first?.fsaHsa?.employerName || "");
+  const [state, setState] = useState("idle");
+  useEffect(() => { setOn(!!first?.fsaHsa?.enrolled); setType(first?.fsaHsa?.accountType || "Dependent Care FSA"); setEmployer(first?.fsaHsa?.employerName || ""); }, [first?.id]);
+  const save = async () => {
+    setState("saving");
+    const results = await Promise.all(kids.map((k) => onSave(k.id, { fsaHsa: { enrolled: on, accountType: type, employerName: employer } })));
+    const ok = results.every((r) => r !== false);
+    setState(ok ? "saved" : "error");
+    if (ok) setTimeout(() => setState("idle"), 1500);
+  };
+  return (
+    <details style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, overflow: "hidden" }}>
+      <summary style={{ padding: "13px 18px", fontWeight: 700, fontSize: 13.5, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, minHeight: 44 }}>
+        <DollarSign size={15} color={C.teal} /> {t("FSA / HSA")} <span style={{ fontWeight: 500, color: C.inkSoft, fontSize: 12.5 }}>· {on ? t(type) : t("not set up")}</span>
+      </summary>
+      <div style={{ padding: "0 18px 16px", display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ fontSize: 11.5, color: C.inkSoft, lineHeight: 1.5 }}>{t("If your employer offers a Dependent Care FSA, you can typically use it toward childcare tuition. Standard HSAs generally do not cover childcare — check your plan documents to confirm.")}</div>
+        <label style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13, minHeight: 36 }}>
+          <input type="checkbox" checked={on} onChange={(e) => setOn(e.target.checked)} style={{ width: 18, height: 18, accentColor: C.teal }} />
+          {t("I use employer FSA/HSA benefits for childcare")}
+        </label>
+        {on && (
+          <>
+            <Field label={t("Account type")}><Select value={type} onChange={setType} options={["Dependent Care FSA", "Health FSA", "HSA"]} labels={["Dependent Care FSA", "Health FSA", "HSA"].map((x) => t(x))} /></Field>
+            <Field label={t("Employer name (optional)")}><input value={employer} onChange={(e) => setEmployer(e.target.value)} style={{ ...inputStyle, width: "100%", padding: "9px 11px", borderRadius: 9, boxSizing: "border-box" }} /></Field>
+          </>
+        )}
+        <button onClick={save} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "10px 0", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 13, minHeight: 42 }}>
+          {state === "saving" ? t("Saving…") : state === "saved" ? t("Saved") : state === "error" ? t("Couldn't save — try again") : t("Save changes")}
+        </button>
+      </div>
+    </details>
   );
 }
 
