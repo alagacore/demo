@@ -728,12 +728,16 @@ function nextDueDateFrom(settings) {
   return billingDueDate(settings, new Date(now.getFullYear(), now.getMonth() + 1, 1));
 }
 // Paid for a period: single payer, or every guardian in a split.
-const paidFor = (f, key) => (f.copaySplit ? f.copaySplit.length > 0 && f.copaySplit.every((s) => s.paidPeriods?.[key]) : !!f.paidPeriods?.[key]);
-const partlyPaidFor = (f, key) => !!(f.copaySplit && f.copaySplit.some((s) => s.paidPeriods?.[key]));
+// A month's record can hold several payments (partial payments add up).
+// It counts as paid once what was received covers what was due.
+const recFull = (rec) => !!rec && (rec.due == null || (Number(rec.amount) || 0) >= Number(rec.due) - 0.005);
+const paidFor = (f, key) => (f.copaySplit ? f.copaySplit.length > 0 && f.copaySplit.every((s) => recFull(s.paidPeriods?.[key])) : recFull(f.paidPeriods?.[key]));
+const partlyPaidFor = (f, key) => (f.copaySplit ? f.copaySplit.some((s) => s.paidPeriods?.[key]) && !paidFor(f, key) : !!f.paidPeriods?.[key] && !recFull(f.paidPeriods[key]));
+const paymentList = (rec) => (!rec ? [] : rec.payments && rec.payments.length ? rec.payments : [{ date: rec.date, method: rec.method, amount: rec.amount, ref: rec.ref, note: rec.note }]);
 // Every month this family has paid, newest first, combining split payers.
 function paymentsOf(f) {
   const out = {};
-  const add = (pp, who) => Object.entries(pp || {}).forEach(([k, v]) => { (out[k] = out[k] || []).push({ ...v, who }); });
+  const add = (pp, who) => Object.entries(pp || {}).forEach(([k, v]) => { paymentList(v).forEach((e) => (out[k] = out[k] || []).push({ ...e, who })); });
   if (f.copaySplit) f.copaySplit.forEach((s) => add(s.paidPeriods, s.parent)); else add(f.paidPeriods, f.parents?.[0]?.name || f.parent);
   return Object.entries(out).sort((a, b) => (a[0] < b[0] ? 1 : -1)).map(([key, entries]) => ({ key, entries, total: entries.reduce((s, e) => s + (Number(e.amount) || 0), 0) }));
 }
@@ -1411,6 +1415,30 @@ const T = {
   "is back": { es: "regresó", tl: "nakabalik na", zh: "已返回", vi: "đã quay lại", ko: "복귀함" },
   "No default sibling discount rate is configured — set one up in Money → Tuition & Subsidies, or force-apply one just for this child above.": { es: "No hay descuento por hermanos configurado — configúralo en Dinero → Colegiatura y subsidios, o aplícalo solo a este niño arriba.", tl: "Walang default na sibling discount — i-set sa Money → Tuition & Subsidies, o i-apply para sa batang ito sa itaas.", zh: "尚未设置默认兄弟姐妹折扣 — 请在“财务 → 学费与补助”中设置，或在上方仅为此孩子应用。", vi: "Chưa có giảm giá anh chị em mặc định — đặt trong Tài chính → Học phí & Trợ cấp, hoặc áp dụng riêng cho trẻ này ở trên.", ko: "기본 형제 할인이 없습니다 — 재정 → 수업료 및 보조금에서 설정하거나 위에서 이 아동에게만 적용하세요." },
   "No default sibling discount rate is configured — set one up in Money → Tuition & Subsidies, or open a child's profile to force-apply one just for them.": { es: "No hay descuento por hermanos configurado — configúralo en Dinero → Colegiatura y subsidios, o ábrelo desde el perfil del niño.", tl: "Walang default na sibling discount — i-set sa Money → Tuition & Subsidies, o buksan ang profile ng bata.", zh: "尚未设置默认兄弟姐妹折扣 — 请在“财务 → 学费与补助”中设置，或打开孩子档案单独应用。", vi: "Chưa có giảm giá anh chị em mặc định — đặt trong Tài chính → Học phí & Trợ cấp, hoặc mở hồ sơ của trẻ để áp dụng riêng.", ko: "기본 형제 할인이 없습니다 — 재정 → 수업료 및 보조금에서 설정하거나 아동 프로필에서 적용하세요." },
+  "Log payment": { es: "Registrar pago", tl: "Itala ang bayad", zh: "记录付款", vi: "Ghi nhận thanh toán", ko: "결제 기록" },
+  "Log": { es: "Registrar pago de", tl: "Itala ang bayad para sa", zh: "记录", vi: "Ghi nhận", ko: "기록:" },
+  "Paid so far": { es: "Pagado hasta ahora", tl: "Nabayaran na", zh: "已付", vi: "Đã trả", ko: "지금까지 납부" },
+  "Still owes": { es: "Aún debe", tl: "Kulang pa", zh: "尚欠", vi: "Còn nợ", ko: "남은 금액" },
+  "Paid in full": { es: "Pagado completo", tl: "Bayad na lahat", zh: "已全额付清", vi: "Đã trả đủ", ko: "완납" },
+  "Amount received": { es: "Cantidad recibida", tl: "Halagang natanggap", zh: "收到金额", vi: "Số tiền nhận", ko: "받은 금액" },
+  "Date received": { es: "Fecha recibida", tl: "Petsa ng pagtanggap", zh: "收款日期", vi: "Ngày nhận", ko: "받은 날짜" },
+  "How they paid": { es: "Cómo pagaron", tl: "Paano nagbayad", zh: "付款方式", vi: "Hình thức trả", ko: "결제 방법" },
+  "For": { es: "Para", tl: "Para sa", zh: "对应月份", vi: "Cho tháng", ko: "해당 월" },
+  "Check number or note (optional)": { es: "Número de cheque o nota (opcional)", tl: "Check number o tala (opsyonal)", zh: "支票号码或备注（可选）", vi: "Số séc hoặc ghi chú (tùy chọn)", ko: "수표 번호 또는 메모 (선택)" },
+  "Check number": { es: "Número de cheque", tl: "Check number", zh: "支票号码", vi: "Số séc", ko: "수표 번호" },
+  "Reference (optional)": { es: "Referencia (opcional)", tl: "Reference (opsyonal)", zh: "参考号（可选）", vi: "Mã tham chiếu (tùy chọn)", ko: "참조 번호 (선택)" },
+  "e.g. Zelle confirmation": { es: "p. ej. confirmación de Zelle", tl: "hal. Zelle confirmation", zh: "例如：Zelle确认号", vi: "vd: mã xác nhận Zelle", ko: "예: Zelle 확인 번호" },
+  "e.g. paid at pickup": { es: "p. ej. pagó al recoger", tl: "hal. nagbayad sa pagsundo", zh: "例如：接孩子时付款", vi: "vd: trả lúc đón trẻ", ko: "예: 하원 시 납부" },
+  "After this, they'll still owe": { es: "Después de esto, aún deberán", tl: "Pagkatapos nito, kulang pa ng", zh: "此后仍欠", vi: "Sau khoản này, còn nợ", ko: "이후 남은 금액:" },
+  "This pays the month in full.": { es: "Con esto el mes queda pagado.", tl: "Bayad na ang buong buwan dito.", zh: "这将付清本月费用。", vi: "Khoản này trả đủ cả tháng.", ko: "이번 달이 완납됩니다." },
+  "Save payment": { es: "Guardar pago", tl: "I-save ang bayad", zh: "保存付款", vi: "Lưu thanh toán", ko: "결제 저장" },
+  "Already logged for": { es: "Ya registrado para", tl: "Naitala na para sa", zh: "已记录：", vi: "Đã ghi cho", ko: "이미 기록됨:" },
+  "Partly paid": { es: "Pago parcial", tl: "Bahagyang bayad", zh: "部分付款", vi: "Trả một phần", ko: "일부 납부" },
+  "log more": { es: "registrar más", tl: "magdagdag", zh: "继续记录", vi: "ghi thêm", ko: "추가 기록" },
+  "view": { es: "ver", tl: "tingnan", zh: "查看", vi: "xem", ko: "보기" },
+  "Cash App": { es: "Cash App", tl: "Cash App", zh: "Cash App", vi: "Cash App", ko: "Cash App" },
+  "Money order": { es: "Giro postal", tl: "Money order", zh: "汇票", vi: "Lệnh chuyển tiền", ko: "우편환" },
+  "Due": { es: "Se debe", tl: "Dapat bayaran", zh: "应付", vi: "Phải trả", ko: "청구액" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -2365,7 +2393,7 @@ function effectiveTuition(family, householdFamilies, tuitionRates) {
 
 const FLEX_CARE_TYPES = ["Early drop-off", "Extended pickup", "After-hours care", "Weekend care", "Extra day"];
 const DENY_REASONS = ["No capacity", "No staff available", "Outside operating hours", "Ratio requirements", "N/A", "Other"];
-const PAYMENT_METHODS = ["Cash", "Check", "Zelle", "Venmo", "Bank transfer", "Other"];
+const PAYMENT_METHODS = ["Cash", "Check", "Zelle", "Venmo", "Cash App", "Bank transfer", "Money order", "Other"];
 const REFUND_REASONS = ["Overpayment", "Withdrawal / early departure", "Closure credit", "Service issue", "Other"];
 let flexSeq = 0;
 function flexReq(o) { flexSeq += 1; return { id: `fc${flexSeq}`, status: "pending", requestedBy: "provider", parentPaymentMethod: null, paymentConfirmed: false, ...o }; }
@@ -4481,7 +4509,7 @@ const HELP_TOPICS = [
   { cat: "Calendar", q: "Add an event like a field trip or photo day", go: { screen: "calendar" }, k: "event field trip photo day picture day carnival party meeting conference", a: ["Go to Calendar and open Events & Meetings.", "Click Add event, pick the type and date, and add anything families should bring.", "Check the box to tell families. It shows under Coming up on your dashboard."] },
   { cat: "Calendar", q: "Change your hours or the schedules you offer", go: { screen: "calendar" }, k: "hours open close weekend saturday schedule full day half day part time", a: ["Go to Calendar.", "Edit Weekly Hours for the days you're open, or Care schedules you offer for full-day, part-day and other options."] },
 
-  { cat: "Money", q: "Record a tuition payment", go: { screen: "payments", tab: "tuition" }, k: "payment paid record tuition copay cash zelle venmo check", a: ["Go to Money → Tuition & Billing.", "Click the family's Unpaid or Overdue status, then Record payment."] },
+  { cat: "Money", q: "Record a tuition payment", go: { screen: "payments", tab: "tuition" }, k: "payment paid record tuition copay cash zelle venmo check", a: ["Go to Money → Tuition & Billing.", "Click the family's name, then Log payment. It opens filled in, so for a full payment today just tap Save.", "Paid only part? Change the amount — Alaga shows what's still owed. You can add a check number or note, or log a payment for another month."] },
   { cat: "Money", q: "Print a receipt for a family (FSA or dependent care)", go: { screen: "payments", tab: "receipts" }, k: "receipt fsa hsa dependent care tax statement proof of payment", a: ["Go to Money → Receipts.", "Click the month for that child.", "Click Dates of care first if the family needs exact dates listed."] },
   { cat: "Money", q: "Set the due date or a late fee", go: { screen: "payments", tab: "tuition" }, k: "due date late fee reminder billing", a: ["Go to Money → Tuition & Billing.", "Set the Billing due date, and turn on a Late fee if you charge one."] },
   { cat: "Money", q: "Split tuition between two parents", go: { screen: "families" }, k: "split tuition two parents guardians divorced shared custody", a: ["Open the child's record from Families.", "Under Funding, click Split tuition between guardians and set each person's share."] },
@@ -8172,6 +8200,88 @@ function ProspectDrawer({ prospect, onClose, update, remove, logAccess, initialE
 }
 
 /* --------------------------------- payments ------------------------------------ */
+// Log a payment however the family paid: cash, check, Zelle and so on. Opens
+// filled in (amount still owed, today, their usual method, this month), so the
+// usual case is one tap on Save. Partial payments add up toward the month.
+function LogPaymentModal({ family, payer, due, rec0Of, defaultKey, defaultMethod, onSaveRec, onClose }) {
+  const t = useT();
+  const now = startOfToday();
+  const keys = [-3, -2, -1, 0, 1].map((m) => periodKeyOf(new Date(now.getFullYear(), now.getMonth() + m, 1)));
+  const [key, setKey] = useState(defaultKey);
+  const rec = rec0Of(key);
+  const list = paymentList(rec);
+  const paidSoFar = list.reduce((n, e) => n + (Number(e.amount) || 0), 0);
+  const owed = Math.max(0, Math.round((due - paidSoFar) * 100) / 100);
+  const [amount, setAmount] = useState(String(owed || due));
+  const [date, setDate] = useState(todayMDY());
+  const [method, setMethod] = useState(PAYMENT_METHODS.includes(defaultMethod) ? defaultMethod : PAYMENT_METHODS[0]);
+  const [ref, setRef] = useState("");
+  const [note, setNote] = useState("");
+  const [more, setMore] = useState(false);
+  useEffect(() => { setAmount(String(owed || due)); }, [key]);
+  const write = (payments) => {
+    if (!payments.length) return onSaveRec(key, null);
+    const total = payments.reduce((n, e) => n + (Number(e.amount) || 0), 0);
+    const last = payments[payments.length - 1];
+    onSaveRec(key, { date: last.date, method: last.method, amount: Math.round(total * 100) / 100, due, payments });
+  };
+  const amt = Number(amount);
+  const valid = amt > 0 && date;
+  const save = () => { if (!valid) return; write([...list.filter((e) => e.date), { date, method, amount: amt, ...(ref.trim() ? { ref: ref.trim() } : {}), ...(note.trim() ? { note: note.trim() } : {}) }]); onClose(); };
+  const remove = (i) => write(list.filter((_, j) => j !== i));
+  const after = Math.max(0, Math.round((due - paidSoFar - (amt > 0 ? amt : 0)) * 100) / 100);
+  const label = { fontSize: 12.5, fontWeight: 700, color: C.inkSoft, marginBottom: 5 };
+  const inp = { ...inputStyle, width: "100%", padding: "10px 11px", fontSize: 14 };
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 70, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
+      <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(31,42,36,0.4)" }} />
+      <div style={{ position: "relative", width: 440, maxWidth: "100%", maxHeight: "92vh", overflowY: "auto", background: C.paper, borderRadius: 16, boxShadow: "0 20px 50px rgba(0,0,0,0.2)", padding: "18px 20px 20px" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, marginBottom: 14 }}>
+          <div>
+            <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>{t("Log payment")}</div>
+            <div style={{ fontSize: 13, color: C.inkSoft, marginTop: 2 }}>{family.child}{payer ? ` · ${payer}` : ""}</div>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: C.inkSoft }}><X size={18} /></button>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 8, padding: "10px 12px", borderRadius: 10, background: C.cream, fontSize: 13, marginBottom: 14 }}>
+          <span>{t("Due")} <b>{money(due)}</b></span>
+          <span>{t("Paid so far")} <b>{money(paidSoFar)}</b></span>
+          <span style={{ color: owed > 0 ? C.danger : C.teal }}>{owed > 0 ? <>{t("Still owes")} <b>{money(owed)}</b></> : <b>{t("Paid in full")}</b>}</span>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <div><div style={label}>{t("Amount received")}</div><input type="number" inputMode="decimal" min={0} step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} style={inp} /></div>
+          <div><div style={label}>{t("Date received")}</div><DateField value={date} onChange={(v) => setDate(v || "")} allowClear={false} /></div>
+          <div><div style={label}>{t("How they paid")}</div><Select value={method} onChange={setMethod} options={PAYMENT_METHODS} labels={PAYMENT_METHODS.map((m) => t(m))} /></div>
+          <div><div style={label}>{t("For")}</div><Select value={key} onChange={setKey} options={keys} labels={keys.map(periodLabel)} /></div>
+        </div>
+        {!more ? (
+          <button onClick={() => setMore(true)} style={{ marginTop: 10, background: "none", border: "none", padding: 0, color: C.teal, fontSize: 13, fontWeight: 700 }}>+ {t("Check number or note (optional)")}</button>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 10, marginTop: 12 }}>
+            <div><div style={label}>{method === "Check" ? t("Check number") : t("Reference (optional)")}</div><input value={ref} onChange={(e) => setRef(e.target.value)} placeholder={method === "Check" ? "1042" : t("e.g. Zelle confirmation")} style={inp} /></div>
+            <div><div style={label}>{t("Note (optional)")}</div><input value={note} onChange={(e) => setNote(e.target.value)} placeholder={t("e.g. paid at pickup")} style={inp} /></div>
+          </div>
+        )}
+        {amt > 0 && <div style={{ marginTop: 12, fontSize: 13, color: after > 0 ? "#7A5620" : C.teal, fontWeight: 600 }}>{after > 0 ? `${t("After this, they'll still owe")} ${money(after)}.` : t("This pays the month in full.")}</div>}
+        <button onClick={save} disabled={!valid} style={{ marginTop: 14, width: "100%", padding: "13px 0", borderRadius: 11, border: "none", background: valid ? C.teal : "#D9D2C5", color: "#fff", fontWeight: 700, fontSize: 15 }}>
+          {t("Save payment")}
+        </button>
+        {list.filter((e) => e.date).length > 0 && (
+          <div style={{ marginTop: 16, borderTop: `1px solid ${C.line}`, paddingTop: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6 }}>{t("Already logged for")} {periodLabel(key)}</div>
+            {list.map((e, i) => e.date && (
+              <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "7px 0", borderBottom: `1px solid ${C.line}`, fontSize: 13 }}>
+                <span><b>{money(Number(e.amount) || 0)}</b> · {t(e.method || "")} · {e.date}{e.ref ? ` · #${e.ref}` : ""}{e.note ? ` · ${e.note}` : ""}</span>
+                <button onClick={() => remove(i)} style={{ background: "none", border: "none", color: C.danger, fontSize: 12.5, fontWeight: 700 }}>{t("Remove")}</button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function Finances({ careCtx, families, expenses, saveExpenses, reminderSettings, saveReminderSettings, staff, tier, payrollSettings, savePayrollSettings, onSave, refunds, saveRefunds, flexCareRequests, tuitionRates, saveTuitionRates, setScreen, providerInfo, meetingMode = false, budgetPlan, saveBudgetPlan, activeTab, setActiveTab }) {
   const t = useT();
   const [tabLocal, setTabLocal] = useState("tuition");
@@ -8220,6 +8330,7 @@ function Finances({ careCtx, families, expenses, saveExpenses, reminderSettings,
   const unpaidFamilies = owingFamilies.filter((f) => !paidFor(f, billing.key));
   const unpaidCount = unpaidFamilies.length;
   // Record (or undo) a payment for the current billing period.
+  const [logging, setLogging] = useState(null); // { f, splitIndex }
   const recordPayment = (f, method, splitIndex = null) => {
     const amount = splitIndex == null ? effectiveTuition(f, families, tuitionRates).discounted : f.copaySplit[splitIndex].amount;
     const entry = { date: todayMDY(), method, amount };
@@ -8516,11 +8627,13 @@ function Finances({ careCtx, families, expenses, saveExpenses, reminderSettings,
                       {f.copay > 0 && !f.copaySplit && (
                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                           <Select value={f.paymentMethod === "Not set" || !f.paymentMethod ? PAYMENT_METHODS[0] : f.paymentMethod} onChange={(v) => onSave(f.id, { paymentMethod: v })} options={PAYMENT_METHODS} labels={PAYMENT_METHODS.map((m) => t(m))} />
-                          <button onClick={() => recordPayment(f, f.paymentMethod && f.paymentMethod !== "Not set" ? f.paymentMethod : PAYMENT_METHODS[0])} style={{
-                            display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "none",
-                            background: received ? C.tealTint : C.teal, color: received ? C.tealDark : "#fff", fontSize: 11, fontWeight: 700,
+                          <button onClick={() => setLogging({ f, splitIndex: null })} style={{
+                            display: "flex", alignItems: "center", gap: 5, padding: "7px 12px", borderRadius: 8, border: "none",
+                            background: received ? C.tealTint : partlyPaidFor(f, billing.key) ? C.amberTint : C.teal, color: received ? C.tealDark : partlyPaidFor(f, billing.key) ? "#7A5620" : "#fff", fontSize: 12, fontWeight: 700,
                           }}>
-                            {received ? <><CheckCircle2 size={12} /> {t("Paid")} {f.paidPeriods?.[billing.key]?.date} · {t("undo")}</> : <><Plus size={12} /> {t("Record")} {billing.label} {t("payment")}</>}
+                            {received ? <><CheckCircle2 size={12} /> {t("Paid")} {f.paidPeriods?.[billing.key]?.date} · {t("view")}</>
+                              : partlyPaidFor(f, billing.key) ? <><Plus size={12} /> {t("Partly paid")} · {money(f.paidPeriods[billing.key].amount)} {t("of")} {money(f.paidPeriods[billing.key].due)} · {t("log more")}</>
+                              : <><Plus size={12} /> {t("Log")} {billing.label} {t("payment")}</>}
                           </button>
                         </div>
                       )}
@@ -8528,7 +8641,8 @@ function Finances({ careCtx, families, expenses, saveExpenses, reminderSettings,
                         <div style={{ display: "flex", flexDirection: "column", gap: 8, paddingTop: 4, borderTop: `1px solid ${C.line}` }}>
                           {f.copaySplit.map((s, i) => {
                             const splitMethod = s.method || PAYMENT_METHODS[0];
-                            const splitReceived = !!s.paidPeriods?.[billing.key];
+                            const splitRec = s.paidPeriods?.[billing.key];
+                            const splitReceived = recFull(splitRec);
                             const updateSplit = (fields) => {
                               const next = f.copaySplit.map((x, xi) => (xi === i ? { ...x, ...fields } : x));
                               onSave(f.id, { copaySplit: next });
@@ -8538,11 +8652,11 @@ function Finances({ careCtx, families, expenses, saveExpenses, reminderSettings,
                                 <span style={{ fontSize: 11.5, fontWeight: 700, color: C.ink, minWidth: 90 }}>{s.parent}</span>
                                 <Select value={splitMethod} onChange={(v) => updateSplit({ method: v })} options={PAYMENT_METHODS} labels={PAYMENT_METHODS.map((m) => t(m))} />
                                 <span style={{ fontSize: 11.5, color: C.inkSoft }}>{money(s.amount)}</span>
-                                <button onClick={() => recordPayment(f, splitMethod, i)} style={{
-                                  display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: "none",
-                                  background: splitReceived ? C.tealTint : C.teal, color: splitReceived ? C.tealDark : "#fff", fontSize: 11, fontWeight: 700,
+                                <button onClick={() => setLogging({ f, splitIndex: i })} style={{
+                                  display: "flex", alignItems: "center", gap: 5, padding: "7px 12px", borderRadius: 8, border: "none",
+                                  background: splitReceived ? C.tealTint : splitRec ? C.amberTint : C.teal, color: splitReceived ? C.tealDark : splitRec ? "#7A5620" : "#fff", fontSize: 12, fontWeight: 700,
                                 }}>
-                                  {splitReceived ? <><CheckCircle2 size={12} /> {t("Paid")} {s.paidPeriods[billing.key].date} · {t("undo")}</> : <><Plus size={12} /> {t("Record payment")}</>}
+                                  {splitReceived ? <><CheckCircle2 size={12} /> {t("Paid")} {splitRec.date} · {t("view")}</> : splitRec ? <><Plus size={12} /> {money(splitRec.amount)} {t("of")} {money(s.amount)} · {t("log more")}</> : <><Plus size={12} /> {t("Log payment")}</>}
                                 </button>
                               </div>
                             );
@@ -8554,7 +8668,7 @@ function Finances({ careCtx, families, expenses, saveExpenses, reminderSettings,
                           <summary style={{ cursor: "pointer", fontWeight: 600 }}>{t("Payment history")} ({paymentsOf(f).length})</summary>
                           <div style={{ display: "flex", flexDirection: "column", gap: 3, marginTop: 6, paddingLeft: 4 }}>
                             {paymentsOf(f).slice(0, 12).map((p) => (
-                              <div key={p.key}>{periodLabel(p.key)} — {money(p.total)} · {p.entries.map((e) => `${f.copaySplit ? `${e.who}: ` : ""}${t(e.method || "")} ${e.date}`).join(", ")}</div>
+                              <div key={p.key}>{periodLabel(p.key)} — {money(p.total)} · {p.entries.map((e) => `${f.copaySplit ? `${e.who}: ` : ""}${money(Number(e.amount) || 0)} ${t(e.method || "")} ${e.date}${e.ref ? ` #${e.ref}` : ""}`).join(", ")}</div>
                             ))}
                           </div>
                         </details>
@@ -8767,6 +8881,25 @@ function Finances({ careCtx, families, expenses, saveExpenses, reminderSettings,
       ) : (
         <BusinessExpenses expenses={expenses} saveExpenses={saveExpenses} incomeTotal={incomeTotal} expenseTotal={expenseTotal} onExport={exportExpenses} payrollTotal={payrollTotal} refundTotal={refundTotal} />
       )}
+      {logging && (() => {
+        const lf = families.find((x) => x.id === logging.f.id) || logging.f;
+        const si = logging.splitIndex;
+        const sp = si == null ? null : lf.copaySplit[si];
+        const due = si == null ? effectiveTuition(lf, families, tuitionRates).discounted : sp.amount;
+        const recOf = (key) => (si == null ? lf.paidPeriods?.[key] : sp.paidPeriods?.[key]);
+        const saveRec = (key, rec) => {
+          if (si == null) {
+            const pp = { ...(lf.paidPeriods || {}) };
+            if (rec) pp[key] = rec; else delete pp[key];
+            onSave(lf.id, { paidPeriods: pp, ...(rec ? { paymentMethod: rec.method } : {}) });
+          } else {
+            onSave(lf.id, { copaySplit: lf.copaySplit.map((x, i) => { if (i !== si) return x; const pp = { ...(x.paidPeriods || {}) }; if (rec) pp[key] = rec; else delete pp[key]; return { ...x, paidPeriods: pp, ...(rec ? { method: rec.method } : {}) }; }) });
+          }
+        };
+        return <LogPaymentModal family={lf} payer={sp ? sp.parent : null} due={due} rec0Of={recOf} defaultKey={billing.key}
+          defaultMethod={si == null ? (lf.paymentMethod && lf.paymentMethod !== "Not set" ? lf.paymentMethod : PAYMENT_METHODS[0]) : (sp.method || PAYMENT_METHODS[0])}
+          onSaveRec={saveRec} onClose={() => setLogging(null)} />;
+      })()}
     </div>
   );
 }
