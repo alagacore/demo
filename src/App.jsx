@@ -1319,6 +1319,15 @@ const T = {
   "Update the address and phone on receipts": { es: "Actualizar la dirección y el teléfono en los recibos", tl: "I-update ang address at telepono sa resibo", zh: "更新收据上的地址和电话", vi: "Cập nhật địa chỉ và số điện thoại trên biên nhận", ko: "영수증의 주소와 전화번호 수정" },
   "Sign out or change your password": { es: "Cerrar sesión o cambiar la contraseña", tl: "Mag-sign out o palitan ang password", zh: "退出登录或更改密码", vi: "Đăng xuất hoặc đổi mật khẩu", ko: "로그아웃 또는 비밀번호 변경" },
   "Get help from the Alaga team": { es: "Obtener ayuda del equipo de Alaga", tl: "Humingi ng tulong sa Alaga team", zh: "获取Alaga团队的帮助", vi: "Nhận hỗ trợ từ đội Alaga", ko: "Alaga 팀에 도움 요청" },
+  "Who's here today": { es: "Quién está hoy", tl: "Sino ang narito ngayon", zh: "今天在园", vi: "Ai có mặt hôm nay", ko: "오늘 출석 현황" },
+  "Here": { es: "Presente", tl: "Narito", zh: "在园", vi: "Có mặt", ko: "원내" },
+  "here": { es: "presentes", tl: "narito", zh: "在园", vi: "có mặt", ko: "원내" },
+  "At appointment": { es: "En una cita", tl: "Nasa appointment", zh: "外出预约", vi: "Đi hẹn", ko: "외출 중" },
+  "Picked up": { es: "Recogido", tl: "Nasundo na", zh: "已接走", vi: "Đã đón", ko: "하원" },
+  "Not here yet": { es: "Aún no llega", tl: "Wala pa", zh: "尚未到园", vi: "Chưa đến", ko: "아직 미등원" },
+  "expected": { es: "esperados", tl: "inaasahan", zh: "预计到园", vi: "dự kiến", ko: "예정" },
+  "Closed today": { es: "Cerrado hoy", tl: "Sarado ngayon", zh: "今天休园", vi: "Hôm nay nghỉ", ko: "오늘 휴원" },
+  "Check in / out": { es: "Entrada / salida", tl: "Check in / out", zh: "入园 / 离园", vi: "Đến / về", ko: "등·하원" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -3370,7 +3379,7 @@ function isoWeekNumber(date) {
   return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 }
 
-function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, flexCareRequests, dismissedNotices, isEmpty, onEnter, language }) {
+function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, flexCareRequests, dismissedNotices, isEmpty, onEnter, language, reminderSettings, closures = [], licensing = {}, compDocs = [] }) {
   const now = new Date();
   const hour = now.getHours();
   const greetWord = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
@@ -3390,6 +3399,23 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   // Each item carries a JSX version for display plus plain English/Spanish
   // sentences for text-to-speech, since spoken items can't read the JSX.
   const items = [];
+  const plain = (tone, en, es) => items.push({ tone, text: en, textEs: es, speechEn: en, speechEs: es });
+  const es = (str) => (T[str] && T[str].es) || str;
+  const noop = () => {};
+  // Same overdue / due-today list the dashboard shows, so the two always agree.
+  briefingDueItems({ closures, prospects, families, licensing, reminderSettings, t: (x) => x, go: { calendar: noop, tours: noop, family: noop, compliance: noop, tuition: noop } })
+    .filter((it) => it.n <= 0)
+    .forEach((it) => { const said = /overdue|today/i.test(it.detail); plain("urgent", `${it.title} — ${it.detail}${said ? "" : it.n < 0 ? " (overdue)" : " (today)"}.`, `${it.title} — ${es(it.detail)}${said ? "" : it.n < 0 ? " (atrasado)" : " (hoy)"}.`); });
+  const billingNow = reminderSettings ? currentBilling(reminderSettings) : null;
+  const overdueTuition = billingNow && billingNow.overdue ? families.filter((f) => f.copay > 0 && !paidFor(f, billingNow.key)) : [];
+  if (overdueTuition.length > 0) plain("urgent",
+    `${overdueTuition.length} ${overdueTuition.length === 1 ? "family is" : "families are"} past due on ${billingNow.label} tuition.`,
+    `${overdueTuition.length} ${overdueTuition.length === 1 ? "familia tiene" : "familias tienen"} la colegiatura de ${billingNow.label} vencida.`);
+  const docsDue = compDocs.filter((d) => (d.displayStatus || d.status) !== "submitted").length;
+  const childDocsDue = families.filter((f) => defaultChildDocs(f).some((d) => d.status === "missing" || ["expired", "expiring"].includes(docEffectiveStatus(d, 30)))).length;
+  if (docsDue + childDocsDue > 0) plain("warn",
+    [docsDue ? `${docsDue} business ${docsDue === 1 ? "document" : "documents"}` : "", childDocsDue ? `${childDocsDue} ${childDocsDue === 1 ? "child's record" : "children's records"}` : ""].filter(Boolean).join(" and ") + " need updating.",
+    [docsDue ? `${docsDue} ${docsDue === 1 ? "documento del negocio" : "documentos del negocio"}` : "", childDocsDue ? `${childDocsDue} ${childDocsDue === 1 ? "expediente de niño" : "expedientes de niños"}` : ""].filter(Boolean).join(" y ") + " necesitan actualizarse.");
   if (families.length > 0) {
     items.push({
       tone: "ok", text: <>You have <strong>{families.length}</strong> {families.length === 1 ? "child" : "children"} in your care — <strong>{subsidizedFams.length}</strong> subsidized and <strong>{families.length - subsidizedFams.length}</strong> private-pay.</>,
@@ -3444,7 +3470,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
     items.push({ tone: "ok", text: okEn, textEs: okEs, speechEn: okEn, speechEs: okEs });
   }
   // Urgency first: anything needing action (warn), then messages, then good-news items.
-  const urgencyRank = { warn: 0, msg: 1, ok: 2 };
+  const urgencyRank = { urgent: 0, warn: 1, msg: 2, ok: 3 };
   items.sort((a, b) => urgencyRank[a.tone] - urgencyRank[b.tone]);
   // Keep the morning view short: the three most urgent things, the rest wait on the dashboard.
   const moreCount = Math.max(0, items.length - 3);
@@ -3486,7 +3512,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
     ? now.toLocaleDateString("es-ES", { weekday: "long", month: "long", day: "numeric" })
     : dateLabel;
 
-  const toneColor = { ok: C.teal, warn: C.amber, msg: C.sky };
+  const toneColor = { ok: C.teal, warn: C.amber, msg: C.sky, urgent: C.danger };
 
   return (
     <div style={{
@@ -3688,12 +3714,13 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const [mandatedNotes, saveMandatedNotes] = usePersistentState(`mandated-reporting-notes${sfx}`, []);
   const [expenses, saveExpenses] = usePersistentState(`business-expenses${sfx}`, baseExpenses);
   const [budgetPlan, saveBudgetPlan] = usePersistentState(`budget-plan${sfx}`, BUDGET_PLAN_DEFAULT);
-  const [checklist, saveChecklist] = usePersistentState("daily-checklist", [
-    { id: 1, text: "Confirm attendance sign-in sheet is out", done: false },
-    { id: 2, text: "Check for expiring subsidy authorizations", done: false },
-    { id: 3, text: "Review overnight messages from parents", done: false },
-    { id: 4, text: "Restock hand-washing & sanitizing supplies", done: false },
-    { id: 5, text: "Prep afternoon snack", done: false },
+  // Your own daily routine. Things Alaga already tracks (subsidies, messages,
+  // paperwork) show in the briefing instead, so they aren't repeated here.
+  const [checklist, saveChecklist] = usePersistentState(`daily-checklist-v2${sfx}`, [
+    { id: 1, text: "Put out the sign-in sheet", done: false },
+    { id: 2, text: "Restock hand-washing & sanitizing supplies", done: false },
+    { id: 3, text: "Prep afternoon snack", done: false },
+    { id: 4, text: "Wipe down tables and toys", done: false },
   ]);
   const [dismissedNotices, saveDismissedNotices] = usePersistentState(`dismissed-notices${sfx}`, []);
   const [a11y, saveA11y] = usePersistentState("accessibility-settings", { dark: false, highContrast: false, textSize: 16, reducedMotion: false });
@@ -3869,6 +3896,10 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
           dismissedNotices={dismissedNotices}
           isEmpty={isEmpty}
           language={language}
+          reminderSettings={reminderSettings}
+          closures={closures}
+          licensing={licensing}
+          compDocs={compDocs}
           onEnter={enterWorkspace}
         />
       </LanguageContext.Provider>
@@ -3899,7 +3930,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
           <main style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
             <Topbar screen={screen} setScreen={setScreen} provider={providerInfo} families={families} staff={staff} goBack={goBack} canGoBack={canGoBack} goToFamily={goToFamily} goTo={goTo} available={navItems.map((n) => n.id)} isMobile={isMobile} onMenu={() => setNavOpen(true)} unread={unreadMessagesCount} />
             <div className="alaga-main" style={{ flex: 1, overflowY: "auto", padding: "28px 32px 60px" }}>
-              {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} reminderSettings={reminderSettings} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} events={events} closures={closures} licensing={licensing} goToTour={() => setScreen("tours")} />}
+              {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} reminderSettings={reminderSettings} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} events={events} closures={closures} licensing={licensing} goToTour={() => setScreen("tours")} attendanceLog={attendanceLog} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
               {screen === "families" && <Families families={families} provider={providerInfo} onWithdraw={withdrawChild} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
               {screen === "bookings" && <Bookings families={families} schedule={fullWeek(weeklySchedule)} closures={closures} provider={providerInfo} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
@@ -4413,7 +4444,7 @@ function computeSetupItems({ providerInfo, weeklySchedule, staff, families, pros
   ];
 }
 
-function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, families, checklist, saveChecklist, dismissedNotices, saveDismissedNotices, tuitionRates, saveTuitionRates, weeklySchedule, staff, prospects, compDocs, providerInfo, flexCareRequests, saveFlexCare, goToSubsidyFamily, goToFlexRequest, meetingMode = false, events = [], closures = [], licensing = {} }) {
+function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, families, checklist, saveChecklist, dismissedNotices, saveDismissedNotices, tuitionRates, saveTuitionRates, weeklySchedule, staff, prospects, compDocs, providerInfo, flexCareRequests, saveFlexCare, goToSubsidyFamily, goToFlexRequest, meetingMode = false, events = [], closures = [], licensing = {}, attendanceLog = {} }) {
   const t = useT();
   const [newTask, setNewTask] = useState("");
   const [collapsed, setCollapsed] = useState({});
@@ -4445,9 +4476,9 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
   const dueNow = dueSoon.filter((it) => it.n <= 0);
   const briefGroups = [
     { key: "due", label: t("Today & this week"), count: dueSoon.length, urgent: dueNow.length > 0 },
+    { key: "tuition", label: t("Tuition"), count: overdueTuition.length, urgent: overdueTuition.length > 0 },
     { key: "subsidy", label: t("Subsidy"), count: expiring.length },
     { key: "flex", label: t("Extra care"), count: flexNeedingAttention.length },
-    { key: "tuition", label: t("Tuition"), count: overdueTuition.length, urgent: overdueTuition.length > 0 },
     { key: "docs", label: t("Documents"), count: docsNeedingAttention.length },
     { key: "records", label: t("Child records"), count: childrenMissingDocs.length },
   ];
@@ -4519,7 +4550,7 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
               {showGroup("due") && (openGroup === "due" ? dueSoon : dueNow).map((it, i) => (
                 <div key={`due${i}`} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
                   <button onClick={it.onClick} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
-                    <Dot c={it.n <= 0 ? C.danger : C.amber} /><b style={{ fontSize: 13 }}>{it.title}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {it.detail} · {whenLabel(it.n)}</span>
+                    <Dot c={it.n <= 0 ? C.danger : C.amber} /><b style={{ fontSize: 13 }}>{it.title}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {it.detail}{/overdue|today/i.test(it.detail) ? "" : ` · ${whenLabel(it.n)}`}</span>
                   </button>
                   <button onClick={it.onClick} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "none", fontSize: 11, fontWeight: 600, color: C.ink, flexShrink: 0 }}>
                     {t("Review")}
@@ -4602,6 +4633,37 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
         </div>
       </div>
 
+      {(() => {
+        // Who's booked today, and where each child is right now (from Bookings).
+        const now0 = startOfToday();
+        const wd = DAY_BY_INDEX[now0.getDay()];
+        const closed = closureOn(closures, todayMDY()) || !(weeklySchedule || []).find((d) => d.day === wd)?.open;
+        const booked = closed ? [] : families.filter((f) => childDays(f).includes(wd) && daysUntil(f.enrollDate) <= 0);
+        const log = attendanceLog[todayMDY()] || {};
+        const rec = (f) => { const v = log[f.id]; return v === true ? { in: "—" } : v || {}; };
+        const stateOf = (f) => { const r = rec(f); return r.absent ? "absent" : r.out ? "gone" : r.in && isAway(r) ? "away" : r.in ? "here" : "expected"; };
+        const count = (k) => booked.filter((f) => stateOf(f) === k).length;
+        const LABEL = { here: t("Here"), away: t("At appointment"), gone: t("Picked up"), absent: t("Absent"), expected: t("Not here yet") };
+        const COLOR = { here: C.teal, away: C.amber, gone: C.inkSoft, absent: C.inkSoft, expected: C.inkSoft };
+        return (
+          <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, overflow: "hidden" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "13px 18px", borderBottom: scheduleOpen ? `1px solid ${C.line}` : "none" }}>
+              <button onClick={() => setScheduleOpen(!scheduleOpen)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", padding: 0, textAlign: "left", fontWeight: 600, fontSize: 14, color: C.ink }}>
+                <Users size={15} color={C.teal} /> {t("Who's here today")}
+                <span style={{ fontWeight: 500, fontSize: 12.5, color: C.inkSoft }}>
+                  {closed ? t("Closed today") : `${count("here")} ${t("here")} · ${count("expected")} ${t("expected")}${count("away") ? ` · ${count("away")} ${t("away")}` : ""}${count("gone") ? ` · ${count("gone")} ${t("picked up")}` : ""}`}
+                </span>
+                {!closed && <ChevronDown size={15} color={C.inkSoft} style={{ transform: scheduleOpen ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />}
+              </button>
+              {!closed && <button onClick={() => setScreen("bookings")} style={{ padding: "6px 12px", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12, fontWeight: 700 }}>{t("Check in / out")}</button>}
+            </div>
+            {scheduleOpen && !closed && booked.map((f) => (
+              <Row key={f.id} left={<><Dot c={f.color} /><b>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>{childHours(f)}</span></>}
+                right={<span style={{ fontSize: 12.5, fontWeight: 600, color: COLOR[stateOf(f)] }}>{LABEL[stateOf(f)]}{rec(f).in && rec(f).in !== "—" && stateOf(f) === "here" ? ` · ${rec(f).in}` : ""}</span>} />
+            ))}
+          </div>
+        );
+      })()}
       <ComingUp items={comingUpItems({ events, t, go: { calendar: () => setScreen("calendar") } })} onAdd={() => setScreen("calendar")} />
 
       {setupItems.some((i) => !i.done) ? (
@@ -4627,11 +4689,7 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
             </button>
           ))}
         </Card>
-      ) : (
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", borderRadius: 12, background: C.tealTint, color: C.tealDark, fontSize: 12.5, fontWeight: 600 }}>
-          <CheckCircle2 size={16} /> {t("Your account setup is complete — this is what a healthy Alaga record looks like.")}
-        </div>
-      )}
+      ) : null}
 
       <Card title={t("Today's checklist")} icon={ListChecks}
         right={<span style={{ fontSize: 12, color: C.inkSoft }}>{doneCount}/{checklist.length} {t("done")}</span>}>
@@ -4655,37 +4713,6 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
           <button onClick={addTask} style={{ padding: "9px 14px", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontWeight: 600, fontSize: 12.5 }}>{t("Add")}</button>
         </div>
       </Card>
-
-      <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, overflow: "hidden" }}>
-        <button onClick={() => setScheduleOpen(!scheduleOpen)} style={{
-          width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left",
-          padding: "13px 18px", background: "none", border: "none", borderBottom: scheduleOpen ? `1px solid ${C.line}` : "none",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 600, fontSize: 14 }}>
-            <CalendarClock size={15} color={C.teal} /> {t("Today's schedule by classroom")}
-          </div>
-          <ChevronDown size={16} color={C.inkSoft} style={{ transform: scheduleOpen ? "none" : "rotate(-90deg)", transition: "transform 0.15s" }} />
-        </button>
-        {scheduleOpen && groupByClassroom(families).map((g) => {
-          const isCollapsed = collapsed[g.classroom.id];
-          return (
-            <div key={g.classroom.id}>
-              <button onClick={() => toggleCollapse(g.classroom.id)} style={{
-                width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", textAlign: "left",
-                padding: "9px 18px", background: C.cream, border: "none", borderBottom: `1px solid ${C.line}`,
-              }}>
-                <span style={{ fontSize: 11.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                  {g.classroom.label} <span style={{ fontWeight: 500, textTransform: "none", color: C.inkSoft }}>· {g.classroom.range} · {g.families.length} {t(g.families.length === 1 ? "child" : "children")}</span>
-                </span>
-                <ChevronDown size={15} color={C.inkSoft} style={{ transform: isCollapsed ? "rotate(-90deg)" : "none", transition: "transform 0.15s" }} />
-              </button>
-              {!isCollapsed && g.families.map((f) => (
-                <Row key={f.id} left={<><Dot c={f.color} /><b>{f.child}</b></>} right={<span style={{ color: C.inkSoft, fontSize: 13 }}>{childHours(f)}</span>} />
-              ))}
-            </div>
-          );
-        })}
-      </div>
 
     </div>
   );
