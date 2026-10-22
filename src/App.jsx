@@ -3446,6 +3446,9 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   // Urgency first: anything needing action (warn), then messages, then good-news items.
   const urgencyRank = { warn: 0, msg: 1, ok: 2 };
   items.sort((a, b) => urgencyRank[a.tone] - urgencyRank[b.tone]);
+  // Keep the morning view short: the three most urgent things, the rest wait on the dashboard.
+  const moreCount = Math.max(0, items.length - 3);
+  items.splice(3);
 
   // Text-to-speech mockup — English and Spanish only, matching the provider's
   // dashboard language when it's one of those two; real speech synthesis via
@@ -3532,11 +3535,16 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
           </div>
           <div>
             {items.map((it, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "16px 20px", borderBottom: i < items.length - 1 ? `1px solid ${C.line}` : "none" }}>
+              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "16px 20px", borderBottom: i < items.length - 1 || moreCount ? `1px solid ${C.line}` : "none" }}>
                 <Dot c={toneColor[it.tone]} />
                 <div style={{ fontSize: 15, color: C.ink, lineHeight: 1.5 }}>{isEs ? it.textEs : it.text}</div>
               </div>
             ))}
+            {moreCount > 0 && (
+              <div style={{ padding: "12px 20px", fontSize: 13.5, color: C.inkSoft }}>
+                {isEs ? `Y ${moreCount} ${moreCount === 1 ? "cosa más" : "cosas más"} en tu panel.` : `Plus ${moreCount} more ${moreCount === 1 ? "thing" : "things"} on your dashboard.`}
+              </div>
+            )}
           </div>
         </div>
 
@@ -3582,7 +3590,13 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
   const [mode, setMode] = useState(startInParentMode ? "parent" : "provider"); // "provider" | "parent"
   // Providers land on the welcome briefing every time they open the workspace —
   // it's a front porch, not a one-time onboarding step.
-  const [showBriefing, setShowBriefing] = useState(!startInParentMode);
+  // The welcome screen shows once a day; later visits go straight to the dashboard.
+  const welcomeKey = `alaga-welcome-seen${isEmpty ? "-empty" : ""}`;
+  const [showBriefing, setShowBriefing] = useState(() => {
+    if (startInParentMode) return false;
+    try { return localStorage.getItem(welcomeKey) !== todayMDY(); } catch (e) { return true; }
+  });
+  const enterWorkspace = () => { try { localStorage.setItem(welcomeKey, todayMDY()); } catch (e) { /* private mode */ } setShowBriefing(false); };
   const [screen, setScreenRaw] = useState("dashboard");
   const [screenHistory, setScreenHistory] = useState([]);
   // navigateToScreen replaces plain setScreen everywhere a nav happens, so the
@@ -3855,7 +3869,7 @@ function Workspace({ isEmpty, providerInfo: initialProviderInfo, onboardingData,
           dismissedNotices={dismissedNotices}
           isEmpty={isEmpty}
           language={language}
-          onEnter={() => setShowBriefing(false)}
+          onEnter={enterWorkspace}
         />
       </LanguageContext.Provider>
     );
@@ -4404,7 +4418,9 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
   const [newTask, setNewTask] = useState("");
   const [collapsed, setCollapsed] = useState({});
   const [scheduleOpen, setScheduleOpen] = useState(false);
-  const [showAttention, setShowAttention] = useState(true);
+  // Briefing starts as a short summary. Anything due today or overdue shows on
+  // its own; other groups open one at a time from the summary chips.
+  const [openGroup, setOpenGroup] = useState(null);
   const subsidizedFams = families.filter((f) => f.subsidized);
   const privateFams = families.filter((f) => !f.subsidized);
   const monthlySubsidy = subsidizedFams.reduce((s, f) => s + (f.coverageBasis === "monthly" ? f.coverageAmount : 0), 0);
@@ -4426,6 +4442,17 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
   const overdueTuition = billingNow && billingNow.overdue ? families.filter((f) => f.copay > 0 && !paidFor(f, billingNow.key)) : [];
   const dueSoon = briefingDueItems({ closures, prospects, families, licensing, reminderSettings, t,
     go: { calendar: () => setScreen("calendar"), tours: () => setScreen("tours"), family: goToFamily, compliance: () => setScreen("compliance"), tuition: openTuition } });
+  const dueNow = dueSoon.filter((it) => it.n <= 0);
+  const briefGroups = [
+    { key: "due", label: t("Today & this week"), count: dueSoon.length, urgent: dueNow.length > 0 },
+    { key: "subsidy", label: t("Subsidy"), count: expiring.length },
+    { key: "flex", label: t("Extra care"), count: flexNeedingAttention.length },
+    { key: "tuition", label: t("Tuition"), count: overdueTuition.length, urgent: overdueTuition.length > 0 },
+    { key: "docs", label: t("Documents"), count: docsNeedingAttention.length },
+    { key: "records", label: t("Child records"), count: childrenMissingDocs.length },
+  ];
+  // With nothing opened, only today's and overdue items show.
+  const showGroup = (key) => openGroup === key || (!openGroup && key === "due" && dueNow.length > 0);
   const whenLabel = (n) => (n < 0 ? t("Overdue") : n === 0 ? t("Today") : n === 1 ? t("Tomorrow") : `${t("In")} ${n} ${t("days")}`);
   const totalAttention = dueSoon.length + expiring.length + flexNeedingAttention.length + docsNeedingAttention.length + childrenMissingDocs.length + overdueTuition.length;
   const approveFlexInline = (id) => saveFlexCare(flexCareRequests.map((r) => (r.id === id ? { ...r, status: "approved" } : r)));
@@ -4472,16 +4499,24 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
             )}
           </div>
           {totalAttention > 0 && (
-            <button onClick={() => setShowAttention(!showAttention)} style={{ marginTop: 14, display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: `1px solid ${C.line}`, background: "#fff", color: C.ink, fontWeight: 600, fontSize: 12.5 }}>
-              {showAttention ? t("Hide") : t("Review now")} <ChevronRight size={13} style={{ transform: showAttention ? "rotate(90deg)" : "none", transition: "transform 0.15s" }} />
-            </button>
+            <div style={{ marginTop: 14, display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {briefGroups.filter((g) => g.count > 0).map((g) => (
+                <button key={g.key} onClick={() => setOpenGroup(openGroup === g.key ? null : g.key)} style={{
+                  display: "inline-flex", alignItems: "center", gap: 6, padding: "7px 12px", borderRadius: 999, fontSize: 12.5, fontWeight: 700,
+                  border: `1px solid ${openGroup === g.key ? C.teal : C.line}`, background: openGroup === g.key ? C.tealTint : "#fff", color: openGroup === g.key ? C.tealDark : C.ink,
+                }}>
+                  {g.label} <span style={{ background: g.urgent ? C.danger : C.cream, color: g.urgent ? "#fff" : C.inkSoft, borderRadius: 999, padding: "0 7px", fontSize: 11.5 }}>{g.count}</span>
+                </button>
+              ))}
+              {openGroup && <button onClick={() => setOpenGroup(null)} style={{ padding: "7px 10px", borderRadius: 999, border: "none", background: "none", fontSize: 12.5, fontWeight: 700, color: C.inkSoft }}>{t("Hide")}</button>}
+            </div>
           )}
-          {showAttention && totalAttention > 0 && (
+          {(openGroup || dueNow.length > 0) && totalAttention > 0 && (
             <div style={{ marginTop: 12, borderRadius: 10, overflow: "hidden", background: C.cream }}>
-              {dueSoon.length > 0 && (
+              {dueSoon.length > 0 && showGroup("due") && (
                 <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Today & this week")}</div>
               )}
-              {dueSoon.map((it, i) => (
+              {showGroup("due") && (openGroup === "due" ? dueSoon : dueNow).map((it, i) => (
                 <div key={`due${i}`} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
                   <button onClick={it.onClick} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
                     <Dot c={it.n <= 0 ? C.danger : C.amber} /><b style={{ fontSize: 13 }}>{it.title}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {it.detail} · {whenLabel(it.n)}</span>
@@ -4491,10 +4526,10 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
                   </button>
                 </div>
               ))}
-              {expiring.length > 0 && (
+              {expiring.length > 0 && showGroup("subsidy") && (
                 <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Subsidy")}</div>
               )}
-              {expiring.map((f) => (
+              {showGroup("subsidy") && expiring.map((f) => (
                 <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
                   <button onClick={() => goToSubsidyFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
                     <Dot c={C.amber} /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {programOf(f.programId)?.label}</span>
@@ -4504,10 +4539,10 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
                   </button>
                 </div>
               ))}
-              {flexNeedingAttention.length > 0 && (
+              {flexNeedingAttention.length > 0 && showGroup("flex") && (
                 <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Flex care")}</div>
               )}
-              {flexNeedingAttention.map((r) => (
+              {showGroup("flex") && flexNeedingAttention.map((r) => (
                 <div key={r.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
                   <button onClick={() => goToFlexRequest(r.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
                     <Dot c={r.status === "pending" ? C.amber : C.teal} /><b style={{ fontSize: 13 }}>{r.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {t(r.type)}, {r.date} · {r.status === "pending" ? t("awaiting approval") : t("payment unconfirmed")}</span>
@@ -4523,10 +4558,10 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
                   )}
                 </div>
               ))}
-              {overdueTuition.length > 0 && (
+              {overdueTuition.length > 0 && showGroup("tuition") && (
                 <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Tuition")} · {billingNow.label}</div>
               )}
-              {overdueTuition.map((f) => (
+              {showGroup("tuition") && overdueTuition.map((f) => (
                 <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
                   <button onClick={openTuition} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
                     <Dot c={C.danger} /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {meetingMode ? "••••" : money(f.copay)} {partlyPaidFor(f, billingNow.key) ? t("partly paid") : t("unpaid")} · {t("due")} {billingNow.dueDate}</span>
@@ -4536,10 +4571,10 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
                   </button>
                 </div>
               ))}
-              {docsNeedingAttention.length > 0 && (
+              {docsNeedingAttention.length > 0 && showGroup("docs") && (
                 <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Documents")}</div>
               )}
-              {docsNeedingAttention.map((d) => (
+              {showGroup("docs") && docsNeedingAttention.map((d) => (
                 <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
                   <button onClick={() => setScreen("compliance")} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
                     <Dot c={["missing", "expired"].includes(d.displayStatus) ? C.danger : C.amber} /><b style={{ fontSize: 13 }}>{t(d.name)}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {trForm(t, d.displayStatus || d.status).label}{d.expiresOn && ["expired", "expiring"].includes(d.displayStatus) ? ` · ${d.expiresOn}` : ""}</span>
@@ -4549,10 +4584,10 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
                   </button>
                 </div>
               ))}
-              {childrenMissingDocs.length > 0 && (
+              {childrenMissingDocs.length > 0 && showGroup("records") && (
                 <div style={{ padding: "8px 14px 4px", fontSize: 10.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("Child records")}</div>
               )}
-              {childrenMissingDocs.map(({ f, missing }) => (
+              {showGroup("records") && childrenMissingDocs.map(({ f, missing }) => (
                 <div key={f.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${C.line}` }}>
                   <button onClick={() => goToFamily(f.id)} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.ink, textAlign: "left" }}>
                     <Dot c={C.danger} /><b style={{ fontSize: 13 }}>{f.child}</b><span style={{ color: C.inkSoft, fontSize: 12 }}>— {missing} {t(missing === 1 ? "document to update" : "documents to update")}</span>
