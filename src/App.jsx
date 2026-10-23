@@ -1781,6 +1781,69 @@ const T = {
   "Open messages": { es: "Abrir mensajes", tl: "Buksan ang mga mensahe", zh: "打开消息", vi: "Mở tin nhắn", ko: "메시지 열기" },
   "Past deadline": { es: "Fuera de plazo", tl: "Lampas sa deadline", zh: "已过截止", vi: "Quá hạn", ko: "마감 후" },
   "asked after the deadline": { es: "pedido después del plazo", tl: "hiningi pagkatapos ng deadline", zh: "截止后提出", vi: "yêu cầu sau hạn", ko: "마감 후 요청" },
+  "Add an email under Contact information to invite them.": { es: "Agregue un correo en Información de contacto para invitarle.", tl: "Magdagdag ng email sa Contact information para ma-invite sila.", zh: "请在联系信息中添加邮箱后再邀请。", vi: "Thêm email ở Thông tin liên hệ để mời.", ko: "연락처 정보에 이메일을 추가해야 초대할 수 있어요." },
+  "Alaga team sign-in": { es: "Acceso del equipo Alaga", tl: "Sign-in ng Alaga team", zh: "Alaga 团队登录", vi: "Đăng nhập nhóm Alaga", ko: "Alaga 팀 로그인" },
+  "Already have an account? Sign in": { es: "¿Ya tiene cuenta? Inicie sesión", tl: "May account ka na? Mag-sign in", zh: "已有账户？登录", vi: "Đã có tài khoản? Đăng nhập", ko: "이미 계정이 있나요? 로그인" },
+  "Can't reach Alaga right now. Check your connection.": { es: "No se puede conectar con Alaga. Revise su conexión.", tl: "Hindi maabot ang Alaga ngayon. Tingnan ang koneksyon mo.", zh: "暂时无法连接 Alaga，请检查网络。", vi: "Không kết nối được Alaga. Hãy kiểm tra mạng.", ko: "지금 Alaga에 연결할 수 없어요. 연결을 확인하세요." },
+  "Cancel invite": { es: "Cancelar invitación", tl: "Kanselahin ang invite", zh: "取消邀请", vi: "Hủy lời mời", ko: "초대 취소" },
+  "Codes work once and expire after 7 days.": { es: "Los códigos sirven una vez y vencen a los 7 días.", tl: "Isang beses lang gagana ang code at mag-e-expire pagkalipas ng 7 araw.", zh: "邀请码只能用一次，7 天后过期。", vi: "Mã chỉ dùng một lần và hết hạn sau 7 ngày.", ko: "코드는 한 번만 사용되며 7일 후 만료돼요." },
+  "Confirm password": { es: "Confirmar contraseña", tl: "Kumpirmahin ang password", zh: "确认密码", vi: "Xác nhận mật khẩu", ko: "비밀번호 확인" },
+  "Copied": { es: "Copiado", tl: "Nakopya", zh: "已复制", vi: "Đã sao chép", ko: "복사됨" },
+  "Copy invite": { es: "Copiar invitación", tl: "Kopyahin ang invite", zh: "复制邀请", vi: "Sao chép lời mời", ko: "초대 복사" },
+  "Daycare sign-in": { es: "Acceso para guarderías", tl: "Sign-in ng daycare", zh: "托育机构登录", vi: "Đăng nhập nơi giữ trẻ", ko: "어린이집 로그인" },
+  "Email invite": { es: "Enviar invitación por correo", tl: "I-email ang invite", zh: "邮件发送邀请", vi: "Gửi lời mời qua email", ko: "이메일로 초대" },
+  "Enter the invite code your daycare sent you. Only families they invite can create an account.": { es: "Escriba el código que le envió su guardería. Solo las familias invitadas pueden crear una cuenta.", tl: "Ilagay ang invite code na ipinadala ng daycare mo. Ang mga pamilyang in-invite lang ang makakagawa ng account.", zh: "输入托育机构发给您的邀请码。只有受邀家庭才能创建账户。", vi: "Nhập mã mời nơi giữ trẻ gửi bạn. Chỉ gia đình được mời mới tạo được tài khoản.", ko: "어린이집에서 받은 초대 코드를 입력하세요. 초대받은 가족만 계정을 만들 수 있어요." },
+  "Family app access": { es: "Acceso a la app familiar", tl: "Access sa family app", zh: "家长应用权限", vi: "Quyền dùng ứng dụng gia đình", ko: "가족 앱 접근" },
+  "Family sign-in": { es: "Acceso para familias", tl: "Sign-in ng pamilya", zh: "家长登录", vi: "Đăng nhập gia đình", ko: "가족 로그인" },
+  "First time? Set a password": { es: "¿Primera vez? Cree una contraseña", tl: "Unang beses? Gumawa ng password", zh: "首次使用？设置密码", vi: "Lần đầu? Đặt mật khẩu", ko: "처음인가요? 비밀번호 설정" },
+  "Has access": { es: "Tiene acceso", tl: "May access", zh: "已开通", vi: "Đã có quyền", ko: "접근 가능" },
+  "Hide code": { es: "Ocultar código", tl: "Itago ang code", zh: "隐藏邀请码", vi: "Ẩn mã", ko: "코드 숨기기" },
+  "I have an invite code": { es: "Tengo un código de invitación", tl: "May invite code ako", zh: "我有邀请码", vi: "Tôi có mã mời", ko: "초대 코드가 있어요" },
+  "I run a daycare": { es: "Tengo una guardería", tl: "May daycare ako", zh: "我经营托育机构", vi: "Tôi điều hành nơi giữ trẻ", ko: "어린이집을 운영해요" },
+  "Incorrect password.": { es: "Contraseña incorrecta.", tl: "Mali ang password.", zh: "密码错误。", vi: "Sai mật khẩu.", ko: "비밀번호가 틀렸어요." },
+  "Invite codes have 8 letters and numbers.": { es: "Los códigos tienen 8 letras y números.", tl: "May 8 letra at numero ang invite code.", zh: "邀请码由 8 位字母和数字组成。", vi: "Mã mời có 8 chữ và số.", ko: "초대 코드는 영문·숫자 8자리예요." },
+  "Invite expired": { es: "Invitación vencida", tl: "Expired ang invite", zh: "邀请已过期", vi: "Lời mời đã hết hạn", ko: "초대 만료" },
+  "Invite to the family app": { es: "Invitar a la app familiar", tl: "I-invite sa family app", zh: "邀请使用家长应用", vi: "Mời dùng ứng dụng gia đình", ko: "가족 앱에 초대" },
+  "Invited": { es: "Invitado", tl: "Na-invite", zh: "已邀请", vi: "Đã mời", ko: "초대함" },
+  "It works only with": { es: "Solo funciona con", tl: "Gagana lang ito sa", zh: "仅适用于", vi: "Chỉ dùng được với", ko: "다음 이메일에서만 사용 가능:" },
+  "Join your daycare on Alaga": { es: "Únase a su guardería en Alaga", tl: "Sumali sa daycare mo sa Alaga", zh: "在 Alaga 加入您的托育机构", vi: "Tham gia nơi giữ trẻ của bạn trên Alaga", ko: "Alaga에서 어린이집과 연결하기" },
+  "New to Alaga? You'll need an invite from your daycare.": { es: "¿Nuevo en Alaga? Necesita una invitación de su guardería.", tl: "Bago sa Alaga? Kailangan mo ng invite mula sa daycare mo.", zh: "第一次使用 Alaga？需要托育机构的邀请。", vi: "Mới dùng Alaga? Bạn cần lời mời từ nơi giữ trẻ.", ko: "Alaga가 처음이세요? 어린이집의 초대가 필요해요." },
+  "No email on file": { es: "Sin correo registrado", tl: "Walang email sa file", zh: "未登记邮箱", vi: "Chưa có email", ko: "등록된 이메일 없음" },
+  "No family is linked to this account yet. Ask your daycare for an invite code.": { es: "Esta cuenta aún no está vinculada a una familia. Pida un código a su guardería.", tl: "Wala pang pamilyang naka-link sa account na ito. Humingi ng invite code sa daycare mo.", zh: "此账户尚未关联家庭。请向托育机构索取邀请码。", vi: "Tài khoản này chưa liên kết gia đình nào. Hãy xin mã mời từ nơi giữ trẻ.", ko: "이 계정에 연결된 가족이 없어요. 어린이집에 초대 코드를 요청하세요." },
+  "Not invited": { es: "Sin invitar", tl: "Hindi pa na-invite", zh: "未邀请", vi: "Chưa mời", ko: "초대 안 함" },
+  "Parents can only join with an invite from you. Each code works once, for one email, and expires in 7 days.": { es: "Los padres solo pueden unirse con su invitación. Cada código sirve una vez, para un correo, y vence en 7 días.", tl: "Makakasali lang ang magulang kung in-invite mo. Isang beses lang gagana ang bawat code, para sa isang email, at mag-e-expire sa loob ng 7 araw.", zh: "家长只能凭您的邀请加入。每个邀请码只能用一次、限一个邮箱，7 天后过期。", vi: "Phụ huynh chỉ tham gia được khi bạn mời. Mỗi mã dùng một lần, cho một email, hết hạn sau 7 ngày.", ko: "부모님은 운영자의 초대로만 가입할 수 있어요. 코드는 이메일 하나에 한 번만 쓰이고 7일 후 만료돼요." },
+  "Remove access": { es: "Quitar acceso", tl: "Alisin ang access", zh: "移除权限", vi: "Gỡ quyền", ko: "접근 해제" },
+  "Send a new code": { es: "Enviar un código nuevo", tl: "Magpadala ng bagong code", zh: "发送新邀请码", vi: "Gửi mã mới", ko: "새 코드 보내기" },
+  "Set up your daycare": { es: "Configure su guardería", tl: "I-set up ang daycare mo", zh: "设置您的托育机构", vi: "Thiết lập nơi giữ trẻ", ko: "어린이집 설정하기" },
+  "Share it only with": { es: "Compártalo solo con", tl: "I-share lang ito kay", zh: "只分享给", vi: "Chỉ chia sẻ với", ko: "다음 분에게만 공유하세요:" },
+  "Show code": { es: "Mostrar código", tl: "Ipakita ang code", zh: "显示邀请码", vi: "Hiện mã", ko: "코드 보기" },
+  "Sign in to add this family": { es: "Inicie sesión para agregar esta familia", tl: "Mag-sign in para idagdag ang pamilyang ito", zh: "登录以添加此家庭", vi: "Đăng nhập để thêm gia đình này", ko: "로그인해서 이 가족 추가하기" },
+  "Sign in to check your child in or out.": { es: "Inicie sesión para registrar la entrada o salida de su hijo.", tl: "Mag-sign in para i-check in o out ang anak mo.", zh: "登录后为孩子签到或签退。", vi: "Đăng nhập để điểm danh vào hoặc ra cho con.", ko: "로그인해서 아이 등하원을 체크하세요." },
+  "Sign in to your daycare, or set one up in a few minutes.": { es: "Entre a su guardería o configúrela en unos minutos.", tl: "Mag-sign in sa daycare mo, o mag-set up sa loob ng ilang minuto.", zh: "登录您的托育机构，或几分钟内完成设置。", vi: "Đăng nhập nơi giữ trẻ, hoặc thiết lập trong vài phút.", ko: "어린이집에 로그인하거나 몇 분 만에 설정하세요." },
+  "That code doesn't match an invite. Check it and try again.": { es: "Ese código no coincide con ninguna invitación. Revíselo e inténtelo de nuevo.", tl: "Walang invite na tugma sa code. Tingnan at subukan ulit.", zh: "该邀请码无效，请检查后重试。", vi: "Mã này không khớp lời mời nào. Hãy kiểm tra và thử lại.", ko: "일치하는 초대가 없어요. 확인 후 다시 시도하세요." },
+  "The passwords don't match.": { es: "Las contraseñas no coinciden.", tl: "Hindi magkatugma ang password.", zh: "两次密码不一致。", vi: "Mật khẩu không khớp.", ko: "비밀번호가 일치하지 않아요." },
+  "This account doesn't have Alaga team access.": { es: "Esta cuenta no tiene acceso al equipo Alaga.", tl: "Walang Alaga team access ang account na ito.", zh: "此账户没有 Alaga 团队权限。", vi: "Tài khoản này không có quyền nhóm Alaga.", ko: "이 계정은 Alaga 팀 권한이 없어요." },
+  "This email is used for a family account. Use a different email for your daycare.": { es: "Este correo ya es de una cuenta familiar. Use otro correo para su guardería.", tl: "Ginagamit ang email na ito sa family account. Gumamit ng ibang email para sa daycare.", zh: "此邮箱已用于家长账户，请为托育机构使用其他邮箱。", vi: "Email này đã dùng cho tài khoản gia đình. Hãy dùng email khác cho nơi giữ trẻ.", ko: "이 이메일은 가족 계정에 쓰이고 있어요. 어린이집은 다른 이메일을 사용하세요." },
+  "This invite has expired. Ask your daycare to send a new one.": { es: "Esta invitación venció. Pida a su guardería una nueva.", tl: "Expired na ang invite. Humingi ng bago sa daycare mo.", zh: "此邀请已过期，请让托育机构重新发送。", vi: "Lời mời đã hết hạn. Hãy xin nơi giữ trẻ gửi lại.", ko: "초대가 만료됐어요. 어린이집에 새 초대를 요청하세요." },
+  "This invite is no longer valid. Ask your daycare for a new one.": { es: "Esta invitación ya no es válida. Pida una nueva a su guardería.", tl: "Hindi na valid ang invite. Humingi ng bago sa daycare mo.", zh: "此邀请已失效，请向托育机构索取新的。", vi: "Lời mời không còn hiệu lực. Hãy xin lời mời mới.", ko: "더 이상 유효하지 않은 초대예요. 새 초대를 요청하세요." },
+  "This invite only works with the email your daycare has on file. Wrong email? Ask them to update it and resend.": { es: "Esta invitación solo funciona con el correo registrado en su guardería. ¿Correo equivocado? Pídales que lo actualicen y la reenvíen.", tl: "Gagana lang ang invite sa email na nasa file ng daycare. Mali ang email? Ipa-update at ipa-resend.", zh: "此邀请仅适用于托育机构登记的邮箱。邮箱不对？请对方更新后重新发送。", vi: "Lời mời chỉ dùng với email nơi giữ trẻ đã lưu. Sai email? Hãy nhờ họ sửa và gửi lại.", ko: "이 초대는 어린이집에 등록된 이메일로만 쓸 수 있어요. 이메일이 틀렸다면 수정 후 다시 보내달라고 하세요." },
+  "This invite was already used. Sign in instead, or ask your daycare for a new one.": { es: "Esta invitación ya se usó. Inicie sesión o pida una nueva.", tl: "Nagamit na ang invite. Mag-sign in o humingi ng bago.", zh: "此邀请已被使用。请直接登录，或索取新的邀请。", vi: "Lời mời đã được dùng. Hãy đăng nhập hoặc xin lời mời mới.", ko: "이미 사용된 초대예요. 로그인하거나 새 초대를 요청하세요." },
+  "This invite was cancelled. Ask your daycare for a new one.": { es: "Esta invitación se canceló. Pida una nueva a su guardería.", tl: "Kinansela ang invite. Humingi ng bago sa daycare mo.", zh: "此邀请已取消，请向托育机构索取新的。", vi: "Lời mời đã bị hủy. Hãy xin lời mời mới.", ko: "취소된 초대예요. 새 초대를 요청하세요." },
+  "This is a family account. Use the parent sign-in instead.": { es: "Esta es una cuenta familiar. Use el acceso para padres.", tl: "Family account ito. Gamitin ang parent sign-in.", zh: "这是家长账户，请使用家长登录。", vi: "Đây là tài khoản gia đình. Hãy dùng đăng nhập phụ huynh.", ko: "가족 계정이에요. 부모 로그인을 이용하세요." },
+  "Too many tries. Try again in": { es: "Demasiados intentos. Intente de nuevo en", tl: "Masyadong maraming subok. Subukan ulit sa loob ng", zh: "尝试次数过多，请稍后再试：", vi: "Thử quá nhiều lần. Thử lại sau", ko: "시도가 너무 많아요. 다시 시도까지" },
+  "Use at least 8 characters.": { es: "Use al menos 8 caracteres.", tl: "Gumamit ng hindi bababa sa 8 character.", zh: "至少 8 个字符。", vi: "Dùng ít nhất 8 ký tự.", ko: "8자 이상 입력하세요." },
+  "Use it within 7 days with this email": { es: "Úselo en 7 días con este correo", tl: "Gamitin sa loob ng 7 araw gamit ang email na ito", zh: "请在 7 天内用此邮箱使用", vi: "Dùng trong 7 ngày với email này", ko: "7일 안에 이 이메일로 사용하세요" },
+  "You already have an Alaga account with this email. Enter its password to add this family.": { es: "Ya tiene una cuenta de Alaga con este correo. Escriba su contraseña para agregar esta familia.", tl: "May Alaga account ka na sa email na ito. Ilagay ang password para idagdag ang pamilyang ito.", zh: "此邮箱已有 Alaga 账户。输入密码即可添加此家庭。", vi: "Email này đã có tài khoản Alaga. Nhập mật khẩu để thêm gia đình này.", ko: "이 이메일로 이미 Alaga 계정이 있어요. 비밀번호를 입력해 이 가족을 추가하세요." },
+  "You're invited to": { es: "Está invitado a", tl: "In-invite ka sa", zh: "您受邀加入", vi: "Bạn được mời tham gia", ko: "초대장:" },
+  "Your daycare sends you an invite code to get started.": { es: "Su guardería le envía un código de invitación para empezar.", tl: "Magpapadala ang daycare mo ng invite code para makapagsimula.", zh: "托育机构会发给您邀请码以开始使用。", vi: "Nơi giữ trẻ sẽ gửi bạn mã mời để bắt đầu.", ko: "어린이집에서 보내준 초대 코드로 시작하세요." },
+  "Your invite code": { es: "Su código de invitación", tl: "Ang invite code mo", zh: "您的邀请码", vi: "Mã mời của bạn", ko: "초대 코드" },
+  "Your invite to": { es: "Su invitación a", tl: "Ang invite mo sa", zh: "您的邀请：", vi: "Lời mời tham gia", ko: "초대:" },
+  "expires": { es: "vence", tl: "mag-e-expire", zh: "到期", vi: "hết hạn", ko: "만료" },
+  "invited": { es: "invitó a", tl: "nag-invite kay", zh: "邀请了", vi: "đã mời", ko: "님을 초대함:" },
+  "min": { es: "min", tl: "min", zh: "分钟", vi: "phút", ko: "분" },
+  "on Alaga": { es: "en Alaga", tl: "sa Alaga", zh: "（Alaga）", vi: "trên Alaga", ko: "(Alaga)" },
+  "on Alaga, the family app for": { es: "en Alaga, la app familiar de", tl: "sa Alaga, ang family app para kay", zh: "——Alaga 家长应用，孩子：", vi: "trên Alaga, ứng dụng gia đình cho", ko: "— Alaga 가족 앱, 아이:" },
+  "for a verification link, then sign in again.": { es: "para el enlace de verificación y luego vuelva a iniciar sesión.", tl: "para sa verification link, tapos mag-sign in ulit.", zh: "中的验证链接，然后重新登录。", vi: "để lấy liên kết xác minh, rồi đăng nhập lại.", ko: "에서 인증 링크를 열고 다시 로그인하세요." },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -3080,9 +3143,11 @@ function usePersistentState(key, initial) {
 // Real Firebase Authentication — this is a genuine account, not a demo mock. Once the
 // backend + Cloud SQL wiring exists, a successful sign-in here will load that specific
 // provider's real data instead of dropping into the shared demo dataset.
-function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language, setLanguage }) {
+// role: "provider" (sign in or create), "parent" (sign in only — accounts come
+// from invites), "admin" (Alaga team addresses only).
+function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language, setLanguage, role = "provider", onInvite, notice: introNotice }) {
   const t = useT();
-  const [mode, setMode] = useState(initialMode); // "signin" | "signup"
+  const [mode, setMode] = useState(role === "parent" ? "signin" : initialMode); // "signin" | "signup"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -3119,20 +3184,36 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language
   const submit = async (e) => {
     e.preventDefault();
     setError("");
+    const addr = email.trim().toLowerCase();
+    if (role === "admin" && !ADMIN_EMAILS.includes(addr)) { setError(t("This account doesn't have Alaga team access.")); return; }
     setBusy(true);
     try {
       const { signInWithEmailAndPassword, createUserWithEmailAndPassword } = await import("firebase/auth");
       const { auth } = await import("./firebase.js");
+      const accounts = await loadJSON(ACCOUNTS_KEY, {});
+      // Each door only lets in its own kind of account.
+      if (role === "provider" && mode === "signup" && accounts[addr]) { setError(t("This email is used for a family account. Use a different email for your daycare.")); return; }
       const cred = mode === "signin"
         ? await signInWithEmailAndPassword(auth, email, password)
         : await createUserWithEmailAndPassword(auth, email, password);
-      onAuthenticated(cred.user, mode);
+      if (role === "provider" && accounts[addr]) { await firebaseSignOut(); setError(t("This is a family account. Use the parent sign-in instead.")); return; }
+      if (role === "parent" && !accounts[addr]) { await firebaseSignOut(); setError(t("No family is linked to this account yet. Ask your daycare for an invite code.")); return; }
+      // Team access needs a verified address: only someone who can open the
+      // Alaga inbox gets in, even if another person created the account first.
+      if (role === "admin" && !cred.user.emailVerified) {
+        try { const { sendEmailVerification } = await import("firebase/auth"); await sendEmailVerification(cred.user); } catch (er) { /* sent recently */ }
+        await firebaseSignOut();
+        setNotice(`${t("Check")} ${addr} ${t("for a verification link, then sign in again.")}`);
+        return;
+      }
+      onAuthenticated(cred.user, mode, role === "parent" ? { ...accounts[addr], email: addr } : null);
     } catch (err) {
-      setError(friendlyError(err.code));
+      setError(err.code === "auth/network-request-failed" ? t("Can't reach Alaga right now. Check your connection.") : friendlyError(err.code));
     } finally {
       setBusy(false);
     }
   };
+  const heading = role === "parent" ? t("Family sign-in") : role === "admin" ? "Alaga team" : mode === "signup" ? t("Set up your daycare") : t("Daycare sign-in");
 
   return (
     <div style={{
@@ -3148,21 +3229,23 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language
       </div>
 
       <form onSubmit={submit} style={{ width: "100%", maxWidth: 380, boxSizing: "border-box", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: 28 }}>
-        <div style={{ display: "flex", gap: 4, marginBottom: 20, background: C.cream, borderRadius: 10, padding: 4 }}>
+        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 600, marginBottom: 14 }}>{heading}</div>
+        {introNotice && <div style={{ fontSize: 13, color: C.tealDark, background: C.tealTint, borderRadius: 9, padding: "9px 11px", marginBottom: 14 }}>{introNotice}</div>}
+        {role !== "parent" && <div style={{ display: "flex", gap: 4, marginBottom: 20, background: C.cream, borderRadius: 10, padding: 4 }}>
           {["signin", "signup"].map((m) => (
             <button key={m} type="button" onClick={() => { setMode(m); setError(""); setNotice(""); }} style={{
               flex: 1, padding: "9px 0", borderRadius: 7, border: "none", fontWeight: 700, fontSize: 13,
               background: mode === m ? "#fff" : "transparent", color: mode === m ? C.tealDark : C.inkSoft,
               boxShadow: mode === m ? C.line && "0 1px 2px rgba(0,0,0,0.06)" : "none",
             }}>
-              {m === "signin" ? t("Sign in") : t("Create account")}
+              {m === "signin" ? t("Sign in") : role === "admin" ? t("First time? Set a password") : t("Create account")}
             </button>
           ))}
-        </div>
+        </div>}
 
         <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft, marginBottom: 6 }}>{t("Email")}</div>
         <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@yourdaycare.com"
+          placeholder={role === "parent" ? "you@email.com" : role === "admin" ? "you@alagacore.com" : "you@yourdaycare.com"}
           style={{ width: "100%", boxSizing: "border-box", padding: "11px 12px", borderRadius: 9, border: `1px solid ${C.line}`, fontSize: 16, marginBottom: 14, fontFamily: "inherit" }} />
 
         <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft, marginBottom: 6 }}>{t("Password")}</div>
@@ -3170,7 +3253,7 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language
           value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
           style={{ width: "100%", boxSizing: "border-box", padding: "11px 12px", borderRadius: 9, border: `1px solid ${C.line}`, fontSize: 16, marginBottom: 6, fontFamily: "inherit" }} />
 
-        {mode === "signup" && (
+        {mode === "signup" && role === "provider" && (
           <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 6, lineHeight: 1.45 }}>{t("At least 6 characters. Next, you'll set up your daycare in about 3 minutes.")}</div>
         )}
         {mode === "signin" && (
@@ -3187,6 +3270,12 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language
         }}>
           {busy ? t("Please wait…") : mode === "signin" ? t("Sign in") : t("Create account")}
         </button>
+        {role === "parent" && onInvite && (
+          <div style={{ marginTop: 16, paddingTop: 14, borderTop: `1px solid ${C.line}`, fontSize: 13, color: C.inkSoft, textAlign: "center", lineHeight: 1.5 }}>
+            {t("New to Alaga? You'll need an invite from your daycare.")}
+            <div><button type="button" onClick={onInvite} style={{ background: "none", border: "none", color: C.tealDark, fontWeight: 700, fontSize: 13.5, padding: 4 }}>{t("I have an invite code")}</button></div>
+          </div>
+        )}
       </form>
 
       <button onClick={onBack} style={{ marginTop: 18, background: "none", border: "none", color: C.inkSoft, fontSize: 13, fontWeight: 600 }}>
@@ -3196,106 +3285,294 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language
   );
 }
 
-function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, language, setLanguage }) {
-  const t = useT();
-  // The cross-account admin view stays off the public page; open the site with
-  // ?admin=1 at the end of the URL to see it.
-  const showAdmin = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("admin");
+/* ------------------------ accounts, invites, team access ------------------------ */
+// Alaga team sign-in is limited to these addresses. (In production the server
+// also checks a role on the account; a list in the page alone isn't enough.)
+const ADMIN_EMAILS = ["hello@alagacore.com"];
+// Parent invites and which family each parent account belongs to. In the demo
+// they live in this browser; in production the server creates, checks and
+// expires invites, and links accounts to families.
+const INVITES_KEY = "parent-invites";
+const ACCOUNTS_KEY = "parent-accounts";
+async function loadJSON(key, fallback) { try { const r = await window.storage.get(key); return r && r.value ? JSON.parse(r.value) : fallback; } catch (e) { return fallback; } }
+async function saveJSON(key, v) { try { await window.storage.set(key, JSON.stringify(v)); return true; } catch (e) { return false; } }
+const INVITE_DAYS = 7;
+function newInviteCode() {
+  const abc = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; const a = new Uint32Array(8); window.crypto.getRandomValues(a);
+  return Array.from(a, (x) => abc[x % abc.length]).join("");
+}
+const normCode = (s) => String(s || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+const fmtCode = (c) => `${c.slice(0, 4)}-${c.slice(4, 8)}`;
+function inviteStatus(inv) {
+  if (!inv) return "none";
+  if (inv.revoked) return "revoked";
+  if (inv.usedAt) return "accepted";
+  if (Date.now() > inv.expiresAt) return "expired";
+  return "pending";
+}
+const inviteLink = (code) => `${typeof window !== "undefined" ? window.location.origin : "https://alagacore.com"}/?invite=${code}`;
+async function firebaseSignOut() { try { const { signOut } = await import("firebase/auth"); const { auth } = await import("./firebase.js"); await signOut(auth); } catch (e) { /* already signed out */ } }
+
+// Wrong guesses on the invite screen lock it for a while (the server enforces
+// the same limit in production).
+const ATTEMPTS_KEY = "alaga-invite-attempts";
+function readAttempts() { try { return JSON.parse(localStorage.getItem(ATTEMPTS_KEY) || "{}"); } catch (e) { return {}; } }
+function writeAttempts(v) { try { localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(v)); } catch (e) { /* ignore */ } }
+
+function EntryShell({ children, language, setLanguage, onBack, t, wide }) {
   return (
     <div style={{
-      minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "48px 16px", position: "relative",
-      backgroundImage: BANIG_PATTERN(C.line, 0.5), backgroundSize: "16px 16px",
+      minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", flexDirection: "column", alignItems: "center",
+      justifyContent: "center", padding: "56px 16px 40px", position: "relative", backgroundImage: BANIG_PATTERN(C.line, 0.5), backgroundSize: "16px 16px", boxSizing: "border-box",
     }}>
       <style>{FONTS}</style>
       {setLanguage && <div style={{ position: "absolute", top: 16, right: 16 }}><LanguagePicker language={language} setLanguage={setLanguage} /></div>}
-      <div style={{ display: "flex", alignItems: "center", gap: 24, marginBottom: 14 }}>
-        <AlagaMark size={104} color={C.tealDark} />
+      {onBack && <button onClick={onBack} style={{ position: "absolute", top: 16, left: 16, display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", color: C.inkSoft, fontSize: 13, fontWeight: 600, padding: 6 }}><ArrowLeft size={15} /> {t("Back")}</button>}
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
+        <AlagaMark size={44} color={C.tealDark} />
+        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 34, fontWeight: 900, color: C.tealDark }}>alaga</div>
+      </div>
+      <div style={{ width: "100%", maxWidth: wide ? 760 : 400 }}>{children}</div>
+    </div>
+  );
+}
+
+// Public front page: two doors (daycares and families) and a quiet team link.
+function LandingChooser({ onProvider, onParent, onTeam, language, setLanguage }) {
+  const t = useT();
+  const door = (icon, tint, fg, title, body, actions) => (
+    <div style={{ flex: "1 1 280px", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 22, display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ width: 46, height: 46, borderRadius: 12, background: tint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{React.createElement(icon, { size: 22, color: fg })}</div>
+        <div><div style={{ fontWeight: 700, fontSize: 17, color: C.ink }}>{title}</div><div style={{ fontSize: 13, color: C.inkSoft, marginTop: 2, lineHeight: 1.45 }}>{body}</div></div>
+      </div>
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: "auto" }}>{actions}</div>
+    </div>
+  );
+  const primary = { flex: "1 1 130px", background: C.teal, color: "#fff", border: "none", borderRadius: 11, padding: "12px 16px", fontWeight: 700, fontSize: 14.5, minHeight: 46 };
+  const secondary = { flex: "1 1 130px", background: "#fff", color: C.tealDark, border: `1px solid ${C.teal}`, borderRadius: 11, padding: "12px 16px", fontWeight: 700, fontSize: 14.5, minHeight: 46 };
+  return (
+    <div style={{
+      minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      padding: "56px 16px 32px", position: "relative", backgroundImage: BANIG_PATTERN(C.line, 0.5), backgroundSize: "16px 16px", boxSizing: "border-box",
+    }}>
+      <style>{FONTS}</style>
+      {setLanguage && <div style={{ position: "absolute", top: 16, right: 16 }}><LanguagePicker language={language} setLanguage={setLanguage} /></div>}
+      <div className="landing-brand" style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 12 }}>
+        <AlagaMark size={84} color={C.tealDark} />
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 86, fontWeight: 900, color: C.tealDark, lineHeight: 1 }}>alaga</div>
-          {/* How to say it: Tagalog, stress on the middle syllable. */}
-          <div aria-label="Pronounced ah-LAH-gah" style={{ marginTop: 8, marginLeft: 4, fontSize: 15, color: C.inkSoft, letterSpacing: "0.04em", fontStyle: "italic" }}>
-            ah · <b style={{ fontStyle: "italic", color: C.tealDark }}>LAH</b> · gah
-          </div>
-          <div style={{ marginTop: 2, marginLeft: 4, fontSize: 13.5, color: C.inkSoft }}>{t("Tagalog for “to care for”")}</div>
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: "clamp(52px, 12vw, 76px)", fontWeight: 900, color: C.tealDark, lineHeight: 1 }}>alaga</div>
+          <div aria-label="Pronounced ah-LAH-gah" style={{ marginTop: 6, marginLeft: 3, fontSize: 14, color: C.inkSoft, letterSpacing: "0.04em", fontStyle: "italic" }}>ah · <b style={{ color: C.tealDark }}>LAH</b> · gah · {t("Tagalog for “to care for”")}</div>
         </div>
       </div>
-      <div style={{ color: C.inkSoft, fontSize: 14.5, fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 30, textAlign: "center", maxWidth: 520, lineHeight: 1.8 }}>
+      <div style={{ color: C.inkSoft, fontSize: 13.5, fontWeight: 600, letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: 30, textAlign: "center", maxWidth: 520, lineHeight: 1.7 }}>
         {t("Nurturing the foundation for your childcare business")}.
       </div>
-
-      {/* The two things a real provider comes here to do, first and side by side. */}
-      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12, marginBottom: 40, width: "100%", maxWidth: 520 }}>
-        <button onClick={onSignUp} style={{
-          flex: "1 1 220px", background: C.teal, color: "#fff", border: "none", borderRadius: 12,
-          padding: "14px 22px", fontWeight: 700, fontSize: 15.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-        }}>
-          <Rocket size={16} /> {t("Create your account")}
-        </button>
-        <button onClick={onSignIn} style={{
-          flex: "1 1 160px", background: "#fff", color: C.tealDark, border: `1px solid ${C.teal}`, borderRadius: 12,
-          padding: "14px 22px", fontWeight: 700, fontSize: 15.5,
-        }}>
-          {t("Sign in")}
-        </button>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 16, width: "100%", maxWidth: 760 }}>
+        {door(Building2, C.tealTint, C.tealDark, t("I run a daycare"), t("Sign in to your daycare, or set one up in a few minutes."), <>
+          <button onClick={() => onProvider("signin")} style={primary}>{t("Sign in")}</button>
+          <button onClick={() => onProvider("signup")} style={secondary}>{t("Create account")}</button>
+        </>)}
+        {door(Users, C.coralTint, C.coral, t("I'm a parent"), t("Your daycare sends you an invite code to get started."), <>
+          <button onClick={() => onParent("signin")} style={primary}>{t("Sign in")}</button>
+          <button onClick={() => onParent("invite")} style={secondary}>{t("I have an invite code")}</button>
+        </>)}
       </div>
-
-      <div style={{ maxWidth: 980, width: "100%" }}>
-        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.inkSoft, marginBottom: 12 }}>
-          {t("Or look around a sample daycare first")}
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: 14, marginBottom: 28 }}>
-          {[
-            { tier: "simple", meeting: false, icon: PlayCircle, tint: C.tealTint, fg: C.tealDark, link: C.teal, title: "Simple plan", body: "Core day-to-day operations — families, subsidy, check-in, and payments." },
-            { tier: "extended", meeting: false, icon: BarChart3, tint: C.amberTint, fg: C.amber, link: C.amber, title: "Extended plan", body: "Everything in Simple, plus staff, growth planning, and analytics." },
-            { tier: "simple", meeting: true, icon: Lock, tint: "#F1EEE5", fg: C.inkSoft, link: C.inkSoft, title: "Meeting-safe", body: "For screen-sharing with providers or investors — proprietary rate math and payout figures are hidden." },
-          ].map((d) => (
-            <button key={d.title} onClick={() => onDemo(d.tier, d.meeting || undefined)} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: 20, display: "flex", flexDirection: "column", gap: 10 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 11, background: d.tint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <d.icon size={19} color={d.fg} />
-                </div>
-                <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>{t(d.title)}</div>
-              </div>
-              <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>{t(d.body)}</div>
-              <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: d.link, fontWeight: 700, fontSize: 13 }}>
-                {t("Enter demo")} <ArrowRight size={13} />
-              </div>
-            </button>
-          ))}
-        </div>
-
-        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.inkSoft, marginBottom: 12 }}>
-          {t("Are you a parent?")}
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 14 }}>
-          <button onClick={onParentDemo} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
-            <div style={{ width: 46, height: 46, borderRadius: 12, background: C.coralTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <Users size={22} color={C.coral} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>{t("I'm a parent")}</div>
-              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>{t("See what families see — check-in, receipts, FSA/HSA, messages.")}</div>
-            </div>
-            <ArrowRight size={16} color={C.coral} />
-          </button>
-
-          {showAdmin && <button onClick={onAdmin} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
-            <div style={{ width: 46, height: 46, borderRadius: 12, background: "#F1EEE5", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <Building2 size={22} color={C.inkSoft} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>Platform admin</div>
-              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>Cross-account view, for the Alaga team only.</div>
-            </div>
-            <ArrowRight size={16} color={C.inkSoft} />
-          </button>}
-        </div>
-      </div>
-
-      <div style={{ marginTop: 36, fontSize: 12.5, color: C.inkSoft, textAlign: "center" }}>
+      <div style={{ marginTop: 34, fontSize: 12.5, color: C.inkSoft, textAlign: "center", lineHeight: 1.7 }}>
         {t("Built for licensed home-based Family Child Care providers in California.")}
+        <div><button onClick={onTeam} style={{ background: "none", border: "none", color: C.inkSoft, fontSize: 12, textDecoration: "underline", padding: 4 }}>{t("Alaga team sign-in")}</button></div>
       </div>
     </div>
+  );
+}
+
+// Parent: redeem an invite code, then create (or link) an account.
+function ParentInviteScreen({ initialCode = "", onBack, onDone, onSignIn, language, setLanguage }) {
+  const t = useT();
+  const [code, setCode] = useState(initialCode ? fmtCode(normCode(initialCode)) : "");
+  const [inv, setInv] = useState(null);
+  const [err, setErr] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [linkMode, setLinkMode] = useState(false);
+  const lockedFor = () => { const a = readAttempts(); return a.until && Date.now() < a.until ? Math.ceil((a.until - Date.now()) / 60000) : 0; };
+  const check = async (raw = code) => {
+    setErr("");
+    const mins = lockedFor(); if (mins) { setErr(`${t("Too many tries. Try again in")} ${mins} ${t("min")}.`); return; }
+    const c = normCode(raw);
+    if (c.length !== 8) { setErr(t("Invite codes have 8 letters and numbers.")); return; }
+    const invites = await loadJSON(INVITES_KEY, []);
+    const found = invites.find((x) => x.code === c);
+    const st = inviteStatus(found);
+    if (st !== "pending") {
+      const a = readAttempts(); const count = (a.count || 0) + 1;
+      writeAttempts(count >= 5 ? { count: 0, until: Date.now() + 10 * 60000 } : { count });
+      setErr(st === "accepted" ? t("This invite was already used. Sign in instead, or ask your daycare for a new one.")
+        : st === "expired" ? t("This invite has expired. Ask your daycare to send a new one.")
+          : st === "revoked" ? t("This invite was cancelled. Ask your daycare for a new one.")
+            : t("That code doesn't match an invite. Check it and try again."));
+      return;
+    }
+    writeAttempts({});
+    setInv(found);
+  };
+  useEffect(() => { if (initialCode) check(initialCode); }, []);
+  const create = async (e) => {
+    e.preventDefault(); setErr("");
+    if (!linkMode && password.length < 8) { setErr(t("Use at least 8 characters.")); return; }
+    if (!linkMode && password !== confirm) { setErr(t("The passwords don't match.")); return; }
+    setBusy(true);
+    try {
+      const fa = await import("firebase/auth"); const { auth } = await import("./firebase.js");
+      try {
+        if (linkMode) await fa.signInWithEmailAndPassword(auth, inv.email, password);
+        else await fa.createUserWithEmailAndPassword(auth, inv.email, password);
+      } catch (er) {
+        if (er.code === "auth/email-already-in-use") { setLinkMode(true); setErr(t("You already have an Alaga account with this email. Enter its password to add this family.")); setBusy(false); return; }
+        throw er;
+      }
+      // Re-check the invite right before using it, then link the account.
+      const invites = await loadJSON(INVITES_KEY, []);
+      const cur = invites.find((x) => x.code === inv.code);
+      if (inviteStatus(cur) !== "pending") { await firebaseSignOut(); setErr(t("This invite is no longer valid. Ask your daycare for a new one.")); setBusy(false); return; }
+      await saveJSON(INVITES_KEY, invites.map((x) => (x.code === inv.code ? { ...x, usedAt: Date.now(), usedBy: inv.email } : x)));
+      const accounts = await loadJSON(ACCOUNTS_KEY, {});
+      const acct = { household: inv.household, parentName: inv.parentName, provider: inv.provider, since: todayMDY() };
+      accounts[inv.email.toLowerCase()] = acct;
+      await saveJSON(ACCOUNTS_KEY, accounts);
+      onDone({ ...acct, email: inv.email });
+    } catch (er) {
+      setErr(er.code === "auth/wrong-password" || er.code === "auth/invalid-credential" ? t("Incorrect password.") : er.code === "auth/network-request-failed" ? t("Can't reach Alaga right now. Check your connection.") : t("Something went wrong — please try again."));
+    }
+    setBusy(false);
+  };
+  const box = { background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 12 };
+  const inp = { width: "100%", boxSizing: "border-box", padding: "11px 12px", borderRadius: 9, border: `1px solid ${C.line}`, fontSize: 16, fontFamily: "inherit" };
+  const btn = { width: "100%", padding: "12px 0", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 15, minHeight: 46 };
+  return (
+    <EntryShell t={t} language={language} setLanguage={setLanguage} onBack={onBack}>
+      {!inv ? (
+        <form onSubmit={(e) => { e.preventDefault(); check(); }} style={box}>
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 21, fontWeight: 600 }}>{t("Join your daycare on Alaga")}</div>
+          <div style={{ fontSize: 13.5, color: C.inkSoft, lineHeight: 1.5 }}>{t("Enter the invite code your daycare sent you. Only families they invite can create an account.")}</div>
+          <input value={code} onChange={(e) => { const c = normCode(e.target.value).slice(0, 8); setCode(c.length > 4 ? fmtCode(c) : c); }} placeholder="ABCD-2345" autoCapitalize="characters" autoComplete="one-time-code"
+            style={{ ...inp, fontFamily: "Menlo, monospace", fontSize: 22, letterSpacing: "0.12em", textAlign: "center", fontWeight: 700 }} />
+          {err && <div role="alert" style={{ color: C.danger, fontSize: 13 }}>{err}</div>}
+          <button type="submit" style={btn}>{t("Continue")}</button>
+          <button type="button" onClick={onSignIn} style={{ background: "none", border: "none", color: C.tealDark, fontSize: 13, fontWeight: 600 }}>{t("Already have an account? Sign in")}</button>
+        </form>
+      ) : (
+        <form onSubmit={create} style={box}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 12, background: C.tealTint, color: C.tealDark }}>
+            <CheckCircle2 size={20} style={{ flexShrink: 0 }} />
+            <div style={{ fontSize: 13.5, lineHeight: 1.4 }}><b>{inv.provider}</b> {t("invited")} <b>{inv.parentName}</b>{inv.kidNames ? ` · ${inv.kidNames}` : ""}</div>
+          </div>
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 600 }}>{linkMode ? t("Sign in to add this family") : t("Create your account")}</div>
+          <Field label={t("Email")}><input value={inv.email} readOnly style={{ ...inp, background: C.cream, color: C.inkSoft }} /></Field>
+          <div style={{ fontSize: 12, color: C.inkSoft, marginTop: -6 }}>{t("This invite only works with the email your daycare has on file. Wrong email? Ask them to update it and resend.")}</div>
+          <Field label={t("Password")}><input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={linkMode ? "current-password" : "new-password"} style={inp} /></Field>
+          {!linkMode && <Field label={t("Confirm password")}><input type="password" required value={confirm} onChange={(e) => setConfirm(e.target.value)} autoComplete="new-password" style={inp} /></Field>}
+          {err && <div role="alert" style={{ color: linkMode && !password ? C.tealDark : C.danger, fontSize: 13 }}>{err}</div>}
+          <button type="submit" disabled={busy} style={{ ...btn, opacity: busy ? 0.7 : 1 }}>{busy ? t("Please wait…") : linkMode ? t("Sign in") : t("Create account")}</button>
+          <div style={{ fontSize: 11.5, color: C.inkSoft, lineHeight: 1.5 }}>{t("Codes work once and expire after 7 days.")}</div>
+        </form>
+      )}
+    </EntryShell>
+  );
+}
+
+// Alaga team home: the admin console and every demo, kept off the public page.
+function AdminHome({ email, onConsole, onDemo, onParentDemo, onDoorDemo, onSignOut }) {
+  const tile = (icon, tint, fg, title, body, onClick) => (
+    <button onClick={onClick} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", gap: 12, alignItems: "flex-start", minHeight: 96 }}>
+      <div style={{ width: 40, height: 40, borderRadius: 11, background: tint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{React.createElement(icon, { size: 19, color: fg })}</div>
+      <div style={{ flex: 1 }}><div style={{ fontWeight: 700, fontSize: 15, color: C.ink }}>{title}</div><div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 3, lineHeight: 1.5 }}>{body}</div></div>
+      <ArrowRight size={15} color={C.inkSoft} style={{ marginTop: 4 }} />
+    </button>
+  );
+  return (
+    <EntryShell t={(x) => x} wide>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
+        <div><div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600 }}>Alaga team</div><div style={{ fontSize: 12.5, color: C.inkSoft }}>Signed in as {email}</div></div>
+        <button onClick={onSignOut} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 9, border: `1px solid ${C.line}`, background: "#fff", color: C.inkSoft, fontWeight: 600, fontSize: 13 }}><LogOut size={14} /> Sign out</button>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 12 }}>
+        {tile(Building2, "#F1EEE5", C.inkSoft, "Admin console", "Every provider account, plans, revenue, and support tickets.", onConsole)}
+        {tile(PlayCircle, C.tealTint, C.tealDark, "Demo — Simple plan", "Sample daycare with the core day-to-day screens.", () => onDemo("simple"))}
+        {tile(BarChart3, C.amberTint, C.amber, "Demo — Extended plan", "Everything, including staff, growth and analytics.", () => onDemo("extended"))}
+        {tile(Lock, "#F1EEE5", C.inkSoft, "Demo — Meeting-safe", "For screen-sharing: rate math and payout figures hidden.", () => onDemo("simple", true))}
+        {tile(Users, C.coralTint, C.coral, "Demo — Parent view", "The family app, with a switcher to view as any sample parent.", onParentDemo)}
+        {tile(ScanLine, C.tealTint, C.tealDark, "Demo — Door check-in", "What a parent sees after scanning the door QR code.", onDoorDemo)}
+      </div>
+    </EntryShell>
+  );
+}
+
+// Provider: give each parent access to the family app with an invite code.
+function FamilyAppAccess({ household, parents, provider, t }) {
+  const [invites, saveInvites] = usePersistentState(INVITES_KEY, []);
+  const [accounts, saveAccounts] = usePersistentState(ACCOUNTS_KEY, {});
+  const [shown, setShown] = useState(null); // code just created
+  const [copied, setCopied] = useState("");
+  const kidNames = household.children.map((c) => c.child.split(" ")[0]).join(" & ");
+  const latestFor = (email) => invites.filter((x) => x.household === household.household && x.email.toLowerCase() === String(email).toLowerCase()).sort((a, b) => b.createdAt - a.createdAt)[0];
+  const accountFor = (email) => accounts[String(email || "").toLowerCase()];
+  const send = (p) => {
+    const code = newInviteCode();
+    const inv = { code, household: household.household, householdName: household.householdName, parentName: p.name, email: p.email.trim(), kidNames, provider: provider?.name || "Your daycare", createdAt: Date.now(), expiresAt: Date.now() + INVITE_DAYS * 86400000, usedAt: null, revoked: false };
+    saveInvites([inv, ...invites.map((x) => (x.household === household.household && x.email.toLowerCase() === inv.email.toLowerCase() && inviteStatus(x) === "pending" ? { ...x, revoked: true } : x))]);
+    setShown(code);
+  };
+  const revoke = (inv) => { saveInvites(invites.map((x) => (x.code === inv.code ? { ...x, revoked: true } : x))); if (shown === inv.code) setShown(null); };
+  const removeAccess = (email) => { const next = { ...accounts }; delete next[String(email).toLowerCase()]; saveAccounts(next); };
+  const inviteText = (inv) => `${t("You're invited to")} ${inv.provider} ${t("on Alaga, the family app for")} ${inv.kidNames}.\n\n${t("Your invite code")}: ${fmtCode(inv.code)}\n${inviteLink(inv.code)}\n\n${t("Use it within 7 days with this email")}: ${inv.email}`;
+  const copy = async (inv) => { try { await navigator.clipboard.writeText(inviteText(inv)); setCopied(inv.code); setTimeout(() => setCopied(""), 2000); } catch (e) { /* copy blocked; the code is on screen */ } };
+  const pill = (label, fg, bg) => <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 999, color: fg, background: bg, whiteSpace: "nowrap" }}>{label}</span>;
+  const small = { display: "inline-flex", alignItems: "center", gap: 5, padding: "6px 10px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12, fontWeight: 700, color: C.tealDark };
+  return (
+    <Section title={t("Family app access")} icon={Lock}>
+      <div style={{ fontSize: 12, color: C.inkSoft, marginBottom: 6, lineHeight: 1.5 }}>{t("Parents can only join with an invite from you. Each code works once, for one email, and expires in 7 days.")}</div>
+      {parents.filter((p) => p.name).map((p, i) => {
+        const acct = accountFor(p.email); const inv = latestFor(p.email); const st = inviteStatus(inv);
+        return (
+          <div key={i} style={{ padding: "10px 0", borderTop: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
+              <div style={{ minWidth: 0 }}><div style={{ fontSize: 13, fontWeight: 600 }}>{p.name}</div><div style={{ fontSize: 11.5, color: C.inkSoft }}>{p.email || t("No email on file")}</div></div>
+              {acct && acct.household === household.household ? pill(`${t("Has access")} · ${acct.since}`, C.tealDark, C.tealTint)
+                : st === "pending" ? pill(`${t("Invited")} · ${t("expires")} ${new Date(inv.expiresAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`, "#7A5620", C.amberTint)
+                  : st === "expired" ? pill(t("Invite expired"), C.inkSoft, "#EFEBE1") : pill(t("Not invited"), C.inkSoft, "#EFEBE1")}
+            </div>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {acct && acct.household === household.household ? (
+                <button onClick={() => removeAccess(p.email)} style={{ ...small, color: C.danger }}>{t("Remove access")}</button>
+              ) : !p.email ? (
+                <span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Add an email under Contact information to invite them.")}</span>
+              ) : st === "pending" ? (
+                <>
+                  <button onClick={() => setShown(shown === inv.code ? null : inv.code)} style={small}>{shown === inv.code ? t("Hide code") : t("Show code")}</button>
+                  <button onClick={() => send(p)} style={small}>{t("Send a new code")}</button>
+                  <button onClick={() => revoke(inv)} style={{ ...small, color: C.danger }}>{t("Cancel invite")}</button>
+                </>
+              ) : (
+                <button onClick={() => send(p)} style={{ ...small, background: C.teal, color: "#fff", border: "none" }}><Send size={12} /> {t("Invite to the family app")}</button>
+              )}
+            </div>
+            {inv && shown === inv.code && st === "pending" && (
+              <div style={{ background: C.cream, borderRadius: 12, padding: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+                <div style={{ fontFamily: "Menlo, monospace", fontSize: 22, fontWeight: 700, letterSpacing: "0.12em", textAlign: "center" }}>{fmtCode(inv.code)}</div>
+                <div style={{ fontSize: 11.5, color: C.inkSoft, textAlign: "center", wordBreak: "break-all" }}>{inviteLink(inv.code)}</div>
+                <div style={{ display: "flex", gap: 6, justifyContent: "center", flexWrap: "wrap" }}>
+                  <a href={`mailto:${encodeURIComponent(inv.email)}?subject=${encodeURIComponent(`${t("Your invite to")} ${inv.provider} ${t("on Alaga")}`)}&body=${encodeURIComponent(inviteText(inv))}`} style={{ ...small, textDecoration: "none" }}><Mail size={12} /> {t("Email invite")}</a>
+                  <button onClick={() => copy(inv)} style={small}>{copied === inv.code ? <><Check size={12} /> {t("Copied")}</> : t("Copy invite")}</button>
+                </div>
+                <div style={{ fontSize: 11, color: C.inkSoft, textAlign: "center" }}>{t("Share it only with")} {p.name}. {t("It works only with")} {inv.email}.</div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </Section>
   );
 }
 
@@ -4177,7 +4454,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   );
 }
 
-function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, providerInfo: initialProviderInfo, onboardingData, onExitToLanding, forceTier, meetingMode = false, startInParentMode = false, openCheckIn = false }) {
+function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, providerInfo: initialProviderInfo, onboardingData, onExitToLanding, forceTier, meetingMode = false, startInParentMode = false, openCheckIn = false, parentAccount = null, isTeam = false }) {
   const sfx = isEmpty ? "-empty" : "";
   const [providerInfo, saveProviderInfo] = usePersistentState(`provider-profile${sfx}`, {
     name: initialProviderInfo.name, city: initialProviderInfo.city, lic: initialProviderInfo.lic,
@@ -4614,7 +4891,7 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
           )}
         </>
       ) : (
-        <ParentApp careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} events={events} reminderSettings={reminderSettings} saveAttendanceLog={saveAttendanceLog} dailyNotes={dailyNotes} parentFeatures={parentFeatures} openCheckIn={openCheckIn} pickupPasses={pickupPasses} savePickupPasses={savePickupPasses} flexRules={flexRules} />
+        <ParentApp careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} events={events} reminderSettings={reminderSettings} saveAttendanceLog={saveAttendanceLog} dailyNotes={dailyNotes} parentFeatures={parentFeatures} openCheckIn={openCheckIn} pickupPasses={pickupPasses} savePickupPasses={savePickupPasses} flexRules={flexRules} lockedHousehold={parentAccount?.household} accountName={parentAccount?.parentName} />
       )}
     </div>
     </LanguageContext.Provider>
@@ -4624,13 +4901,24 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
 export default function AlagaMockup() {
   // Scanning the door code opens /?checkin=<daycare>. In the demo that goes
   // straight to the sample daycare's parent check-in.
-  const fromDoorCode = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("checkin");
-  const [entry, setEntry] = useState(fromDoorCode ? "workspace" : "landing"); // "landing" | "wizard" | "workspace" | "admin"
+  // Links people arrive with: the door QR code (?checkin=…) asks a parent to
+  // sign in, then opens drop-off / pickup; an invite link (?invite=…) opens
+  // the invite screen with the code filled in.
+  const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : new URLSearchParams();
+  const fromDoorCode = params.has("checkin");
+  const inviteFromLink = params.get("invite") || "";
+  const clearLinkParams = () => { if ((fromDoorCode || inviteFromLink) && typeof window !== "undefined") window.history.replaceState(null, "", window.location.pathname); };
+  // "landing" | "auth" | "invite" | "teamHome" | "admin" | "wizard" | "workspace"
+  const [entry, setEntry] = useState(inviteFromLink ? "invite" : fromDoorCode ? "auth" : "landing");
+  const [authRole, setAuthRole] = useState(fromDoorCode ? "parent" : "provider");
   const [isEmptyWorkspace, setIsEmptyWorkspace] = useState(false);
-  const [forcedTier, setForcedTier] = useState(fromDoorCode ? "extended" : null);
+  const [forcedTier, setForcedTier] = useState(null);
   const [meetingMode, setMeetingMode] = useState(false);
-  const [startInParent, setStartInParent] = useState(fromDoorCode);
-  const [openCheckIn, setOpenCheckIn] = useState(fromDoorCode);
+  const [startInParent, setStartInParent] = useState(false);
+  const [openCheckIn, setOpenCheckIn] = useState(false);
+  const [pendingCheckIn, setPendingCheckIn] = useState(fromDoorCode);
+  const [parentAccount, setParentAccount] = useState(null); // signed-in parent: { household, parentName, email }
+  const [teamEmail, setTeamEmail] = useState(""); // signed-in Alaga team member
   const [providerInfo, setProviderInfo] = useState(PROVIDER);
   const [onboardingData, setOnboardingData] = useState(null);
   const [authMode, setAuthMode] = useState("signin");
@@ -4668,31 +4956,60 @@ export default function AlagaMockup() {
     } catch (e) { /* admin registration is best-effort — never block the actual signup on it */ }
   };
 
+  const openDemo = ({ tier = "extended", meeting = false, parent = false, checkIn = false } = {}) => {
+    setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setParentAccount(null);
+    setForcedTier(tier); setMeetingMode(meeting); setStartInParent(parent); setOpenCheckIn(checkIn); setEntry("workspace");
+  };
+  const enterAsParent = (acct) => {
+    setParentAccount(acct); setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null);
+    setForcedTier("extended"); setMeetingMode(false); setStartInParent(true); setOpenCheckIn(pendingCheckIn); setPendingCheckIn(false); clearLinkParams(); setEntry("workspace");
+  };
+  const toLanding = () => { clearLinkParams(); setPendingCheckIn(false); setEntry("landing"); };
+
   if (entry === "landing") {
     return <LanguageContext.Provider value={publicCtx}><LandingChooser language={publicLanguage} setLanguage={setPublicLanguage}
-      onDemo={(demoTier, isMeeting) => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier(demoTier); setMeetingMode(!!isMeeting); setStartInParent(false); setEntry("workspace"); }}
-      onSignUp={() => { setAuthMode("signup"); setEntry("auth"); }}
-      onAdmin={() => setEntry("admin")}
-      onSignIn={() => { setAuthMode("signin"); setEntry("auth"); }}
-      onParentDemo={() => { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier("extended"); setMeetingMode(false); setStartInParent(true); setEntry("workspace"); }}
+      onProvider={(m) => { setAuthRole("provider"); setAuthMode(m); setEntry("auth"); }}
+      onParent={(m) => { if (m === "invite") { setEntry("invite"); return; } setAuthRole("parent"); setAuthMode("signin"); setEntry("auth"); }}
+      onTeam={() => { setAuthRole("admin"); setAuthMode("signin"); setEntry("auth"); }}
     /></LanguageContext.Provider>;
+  }
+  if (entry === "invite") {
+    return <LanguageContext.Provider value={publicCtx}><ParentInviteScreen language={publicLanguage} setLanguage={setPublicLanguage}
+      initialCode={inviteFromLink} onBack={toLanding} onDone={enterAsParent}
+      onSignIn={() => { setAuthRole("parent"); setAuthMode("signin"); setEntry("auth"); }} /></LanguageContext.Provider>;
   }
   if (entry === "auth") {
-    // Real Firebase accounts. A brand-new account goes straight into the setup
-    // wizard. Signing in to an existing account drops into the populated demo
-    // workspace until the backend + Cloud SQL wiring can load each provider's own data.
+    // Real Firebase accounts. A brand-new daycare goes straight into the setup
+    // wizard. A daycare signing in drops into the sample workspace until the
+    // backend can load each provider's own data. Parents land in their own
+    // family only; the Alaga team gets the team home.
     return <LanguageContext.Provider value={publicCtx}><LoginScreen language={publicLanguage} setLanguage={setPublicLanguage}
-      key={authMode}
+      key={`${authRole}-${authMode}`}
+      role={authRole}
       initialMode={authMode}
-      onAuthenticated={(user, mode) => {
+      notice={authRole === "parent" && pendingCheckIn ? publicCtx.t("Sign in to check your child in or out.") : ""}
+      onInvite={() => setEntry("invite")}
+      onAuthenticated={(user, mode, acct) => {
+        if (authRole === "parent") { enterAsParent(acct); return; }
+        if (authRole === "admin") { setTeamEmail(user?.email || ""); setEntry("teamHome"); return; }
         if (mode === "signup") { setSignupEmail(user?.email || ""); setEntry("wizard"); return; }
-        setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setForcedTier(null); setMeetingMode(false); setEntry("workspace");
+        setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setParentAccount(null); setForcedTier(null); setMeetingMode(false); setStartInParent(false); setEntry("workspace");
       }}
-      onBack={() => setEntry("landing")}
+      onBack={toLanding}
     /></LanguageContext.Provider>;
   }
+  if (entry === "teamHome") {
+    if (!teamEmail) { setEntry("landing"); return null; }
+    return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><AdminHome email={teamEmail}
+      onConsole={() => setEntry("admin")}
+      onDemo={(tier, meeting) => openDemo({ tier, meeting: !!meeting })}
+      onParentDemo={() => openDemo({ parent: true })}
+      onDoorDemo={() => openDemo({ parent: true, checkIn: true })}
+      onSignOut={async () => { await firebaseSignOut(); setTeamEmail(""); setEntry("landing"); }} /></LanguageContext.Provider>;
+  }
   if (entry === "admin") {
-    return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><AdminScreen onBack={() => setEntry("landing")} /></LanguageContext.Provider>;
+    if (!teamEmail) { setEntry("landing"); return null; }
+    return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><AdminScreen onBack={() => setEntry("teamHome")} /></LanguageContext.Provider>;
   }
   if (entry === "wizard") {
     return <LanguageContext.Provider value={publicCtx}><OnboardingWizard
@@ -4701,7 +5018,7 @@ export default function AlagaMockup() {
       onBack={() => setEntry("landing")}
     /></LanguageContext.Provider>;
   }
-  return <Workspace initialLanguage={publicLanguage} onLanguageChange={setPublicLanguage} isEmpty={isEmptyWorkspace} providerInfo={providerInfo} onboardingData={onboardingData} onExitToLanding={() => { setOpenCheckIn(false); if (fromDoorCode) window.history.replaceState(null, "", window.location.pathname); setEntry("landing"); }} forceTier={forcedTier} meetingMode={meetingMode} startInParentMode={startInParent} openCheckIn={openCheckIn} />;
+  return <Workspace initialLanguage={publicLanguage} onLanguageChange={setPublicLanguage} isEmpty={isEmptyWorkspace} providerInfo={providerInfo} onboardingData={onboardingData} onExitToLanding={async () => { setOpenCheckIn(false); clearLinkParams(); if (teamEmail) { setEntry("teamHome"); return; } await firebaseSignOut(); setParentAccount(null); setEntry("landing"); }} forceTier={forcedTier} meetingMode={meetingMode} startInParentMode={startInParent} openCheckIn={openCheckIn} parentAccount={parentAccount} isTeam={!!teamEmail} />;
 }
 
 /* --------------------------------- sidebar ------------------------------------ */
@@ -5941,6 +6258,8 @@ function HouseholdDrawer({ household, onClose, goToSubsidy, onSave, logAccess, t
               </div>
             )}
           </Section>
+
+          {!editing && <FamilyAppAccess household={household} parents={parents} provider={provider} t={t} />}
 
           <Section title={t("Emergency contact")} icon={AlertTriangle}>
             {!editing ? (
@@ -13371,7 +13690,7 @@ function inDateRange(dates, day = startOfToday()) {
   return day >= new Date(start.getFullYear(), start.getMonth(), start.getDate()) && day <= new Date(end.getFullYear(), end.getMonth(), end.getDate());
 }
 
-function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage, events = [], reminderSettings, saveAttendanceLog, dailyNotes = {}, parentFeatures = {}, openCheckIn = false, pickupPasses = [], savePickupPasses, flexRules = FLEX_RULES_DEFAULT }) {
+function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage, events = [], reminderSettings, saveAttendanceLog, dailyNotes = {}, parentFeatures = {}, openCheckIn = false, pickupPasses = [], savePickupPasses, flexRules = FLEX_RULES_DEFAULT, lockedHousehold, accountName }) {
   const t = useT();
   const lang = React.useContext(LanguageContext).lang;
   // Dates and month names in the parent's chosen language.
@@ -13382,10 +13701,11 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
 
   // ---- which household is signed in (the demo lets you switch)
   const households = groupByHousehold(families);
-  const [hhId, setHhId] = useState(households[0]?.household);
-  const hh = households.find((h) => h.household === hhId) || households[0];
+  // A signed-in parent sees only their own family; the team's demo can switch.
+  const [hhId, setHhId] = useState(lockedHousehold || households[0]?.household);
+  const hh = lockedHousehold ? households.find((h) => h.household === lockedHousehold) : (households.find((h) => h.household === hhId) || households[0]);
   const kids = hh ? hh.children : [];
-  const parentName = (kids[0] && (kids[0].parent || kids[0].parents?.[0]?.name)) || "";
+  const parentName = accountName || (kids[0] && (kids[0].parent || kids[0].parents?.[0]?.name)) || "";
   const firstName = parentName.split(" ")[0];
   const [tab, setTab] = useState("home");
   const go = (id) => { setTab(id); if (typeof window !== "undefined") window.scrollTo({ top: 0 }); };
@@ -13970,17 +14290,17 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
               </div>
             )}
             <button onClick={onExit} style={{ fontSize: 12, color: C.inkSoft, background: "none", border: `1px solid ${C.line}`, borderRadius: 9, padding: "7px 10px", fontWeight: 600, whiteSpace: "nowrap" }}>
-              {isMobile ? t("Exit") : showBackToProvider ? t("Exit parent view") : t("Exit demo")}
+              {lockedHousehold ? t("Sign out") : isMobile ? t("Exit") : showBackToProvider ? t("Exit parent view") : t("Exit demo")}
             </button>
           </div>
         </div>
         {/* demo only: switch which parent is signed in */}
-        <div style={{ maxWidth: 960, margin: "0 auto", padding: isMobile ? "0 14px 10px" : "10px 24px 0", display: "flex", alignItems: "center", gap: 8 }}>
+        {!lockedHousehold && <div style={{ maxWidth: 960, margin: "0 auto", padding: isMobile ? "0 14px 10px" : "10px 24px 0", display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ fontSize: 11, fontWeight: 700, color: C.inkSoft, textTransform: "uppercase", letterSpacing: "0.04em", whiteSpace: "nowrap" }}>{t("Demo: viewing as")}</span>
           <select value={hh.household} onChange={(e) => setHhId(e.target.value)} style={{ flex: isMobile ? 1 : "none", minWidth: 0, background: "#fff", color: C.ink, border: `1px dashed ${C.line}`, borderRadius: 9, padding: "6px 10px", fontSize: 12.5, fontFamily: "inherit" }}>
             {households.map((h) => <option key={h.household} value={h.household}>{h.children[0].parent} — {h.children.map((c) => c.child.split(" ")[0]).join(" & ")}</option>)}
           </select>
-        </div>
+        </div>}
         {!isMobile && (
           <div role="tablist" style={{ maxWidth: 960, margin: "0 auto", padding: "8px 24px 0", display: "flex", gap: 4 }}>
             {PARENT_TABS.map((x) => {
