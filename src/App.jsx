@@ -1594,6 +1594,72 @@ const T = {
   "picked up at": { es: "recogido a las", tl: "nasundo nang", zh: "接走于", vi: "đã đón lúc", ko: "하원 시간" },
   "sent by parent": { es: "enviado por el padre o madre", tl: "ipinadala ng magulang", zh: "家长已发送", vi: "phụ huynh đã gửi", ko: "부모가 보냄" },
   "sign": { es: "firmar", tl: "pumirma", zh: "签名", vi: "ký tên", ko: "서명" },
+  "Add a pickup person": { es: "Agregar persona autorizada", tl: "Magdagdag ng susundo", zh: "添加接送人", vi: "Thêm người đón", ko: "픽업할 사람 추가" },
+  "Added a pickup": { es: "Agregué una persona autorizada", tl: "Nagdagdag ng susundo", zh: "已添加接送人", vi: "Đã thêm người đón", ko: "픽업할 사람 추가함" },
+  "All pickup people": { es: "Todas las personas autorizadas", tl: "Lahat ng susundo", zh: "所有接送人", vi: "Tất cả người đón", ko: "모든 픽업 인원" },
+  "Already used": { es: "Ya se usó el", tl: "Nagamit na noong", zh: "已使用于", vi: "Đã dùng ngày", ko: "이미 사용됨:" },
+  "Approved pickup people": { es: "Personas autorizadas", tl: "Mga aprubadong susundo", zh: "已批准的接送人", vi: "Người đón đã được duyệt", ko: "승인된 픽업 인원" },
+  "As it appears on their ID": { es: "Como aparece en su identificación", tl: "Gaya ng nasa ID nila", zh: "与证件上一致", vi: "Như trên giấy tờ tùy thân", ko: "신분증에 적힌 대로" },
+  "Aunt/Uncle": { es: "Tía/Tío", tl: "Tita/Tito", zh: "阿姨/叔叔", vi: "Cô/Chú", ko: "이모/삼촌" },
+  "Bring a photo ID.": { es: "Traiga una identificación con foto.", tl: "Magdala ng photo ID.", zh: "请携带带照片的证件。", vi: "Mang theo giấy tờ có ảnh.", ko: "사진 신분증을 지참하세요." },
+  "Can pick up": { es: "Puede recoger a", tl: "Puwedeng sunduin", zh: "可以接", vi: "Được đón", ko: "픽업 가능 아이" },
+  "Code": { es: "Código", tl: "Code", zh: "代码", vi: "Mã", ko: "코드" },
+  "Copied — paste it into a text message.": { es: "Copiado: péguelo en un mensaje de texto.", tl: "Nakopya na — i-paste sa text message.", zh: "已复制——粘贴到短信中即可。", vi: "Đã sao chép — dán vào tin nhắn.", ko: "복사됨 — 문자 메시지에 붙여넣으세요." },
+  "Couldn't share. Save the image instead.": { es: "No se pudo compartir. Guarde la imagen.", tl: "Hindi ma-share. I-save na lang ang image.", zh: "无法分享，请改为保存图片。", vi: "Không chia sẻ được. Hãy lưu ảnh.", ko: "공유할 수 없어요. 이미지를 저장하세요." },
+  "Create pass": { es: "Crear pase", tl: "Gumawa ng pass", zh: "生成通行证", vi: "Tạo thẻ", ko: "패스 만들기" },
+  "Demo: pick a pass instead of scanning": { es: "Demo: elegir un pase en lugar de escanear", tl: "Demo: pumili ng pass sa halip na mag-scan", zh: "演示：直接选择通行证", vi: "Demo: chọn thẻ thay vì quét", ko: "데모: 스캔 대신 패스 선택" },
+  "Each parent has a personal QR pass, and can add guest passes for other adults. Tap Scan a pass at drop-off and pickup.": { es: "Cada padre o madre tiene un pase QR personal y puede crear pases de invitado para otros adultos. Toque Escanear pase al entregar y recoger.", tl: "May sariling QR pass ang bawat magulang, at puwede silang gumawa ng guest pass para sa ibang adult. I-tap ang Scan a pass sa hatid at sundo.", zh: "每位家长都有个人二维码通行证，也可以为其他成年人添加访客通行证。送托和接走时点“扫描通行证”。", vi: "Mỗi phụ huynh có thẻ QR riêng và có thể tạo thẻ khách cho người lớn khác. Chạm Quét thẻ khi gửi và đón.", ko: "부모님마다 개인 QR 패스가 있고, 다른 어른을 위한 게스트 패스도 만들 수 있어요. 등하원 때 '패스 스캔'을 누르세요." },
+  "Friend": { es: "Amigo/a", tl: "Kaibigan", zh: "朋友", vi: "Bạn", ko: "친구" },
+  "Guest pickup pass": { es: "Pase de recogida para invitado", tl: "Guest pickup pass", zh: "访客接送通行证", vi: "Thẻ đón trẻ cho khách", ko: "게스트 픽업 패스" },
+  "Guest — added by": { es: "Invitado — agregado por", tl: "Guest — idinagdag ni", zh: "访客——添加人：", vi: "Khách — thêm bởi", ko: "게스트 — 추가한 사람:" },
+  "How long": { es: "Por cuánto tiempo", tl: "Gaano katagal", zh: "有效期", vi: "Thời hạn", ko: "기간" },
+  "I checked their photo ID matches": { es: "Verifiqué que su identificación con foto coincide con", tl: "Na-check ko na tugma ang photo ID kay", zh: "我已核对证件与本人一致：", vi: "Tôi đã kiểm tra giấy tờ có ảnh khớp với", ko: "사진 신분증 확인 완료:" },
+  "Look up": { es: "Buscar", tl: "Hanapin", zh: "查找", vi: "Tra cứu", ko: "조회" },
+  "My pass": { es: "Mi pase", tl: "Pass ko", zh: "我的通行证", vi: "Thẻ của tôi", ko: "내 패스" },
+  "My pickup pass": { es: "Mi pase de recogida", tl: "Pickup pass ko", zh: "我的接送通行证", vi: "Thẻ đón trẻ của tôi", ko: "내 픽업 패스" },
+  "Neighbor": { es: "Vecino/a", tl: "Kapitbahay", zh: "邻居", vi: "Hàng xóm", ko: "이웃" },
+  "No one added yet. Add a grandparent, babysitter, or friend who might pick up.": { es: "Aún no ha agregado a nadie. Agregue a un abuelo, niñera o amigo que pueda recoger.", tl: "Wala pang idinagdag. Magdagdag ng lolo/lola, yaya, o kaibigan na puwedeng sumundo.", zh: "还没有添加。可添加可能来接孩子的祖父母、保姆或朋友。", vi: "Chưa thêm ai. Thêm ông bà, người trông trẻ hoặc bạn bè có thể đón.", ko: "아직 추가된 사람이 없어요. 데려갈 수 있는 조부모, 베이비시터, 친구를 추가하세요." },
+  "No pass matches that code.": { es: "Ningún pase coincide con ese código.", tl: "Walang pass na tugma sa code.", zh: "没有与该代码匹配的通行证。", vi: "Không có thẻ khớp với mã này.", ko: "일치하는 패스가 없어요." },
+  "Not here yet — nothing to pick up.": { es: "Aún no ha llegado; no hay nada que recoger.", tl: "Wala pa rito — walang susunduin.", zh: "还没到——无需接走。", vi: "Chưa đến — không có gì để đón.", ko: "아직 등원 전 — 하원할 수 없어요." },
+  "One time": { es: "Una vez", tl: "Isang beses", zh: "一次性", vi: "Một lần", ko: "1회용" },
+  "Ongoing": { es: "Continuo", tl: "Tuloy-tuloy", zh: "长期", vi: "Lâu dài", ko: "계속" },
+  "Ongoing until turned off": { es: "Continuo hasta desactivarlo", tl: "Tuloy-tuloy hanggang i-off", zh: "长期有效，直到关闭", vi: "Lâu dài đến khi tắt", ko: "끌 때까지 유효" },
+  "Only valid on": { es: "Solo válido el", tl: "Valid lang sa", zh: "仅在此日期有效：", vi: "Chỉ có hiệu lực ngày", ko: "유효한 날짜:" },
+  "Or type the 6-digit code": { es: "O escriba el código de 6 dígitos", tl: "O i-type ang 6-digit code", zh: "或输入 6 位代码", vi: "Hoặc nhập mã 6 số", ko: "또는 6자리 코드 입력" },
+  "Parent": { es: "Padre/Madre", tl: "Magulang", zh: "家长", vi: "Phụ huynh", ko: "부모" },
+  "Parent · always valid": { es: "Padre/Madre · siempre válido", tl: "Magulang · laging valid", zh: "家长 · 始终有效", vi: "Phụ huynh · luôn hiệu lực", ko: "부모 · 항상 유효" },
+  "Phone (optional)": { es: "Teléfono (opcional)", tl: "Telepono (opsyonal)", zh: "电话（可选）", vi: "Điện thoại (không bắt buộc)", ko: "전화번호 (선택)" },
+  "Pickup": { es: "Recogida", tl: "Sundo", zh: "接送", vi: "Đón trẻ", ko: "픽업" },
+  "Pickup date": { es: "Fecha de recogida", tl: "Petsa ng sundo", zh: "接送日期", vi: "Ngày đón", ko: "픽업 날짜" },
+  "Pickup pass": { es: "Pase de recogida", tl: "Pickup pass", zh: "接送通行证", vi: "Thẻ đón trẻ", ko: "픽업 패스" },
+  "Pickup pass for": { es: "Pase de recogida para", tl: "Pickup pass para kay", zh: "接送通行证：", vi: "Thẻ đón trẻ cho", ko: "픽업 패스:" },
+  "Pickup passes": { es: "Pases de recogida", tl: "Mga pickup pass", zh: "接送通行证", vi: "Thẻ đón trẻ", ko: "픽업 패스" },
+  "Pickup people": { es: "Personas autorizadas", tl: "Mga susundo", zh: "接送人", vi: "Người đón", ko: "픽업 인원" },
+  "Relative": { es: "Familiar", tl: "Kamag-anak", zh: "亲戚", vi: "Họ hàng", ko: "친척" },
+  "Release to guest": { es: "Entregar al invitado", tl: "Ibigay sa guest", zh: "交给访客", vi: "Giao cho khách", ko: "게스트에게 인계" },
+  "Save image": { es: "Guardar imagen", tl: "I-save ang image", zh: "保存图片", vi: "Lưu ảnh", ko: "이미지 저장" },
+  "Save to my phone": { es: "Guardar en mi teléfono", tl: "I-save sa phone ko", zh: "保存到手机", vi: "Lưu vào điện thoại", ko: "내 휴대폰에 저장" },
+  "Scan a pass": { es: "Escanear pase", tl: "I-scan ang pass", zh: "扫描通行证", vi: "Quét thẻ", ko: "패스 스캔" },
+  "Scan a pickup pass": { es: "Escanear pase de recogida", tl: "I-scan ang pickup pass", zh: "扫描接送通行证", vi: "Quét thẻ đón trẻ", ko: "픽업 패스 스캔" },
+  "Scan another": { es: "Escanear otro", tl: "Mag-scan ng iba", zh: "扫描下一个", vi: "Quét thẻ khác", ko: "다른 패스 스캔" },
+  "Show the QR code or this code to staff, and bring a photo ID.": { es: "Muestre el código QR o este código al personal y traiga una identificación con foto.", tl: "Ipakita ang QR code o ang code na ito sa staff, at magdala ng photo ID.", zh: "向工作人员出示二维码或此代码，并携带带照片的证件。", vi: "Đưa mã QR hoặc mã này cho nhân viên, và mang giấy tờ có ảnh.", ko: "직원에게 QR 코드나 이 코드를 보여주고 사진 신분증을 지참하세요." },
+  "Show this at drop-off and pickup.": { es: "Muéstrelo al entregar y recoger.", tl: "Ipakita ito sa hatid at sundo.", zh: "送托和接走时出示。", vi: "Đưa thẻ này khi gửi và đón.", ko: "등하원 때 보여주세요." },
+  "Show this to staff at drop-off and pickup. Save it to your photos, or keep this app on your home screen. It's only for you — add other adults under Pickup people.": { es: "Muéstrelo al personal al entregar y recoger. Guárdelo en sus fotos o tenga esta app en su pantalla de inicio. Es solo para usted; agregue a otros adultos en Personas autorizadas.", tl: "Ipakita ito sa staff sa hatid at sundo. I-save sa photos mo, o ilagay ang app sa home screen. Para sa iyo lang ito — idagdag ang ibang adult sa Mga susundo.", zh: "送托和接走时向工作人员出示。可保存到相册，或把本应用放在主屏幕上。仅限本人使用——其他成年人请在“接送人”中添加。", vi: "Đưa cho nhân viên khi gửi và đón. Lưu vào ảnh hoặc để ứng dụng trên màn hình chính. Thẻ chỉ dành cho bạn — thêm người lớn khác trong Người đón.", ko: "등하원 때 직원에게 보여주세요. 사진에 저장하거나 홈 화면에 앱을 두세요. 본인 전용이에요 — 다른 어른은 '픽업 인원'에 추가하세요." },
+  "Sibling": { es: "Hermano/a", tl: "Kapatid", zh: "兄弟姐妹", vi: "Anh chị em", ko: "형제자매" },
+  "Text the code to": { es: "Enviar el código por mensaje a", tl: "I-text ang code sa", zh: "短信发送代码到", vi: "Nhắn mã đến", ko: "코드 문자 보내기:" },
+  "The parent turned this pass off": { es: "El padre o madre desactivó este pase", tl: "In-off ng magulang ang pass na ito", zh: "家长已关闭此通行证", vi: "Phụ huynh đã tắt thẻ này", ko: "부모가 이 패스를 껐어요" },
+  "Their full name": { es: "Nombre completo", tl: "Buong pangalan nila", zh: "对方全名", vi: "Họ tên đầy đủ", ko: "성명" },
+  "This pass has expired": { es: "Este pase venció", tl: "Expired na ang pass na ito", zh: "此通行证已过期", vi: "Thẻ này đã hết hạn", ko: "만료된 패스예요" },
+  "Turn off this pass": { es: "Desactivar este pase", tl: "I-off ang pass na ito", zh: "关闭此通行证", vi: "Tắt thẻ này", ko: "이 패스 끄기" },
+  "Turned off": { es: "Desactivado", tl: "Naka-off", zh: "已关闭", vi: "Đã tắt", ko: "꺼짐" },
+  "Turned off pickup pass for": { es: "Desactivé el pase de recogida de", tl: "In-off ang pickup pass ni", zh: "已关闭接送通行证：", vi: "Đã tắt thẻ đón trẻ của", ko: "픽업 패스 끔:" },
+  "Used": { es: "Usado", tl: "Nagamit", zh: "已使用", vi: "Đã dùng", ko: "사용됨" },
+  "Works once, on the day you pick.": { es: "Funciona una vez, el día que elija.", tl: "Isang beses lang gagana, sa araw na pipiliin mo.", zh: "仅在所选日期使用一次。", vi: "Dùng một lần, vào ngày bạn chọn.", ko: "선택한 날 한 번만 사용돼요." },
+  "Works until you turn it off — good for a grandparent or regular sitter.": { es: "Funciona hasta que lo desactive; ideal para un abuelo o niñera habitual.", tl: "Gagana hanggang i-off mo — bagay sa lolo/lola o regular na yaya.", zh: "在您关闭前一直有效——适合祖父母或固定保姆。", vi: "Dùng đến khi bạn tắt — phù hợp cho ông bà hoặc người trông trẻ quen.", ko: "끌 때까지 사용 — 조부모나 정기 시터에게 좋아요." },
+  "Your pass isn't ready yet. Ask your provider.": { es: "Su pase aún no está listo. Consulte a su proveedor.", tl: "Hindi pa handa ang pass mo. Tanungin ang provider.", zh: "您的通行证还没准备好，请询问托育者。", vi: "Thẻ của bạn chưa sẵn sàng. Hãy hỏi người giữ trẻ.", ko: "패스가 아직 준비되지 않았어요. 운영자에게 문의하세요." },
+  "Your provider is notified and will check their photo ID at pickup.": { es: "Se avisa a su proveedor, quien verificará su identificación al recoger.", tl: "Maaabisuhan ang provider at iche-check nila ang photo ID sa sundo.", zh: "托育者会收到通知，并在接送时核对证件。", vi: "Người giữ trẻ sẽ được báo và kiểm tra giấy tờ khi đón.", ko: "운영자에게 알림이 가고 픽업 때 신분증을 확인합니다." },
+  "guest": { es: "invitado", tl: "guest", zh: "访客", vi: "khách", ko: "게스트" },
+  "used": { es: "usado", tl: "nagamit", zh: "已使用", vi: "đã dùng", ko: "사용됨" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -4000,7 +4066,13 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
   // Notes (and photos) the provider shares with each family, by date then child.
   const [dailyNotes, saveDailyNotes] = usePersistentState(`daily-notes${sfx}`, {});
   // What the parent app offers: QR drop-off / pickup and the daily summary.
-  const [parentFeatures, saveParentFeatures] = usePersistentState(`parent-features${sfx}`, { qrCheckin: true, dailySummary: true });
+  const [parentFeatures, saveParentFeatures] = usePersistentState(`parent-features${sfx}`, { qrCheckin: true, dailySummary: true, pickupPasses: true });
+  // Pickup passes: one per parent, plus guest passes parents create.
+  const [pickupPasses, savePickupPasses, passesReady] = usePersistentState(`pickup-passes${sfx}`, isEmpty ? [] : [{
+    id: "gp-demo-elena", type: "guest", household: "reyes", name: "Elena Reyes", relationship: "Grandparent", phone: "(310) 555-0271",
+    kids: FAMILIES.filter((f) => f.household === "reyes").map((f) => f.id), oneTime: false, date: "", token: "ELENAREYES2026", code: "482913",
+    createdBy: "Maria Reyes", createdAt: 1, created: shiftDemoString("09/02/2026"),
+  }]);
   const [tuitionRates, saveTuitionRates] = usePersistentState(`tuition-rates${sfx}`, TUITION_RATES_DEFAULT);
 
   useEffect(() => {
@@ -4153,6 +4225,13 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
   const families = [...baseFamilies, ...addedFamilies].map((f) => mergeFam(f, overrides))
     .filter((f) => !(f.departedOn && daysUntil(f.departedOn) < 0))
     .map((f) => (f.subsidized ? { ...f, status: subsidyStatus(f) } : f));
+  // Every parent gets a pickup pass once saved data has loaded.
+  const parentKey = families.map((f) => `${f.household}:${f.id}:${(f.parents || []).map((p) => p.name).join("|")}`).join(",");
+  useEffect(() => {
+    if (!passesReady) return;
+    const next = ensureParentPasses(pickupPasses, families);
+    if (next !== pickupPasses) savePickupPasses(next);
+  }, [passesReady, parentKey]);
   const subsidizedFamsForBadge = families.filter((f) => f.subsidized);
   const expiringCount = subsidizedFamsForBadge.filter((f) => f.status !== "active" && !dismissedNotices.includes(f.id)).length;
   const unreadMessagesCount = threads.filter((th) => th.unread).length;
@@ -4255,7 +4334,7 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
               {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} reminderSettings={reminderSettings} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} events={events} closures={closures} licensing={licensing} goToTour={() => setScreen("tours")} attendanceLog={attendanceLog} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
               {screen === "families" && <Families families={families} provider={providerInfo} onWithdraw={withdrawChild} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
-              {screen === "bookings" && <Bookings families={families} schedule={fullWeek(weeklySchedule)} closures={closures} provider={providerInfo} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} dailyNotes={dailyNotes} saveDailyNotes={saveDailyNotes} parentFeatures={parentFeatures} saveParentFeatures={saveParentFeatures} />}
+              {screen === "bookings" && <Bookings families={families} schedule={fullWeek(weeklySchedule)} closures={closures} provider={providerInfo} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} dailyNotes={dailyNotes} saveDailyNotes={saveDailyNotes} parentFeatures={parentFeatures} saveParentFeatures={saveParentFeatures} pickupPasses={pickupPasses} savePickupPasses={savePickupPasses} />}
               {screen === "staff" && <StaffScreen staff={staff} families={families} updateStaffMember={updateStaffMember} addStaffMember={addStaffMember} removeStaffMember={removeStaffMember} />}
               {screen === "calendar" && <CalendarScreen careSchedules={careSchedules} saveCareSchedules={saveCareSchedules} schedule={fullWeek(weeklySchedule)} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} families={families} threads={threads} saveThreads={saveThreads} />}
               {screen === "tours" && <ToursScreen providerInfo={providerInfo} prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} startEnroll={(p) => setEnrollingProspectId(p.id)} />}
@@ -4298,7 +4377,7 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
           )}
         </>
       ) : (
-        <ParentApp careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} events={events} reminderSettings={reminderSettings} saveAttendanceLog={saveAttendanceLog} dailyNotes={dailyNotes} parentFeatures={parentFeatures} openCheckIn={openCheckIn} />
+        <ParentApp careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} events={events} reminderSettings={reminderSettings} saveAttendanceLog={saveAttendanceLog} dailyNotes={dailyNotes} parentFeatures={parentFeatures} openCheckIn={openCheckIn} pickupPasses={pickupPasses} savePickupPasses={savePickupPasses} />
       )}
     </div>
     </LanguageContext.Provider>
@@ -6089,7 +6168,7 @@ function StatBlock({ label, value }) {
 
 
 /* --------------------------------- bookings ------------------------------------ */
-function Bookings({ families, schedule = [], closures = [], provider, staff, tuitionRates, flexCareRequests, saveFlexCare, attendanceLog, saveAttendanceLog, onSave, highlightId, dailyNotes = {}, saveDailyNotes, parentFeatures = {}, saveParentFeatures }) {
+function Bookings({ families, schedule = [], closures = [], provider, staff, tuitionRates, flexCareRequests, saveFlexCare, attendanceLog, saveAttendanceLog, onSave, highlightId, dailyNotes = {}, saveDailyNotes, parentFeatures = {}, saveParentFeatures, pickupPasses = [], savePickupPasses }) {
   const t = useT();
   const highlightRef = React.useRef(null);
   useEffect(() => {
@@ -6106,6 +6185,8 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
   const [sheetsOpen, setSheetsOpen] = useState(false);
   const [parentAppOpen, setParentAppOpen] = useState(false);
   const [noteFor, setNoteFor] = useState(null);
+  const [scanOpen, setScanOpen] = useState(false);
+  const passesOn = parentFeatures.pickupPasses !== false && !!savePickupPasses;
   const [sheetMonth, setSheetMonth] = useState(0); // 0 = this month, -1 = last month
   const [sheetWho, setSheetWho] = useState("subsidized");
   const [bookingsTab, setBookingsTab] = useState(highlightId ? "flex" : "roster");
@@ -6230,6 +6311,7 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      {scanOpen && <PassScanSheet passes={pickupPasses} savePasses={savePickupPasses} families={families} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onClose={() => setScanOpen(false)} t={t} />}
       {noteFor && (
         <DailyNoteEditor f={noteFor} note={(dailyNotes[dateFull] || {})[noteFor.id]} t={t} onClose={() => setNoteFor(null)}
           onSave={(n) => { const day = { ...(dailyNotes[dateFull] || {}) }; if (n) day[noteFor.id] = n; else delete day[noteFor.id]; saveDailyNotes({ ...dailyNotes, [dateFull]: day }); setNoteFor(null); }} />
@@ -6266,6 +6348,11 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
             </div>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
+            {isToday && passesOn && (
+              <button onClick={() => setScanOpen(true)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: "none", background: C.teal, fontSize: 12.5, fontWeight: 700, color: "#fff" }}>
+                <ScanLine size={14} /> {t("Scan a pass")}
+              </button>
+            )}
             <button onClick={() => { setParentAppOpen(!parentAppOpen); setSheetsOpen(false); setPickerOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: `1px solid ${C.line}`, background: parentAppOpen ? C.tealTint : "#fff", fontSize: 12.5, fontWeight: 600, color: C.tealDark }}>
               <ScanLine size={14} /> {t("Parent check-in & notes")}
             </button>
@@ -6313,6 +6400,25 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
                 <input type="checkbox" checked={parentFeatures.dailySummary !== false} onChange={(e) => saveParentFeatures({ ...parentFeatures, dailySummary: e.target.checked })} style={{ width: 17, height: 17, marginTop: 1, accentColor: C.teal }} />
                 <span><b>{t("Daily summary for parents")}</b><br /><span style={{ color: C.inkSoft, fontSize: 12 }}>{t("Parents see drop-off and pickup times automatically. Add an optional note or photo from a child's ⋯ menu.")}</span></span>
               </label>
+              <label style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 13 }}>
+                <input type="checkbox" checked={parentFeatures.pickupPasses !== false} onChange={(e) => saveParentFeatures({ ...parentFeatures, pickupPasses: e.target.checked })} style={{ width: 17, height: 17, marginTop: 1, accentColor: C.teal }} />
+                <span><b>{t("Pickup passes")}</b><br /><span style={{ color: C.inkSoft, fontSize: 12 }}>{t("Each parent has a personal QR pass, and can add guest passes for other adults. Tap Scan a pass at drop-off and pickup.")}</span></span>
+              </label>
+              {passesOn && (() => {
+                const guestList = pickupPasses.filter((p) => p.type === "guest" && ["active", "upcoming"].includes(passStatus(p)));
+                if (!guestList.length) return null;
+                return (
+                  <div style={{ background: C.cream, borderRadius: 10, padding: "10px 12px" }}>
+                    <div style={{ fontSize: 11.5, fontWeight: 700, color: C.inkSoft, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6 }}>{t("Approved pickup people")}</div>
+                    {guestList.map((g) => (
+                      <div key={g.id} style={{ display: "flex", justifyContent: "space-between", gap: 10, fontSize: 12.5, padding: "4px 0" }}>
+                        <span><b>{g.name}</b> · {t(g.relationship)} · {families.filter((f) => g.kids.includes(f.id)).map((f) => f.child.split(" ")[0]).join(" & ")}</span>
+                        <span style={{ color: C.inkSoft, whiteSpace: "nowrap" }}>{g.oneTime ? g.date : t("Ongoing")}</span>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
             </div>
           </div>
         )}
@@ -12639,6 +12745,316 @@ function DailyNoteEditor({ f, note, onSave, onClose, t }) {
   );
 }
 
+/* ------------------------------- pickup passes ------------------------------- */
+// Each parent has a personal pass (a QR code they show at drop-off and
+// pickup). Parents can also create guest passes for other adults: one time
+// on a set date, or ongoing until they turn it off. Staff scan the code (or
+// type the 6-digit number) in Attendance.
+const PASS_PREFIX = "ALAGA-PASS:";
+const randomToken = (n = 12) => {
+  const abc = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; const a = new Uint32Array(n);
+  (window.crypto || window.msCrypto).getRandomValues(a);
+  return Array.from(a, (x) => abc[x % abc.length]).join("");
+};
+const randomDigits = (n = 6) => { const a = new Uint32Array(n); window.crypto.getRandomValues(a); return Array.from(a, (x) => x % 10).join(""); };
+const passQrText = (p) => `${PASS_PREFIX}${p.token}`;
+function passStatus(p, day = todayMDY()) {
+  if (p.revoked) return "revoked";
+  if (p.oneTime) {
+    if (p.usedAt) return "used";
+    const left = daysUntil(p.date);
+    if (left < 0) return "expired";
+    if (p.date !== day && left > 0) return "upcoming";
+  }
+  return "active";
+}
+const PASS_STATUS_META = {
+  active: { label: "Active", fg: C.teal, bg: C.tealTint },
+  upcoming: { label: "Scheduled", fg: C.sky, bg: C.skyTint },
+  used: { label: "Used", fg: C.inkSoft, bg: "#EFEBE1" },
+  expired: { label: "Expired", fg: C.inkSoft, bg: "#EFEBE1" },
+  revoked: { label: "Turned off", fg: C.danger, bg: C.dangerTint },
+};
+const passValidity = (p, t) => (p.type === "parent" ? t("Parent · always valid") : p.oneTime ? `${t("One time")} · ${p.date}` : t("Ongoing until turned off"));
+// A demo daycare gets a pass for every parent, plus one standing guest.
+function ensureParentPasses(passes, families) {
+  const out = [...passes]; let changed = false;
+  groupByHousehold(families).forEach((h) => {
+    const kids = h.children.map((c) => c.id);
+    const parents = (h.parents && h.parents.length ? h.parents : [{ name: h.children[0].parent, relationship: "Parent" }]);
+    parents.forEach((pa) => {
+      if (!pa.name) return;
+      const ex = out.find((p) => p.type === "parent" && p.household === h.household && p.name === pa.name);
+      if (!ex) { out.push({ id: `pp-${h.household}-${pa.name}`, type: "parent", household: h.household, name: pa.name, relationship: pa.relationship || "Parent", kids, token: randomToken(), code: randomDigits(), created: todayMDY() }); changed = true; }
+      else if (kids.some((k) => !ex.kids.includes(k))) { ex.kids = Array.from(new Set([...ex.kids, ...kids])); changed = true; }
+    });
+  });
+  return changed ? out : passes;
+}
+
+async function passImageDataUrl(p, { provider = {}, kidNames = "", t = (x) => x } = {}) {
+  const m = await import("qrcode");
+  const qr = await (m.default || m).toDataURL(passQrText(p), { margin: 1, width: 560 });
+  const img = new Image(); img.src = qr; await img.decode();
+  const W = 720, H = 1140; const c = document.createElement("canvas"); c.width = W; c.height = H;
+  const x = c.getContext("2d");
+  x.fillStyle = "#F6F1E8"; x.fillRect(0, 0, W, H);
+  x.fillStyle = p.type === "parent" ? C.teal : "#2F5D50"; x.fillRect(0, 0, W, 170);
+  x.fillStyle = "#fff"; x.font = "700 34px Georgia, serif"; x.fillText(provider.name || "Alaga", 44, 74);
+  x.font = "600 24px Helvetica, Arial, sans-serif"; x.fillText(p.type === "parent" ? t("Pickup pass") : t("Guest pickup pass"), 44, 122);
+  x.fillStyle = "#fff"; x.fillRect(80, 210, 560, 560); x.drawImage(img, 80, 210, 560, 560);
+  x.fillStyle = "#1F2A24"; x.font = "700 40px Helvetica, Arial, sans-serif"; x.fillText(p.name, 44, 840);
+  x.font = "400 26px Helvetica, Arial, sans-serif"; x.fillStyle = "#4A5550";
+  x.fillText(`${t(p.relationship || "")}${kidNames ? ` · ${kidNames}` : ""}`.slice(0, 48), 44, 884);
+  x.fillText(passValidity(p, t), 44, 924);
+  x.fillStyle = "#1F2A24"; x.font = "700 52px Menlo, monospace"; x.fillText(p.code.replace(/(\d{3})(\d{3})/, "$1 $2"), 44, 1010);
+  x.font = "400 22px Helvetica, Arial, sans-serif"; x.fillStyle = "#4A5550"; x.fillText(t("Show this at drop-off and pickup."), 44, 1060);
+  if (p.type !== "parent") x.fillText(t("Bring a photo ID."), 44, 1094);
+  return c.toDataURL("image/png");
+}
+async function savePassImage(p, opts) {
+  const url = await passImageDataUrl(p, opts);
+  const a = document.createElement("a"); a.href = url; a.download = `alaga-pass-${p.name.replace(/\s+/g, "-").toLowerCase()}.png`;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+const passShareText = (p, { provider = {}, kidNames = "", t = (x) => x } = {}) => `${t("Pickup pass for")} ${p.name} — ${provider.name}\n${kidNames}\n${passValidity(p, t)}\n${t("Code")}: ${p.code}\n${t("Show the QR code or this code to staff, and bring a photo ID.")}`;
+async function sharePass(p, { provider = {}, kidNames = "", t = (x) => x } = {}) {
+  const text = passShareText(p, { provider, kidNames, t });
+  // No share menu (most computers): copy right away, while the click still counts.
+  if (!navigator.share) { try { await navigator.clipboard.writeText(text); return "copied"; } catch (e) { return "failed"; } }
+  try {
+    const url = await passImageDataUrl(p, { provider, kidNames, t });
+    const blob = await (await fetch(url)).blob();
+    const file = new File([blob], "alaga-pickup-pass.png", { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], text }); return "shared"; }
+    if (navigator.share) { await navigator.share({ text }); return "shared"; }
+  } catch (e) { if (e && e.name === "AbortError") return "cancelled"; }
+  try { await navigator.clipboard.writeText(text); return "copied"; } catch (e) { return "failed"; }
+}
+
+function PassView({ p, provider, kidNames, t, children }) {
+  const st = passStatus(p); const meta = PASS_STATUS_META[st];
+  return (
+    <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 18, overflow: "hidden" }}>
+      <div style={{ background: p.type === "parent" ? C.teal : "#2F5D50", color: "#fff", padding: "14px 18px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
+        <div><div style={{ fontFamily: "'Fraunces', serif", fontWeight: 700, fontSize: 16 }}>{provider.name}</div><div style={{ fontSize: 12, opacity: 0.9 }}>{p.type === "parent" ? t("Pickup pass") : t("Guest pickup pass")}</div></div>
+        {st !== "active" && <Pill label={t(meta.label)} fg={meta.fg} bg="#fff" />}
+      </div>
+      <div style={{ padding: 18, display: "flex", flexDirection: "column", alignItems: "center", gap: 10, opacity: st === "active" || st === "upcoming" ? 1 : 0.45 }}>
+        <div style={{ background: "#fff", padding: 10, borderRadius: 14, border: `1px solid ${C.line}`, lineHeight: 0 }}><QrImage text={passQrText(p)} size={210} /></div>
+        <div style={{ fontFamily: "Menlo, monospace", fontSize: 26, fontWeight: 700, letterSpacing: "0.08em" }}>{p.code.replace(/(\d{3})(\d{3})/, "$1 $2")}</div>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ fontSize: 17, fontWeight: 700 }}>{p.name}</div>
+          <div style={{ fontSize: 13, color: C.inkSoft }}>{t(p.relationship || "")}{kidNames ? ` · ${kidNames}` : ""}</div>
+          <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>{passValidity(p, t)}</div>
+        </div>
+      </div>
+      {children && <div style={{ padding: "0 18px 18px", display: "flex", flexDirection: "column", gap: 8 }}>{children}</div>}
+    </div>
+  );
+}
+
+// Parent: their own pass, and the guest passes they've made.
+function PickupPassesSheet({ start = "mine", passes, savePasses, household, kids, parentName, provider, onNotify, onClose, isMobile, t }) {
+  const [view, setView] = useState(start); // mine | guests | new | guest:<id>
+  const [msg, setMsg] = useState("");
+  const kidNamesOf = (p) => kids.filter((k) => p.kids.includes(k.id)).map((k) => k.child.split(" ")[0]).join(" & ");
+  const mine = passes.find((p) => p.type === "parent" && p.household === household && p.name === parentName);
+  const guests = passes.filter((p) => p.type === "guest" && p.household === household).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  const [form, setForm] = useState({ name: "", relationship: "Grandparent", phone: "", kids: kids.map((k) => k.id), oneTime: true, date: todayMDY() });
+  const flash = (m) => { setMsg(m); setTimeout(() => setMsg(""), 2500); };
+  const create = () => {
+    if (!form.name.trim() || !form.kids.length || (form.oneTime && !form.date)) return;
+    const p = { id: `gp-${Date.now()}`, type: "guest", household, name: form.name.trim(), relationship: form.relationship, phone: form.phone.trim(), kids: form.kids, oneTime: form.oneTime, date: form.oneTime ? form.date : "", token: randomToken(), code: randomDigits(), createdBy: parentName, createdAt: Date.now(), created: todayMDY() };
+    savePasses([p, ...passes]);
+    onNotify(`🔑 ${t("Added a pickup")}: ${p.name} (${t(p.relationship)}) ${t("for")} ${kidNamesOf(p)} — ${passValidity(p, t)}`);
+    setView(`guest:${p.id}`);
+  };
+  const revoke = (p) => { savePasses(passes.map((x) => (x.id === p.id ? { ...x, revoked: true } : x))); onNotify(`🔒 ${t("Turned off pickup pass for")} ${p.name}`); };
+  const share = async (p) => { const r = await sharePass(p, { provider, kidNames: kidNamesOf(p), t }); if (r === "copied") flash(t("Copied — paste it into a text message.")); else if (r === "failed") flash(t("Couldn't share. Save the image instead.")); };
+  const btn = { width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px 0", borderRadius: 11, fontWeight: 700, fontSize: 14, minHeight: 46 };
+  const main = { ...btn, border: "none", background: C.teal, color: "#fff" };
+  const soft = { ...btn, border: `1px solid ${C.line}`, background: "#fff", color: C.tealDark };
+  const inp = { ...inputStyle, width: "100%", padding: "10px 12px", borderRadius: 9, boxSizing: "border-box", fontSize: 14 };
+  const guestOpen = view.startsWith("guest:") ? guests.find((g) => g.id === view.slice(6)) : null;
+  const title = view === "mine" ? t("My pickup pass") : view === "new" ? t("Add a pickup person") : guestOpen ? guestOpen.name : t("Pickup people");
+
+  return (
+    <ParentSheet title={title} onClose={onClose} isMobile={isMobile} t={t}>
+      <div style={{ display: "flex", gap: 6, background: C.paper, border: `1px solid ${C.line}`, borderRadius: 11, padding: 3 }}>
+        {[["mine", t("My pass")], ["guests", `${t("Pickup people")} (${guests.filter((g) => ["active", "upcoming"].includes(passStatus(g))).length})`]].map(([id, label]) => {
+          const on = view === id || (id === "guests" && (view === "new" || guestOpen));
+          return <button key={id} onClick={() => setView(id)} style={{ flex: 1, padding: "9px 6px", borderRadius: 8, border: "none", background: on ? C.tealTint : "transparent", color: on ? C.tealDark : C.inkSoft, fontWeight: 700, fontSize: 13 }}>{label}</button>;
+        })}
+      </div>
+      {msg && <div role="status" style={{ padding: "10px 12px", borderRadius: 10, background: C.tealTint, color: C.tealDark, fontWeight: 600, fontSize: 13 }}>{msg}</div>}
+
+      {view === "mine" && (mine ? (
+        <>
+          <PassView p={mine} provider={provider} kidNames={kidNamesOf(mine)} t={t}>
+            <button onClick={() => savePassImage(mine, { provider, kidNames: kidNamesOf(mine), t })} style={main}><Download size={16} /> {t("Save to my phone")}</button>
+          </PassView>
+          <div style={{ fontSize: 12, color: C.inkSoft, lineHeight: 1.55, display: "flex", gap: 6 }}><Info size={13} style={{ flexShrink: 0, marginTop: 2 }} /> {t("Show this to staff at drop-off and pickup. Save it to your photos, or keep this app on your home screen. It's only for you — add other adults under Pickup people.")}</div>
+        </>
+      ) : <div style={{ fontSize: 13, color: C.inkSoft }}>{t("Your pass isn't ready yet. Ask your provider.")}</div>)}
+
+      {view === "guests" && (
+        <>
+          <button onClick={() => setView("new")} style={main}><UserPlus size={16} /> {t("Add a pickup person")}</button>
+          {guests.length === 0 && <div style={{ fontSize: 13, color: C.inkSoft, textAlign: "center", padding: 10 }}>{t("No one added yet. Add a grandparent, babysitter, or friend who might pick up.")}</div>}
+          {guests.map((g) => {
+            const st = passStatus(g); const meta = PASS_STATUS_META[st];
+            return (
+              <button key={g.id} onClick={() => setView(`guest:${g.id}`)} style={{ display: "flex", alignItems: "center", gap: 12, textAlign: "left", background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, padding: "12px 14px", minHeight: 60 }}>
+                <div style={{ width: 38, height: 38, borderRadius: "50%", background: "#2F5D50", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, flexShrink: 0 }}>{initialsOf(g.name)}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700 }}>{g.name} <span style={{ fontWeight: 500, color: C.inkSoft, fontSize: 12.5 }}>· {t(g.relationship)}</span></div>
+                  <div style={{ fontSize: 12, color: C.inkSoft }}>{kidNamesOf(g)} · {passValidity(g, t)}{g.usedAt ? ` · ${t("used")} ${g.usedAt}` : ""}</div>
+                </div>
+                <Pill label={t(meta.label)} fg={meta.fg} bg={meta.bg} />
+              </button>
+            );
+          })}
+        </>
+      )}
+
+      {view === "new" && (
+        <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, padding: 16, display: "flex", flexDirection: "column", gap: 12 }}>
+          <Field label={t("Their full name")}><input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t("As it appears on their ID")} style={inp} /></Field>
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: 10 }}>
+            <Field label={t("Relationship")}><Select value={form.relationship} onChange={(v) => setForm({ ...form, relationship: v })} options={EMERGENCY_CONTACT_RELATIONSHIPS} labels={EMERGENCY_CONTACT_RELATIONSHIPS.map((x) => t(x))} /></Field>
+            <Field label={t("Phone (optional)")}><input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} style={inp} /></Field>
+          </div>
+          {kids.length > 1 && (
+            <Field label={t("Can pick up")}>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {kids.map((k) => { const on = form.kids.includes(k.id); return <button key={k.id} onClick={() => setForm({ ...form, kids: on ? form.kids.filter((x) => x !== k.id) : [...form.kids, k.id] })} style={{ padding: "8px 14px", borderRadius: 999, minHeight: 38, border: `1.5px solid ${on ? C.teal : C.line}`, background: on ? C.tealTint : "#fff", color: on ? C.tealDark : C.ink, fontWeight: 600, fontSize: 13 }}>{on ? "✓ " : ""}{k.child.split(" ")[0]}</button>; })}
+              </div>
+            </Field>
+          )}
+          <Field label={t("How long")}>
+            <div style={{ display: "flex", gap: 8 }}>
+              {[[true, t("One time")], [false, t("Ongoing")]].map(([v, label]) => { const on = form.oneTime === v; return <button key={String(v)} onClick={() => setForm({ ...form, oneTime: v })} style={{ flex: 1, padding: "10px 0", borderRadius: 10, border: `1.5px solid ${on ? C.teal : C.line}`, background: on ? C.tealTint : "#fff", color: on ? C.tealDark : C.ink, fontWeight: 700, fontSize: 13.5 }}>{label}</button>; })}
+            </div>
+            <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 6 }}>{form.oneTime ? t("Works once, on the day you pick.") : t("Works until you turn it off — good for a grandparent or regular sitter.")}</div>
+          </Field>
+          {form.oneTime && <Field label={t("Pickup date")}><DateField value={form.date} onChange={(v) => setForm({ ...form, date: v })} allowClear={false} /></Field>}
+          <button onClick={create} disabled={!form.name.trim() || !form.kids.length} style={{ ...main, opacity: form.name.trim() && form.kids.length ? 1 : 0.5 }}><Check size={16} /> {t("Create pass")}</button>
+          <div style={{ fontSize: 11.5, color: C.inkSoft, lineHeight: 1.5 }}>{t("Your provider is notified and will check their photo ID at pickup.")}</div>
+        </div>
+      )}
+
+      {guestOpen && (() => {
+        const st = passStatus(guestOpen); const live = st === "active" || st === "upcoming";
+        return (
+          <>
+            <PassView p={guestOpen} provider={provider} kidNames={kidNamesOf(guestOpen)} t={t}>
+              {live && <button onClick={() => share(guestOpen)} style={main}><Send size={16} /> {t("Send to")} {guestOpen.name.split(" ")[0]}</button>}
+              {live && guestOpen.phone && <a href={`sms:${guestOpen.phone.replace(/[^\d+]/g, "")}?&body=${encodeURIComponent(passShareText(guestOpen, { provider, kidNames: kidNamesOf(guestOpen), t }))}`} style={{ ...soft, textDecoration: "none", boxSizing: "border-box" }}><MessageSquare size={16} /> {t("Text the code to")} {guestOpen.phone}</a>}
+              {live && <button onClick={() => savePassImage(guestOpen, { provider, kidNames: kidNamesOf(guestOpen), t })} style={soft}><Download size={16} /> {t("Save image")}</button>}
+              {live && <button onClick={() => revoke(guestOpen)} style={{ ...soft, color: C.danger }}><Lock size={15} /> {t("Turn off this pass")}</button>}
+            </PassView>
+            {guestOpen.usedAt && <div style={{ fontSize: 12.5, color: C.inkSoft }}>{t("Used")} {guestOpen.usedAt}{guestOpen.usedTime ? ` · ${guestOpen.usedTime}` : ""}</div>}
+            <button onClick={() => setView("guests")} style={{ alignSelf: "flex-start", background: "none", border: "none", color: C.teal, fontWeight: 700, fontSize: 13, display: "flex", alignItems: "center", gap: 5 }}><ArrowLeft size={14} /> {t("All pickup people")}</button>
+          </>
+        );
+      })()}
+    </ParentSheet>
+  );
+}
+
+// Staff: scan or type a pass, see who it is and which children they can take.
+function PassScanSheet({ passes, savePasses, families, attendanceLog, saveAttendanceLog, onClose, t }) {
+  const isMobile = useIsMobile();
+  const [found, setFound] = useState(null);
+  const [code, setCode] = useState("");
+  const [err, setErr] = useState("");
+  const [done, setDone] = useState("");
+  const [idChecked, setIdChecked] = useState(false);
+  const [scanKey, setScanKey] = useState(0);
+  const lookup = (raw) => {
+    const v = String(raw || "").trim();
+    const p = v.startsWith(PASS_PREFIX) ? passes.find((x) => x.token === v.slice(PASS_PREFIX.length)) : passes.find((x) => x.code === v.replace(/\D/g, ""));
+    if (!p) { setErr(t("No pass matches that code.")); return; }
+    setErr(""); setFound(p); setIdChecked(false); setDone("");
+  };
+  const today = todayMDY();
+  const day = (attendanceLog || {})[today] || {};
+  const rec = (id) => { const v = day[id]; return v === true ? { in: "—" } : v || {}; };
+  const st = found ? passStatus(found) : null;
+  const valid = st === "active";
+  const kids = found ? families.filter((f) => found.kids.includes(f.id)) : [];
+  const who = found ? (found.type === "guest" ? `${found.name} (${t("guest")})` : found.name) : "";
+  const act = (list, kind) => {
+    const time = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    const copy = { ...day };
+    list.forEach((f) => { const r = rec(f.id); copy[f.id] = kind === "in" ? { in: time, inBy: who, via: "pass" } : { ...r, out: time, outBy: who, via: "pass" }; });
+    saveAttendanceLog({ ...(attendanceLog || {}), [today]: copy });
+    if (found.type === "guest" && found.oneTime && kind === "out") savePasses(passes.map((x) => (x.id === found.id ? { ...x, usedAt: today, usedTime: time } : x)));
+    setDone(`${list.map((f) => f.child.split(" ")[0]).join(" & ")} — ${kind === "in" ? t("checked in at") : t("picked up at")} ${time} · ${who}`);
+  };
+  const demoPasses = passes.filter((p) => passStatus(p) === "active").slice(0, 8);
+  const big = { flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "12px 0", borderRadius: 11, fontWeight: 700, fontSize: 14, minHeight: 46 };
+  return (
+    <ParentSheet title={t("Scan a pickup pass")} onClose={onClose} isMobile={isMobile} t={t}>
+      {!found ? (
+        <>
+          <QrScanner key={scanKey} onResult={lookup} t={t} />
+          <div style={{ display: "flex", gap: 8 }}>
+            <input value={code} onChange={(e) => setCode(e.target.value)} onKeyDown={(e) => e.key === "Enter" && lookup(code)} inputMode="numeric" placeholder={t("Or type the 6-digit code")} style={{ ...inputStyle, padding: "11px 12px", borderRadius: 10, fontSize: 15, letterSpacing: "0.08em" }} />
+            <button onClick={() => lookup(code)} style={{ padding: "0 16px", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700 }}>{t("Look up")}</button>
+          </div>
+          {err && <div style={{ fontSize: 13, color: C.danger }}>{err}</div>}
+          {demoPasses.length > 0 && (
+            <details>
+              <summary style={{ fontSize: 12.5, color: C.inkSoft, cursor: "pointer", padding: "6px 0" }}>{t("Demo: pick a pass instead of scanning")}</summary>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 6 }}>
+                {demoPasses.map((p) => <button key={p.id} onClick={() => lookup(passQrText(p))} style={{ padding: "6px 10px", borderRadius: 999, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12, fontWeight: 600 }}>{p.name}{p.type === "guest" ? ` (${t("guest")})` : ""}</button>)}
+              </div>
+            </details>
+          )}
+        </>
+      ) : (
+        <>
+          <div style={{ background: valid ? C.paper : C.dangerTint, border: `1.5px solid ${valid ? C.teal : C.danger}`, borderRadius: 16, padding: 16, display: "flex", gap: 14, alignItems: "center" }}>
+            <div style={{ width: 52, height: 52, borderRadius: "50%", background: found.type === "parent" ? C.teal : "#2F5D50", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 18, flexShrink: 0 }}>{initialsOf(found.name)}</div>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: 18, fontWeight: 700 }}>{found.name}</div>
+              <div style={{ fontSize: 13, color: C.inkSoft }}>{t(found.relationship || "")} · {found.type === "parent" ? t("Parent") : `${t("Guest — added by")} ${found.createdBy}`}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: valid ? C.tealDark : C.danger, marginTop: 3 }}>
+                {valid ? `✓ ${passValidity(found, t)}` : st === "used" ? `${t("Already used")} ${found.usedAt}` : st === "upcoming" ? `${t("Only valid on")} ${found.date}` : st === "revoked" ? t("The parent turned this pass off") : t("This pass has expired")}
+              </div>
+            </div>
+          </div>
+          {done && <div role="status" style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 12, background: C.tealTint, color: C.tealDark, fontWeight: 700, fontSize: 14 }}><CheckCircle2 size={19} /> {done}</div>}
+          {valid && found.type === "guest" && (
+            <label style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 12, background: C.amberTint, color: "#7A5620", fontWeight: 700, fontSize: 14 }}>
+              <input type="checkbox" checked={idChecked} onChange={(e) => setIdChecked(e.target.checked)} style={{ width: 20, height: 20, accentColor: C.teal }} />
+              {t("I checked their photo ID matches")} {found.name}
+            </label>
+          )}
+          {valid && kids.map((f) => {
+            const r = rec(f.id); const s = r.absent ? "absent" : r.out ? "gone" : r.in ? "here" : "expected";
+            const blocked = found.type === "guest" && !idChecked;
+            return (
+              <div key={f.id} style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, padding: 14, display: "flex", flexDirection: "column", gap: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: "50%", background: f.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 }}>{f.child[0]}</div>
+                  <div><div style={{ fontWeight: 700, fontSize: 15 }}>{f.child}</div><div style={{ fontSize: 12.5, color: C.inkSoft }}>{s === "here" ? `${t("Here since")} ${r.in}` : s === "gone" ? `${t("Picked up")} ${r.out}${r.outBy ? ` · ${r.outBy}` : ""}` : s === "absent" ? t("Absent") : t("Not checked in yet")}</div></div>
+                </div>
+                {s === "here" && <button disabled={blocked} onClick={() => act([f], "out")} style={{ ...big, border: "none", background: blocked ? "#C9C4B4" : C.teal, color: "#fff" }}><LogOut size={16} /> {found.type === "guest" ? t("Release to guest") : t("Pick up")}</button>}
+                {(s === "expected" || s === "absent") && found.type === "parent" && <button onClick={() => act([f], "in")} style={{ ...big, border: "none", background: C.teal, color: "#fff" }}><CheckCircle2 size={16} /> {t("Drop off")}</button>}
+                {(s === "expected" || s === "absent") && found.type === "guest" && <div style={{ fontSize: 12.5, color: C.inkSoft }}>{t("Not here yet — nothing to pick up.")}</div>}
+              </div>
+            );
+          })}
+          <button onClick={() => { setFound(null); setCode(""); setScanKey((k) => k + 1); }} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "12px 0", borderRadius: 11, border: `1px solid ${C.line}`, background: "#fff", color: C.tealDark, fontWeight: 700, fontSize: 14 }}><ScanLine size={16} /> {t("Scan another")}</button>
+        </>
+      )}
+    </ParentSheet>
+  );
+}
+
 // Parent / family app. A parent account covers their whole household, so
 // siblings show together. Five areas: Home (today, to-do, coming up),
 // Messages, Billing, Documents and Extra care. Phones get a bottom tab bar;
@@ -12659,7 +13075,7 @@ function inDateRange(dates, day = startOfToday()) {
   return day >= new Date(start.getFullYear(), start.getMonth(), start.getDate()) && day <= new Date(end.getFullYear(), end.getMonth(), end.getDate());
 }
 
-function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage, events = [], reminderSettings, saveAttendanceLog, dailyNotes = {}, parentFeatures = {}, openCheckIn = false }) {
+function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage, events = [], reminderSettings, saveAttendanceLog, dailyNotes = {}, parentFeatures = {}, openCheckIn = false, pickupPasses = [], savePickupPasses }) {
   const t = useT();
   const lang = React.useContext(LanguageContext).lang;
   // Dates and month names in the parent's chosen language.
@@ -12683,6 +13099,8 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
   // Opened from the door code (?checkin=…): go straight to drop-off / pickup.
   const [checkInOpen, setCheckInOpen] = useState(openCheckIn ? "scanned" : null);
   const [signing, setSigning] = useState(null); // { famId, docId }
+  const passesOn = parentFeatures.pickupPasses !== false && !!savePickupPasses;
+  const [passesOpen, setPassesOpen] = useState(null); // "mine" | "guests"
 
   // ---- billing
   const billing = reminderSettings ? currentBilling(reminderSettings) : null;
@@ -12884,6 +13302,21 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
     </div>
   );
 
+  const myGuests = pickupPasses.filter((p) => p.type === "guest" && p.household === hh?.household && ["active", "upcoming"].includes(passStatus(p)));
+  const PickupCard = passesOn ? (
+    <div style={card}>
+      <div style={cardHead}><Lock size={15} color={C.teal} /> {t("Pickup")}</div>
+      <div style={{ padding: "12px 18px", display: "flex", gap: 10, flexWrap: "wrap" }}>
+        <button onClick={() => setPassesOpen("mine")} style={{ flex: "1 1 150px", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "11px 12px", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 13.5, minHeight: 44 }}>
+          <ScanLine size={15} /> {t("My pickup pass")}
+        </button>
+        <button onClick={() => setPassesOpen("guests")} style={{ flex: "1 1 150px", display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "11px 12px", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", color: C.tealDark, fontWeight: 700, fontSize: 13.5, minHeight: 44 }}>
+          <UserPlus size={15} /> {t("Pickup people")} {myGuests.length > 0 && `(${myGuests.length})`}
+        </button>
+      </div>
+      {myGuests.length > 0 && <div style={{ padding: "0 18px 12px", fontSize: 12, color: C.inkSoft }}>{myGuests.map((g) => `${g.name}${g.oneTime ? ` (${g.date})` : ""}`).join(" · ")}</div>}
+    </div>
+  ) : null;
   const LatestMessageCard = (
     <button onClick={() => go("messages")} style={{ ...card, width: "100%", textAlign: "left", padding: "14px 18px", display: "flex", alignItems: "center", gap: 12 }}>
       <MessageSquare size={18} color={C.teal} style={{ flexShrink: 0 }} />
@@ -12901,11 +13334,11 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
     <>
       <div style={{ fontFamily: "'Fraunces', serif", fontSize: isMobile ? 22 : 26, fontWeight: 600 }}>{t("Hi")}, {firstName}</div>
       {isMobile ? (
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>{TodayCard}{TodoCard}{LatestMessageCard}{ComingUpCard}</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>{TodayCard}{TodoCard}{PickupCard}{LatestMessageCard}{ComingUpCard}</div>
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.1fr) minmax(0, 0.9fr)", gap: 16, alignItems: "start" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>{TodayCard}{TodoCard}</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>{LatestMessageCard}{ComingUpCard}</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>{PickupCard}{LatestMessageCard}{ComingUpCard}</div>
         </div>
       )}
     </>
@@ -13251,6 +13684,10 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
       {checkInOpen && (
         <CheckInSheet kids={kids} parentName={parentName} provider={provider} attendanceLog={careCtx?.attendanceLog || {}} saveAttendanceLog={saveAttendanceLog}
           scanned={checkInOpen === "scanned"} onClose={() => setCheckInOpen(null)} isMobile={isMobile} t={t} />
+      )}
+      {passesOpen && (
+        <PickupPassesSheet start={passesOpen} passes={pickupPasses} savePasses={savePickupPasses} household={hh.household} kids={kids} parentName={parentName} provider={provider}
+          onNotify={sendMessage} onClose={() => setPassesOpen(null)} isMobile={isMobile} t={t} />
       )}
       {signing && (() => {
         const f = kids.find((k) => k.id === signing.famId);
