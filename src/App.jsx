@@ -3142,7 +3142,13 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, lan
       {setLanguage && <div style={{ position: "absolute", top: 16, right: 16 }}><LanguagePicker language={language} setLanguage={setLanguage} /></div>}
       <div style={{ display: "flex", alignItems: "center", gap: 24, marginBottom: 14 }}>
         <AlagaMark size={104} color={C.tealDark} />
-        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 86, fontWeight: 900, color: C.tealDark }}>alaga</div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 86, fontWeight: 900, color: C.tealDark, lineHeight: 1 }}>alaga</div>
+          {/* How to say it: Tagalog, stress on the middle syllable. */}
+          <div aria-label="Pronounced ah-LAH-gah" style={{ marginTop: 8, marginLeft: 4, fontSize: 15, color: C.inkSoft, letterSpacing: "0.04em", fontStyle: "italic" }}>
+            ah · <b style={{ fontStyle: "italic", color: C.tealDark }}>LAH</b> · gah
+          </div>
+        </div>
       </div>
       <div style={{ color: C.inkSoft, fontSize: 14.5, fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 30, textAlign: "center", maxWidth: 520, lineHeight: 1.8 }}>
         {t("Nurturing the foundation for your childcare business")}.
