@@ -1749,6 +1749,38 @@ const T = {
   "up to": { es: "hasta", tl: "hanggang", zh: "最多", vi: "tối đa", ko: "최대" },
   "Add event": { es: "Agregar evento", tl: "Magdagdag ng event", zh: "添加活动", vi: "Thêm sự kiện", ko: "일정 추가" },
   "Tagalog for “to care for”": { es: "Del tagalo: “cuidar”", tl: "Sa Tagalog: “mag-aruga”", zh: "他加禄语，意为“照顾”", vi: "Tiếng Tagalog nghĩa là “chăm sóc”", ko: "타갈로그어로 ‘돌보다’라는 뜻" },
+  "Parents can request extra care for any upcoming day.": { es: "Los padres pueden pedir cuidado extra para cualquier día próximo.", tl: "Puwedeng mag-request ang magulang ng dagdag na alaga para sa kahit anong susunod na araw.", zh: "家长可以为任何即将到来的日子申请额外托育。", vi: "Phụ huynh có thể yêu cầu giữ trẻ thêm cho bất kỳ ngày sắp tới nào.", ko: "부모님은 앞으로의 어느 날이든 추가 보육을 요청할 수 있어요." },
+  "Request by": { es: "Pida antes de las", tl: "Mag-request bago mag", zh: "申请截止：", vi: "Yêu cầu trước", ko: "요청 마감:" },
+  "the same day": { es: "del mismo día", tl: "sa mismong araw", zh: "当天", vi: "cùng ngày", ko: "당일" },
+  "day before": { es: "día antes", tl: "araw bago", zh: "天前", vi: "ngày trước", ko: "일 전" },
+  "days before": { es: "días antes", tl: "araw bago", zh: "天前", vi: "ngày trước", ko: "일 전" },
+  "days ahead": { es: "días de anticipación", tl: "araw na mas maaga", zh: "天", vi: "ngày trước", ko: "일 전까지" },
+  "When parents can request": { es: "Cuándo pueden pedir los padres", tl: "Kailan puwedeng mag-request ang magulang", zh: "家长何时可以申请", vi: "Khi nào phụ huynh được yêu cầu", ko: "부모님 요청 가능 시간" },
+  "Applies to the parent app only — you can add care any time.": { es: "Solo aplica a la app de padres; usted puede agregar cuidado en cualquier momento.", tl: "Para sa parent app lang — puwede kang magdagdag ng alaga anumang oras.", zh: "仅适用于家长应用——您随时可以添加托育。", vi: "Chỉ áp dụng cho ứng dụng phụ huynh — bạn có thể thêm bất cứ lúc nào.", ko: "부모 앱에만 적용돼요 — 운영자는 언제든 추가할 수 있어요." },
+  "Set a booking window for extra care requests": { es: "Fijar un plazo para pedir cuidado extra", tl: "Magtakda ng booking window para sa request ng dagdag na alaga", zh: "为额外托育申请设置预约时段", vi: "Đặt khung thời gian yêu cầu giữ trẻ thêm", ko: "추가 보육 요청 기간 설정" },
+  "Notice needed": { es: "Aviso necesario", tl: "Kailangang abiso", zh: "需提前", vi: "Cần báo trước", ko: "사전 통보" },
+  "Requests close at": { es: "Las solicitudes cierran a las", tl: "Sarado ang request ng", zh: "申请截止时间", vi: "Hết hạn yêu cầu lúc", ko: "요청 마감 시각" },
+  "Furthest ahead": { es: "Máximo de anticipación", tl: "Pinakamalayong araw", zh: "最远可提前", vi: "Xa nhất", ko: "최대 미리" },
+  "Parents see": { es: "Los padres ven", tl: "Makikita ng magulang", zh: "家长看到", vi: "Phụ huynh thấy", ko: "부모님께 표시" },
+  "Example: care tomorrow must be requested by": { es: "Ejemplo: el cuidado de mañana debe pedirse antes del", tl: "Halimbawa: ang alaga bukas ay dapat i-request bago ang", zh: "例如：明天的托育须在此前申请：", vi: "Ví dụ: giữ trẻ ngày mai phải yêu cầu trước", ko: "예: 내일 보육은 다음까지 요청해야 해요:" },
+  "Too late to request this day online — requests closed": { es: "Es tarde para pedir este día en línea; las solicitudes cerraron el", tl: "Huli na para i-request ang araw na ito online — nagsara ang request noong", zh: "此日已无法在线申请——申请已于此时截止：", vi: "Đã quá hạn yêu cầu ngày này trực tuyến — đã đóng lúc", ko: "이 날은 온라인 요청이 마감됐어요 — 마감:" },
+  "That's too far ahead. You can request up to": { es: "Es demasiado adelantado. Puede pedir hasta", tl: "Masyadong malayo pa. Puwede kang mag-request hanggang", zh: "日期太远了。最多可提前", vi: "Quá xa. Bạn có thể yêu cầu tối đa", ko: "너무 먼 날짜예요. 최대" },
+  "Pick a day that hasn't passed.": { es: "Elija un día que no haya pasado.", tl: "Pumili ng araw na hindi pa lumilipas.", zh: "请选择尚未过去的日期。", vi: "Hãy chọn ngày chưa qua.", ko: "지나지 않은 날을 선택하세요." },
+  "Hi! Is there any chance of extra care for": { es: "¡Hola! ¿Habría posibilidad de cuidado extra para", tl: "Hi! May pagkakataon po bang magkaroon ng dagdag na alaga para kay", zh: "您好！是否有可能为以下孩子安排额外托育：", vi: "Chào cô! Có thể giữ trẻ thêm cho", ko: "안녕하세요! 추가 보육이 가능할까요?" },
+  "I know it's past the request deadline.": { es: "Sé que ya pasó el plazo.", tl: "Alam kong lampas na sa deadline.", zh: "我知道已经过了申请截止时间。", vi: "Tôi biết đã quá hạn yêu cầu.", ko: "요청 마감이 지난 건 알고 있어요." },
+  "Ask your provider instead": { es: "Pregúntele a su proveedor", tl: "Tanungin na lang ang provider", zh: "改为询问托育者", vi: "Hỏi người giữ trẻ", ko: "운영자에게 문의하기" },
+  "Book by": { es: "Pida antes del", tl: "Mag-book bago ang", zh: "请在此前预约：", vi: "Đặt trước", ko: "예약 마감:" },
+  "Extra care request": { es: "Solicitud de cuidado extra", tl: "Request para dagdag na alaga", zh: "额外托育申请", vi: "Yêu cầu giữ trẻ thêm", ko: "추가 보육 요청" },
+  "Late extra care request": { es: "Solicitud tardía de cuidado extra", tl: "Huling request para dagdag na alaga", zh: "逾期的额外托育申请", vi: "Yêu cầu giữ trẻ thêm trễ hạn", ko: "마감 후 추가 보육 요청" },
+  "for today": { es: "para hoy", tl: "para ngayon", zh: "今天", vi: "cho hôm nay", ko: "오늘" },
+  "for tomorrow": { es: "para mañana", tl: "para bukas", zh: "明天", vi: "cho ngày mai", ko: "내일" },
+  "days' notice": { es: "días de aviso", tl: "araw na abiso", zh: "天前通知", vi: "ngày báo trước", ko: "일 전 요청" },
+  "past your booking window": { es: "fuera de su plazo", tl: "lampas sa booking window mo", zh: "超出预约时段", vi: "ngoài khung thời gian", ko: "요청 기간 지남" },
+  "more": { es: "más", tl: "pa", zh: "更多", vi: "nữa", ko: "건 더" },
+  "Review request": { es: "Revisar solicitud", tl: "Suriin ang request", zh: "查看申请", vi: "Xem yêu cầu", ko: "요청 확인" },
+  "Open messages": { es: "Abrir mensajes", tl: "Buksan ang mga mensahe", zh: "打开消息", vi: "Mở tin nhắn", ko: "메시지 열기" },
+  "Past deadline": { es: "Fuera de plazo", tl: "Lampas sa deadline", zh: "已过截止", vi: "Quá hạn", ko: "마감 후" },
+  "asked after the deadline": { es: "pedido después del plazo", tl: "hiningi pagkatapos ng deadline", zh: "截止后提出", vi: "yêu cầu sau hạn", ko: "마감 후 요청" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -2701,6 +2733,41 @@ function effectiveTuition(family, householdFamilies, tuitionRates) {
   return { base, discounted, discountApplied: discountConfig?.enabled && discounted !== base, source: "default-applied" };
 }
 
+// When parents may request extra care: at least `noticeDays` before the day,
+// by `cutoff` (24h "HH:MM") on that deadline day, and no more than
+// `maxDaysAhead` days out. Providers can still add care any time themselves.
+const FLEX_RULES_DEFAULT = { enabled: true, noticeDays: 1, cutoff: "18:00", maxDaysAhead: 30 };
+const fmtClock = (hhmm) => { const [h, m] = String(hhmm || "18:00").split(":").map(Number); return new Date(2000, 0, 1, h, m).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); };
+function flexDeadline(dateMDY, rules = FLEX_RULES_DEFAULT) {
+  const d = parseAnyDate(dateMDY); if (!d) return null;
+  const [h, m] = String(rules.cutoff || "18:00").split(":").map(Number);
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() - (Number(rules.noticeDays) || 0), h, m);
+}
+// { ok, reason: "past" | "late" | "far", deadline, lastDay }
+function flexWindow(dateMDY, rules = FLEX_RULES_DEFAULT, now = new Date()) {
+  const d = parseAnyDate(dateMDY);
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const lastDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + (Number(rules.maxDaysAhead) || 365));
+  if (!d) return { ok: false, reason: "none", lastDay };
+  const deadline = flexDeadline(dateMDY, rules);
+  if (d < today) return { ok: false, reason: "past", deadline, lastDay };
+  if (!rules.enabled) return { ok: true, deadline, lastDay };
+  if (now > deadline) return { ok: false, reason: "late", deadline, lastDay };
+  if (d > lastDay) return { ok: false, reason: "far", deadline, lastDay };
+  return { ok: true, deadline, lastDay };
+}
+// The earliest day a parent can still book right now.
+function flexFirstDay(rules = FLEX_RULES_DEFAULT, now = new Date()) {
+  for (let i = 0; i < 30; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+    const mdy = `${pad2(d.getMonth() + 1)}/${pad2(d.getDate())}/${d.getFullYear()}`;
+    const r = flexWindow(mdy, rules, now).reason;
+    if (r !== "late" && r !== "past") return d;
+  }
+  return null;
+}
+const flexRulesText = (rules, t) => !rules.enabled ? t("Parents can request extra care for any upcoming day.")
+  : `${Number(rules.noticeDays) === 0 ? `${t("Request by")} ${fmtClock(rules.cutoff)} ${t("the same day")}` : `${t("Request by")} ${fmtClock(rules.cutoff)}, ${rules.noticeDays} ${Number(rules.noticeDays) === 1 ? t("day before") : t("days before")}`} · ${t("up to")} ${rules.maxDaysAhead} ${t("days ahead")}`;
 const FLEX_CARE_TYPES = ["Early drop-off", "Extended pickup", "After-hours care", "Weekend care", "Extra day"];
 const DENY_REASONS = ["No capacity", "No staff available", "Outside operating hours", "Ratio requirements", "N/A", "Other"];
 const PAYMENT_METHODS = ["Cash", "Check", "Zelle", "Venmo", "Cash App", "Bank transfer", "Money order", "Other"];
@@ -4160,6 +4227,8 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
   const setScreen = navigateToScreen;
   const [settingsTab, setSettingsTab] = useState("profile");
   const [messageToast, setMessageToast] = useState(null);
+  const tRef = React.useRef((x) => x);
+  const tAlert = (x) => tRef.current(x);
   const isMobile = useIsMobile();
   const [navOpen, setNavOpen] = useState(false);
   const [supportTab, setSupportTab] = useState("help");
@@ -4194,7 +4263,10 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
   const tierLocked = !!forceTier;
   const [billing, saveBilling] = usePersistentState(`plan-billing${sfx}`, { cycle: "monthly", status: "active", canceledAt: null, startedOn: todayMDY() });
   const [payrollSettings, savePayrollSettings] = usePersistentState(`payroll-settings${sfx}`, { frequency: "Biweekly", nextPayDate: shiftDemoString("08/07/2026"), providerConnected: false, providerName: "" });
-  const [flexCareRequests, saveFlexCare] = usePersistentState(`flex-care${sfx}`, isEmpty ? [] : FLEX_CARE_DEFAULT);
+  const [flexCareRequests, saveFlexCare, flexReady] = usePersistentState(`flex-care${sfx}`, isEmpty ? [] : FLEX_CARE_DEFAULT);
+  // Parent requests the provider has already been alerted about (the sample ones to start).
+  const [flexAlerted, saveFlexAlerted, flexAlertedReady] = usePersistentState(`flex-alerted${sfx}`, isEmpty ? [] : FLEX_CARE_DEFAULT.map((r) => r.id));
+  const [flexRules, saveFlexRules] = usePersistentState(`flex-rules${sfx}`, FLEX_RULES_DEFAULT);
   const [refunds, saveRefunds] = usePersistentState(`refunds${sfx}`, isEmpty ? [] : REFUNDS_DEFAULT);
   const [attendanceLog, saveAttendanceLog] = usePersistentState(`attendance${sfx}`, {});
   // Notes (and photos) the provider shares with each family, by date then child.
@@ -4372,20 +4444,48 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
   // New message alerts: an in-app notice, plus a browser notification when the
   // provider has allowed them. (Alerts while Alaga is closed need the backend.)
   const [messageAlerts, saveMessageAlerts] = usePersistentState(`message-alerts${sfx}`, true);
-  const incomingCount = threads.reduce((n, th) => n + th.messages.filter((m) => m.from !== "me").length, 0);
+  // Messages that accompany an extra care request get their own alert below.
+  const incomingCount = threads.reduce((n, th) => n + th.messages.filter((m) => m.from !== "me" && m.kind !== "flex").length, 0);
   const incomingRef = React.useRef({ count: null, since: Date.now() });
+  const notify = (title, body) => { if (typeof Notification !== "undefined" && Notification.permission === "granted") { try { new Notification(title, { body, tag: title }); } catch (e) { /* some browsers only notify from a service worker */ } } };
   useEffect(() => {
     const r = incomingRef.current;
     if (r.count !== null && incomingCount > r.count && Date.now() - r.since > 1500) {
       const th = [...threads].sort((a, b) => threadLastAt(b) - threadLastAt(a)).find((x) => x.unread) || threads[0];
-      const last = th?.messages[th.messages.length - 1];
+      const last = [...(th?.messages || [])].reverse().find((m) => m.kind !== "flex");
       if (th && messageAlerts) {
         setMessageToast({ name: th.name, text: last?.text || "" });
-        if (typeof Notification !== "undefined" && Notification.permission === "granted") new Notification(`New message from ${th.name}`, { body: last?.text || "" });
+        notify(`New message from ${th.name}`, last?.text || "");
       }
     }
     r.count = incomingCount;
   }, [incomingCount]);
+  // New extra care requests from parents: alert with the day, hours, fee and
+  // how much notice they gave, and open Extra care to approve.
+  // Alerts wait until the provider side is open, like a push that arrives
+  // when they next look at their phone.
+  const parentFlex = flexCareRequests.filter((r) => r.requestedBy === "parent");
+  useEffect(() => {
+    if (!flexReady || !flexAlertedReady || mode !== "provider") return;
+    const ids = parentFlex.map((x) => x.id);
+    const fresh = parentFlex.filter((x) => !flexAlerted.includes(x.id) && x.status === "pending");
+    if (!fresh.length) return;
+    saveFlexAlerted(Array.from(new Set([...flexAlerted, ...ids])));
+    if (messageAlerts) {
+      // One push per new request (newest first); the on-screen card shows the newest.
+      fresh.slice(0, 5).forEach((x, i) => {
+        const d = parseAnyDate(x.date);
+        const lead = d ? Math.round((d - startOfToday()) / 86400000) : null;
+        const fee = Math.round((tuitionRates[x.classroom]?.hourly || 0) * (Number(x.hours) || 0));
+        const day = d ? d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }) : x.date;
+        const notice = lead === 0 ? tAlert("for today") : lead === 1 ? tAlert("for tomorrow") : `${lead} ${tAlert("days' notice")}`;
+        const title = `${tAlert(x.late ? "Late extra care request" : "Extra care request")} — ${x.child}`;
+        const body = `${tAlert(x.type)} · ${day} · ${x.hours} ${tAlert("hrs")} · ${money(fee)} · ${notice}${x.late ? ` · ${tAlert("past your booking window")}` : ""}`;
+        if (i === 0) setMessageToast({ kind: x.late ? "flex-late" : "flex", name: fresh.length > 1 ? `${title} (+${fresh.length - 1} ${tAlert("more")})` : title, text: body, id: x.id });
+        notify(title, body);
+      });
+    }
+  }, [flexReady, flexAlertedReady, mode, parentFlex.map((x) => x.id).join(",")]);
   const flexAttentionCount = flexCareRequests.filter((r) => r.status === "pending" || (r.status === "approved" && !r.paymentConfirmed)).length;
   // Jump to a screen (and a tab on Finances, Settings or Support).
   const goTo = (target) => {
@@ -4410,6 +4510,7 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
   const openFam = families.find((f) => f.id === openFamId) || null;
   const langCode = LANG_CODES[language] || "en";
   const t = useCallback((s) => (langCode === "en" ? plainEnglish(s) : (T[s] && T[s][langCode]) || s), [langCode]);
+  tRef.current = t;
 
   const a11yCSS = `
     .a11y-scale { zoom: ${(a11y.textSize / 16).toFixed(3)}; }
@@ -4468,7 +4569,7 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
               {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} reminderSettings={reminderSettings} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} events={events} closures={closures} licensing={licensing} goToTour={() => setScreen("tours")} attendanceLog={attendanceLog} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
               {screen === "families" && <Families families={families} provider={providerInfo} onWithdraw={withdrawChild} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
-              {screen === "bookings" && <Bookings families={families} schedule={fullWeek(weeklySchedule)} closures={closures} provider={providerInfo} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} dailyNotes={dailyNotes} saveDailyNotes={saveDailyNotes} parentFeatures={parentFeatures} saveParentFeatures={saveParentFeatures} pickupPasses={pickupPasses} savePickupPasses={savePickupPasses} />}
+              {screen === "bookings" && <Bookings families={families} schedule={fullWeek(weeklySchedule)} closures={closures} provider={providerInfo} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} dailyNotes={dailyNotes} saveDailyNotes={saveDailyNotes} parentFeatures={parentFeatures} saveParentFeatures={saveParentFeatures} pickupPasses={pickupPasses} savePickupPasses={savePickupPasses} flexRules={flexRules} saveFlexRules={saveFlexRules} />}
               {screen === "staff" && <StaffScreen staff={staff} families={families} updateStaffMember={updateStaffMember} addStaffMember={addStaffMember} removeStaffMember={removeStaffMember} />}
               {screen === "calendar" && <CalendarScreen careSchedules={careSchedules} saveCareSchedules={saveCareSchedules} schedule={fullWeek(weeklySchedule)} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} families={families} threads={threads} saveThreads={saveThreads} />}
               {screen === "tours" && <ToursScreen providerInfo={providerInfo} prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} startEnroll={(p) => setEnrollingProspectId(p.id)} />}
@@ -4486,13 +4587,15 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
                 threads={threads} saveThreads={saveThreads} isDemo={!isEmpty || !!forceTier || meetingMode} onSignOut={onExitToLanding} />}
             </div>
           </main>
-          {messageToast && screen !== "messages" && (
-            <div style={{ position: "fixed", right: 20, bottom: 20, zIndex: 70, width: 320, background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, boxShadow: "0 12px 32px rgba(0,0,0,0.18)", padding: "12px 14px", display: "flex", gap: 10 }}>
-              <MessageSquare size={18} color={C.teal} style={{ flexShrink: 0, marginTop: 2 }} />
+          {messageToast && (screen !== "messages" || messageToast.id) && (
+            <div role="status" style={{ position: "fixed", right: 20, bottom: 20, zIndex: 70, width: "min(340px, calc(100vw - 40px))", background: C.paper, border: `1px solid ${messageToast.kind === "flex-late" ? C.amber : C.line}`, borderRadius: 14, boxShadow: "0 12px 32px rgba(0,0,0,0.18)", padding: "12px 14px", display: "flex", gap: 10 }}>
+              {messageToast.kind ? <Clock size={18} color={messageToast.kind === "flex-late" ? C.amber : C.teal} style={{ flexShrink: 0, marginTop: 2 }} /> : <MessageSquare size={18} color={C.teal} style={{ flexShrink: 0, marginTop: 2 }} />}
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 12.5, fontWeight: 700 }}>{messageToast.name}</div>
-                <div style={{ fontSize: 12, color: C.inkSoft, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{messageToast.text}</div>
-                <button onClick={() => { setMessageToast(null); setScreen("messages"); }} style={{ marginTop: 6, fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none", padding: 0 }}>Open messages</button>
+                <div style={{ fontSize: 12, color: C.inkSoft, whiteSpace: messageToast.kind ? "normal" : "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{messageToast.text}</div>
+                {messageToast.kind === "flex" || (messageToast.kind === "flex-late" && messageToast.id)
+                  ? <button onClick={() => { setFlexHighlightId(messageToast.id); setMessageToast(null); setScreen("bookings"); }} style={{ marginTop: 6, fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none", padding: 0 }}>{t("Review request")}</button>
+                  : <button onClick={() => { setMessageToast(null); setScreen("messages"); }} style={{ marginTop: 6, fontSize: 12, fontWeight: 700, color: C.teal, background: "none", border: "none", padding: 0 }}>{t("Open messages")}</button>}
               </div>
               <button onClick={() => setMessageToast(null)} style={{ background: "none", border: "none", color: C.inkSoft, alignSelf: "flex-start" }}><X size={14} /></button>
             </div>
@@ -4511,7 +4614,7 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
           )}
         </>
       ) : (
-        <ParentApp careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} events={events} reminderSettings={reminderSettings} saveAttendanceLog={saveAttendanceLog} dailyNotes={dailyNotes} parentFeatures={parentFeatures} openCheckIn={openCheckIn} pickupPasses={pickupPasses} savePickupPasses={savePickupPasses} />
+        <ParentApp careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} events={events} reminderSettings={reminderSettings} saveAttendanceLog={saveAttendanceLog} dailyNotes={dailyNotes} parentFeatures={parentFeatures} openCheckIn={openCheckIn} pickupPasses={pickupPasses} savePickupPasses={savePickupPasses} flexRules={flexRules} />
       )}
     </div>
     </LanguageContext.Provider>
@@ -6326,7 +6429,7 @@ function StatBlock({ label, value }) {
 
 
 /* --------------------------------- bookings ------------------------------------ */
-function Bookings({ families, schedule = [], closures = [], provider, staff, tuitionRates, flexCareRequests, saveFlexCare, attendanceLog, saveAttendanceLog, onSave, highlightId, dailyNotes = {}, saveDailyNotes, parentFeatures = {}, saveParentFeatures, pickupPasses = [], savePickupPasses }) {
+function Bookings({ families, schedule = [], closures = [], provider, staff, tuitionRates, flexCareRequests, saveFlexCare, attendanceLog, saveAttendanceLog, onSave, highlightId, dailyNotes = {}, saveDailyNotes, parentFeatures = {}, saveParentFeatures, pickupPasses = [], savePickupPasses, flexRules = FLEX_RULES_DEFAULT, saveFlexRules }) {
   const t = useT();
   const highlightRef = React.useRef(null);
   useEffect(() => {
@@ -6777,6 +6880,36 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
       </>
       )}
 
+      {bookingsTab === "flex" && saveFlexRules && (
+        <Card title={t("When parents can request")} icon={Clock} right={<span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Applies to the parent app only — you can add care any time.")}</span>}>
+          <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
+            <label style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13, fontWeight: 600 }}>
+              <input type="checkbox" checked={!!flexRules.enabled} onChange={(e) => saveFlexRules({ ...flexRules, enabled: e.target.checked })} style={{ width: 17, height: 17, accentColor: C.teal }} />
+              {t("Set a booking window for extra care requests")}
+            </label>
+            {flexRules.enabled && (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 12 }}>
+                <Field label={t("Notice needed")}>
+                  <Select value={String(flexRules.noticeDays)} onChange={(v) => saveFlexRules({ ...flexRules, noticeDays: Number(v) })} options={["0", "1", "2", "3", "7"]}
+                    labels={[t("Same day"), `1 ${t("day before")}`, `2 ${t("days before")}`, `3 ${t("days before")}`, `7 ${t("days before")}`]} />
+                </Field>
+                <Field label={t("Requests close at")}>
+                  <Select value={flexRules.cutoff} onChange={(v) => saveFlexRules({ ...flexRules, cutoff: v })} options={["07:00", "09:00", "12:00", "15:00", "17:00", "18:00", "20:00", "23:59"]}
+                    labels={["07:00", "09:00", "12:00", "15:00", "17:00", "18:00", "20:00", "23:59"].map(fmtClock)} />
+                </Field>
+                <Field label={t("Furthest ahead")}>
+                  <Select value={String(flexRules.maxDaysAhead)} onChange={(v) => saveFlexRules({ ...flexRules, maxDaysAhead: Number(v) })} options={["7", "14", "30", "60", "90"]}
+                    labels={["7", "14", "30", "60", "90"].map((n) => `${n} ${t("days")}`)} />
+                </Field>
+              </div>
+            )}
+            <div style={{ fontSize: 12.5, color: C.tealDark, background: C.tealTint, borderRadius: 9, padding: "9px 12px" }}>
+              {t("Parents see")}: <b>{flexRulesText(flexRules, t)}</b>
+              {flexRules.enabled && (() => { const d = new Date(); d.setDate(d.getDate() + 1); const mdy = `${pad2(d.getMonth() + 1)}/${pad2(d.getDate())}/${d.getFullYear()}`; const dl = flexDeadline(mdy, flexRules); return <div style={{ fontSize: 11.5, marginTop: 3 }}>{t("Example: care tomorrow must be requested by")} {dl.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}, {fmtClock(flexRules.cutoff)}.</div>; })()}
+            </div>
+          </div>
+        </Card>
+      )}
       {bookingsTab === "flex" && (
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <Card title={t("Request flex care")} icon={Plus} right={<span style={{ fontSize: 11, color: C.inkSoft }}>{t("Early drop-off, late pickup, extra days, weekends")}</span>}>
@@ -6825,6 +6958,7 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
                   <div>
                     <b style={{ fontSize: 13 }}>{r.child}</b> <span style={{ color: C.inkSoft, fontSize: 12 }}>· {t(r.type)} · {r.date}</span>
                     {r.requestedBy === "parent" && <Pill label={t("Requested by parent")} fg={C.sky} bg={C.skyTint} />}
+                    {r.late && <Pill label={t("Past deadline")} fg="#7A5620" bg={C.amberTint} />}
                     {r.notes && <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 2 }}>{r.notes}</div>}
                   </div>
                   <Pill {...statusMeta} />
@@ -12397,7 +12531,7 @@ function MoneyInput({ value, onChange, suffix, icon: Icon }) {
 // Shared date picker used everywhere a date is entered — click anywhere on the
 // field to open the browser's native calendar popup. Displays and returns
 // dates as "MM/DD/YYYY" (the app's storage format) via mdyToISO/isoToMDY.
-function DateField({ value, onChange, placeholder = "Select a date…", allowClear = true }) {
+function DateField({ value, onChange, placeholder = "Select a date…", allowClear = true, min, max }) {
   const ref = React.useRef(null);
   const iso = mdyToISO(value);
   const openPicker = () => {
@@ -12421,6 +12555,8 @@ function DateField({ value, onChange, placeholder = "Select a date…", allowCle
         ref={ref}
         type="date"
         value={iso}
+        min={min}
+        max={max}
         onChange={(e) => onChange(e.target.value ? isoToMDY(e.target.value) : "")}
         style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%" }}
       />
@@ -13235,7 +13371,7 @@ function inDateRange(dates, day = startOfToday()) {
   return day >= new Date(start.getFullYear(), start.getMonth(), start.getDate()) && day <= new Date(end.getFullYear(), end.getMonth(), end.getDate());
 }
 
-function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage, events = [], reminderSettings, saveAttendanceLog, dailyNotes = {}, parentFeatures = {}, openCheckIn = false, pickupPasses = [], savePickupPasses }) {
+function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage, events = [], reminderSettings, saveAttendanceLog, dailyNotes = {}, parentFeatures = {}, openCheckIn = false, pickupPasses = [], savePickupPasses, flexRules = FLEX_RULES_DEFAULT }) {
   const t = useT();
   const lang = React.useContext(LanguageContext).lang;
   // Dates and month names in the parent's chosen language.
@@ -13278,12 +13414,15 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
   // ---- messages: one conversation per household
   const threadName = hh?.householdName || kids[0]?.child || "";
   const myThread = hh ? findThread(threads, { household: hh.household, name: threadName }) : null;
-  const sendMessage = (text) => {
+  // `extra` tags a message (e.g. kind "flex" when it accompanies an extra
+  // care request, which the provider is alerted about separately).
+  const sendMessage = (text, extra = {}) => {
     if (!text.trim() || !hh) return;
+    const msg = { from: "them", text, ...extra, ...msgNow() };
     if (myThread) {
-      saveThreads(threads.map((th) => (th.id === myThread.id ? { ...th, unread: true, messages: [...th.messages, { from: "them", text, ...msgNow() }] } : th)));
+      saveThreads(threads.map((th) => (th.id === myThread.id ? { ...th, unread: true, messages: [...th.messages, msg] } : th)));
     } else {
-      saveThreads([{ id: `th-parent-${Date.now()}`, name: threadName, household: hh.household, unread: true, messages: [{ from: "them", text, ...msgNow() }] }, ...threads]);
+      saveThreads([{ id: `th-parent-${Date.now()}`, name: threadName, household: hh.household, unread: true, messages: [msg] }, ...threads]);
     }
   };
   const lastMsg = myThread?.messages[myThread.messages.length - 1];
@@ -13698,11 +13837,15 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
   const flexChild = kids.find((k) => String(k.id) === String(flexForm.childId)) || kids[0];
   const flexFee = (f, hours) => Math.round((tuitionRates[f?.classroom]?.hourly || 0) * hours);
   const [flexSent, setFlexSent] = useState(false);
+  const flexCheck = flexForm.date ? flexWindow(flexForm.date, flexRules) : null;
+  const isoOf = (d) => (d ? `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}` : undefined);
+  const firstDay = flexRules.enabled ? flexFirstDay(flexRules) : startOfToday();
+  const lastDay = flexRules.enabled ? flexWindow("01/01/2000", flexRules).lastDay : undefined;
   const submitFlex = () => {
-    if (!flexForm.date || !flexChild) return;
+    if (!flexForm.date || !flexChild || !(flexCheck && flexCheck.ok)) return;
     flexSeq += 1;
     saveFlexCare([{ id: `fc${flexSeq}`, child: flexChild.child, classroom: flexChild.classroom, type: flexForm.type, date: flexForm.date, hours: Number(flexForm.hours) || 1, notes: flexForm.notes, status: "pending", requestedBy: "parent", parentPaymentMethod: flexForm.paymentMethod, paymentConfirmed: false }, ...flexCareRequests]);
-    sendMessage(`${t("New extra care request")}: ${flexChild.child} · ${t(flexForm.type)} · ${flexForm.date}${flexForm.notes ? ` — ${flexForm.notes}` : ""}`);
+    sendMessage(`${t("New extra care request")}: ${flexChild.child} · ${t(flexForm.type)} · ${flexForm.date} · ${flexForm.hours} ${t("hrs")}${flexForm.notes ? ` — ${flexForm.notes}` : ""}`, { kind: "flex" });
     setFlexForm({ ...flexForm, date: "", hours: 1, notes: "" });
     setFlexSent(true); setTimeout(() => setFlexSent(false), 2500);
   };
@@ -13713,6 +13856,7 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
         <div style={cardHead}><Plus size={15} color={C.teal} /> {t("Request extra care")}</div>
         <div style={{ padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
           <div style={{ fontSize: 12, color: C.inkSoft, lineHeight: 1.5 }}>{t("Early drop-off, a late pickup, or an extra day. Your provider approves it before it's confirmed.")}</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 12.5, fontWeight: 600, color: C.tealDark, background: C.tealTint, borderRadius: 9, padding: "8px 11px" }}><Clock size={13} style={{ flexShrink: 0 }} /> {flexRulesText(flexRules, t)}</div>
           {kids.length > 1 && (
             <Field label={t("Child")}>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -13725,7 +13869,7 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
           )}
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 12 }}>
             <Field label={t("Type")}><Select value={flexForm.type} onChange={(v) => setFlexForm({ ...flexForm, type: v })} options={FLEX_CARE_TYPES} labels={FLEX_CARE_TYPES.map((x) => t(x))} /></Field>
-            <Field label={t("Date")}><DateField value={flexForm.date} onChange={(v) => setFlexForm({ ...flexForm, date: v })} placeholder={t("Pick a date")} /></Field>
+            <Field label={t("Date")}><DateField value={flexForm.date} onChange={(v) => setFlexForm({ ...flexForm, date: v })} placeholder={t("Pick a date")} min={isoOf(firstDay)} max={isoOf(lastDay)} /></Field>
             <Field label={t("Extra hours")}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <button onClick={() => setFlexForm({ ...flexForm, hours: Math.max(0.5, (Number(flexForm.hours) || 1) - 0.5) })} aria-label="-" style={{ width: 38, height: 38, borderRadius: 9, border: `1px solid ${C.line}`, background: "#fff", fontSize: 18, fontWeight: 700, color: C.ink }}>−</button>
@@ -13737,7 +13881,25 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
           </div>
           <Field label={t("Notes (optional)")}><input value={flexForm.notes} onChange={(e) => setFlexForm({ ...flexForm, notes: e.target.value })} style={{ ...inputStyle, width: "100%", padding: "9px 11px", borderRadius: 9, boxSizing: "border-box" }} /></Field>
           <div style={{ fontSize: 12.5, color: C.inkSoft }}>{t("Estimated fee")}: <b style={{ color: C.ink }}>{money(flexFee(flexChild, Number(flexForm.hours) || 0))}</b></div>
-          <button onClick={submitFlex} disabled={!flexForm.date} style={{ ...btnMain, opacity: flexForm.date ? 1 : 0.5 }}>{flexSent ? <><Check size={15} /> {t("Request sent")}</> : t("Send request")}</button>
+          {flexCheck && !flexCheck.ok && (
+            <div role="alert" style={{ display: "flex", flexDirection: "column", gap: 8, padding: "11px 13px", borderRadius: 10, background: C.amberTint, color: "#7A5620", fontSize: 13, lineHeight: 1.45 }}>
+              <div style={{ display: "flex", gap: 7 }}><AlertTriangle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
+                <span>{flexCheck.reason === "late" ? `${t("Too late to request this day online — requests closed")} ${flexCheck.deadline.toLocaleDateString(locale, { weekday: "short", month: "short", day: "numeric" })}, ${fmtClock(flexRules.cutoff)}.`
+                  : flexCheck.reason === "far" ? `${t("That's too far ahead. You can request up to")} ${flexRules.maxDaysAhead} ${t("days ahead")}.` : t("Pick a day that hasn't passed.")}</span></div>
+              {flexCheck.reason === "late" && (
+                <button onClick={() => {
+                  flexSeq += 1;
+                  saveFlexCare([{ id: `fc${flexSeq}-${Date.now()}`, child: flexChild.child, classroom: flexChild.classroom, type: flexForm.type, date: flexForm.date, hours: Number(flexForm.hours) || 1, notes: flexForm.notes, status: "pending", requestedBy: "parent", late: true, parentPaymentMethod: flexForm.paymentMethod, paymentConfirmed: false }, ...flexCareRequests]);
+                  sendMessage(`${t("Hi! Is there any chance of extra care for")} ${flexChild.child} — ${t(flexForm.type)}, ${flexForm.date}? ${t("I know it's past the request deadline.")}`, { kind: "flex" });
+                  go("messages");
+                }} style={{ alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 9, border: "none", background: "#fff", color: C.tealDark, fontWeight: 700, fontSize: 12.5 }}>
+                  <MessageSquare size={13} /> {t("Ask your provider instead")}
+                </button>
+              )}
+            </div>
+          )}
+          {flexCheck && flexCheck.ok && flexRules.enabled && <div style={{ fontSize: 12, color: C.inkSoft }}>{t("Book by")} {flexCheck.deadline.toLocaleDateString(locale, { weekday: "short", month: "short", day: "numeric" })}, {fmtClock(flexRules.cutoff)}</div>}
+          <button onClick={submitFlex} disabled={!(flexCheck && flexCheck.ok)} style={{ ...btnMain, opacity: flexCheck && flexCheck.ok ? 1 : 0.5 }}>{flexSent ? <><Check size={15} /> {t("Request sent")}</> : t("Send request")}</button>
         </div>
       </div>
       <div style={card}>
@@ -13752,7 +13914,7 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontSize: 13, fontWeight: 600 }}>{kids.length > 1 ? `${r.child.split(" ")[0]} · ` : ""}{t(r.type)} · {r.date}</div>
-                  <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 2 }}>{r.hours} {t("hrs")} · {money(flexFee(kid, r.hours))}</div>
+                  <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 2 }}>{r.hours} {t("hrs")} · {money(flexFee(kid, r.hours))}{r.late ? ` · ${t("asked after the deadline")}` : ""}</div>
                 </div>
                 <Pill {...meta} />
               </div>
