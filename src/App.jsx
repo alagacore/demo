@@ -1748,6 +1748,7 @@ const T = {
   "for this license type": { es: "para este tipo de licencia", tl: "para sa ganitong lisensya", zh: "（此执照类型）", vi: "với loại giấy phép này", ko: "(이 면허 유형 기준)" },
   "up to": { es: "hasta", tl: "hanggang", zh: "最多", vi: "tối đa", ko: "최대" },
   "Add event": { es: "Agregar evento", tl: "Magdagdag ng event", zh: "添加活动", vi: "Thêm sự kiện", ko: "일정 추가" },
+  "Tagalog for “to care for”": { es: "Del tagalo: “cuidar”", tl: "Sa Tagalog: “mag-aruga”", zh: "他加禄语，意为“照顾”", vi: "Tiếng Tagalog nghĩa là “chăm sóc”", ko: "타갈로그어로 ‘돌보다’라는 뜻" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -3148,6 +3149,7 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, lan
           <div aria-label="Pronounced ah-LAH-gah" style={{ marginTop: 8, marginLeft: 4, fontSize: 15, color: C.inkSoft, letterSpacing: "0.04em", fontStyle: "italic" }}>
             ah · <b style={{ fontStyle: "italic", color: C.tealDark }}>LAH</b> · gah
           </div>
+          <div style={{ marginTop: 2, marginLeft: 4, fontSize: 13.5, color: C.inkSoft }}>{t("Tagalog for “to care for”")}</div>
         </div>
       </div>
       <div style={{ color: C.inkSoft, fontSize: 14.5, fontWeight: 600, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 30, textAlign: "center", maxWidth: 520, lineHeight: 1.8 }}>
