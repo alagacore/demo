@@ -64,6 +64,8 @@ const MOBILE_CSS = `
   [style*="font-size: 12.5px"], [style*="font-size: 13px"] { font-size: 14px !important; }
   .quick-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   .wrap-mobile { flex-wrap: wrap !important; }
+  .nowrap-mobile { flex-wrap: nowrap !important; }
+  .rate-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
   .alaga-main { padding: 16px 14px 80px !important; }
 }
 @media (max-width: 420px) {
@@ -1660,6 +1662,92 @@ const T = {
   "Your provider is notified and will check their photo ID at pickup.": { es: "Se avisa a su proveedor, quien verificará su identificación al recoger.", tl: "Maaabisuhan ang provider at iche-check nila ang photo ID sa sundo.", zh: "托育者会收到通知，并在接送时核对证件。", vi: "Người giữ trẻ sẽ được báo và kiểm tra giấy tờ khi đón.", ko: "운영자에게 알림이 가고 픽업 때 신분증을 확인합니다." },
   "guest": { es: "invitado", tl: "guest", zh: "访客", vi: "khách", ko: "게스트" },
   "used": { es: "usado", tl: "nagamit", zh: "已使用", vi: "đã dùng", ko: "사용됨" },
+  "/hour": { es: "/hora", tl: "/oras", zh: "/小时", vi: "/giờ", ko: "/시간" },
+  "/month": { es: "/mes", tl: "/buwan", zh: "/月", vi: "/tháng", ko: "/월" },
+  "0–17 months": { es: "0–17 meses", tl: "0–17 buwan", zh: "0–17个月", vi: "0–17 tháng", ko: "0–17개월" },
+  "18 months–2y": { es: "18 meses–2 años", tl: "18 buwan–2 taon", zh: "18个月–2岁", vi: "18 tháng–2 tuổi", ko: "18개월–2세" },
+  "3–4y": { es: "3–4 años", tl: "3–4 taon", zh: "3–4岁", vi: "3–4 tuổi", ko: "3–4세" },
+  "5y+": { es: "5+ años", tl: "5+ taon", zh: "5岁以上", vi: "5 tuổi trở lên", ko: "5세 이상" },
+  "Account created for": { es: "Cuenta creada para", tl: "Nagawa ang account para sa", zh: "已为以下邮箱创建账户：", vi: "Đã tạo tài khoản cho", ko: "계정 생성됨:" },
+  "Add it in Settings once CCLD issues it.": { es: "Agréguelo en Configuración cuando CCLD lo emita.", tl: "Idagdag ito sa Settings kapag naibigay na ng CCLD.", zh: "CCLD 签发后，请在设置中添加。", vi: "Thêm vào Cài đặt khi CCLD cấp số.", ko: "CCLD에서 발급되면 설정에서 추가하세요." },
+  "Add the things you do every day. They reset each morning so you can tick them off again.": { es: "Agregue lo que hace todos los días. Se reinicia cada mañana para que pueda marcarlo de nuevo.", tl: "Idagdag ang mga ginagawa mo araw-araw. Nagre-reset ito tuwing umaga para ma-check mo ulit.", zh: "添加您每天要做的事。每天早上会重置，方便您再次勾选。", vi: "Thêm những việc bạn làm hằng ngày. Danh sách sẽ đặt lại mỗi sáng để bạn đánh dấu lại.", ko: "매일 하는 일을 추가하세요. 매일 아침 초기화되어 다시 체크할 수 있어요." },
+  "Add your business name and your name to continue.": { es: "Agregue el nombre de su negocio y su nombre para continuar.", tl: "Ilagay ang pangalan ng negosyo at pangalan mo para magpatuloy.", zh: "请填写机构名称和您的姓名以继续。", vi: "Nhập tên cơ sở và tên của bạn để tiếp tục.", ko: "계속하려면 사업체 이름과 본인 이름을 입력하세요." },
+  "Age groups": { es: "Grupos de edad", tl: "Mga age group", zh: "年龄组", vi: "Nhóm tuổi", ko: "연령 그룹" },
+  "Are you a parent?": { es: "¿Es usted padre o madre?", tl: "Magulang ka ba?", zh: "您是家长吗？", vi: "Bạn là phụ huynh?", ko: "학부모이신가요?" },
+  "At least 6 characters. Next, you'll set up your daycare in about 3 minutes.": { es: "Al menos 6 caracteres. Luego configurará su guardería en unos 3 minutos.", tl: "Hindi bababa sa 6 na character. Susunod, ise-set up mo ang daycare mo sa mga 3 minuto.", zh: "至少 6 个字符。接下来大约 3 分钟即可设置好您的托儿所。", vi: "Ít nhất 6 ký tự. Tiếp theo, bạn sẽ thiết lập nhà trẻ trong khoảng 3 phút.", ko: "6자 이상. 다음으로 약 3분 만에 어린이집을 설정합니다." },
+  "City": { es: "Ciudad", tl: "Lungsod", zh: "城市", vi: "Thành phố", ko: "도시" },
+  "Closes at": { es: "Cierra a las", tl: "Sarado ng", zh: "关门时间", vi: "Đóng cửa lúc", ko: "마감 시간" },
+  "Closing time needs to be after opening time.": { es: "La hora de cierre debe ser después de la de apertura.", tl: "Dapat mas huli ang oras ng pagsara kaysa sa pagbukas.", zh: "关门时间必须晚于开门时间。", vi: "Giờ đóng cửa phải sau giờ mở cửa.", ko: "마감 시간은 시작 시간 이후여야 합니다." },
+  "Continue": { es: "Continuar", tl: "Magpatuloy", zh: "继续", vi: "Tiếp tục", ko: "계속" },
+  "Create your account": { es: "Cree su cuenta", tl: "Gumawa ng account", zh: "创建账户", vi: "Tạo tài khoản", ko: "계정 만들기" },
+  "Days & hours": { es: "Días y horario", tl: "Mga araw at oras", zh: "营业日和时间", vi: "Ngày & giờ", ko: "요일 및 시간" },
+  "Days you're open": { es: "Días que abre", tl: "Mga araw na bukas ka", zh: "营业日", vi: "Những ngày mở cửa", ko: "운영 요일" },
+  "Different hours on some days? You can set each day separately later in Calendar.": { es: "¿Horario distinto algunos días? Puede ajustar cada día después en Calendario.", tl: "Iba ang oras sa ilang araw? Puwede mong i-set bawat araw mamaya sa Calendar.", zh: "某些天时间不同？稍后可在日历中分别设置每一天。", vi: "Có ngày giờ khác? Bạn có thể chỉnh từng ngày sau trong Lịch.", ko: "요일마다 시간이 다른가요? 나중에 캘린더에서 요일별로 설정할 수 있어요." },
+  "Do you accept any subsidy programs?": { es: "¿Acepta algún programa de subsidio?", tl: "Tumatanggap ka ba ng subsidy program?", zh: "您接受补助项目吗？", vi: "Bạn có nhận chương trình trợ cấp nào không?", ko: "보조금 프로그램을 받으시나요?" },
+  "Drop-in": { es: "Por hora", tl: "Drop-in", zh: "临时托管", vi: "Gửi theo giờ", ko: "시간제" },
+  "Everything here can be changed later. Have families on paper or in a spreadsheet? You'll add them from Families → Tours.": { es: "Todo esto se puede cambiar después. ¿Tiene familias en papel o en una hoja de cálculo? Agréguelas desde Familias → Visitas.", tl: "Puwedeng baguhin lahat ng ito mamaya. May mga pamilya sa papel o spreadsheet? Idagdag sila mula sa Families → Tours.", zh: "以上内容以后都可修改。家庭信息在纸上或表格里？可在 家庭 → 参观 中添加。", vi: "Mọi thứ đều có thể thay đổi sau. Có hồ sơ gia đình trên giấy hoặc bảng tính? Thêm từ Gia đình → Tham quan.", ko: "모두 나중에 변경할 수 있어요. 종이나 스프레드시트에 가족 정보가 있나요? 가족 → 투어에서 추가하세요." },
+  "Families, attendance, subsidy, paperwork and payments.": { es: "Familias, asistencia, subsidios, documentos y pagos.", tl: "Mga pamilya, attendance, subsidy, papeles at bayad.", zh: "家庭、出勤、补助、文件和付款。", vi: "Gia đình, điểm danh, trợ cấp, giấy tờ và thanh toán.", ko: "가족, 출석, 보조금, 서류, 결제." },
+  "Family Child Care Home — Large (9–14 children)": { es: "Guardería Familiar — Grande (9–14 niños)", tl: "Family Child Care Home — Malaki (9–14 bata)", zh: "家庭托儿所 — 大型（9–14 名儿童）", vi: "Nhà trẻ gia đình — Lớn (9–14 trẻ)", ko: "가정 어린이집 — 대형 (9–14명)" },
+  "Family Child Care Home — Small (1–8 children)": { es: "Guardería Familiar — Pequeña (1–8 niños)", tl: "Family Child Care Home — Maliit (1–8 bata)", zh: "家庭托儿所 — 小型（1–8 名儿童）", vi: "Nhà trẻ gia đình — Nhỏ (1–8 trẻ)", ko: "가정 어린이집 — 소형 (1–8명)" },
+  "Fri": { es: "Vie", tl: "Biy", zh: "周五", vi: "T6", ko: "금" },
+  "How many children can you care for?": { es: "¿Cuántos niños puede cuidar?", tl: "Ilang bata ang kaya mong alagaan?", zh: "您可以照顾多少名儿童？", vi: "Bạn có thể chăm bao nhiêu trẻ?", ko: "몇 명의 아이를 돌볼 수 있나요?" },
+  "Infants": { es: "Bebés", tl: "Sanggol", zh: "婴儿", vi: "Trẻ sơ sinh", ko: "영아" },
+  "Languages": { es: "Idiomas", tl: "Mga wika", zh: "语言", vi: "Ngôn ngữ", ko: "언어" },
+  "Languages spoken at your daycare": { es: "Idiomas que se hablan en su guardería", tl: "Mga wikang ginagamit sa daycare mo", zh: "您托儿所使用的语言", vi: "Ngôn ngữ sử dụng tại nhà trẻ", ko: "어린이집에서 사용하는 언어" },
+  "License": { es: "Licencia", tl: "Lisensya", zh: "执照", vi: "Giấy phép", ko: "면허" },
+  "License & ages": { es: "Licencia y edades", tl: "Lisensya at edad", zh: "执照和年龄", vi: "Giấy phép & độ tuổi", ko: "면허 및 연령" },
+  "License type": { es: "Tipo de licencia", tl: "Uri ng lisensya", zh: "执照类型", vi: "Loại giấy phép", ko: "면허 유형" },
+  "License-Exempt / Family, Friend & Neighbor (FFN)": { es: "Exento de licencia / Familia, amigos y vecinos (FFN)", tl: "License-Exempt / Pamilya, Kaibigan at Kapitbahay (FFN)", zh: "免执照 / 亲友邻居照护（FFN）", vi: "Miễn giấy phép / Gia đình, bạn bè & hàng xóm (FFN)", ko: "면허 면제 / 가족·친구·이웃 (FFN)" },
+  "Mon": { es: "Lun", tl: "Lun", zh: "周一", vi: "T2", ko: "월" },
+  "Need staff, growth planning or analytics? Switch to Extended anytime in Settings → Plan & Billing.": { es: "¿Necesita personal, planificación de crecimiento o análisis? Cambie a Extendido cuando quiera en Configuración → Plan y facturación.", tl: "Kailangan ng staff, growth planning o analytics? Lumipat sa Extended anytime sa Settings → Plan & Billing.", zh: "需要员工、成长规划或数据分析？随时在 设置 → 套餐与账单 中切换到扩展版。", vi: "Cần nhân viên, kế hoạch phát triển hoặc phân tích? Chuyển sang gói Mở rộng bất cứ lúc nào trong Cài đặt → Gói & thanh toán.", ko: "직원, 성장 계획, 분석이 필요하세요? 설정 → 요금제 및 결제에서 언제든 확장 요금제로 바꿀 수 있어요." },
+  "No children enrolled yet": { es: "Aún no hay niños inscritos", tl: "Wala pang batang naka-enroll", zh: "尚无入托儿童", vi: "Chưa có trẻ ghi danh", ko: "아직 등록된 아이가 없어요" },
+  "No staff added yet": { es: "Aún no hay personal", tl: "Wala pang staff", zh: "尚未添加员工", vi: "Chưa thêm nhân viên", ko: "아직 직원이 없어요" },
+  "Not set yet — add later": { es: "Aún no — agregar después", tl: "Wala pa — idagdag mamaya", zh: "尚未设置 — 稍后添加", vi: "Chưa đặt — thêm sau", ko: "아직 없음 — 나중에 추가" },
+  "Not sure yet? Skip this — you can add or change rates anytime in Money → Tuition & Billing.": { es: "¿Aún no lo sabe? Omita esto — puede agregar o cambiar tarifas cuando quiera en Dinero → Colegiatura y cobros.", tl: "Hindi pa sigurado? I-skip muna — puwede kang magdagdag o magbago ng rate anytime sa Money → Tuition & Billing.", zh: "还不确定？可以先跳过 — 随时在 财务 → 学费与账单 中添加或修改。", vi: "Chưa chắc? Bỏ qua — bạn có thể thêm hoặc đổi mức phí bất cứ lúc nào trong Tiền → Học phí & hóa đơn.", ko: "아직 모르겠나요? 건너뛰세요 — 돈 → 수업료 및 청구에서 언제든 추가하거나 바꿀 수 있어요." },
+  "Number pending": { es: "Número pendiente", tl: "Hinihintay pa ang numero", zh: "号码待定", vi: "Đang chờ số", ko: "번호 대기 중" },
+  "Open my workspace": { es: "Abrir mi espacio", tl: "Buksan ang workspace ko", zh: "进入我的工作区", vi: "Mở không gian làm việc", ko: "내 워크스페이스 열기" },
+  "Opens at": { es: "Abre a las", tl: "Bukas mula", zh: "开门时间", vi: "Mở cửa lúc", ko: "시작 시간" },
+  "Or look around a sample daycare first": { es: "O explore primero una guardería de ejemplo", tl: "O silipin muna ang sample na daycare", zh: "或先看看示例托儿所", vi: "Hoặc xem thử một nhà trẻ mẫu trước", ko: "또는 샘플 어린이집을 먼저 둘러보세요" },
+  "Pick at least one age group to continue.": { es: "Elija al menos un grupo de edad para continuar.", tl: "Pumili ng kahit isang age group para magpatuloy.", zh: "请至少选择一个年龄组以继续。", vi: "Chọn ít nhất một nhóm tuổi để tiếp tục.", ko: "계속하려면 연령 그룹을 하나 이상 선택하세요." },
+  "Pick at least one day you're open.": { es: "Elija al menos un día que abre.", tl: "Pumili ng kahit isang araw na bukas ka.", zh: "请至少选择一个营业日。", vi: "Chọn ít nhất một ngày mở cửa.", ko: "운영 요일을 하나 이상 선택하세요." },
+  "Pick every language you or your staff speak with families.": { es: "Elija cada idioma que usted o su personal hablan con las familias.", tl: "Piliin lahat ng wikang ginagamit mo o ng staff mo sa mga pamilya.", zh: "选择您或员工与家庭沟通时使用的所有语言。", vi: "Chọn mọi ngôn ngữ bạn hoặc nhân viên dùng với phụ huynh.", ko: "본인이나 직원이 가족과 사용하는 언어를 모두 선택하세요." },
+  "Pre-K / School-age": { es: "Pre-K / Edad escolar", tl: "Pre-K / School-age", zh: "学前班 / 学龄", vi: "Mẫu giáo lớn / Tuổi đi học", ko: "Pre-K / 학령기" },
+  "Prep afternoon snack": { es: "Preparar la merienda", tl: "Ihanda ang meryenda sa hapon", zh: "准备下午点心", vi: "Chuẩn bị bữa xế", ko: "오후 간식 준비" },
+  "Preschool": { es: "Preescolar", tl: "Preschool", zh: "学前", vi: "Mẫu giáo", ko: "유아" },
+  "Private-pay only": { es: "Solo pago privado", tl: "Private-pay lang", zh: "仅自费", vi: "Chỉ tự trả phí", ko: "자부담만" },
+  "Private-pay only? Leave these unselected.": { es: "¿Solo pago privado? Deje esto sin seleccionar.", tl: "Private-pay lang? Huwag pumili rito.", zh: "仅自费？这些不用选。", vi: "Chỉ tự trả phí? Để trống phần này.", ko: "자부담만 받나요? 선택하지 마세요." },
+  "Put out the sign-in sheet": { es: "Poner la hoja de registro", tl: "Ilabas ang sign-in sheet", zh: "摆好签到表", vi: "Đặt sẵn sổ ký tên", ko: "출석부 꺼내 두기" },
+  "Restock hand-washing & sanitizing supplies": { es: "Reponer jabón y desinfectante", tl: "Mag-restock ng sabon at sanitizer", zh: "补充洗手和消毒用品", vi: "Bổ sung đồ rửa tay & sát khuẩn", ko: "손 씻기·소독 용품 채우기" },
+  "Sat": { es: "Sáb", tl: "Sab", zh: "周六", vi: "T7", ko: "토" },
+  "Set your tuition rates": { es: "Fije sus tarifas", tl: "I-set ang tuition rates mo", zh: "设置学费标准", vi: "Đặt mức học phí", ko: "수업료 설정" },
+  "Skip for now": { es: "Omitir por ahora", tl: "Laktawan muna", zh: "暂时跳过", vi: "Bỏ qua lúc này", ko: "지금은 건너뛰기" },
+  "So Alaga can track what each family owes.": { es: "Para que Alaga lleve la cuenta de lo que debe cada familia.", tl: "Para masubaybayan ng Alaga ang utang ng bawat pamilya.", zh: "这样 Alaga 才能记录每个家庭的应付金额。", vi: "Để Alaga theo dõi số tiền mỗi gia đình cần trả.", ko: "Alaga가 가족별 청구 금액을 관리할 수 있도록요." },
+  "Step": { es: "Paso", tl: "Hakbang", zh: "第", vi: "Bước", ko: "단계" },
+  "Still waiting on it? Leave this blank — it'll stay on your setup list until you add it.": { es: "¿Aún no lo tiene? Déjelo en blanco — seguirá en su lista de configuración hasta que lo agregue.", tl: "Hinihintay pa? Iwanang blangko — mananatili ito sa setup list mo hanggang maidagdag mo.", zh: "还在等执照？先留空 — 它会一直留在您的设置清单上，直到您添加。", vi: "Vẫn đang chờ? Để trống — mục này sẽ nằm trong danh sách thiết lập đến khi bạn thêm.", ko: "아직 기다리는 중인가요? 비워 두세요 — 추가할 때까지 설정 목록에 남아 있어요." },
+  "Subsidy programs": { es: "Programas de subsidio", tl: "Mga subsidy program", zh: "补助项目", vi: "Chương trình trợ cấp", ko: "보조금 프로그램" },
+  "Sun": { es: "Dom", tl: "Lin", zh: "周日", vi: "CN", ko: "일" },
+  "This is the language you'll see. Each family can pick their own language too.": { es: "Este es el idioma que usted verá. Cada familia puede elegir el suyo.", tl: "Ito ang wikang makikita mo. Puwede ring pumili ng sariling wika ang bawat pamilya.", zh: "这是您看到的语言。每个家庭也可以选择自己的语言。", vi: "Đây là ngôn ngữ bạn sẽ thấy. Mỗi gia đình cũng có thể chọn ngôn ngữ riêng.", ko: "내가 보게 될 언어예요. 가족마다 원하는 언어를 따로 고를 수 있어요." },
+  "Thu": { es: "Jue", tl: "Huw", zh: "周四", vi: "T5", ko: "목" },
+  "Toddlers": { es: "Niños pequeños", tl: "Toddler", zh: "幼儿", vi: "Trẻ mới biết đi", ko: "걸음마기" },
+  "Tue": { es: "Mar", tl: "Mar", zh: "周二", vi: "T3", ko: "화" },
+  "Up to": { es: "Hasta", tl: "Hanggang", zh: "最多", vi: "Tối đa", ko: "최대" },
+  "Wed": { es: "Mié", tl: "Miy", zh: "周三", vi: "T4", ko: "수" },
+  "What do you charge? Only you can see these — families don't. Leave anything blank you don't offer.": { es: "¿Cuánto cobra? Solo usted ve esto — las familias no. Deje en blanco lo que no ofrece.", tl: "Magkano ang singil mo? Ikaw lang ang nakakakita nito — hindi ang mga pamilya. Iwanang blangko ang hindi mo ino-offer.", zh: "您收费多少？只有您能看到，家庭看不到。不提供的项目留空即可。", vi: "Bạn thu bao nhiêu? Chỉ bạn thấy — phụ huynh không thấy. Để trống mục bạn không cung cấp.", ko: "요금이 얼마인가요? 본인만 볼 수 있고 가족은 못 봐요. 제공하지 않는 항목은 비워 두세요." },
+  "Which age groups will you care for?": { es: "¿Qué grupos de edad cuidará?", tl: "Anong mga age group ang aalagaan mo?", zh: "您将照顾哪些年龄组？", vi: "Bạn sẽ chăm nhóm tuổi nào?", ko: "어떤 연령 그룹을 돌보시나요?" },
+  "Wipe down tables and toys": { es: "Limpiar mesas y juguetes", tl: "Punasan ang mesa at laruan", zh: "擦拭桌子和玩具", vi: "Lau bàn và đồ chơi", ko: "테이블과 장난감 닦기" },
+  "You're starting on the Simple plan": { es: "Comienza con el plan Simple", tl: "Magsisimula ka sa Simple plan", zh: "您将从简易版开始", vi: "Bạn bắt đầu với gói Cơ bản", ko: "심플 요금제로 시작합니다" },
+  "Your Alaga language": { es: "Su idioma en Alaga", tl: "Wika mo sa Alaga", zh: "您的 Alaga 语言", vi: "Ngôn ngữ Alaga của bạn", ko: "Alaga 사용 언어" },
+  "Your business": { es: "Su negocio", tl: "Ang negosyo mo", zh: "您的机构", vi: "Cơ sở của bạn", ko: "내 사업체" },
+  "Your full name": { es: "Su nombre completo", tl: "Buong pangalan mo", zh: "您的全名", vi: "Họ và tên", ko: "성명" },
+  "Your name": { es: "Su nombre", tl: "Pangalan mo", zh: "您的姓名", vi: "Tên của bạn", ko: "이름" },
+  "about 3 minutes": { es: "unos 3 minutos", tl: "mga 3 minuto", zh: "约 3 分钟", vi: "khoảng 3 phút", ko: "약 3분" },
+  "age groups set": { es: "grupos de edad listos", tl: "age group na naka-set", zh: "个年龄组已设置", vi: "nhóm tuổi đã đặt", ko: "개 연령 그룹 설정됨" },
+  "e.g. 198-402-3211": { es: "p. ej. 198-402-3211", tl: "hal. 198-402-3211", zh: "例如 198-402-3211", vi: "vd. 198-402-3211", ko: "예: 198-402-3211" },
+  "e.g. Chula Vista, CA": { es: "p. ej. Chula Vista, CA", tl: "hal. Chula Vista, CA", zh: "例如 Chula Vista, CA", vi: "vd. Chula Vista, CA", ko: "예: Chula Vista, CA" },
+  "e.g. Tita's Family Child Care": { es: "p. ej. Guardería Familiar Tita", tl: "hal. Tita's Family Child Care", zh: "例如 Tita's Family Child Care", vi: "vd. Nhà trẻ Tita", ko: "예: Tita's Family Child Care" },
+  "for this license type": { es: "para este tipo de licencia", tl: "para sa ganitong lisensya", zh: "（此执照类型）", vi: "với loại giấy phép này", ko: "(이 면허 유형 기준)" },
+  "up to": { es: "hasta", tl: "hanggang", zh: "最多", vi: "tối đa", ko: "최대" },
+  "Add event": { es: "Agregar evento", tl: "Magdagdag ng event", zh: "添加活动", vi: "Thêm sự kiện", ko: "일정 추가" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -2708,6 +2796,7 @@ function defaultStaffDocs(member) {
 // Real requirements depend on exact license type, ages present, and any waivers —
 // this is a starting point, not a substitute for confirming with CCLD/your LPA.
 function requiredQualifiedAdults(enrolledCount) {
+  if (enrolledCount <= 0) return 0; // nobody enrolled yet — nothing to staff for
   if (enrolledCount <= 6) return 1;
   if (enrolledCount <= 8) return 1; // Small FCC, expanded (assistant may be required depending on ages present)
   if (enrolledCount <= 12) return 2; // Large FCC
@@ -2990,7 +3079,7 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language
         <div style={{ fontFamily: "'Fraunces', serif", fontSize: 34, fontWeight: 900, color: C.tealDark }}>alaga</div>
       </div>
 
-      <form onSubmit={submit} style={{ width: "100%", maxWidth: 380, background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: 28 }}>
+      <form onSubmit={submit} style={{ width: "100%", maxWidth: 380, boxSizing: "border-box", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: 28 }}>
         <div style={{ display: "flex", gap: 4, marginBottom: 20, background: C.cream, borderRadius: 10, padding: 4 }}>
           {["signin", "signup"].map((m) => (
             <button key={m} type="button" onClick={() => { setMode(m); setError(""); setNotice(""); }} style={{
@@ -3006,13 +3095,16 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language
         <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft, marginBottom: 6 }}>{t("Email")}</div>
         <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)}
           placeholder="you@yourdaycare.com"
-          style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: `1px solid ${C.line}`, fontSize: 14, marginBottom: 14, fontFamily: "inherit" }} />
+          style={{ width: "100%", boxSizing: "border-box", padding: "11px 12px", borderRadius: 9, border: `1px solid ${C.line}`, fontSize: 16, marginBottom: 14, fontFamily: "inherit" }} />
 
         <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft, marginBottom: 6 }}>{t("Password")}</div>
         <input type="password" required minLength={6} autoComplete={mode === "signin" ? "current-password" : "new-password"}
           value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
-          style={{ width: "100%", padding: "10px 12px", borderRadius: 9, border: `1px solid ${C.line}`, fontSize: 14, marginBottom: 6, fontFamily: "inherit" }} />
+          style={{ width: "100%", boxSizing: "border-box", padding: "11px 12px", borderRadius: 9, border: `1px solid ${C.line}`, fontSize: 16, marginBottom: 6, fontFamily: "inherit" }} />
 
+        {mode === "signup" && (
+          <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 6, lineHeight: 1.45 }}>{t("At least 6 characters. Next, you'll set up your daycare in about 3 minutes.")}</div>
+        )}
         {mode === "signin" && (
           <button type="button" onClick={sendReset} style={{ background: "none", border: "none", padding: 0, marginTop: 4, color: C.tealDark, fontSize: 12.5, fontWeight: 600 }}>
             {t("Forgot password?")}
@@ -3043,7 +3135,7 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, lan
   const showAdmin = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("admin");
   return (
     <div style={{
-      minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "56px 32px", position: "relative",
+      minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "48px 16px", position: "relative",
       backgroundImage: BANIG_PATTERN(C.line, 0.5), backgroundSize: "16px 16px",
     }}>
       <style>{FONTS}</style>
@@ -3056,73 +3148,51 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, lan
         {t("Nurturing the foundation for your childcare business")}.
       </div>
 
-      <button onClick={onSignIn} style={{
-        marginBottom: 36, background: C.teal, color: "#fff", border: "none", borderRadius: 12,
-        padding: "13px 28px", fontWeight: 700, fontSize: 15.5,
-      }}>
-        {t("Sign in to your account")}
-      </button>
+      {/* The two things a real provider comes here to do, first and side by side. */}
+      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 12, marginBottom: 40, width: "100%", maxWidth: 520 }}>
+        <button onClick={onSignUp} style={{
+          flex: "1 1 220px", background: C.teal, color: "#fff", border: "none", borderRadius: 12,
+          padding: "14px 22px", fontWeight: 700, fontSize: 15.5, display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+        }}>
+          <Rocket size={16} /> {t("Create your account")}
+        </button>
+        <button onClick={onSignIn} style={{
+          flex: "1 1 160px", background: "#fff", color: C.tealDark, border: `1px solid ${C.teal}`, borderRadius: 12,
+          padding: "14px 22px", fontWeight: 700, fontSize: 15.5,
+        }}>
+          {t("Sign in")}
+        </button>
+      </div>
 
       <div style={{ maxWidth: 980, width: "100%" }}>
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.inkSoft, marginBottom: 12 }}>
-          {t("Try a sample daycare")}
+          {t("Or look around a sample daycare first")}
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 18, marginBottom: 28 }}>
-          <button onClick={() => onDemo("simple")} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", flexDirection: "column", gap: 12 }}>
-            <div style={{ width: 46, height: 46, borderRadius: 12, background: C.tealTint, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <PlayCircle size={22} color={C.tealDark} />
-            </div>
-            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>{t("Simple plan")}</div>
-            <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>
-              {t("Core day-to-day operations — families, subsidy, check-in, and payments.")}
-            </div>
-            <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.teal, fontWeight: 700, fontSize: 13 }}>
-              {t("Enter demo")} <ArrowRight size={13} />
-            </div>
-          </button>
-
-          <button onClick={() => onDemo("extended")} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", flexDirection: "column", gap: 12 }}>
-            <div style={{ width: 46, height: 46, borderRadius: 12, background: C.amberTint, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <BarChart3 size={22} color={C.amber} />
-            </div>
-            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>{t("Extended plan")}</div>
-            <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>
-              {t("Everything in Simple, plus staff, growth planning, and analytics.")}
-            </div>
-            <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.amber, fontWeight: 700, fontSize: 13 }}>
-              {t("Enter demo")} <ArrowRight size={13} />
-            </div>
-          </button>
-
-          <button onClick={() => onDemo("simple", true)} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", flexDirection: "column", gap: 12 }}>
-            <div style={{ width: 46, height: 46, borderRadius: 12, background: "#F1EEE5", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Lock size={20} color={C.inkSoft} />
-            </div>
-            <div style={{ fontWeight: 700, fontSize: 16, color: C.ink }}>{t("Meeting-safe")}</div>
-            <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>
-              {t("For screen-sharing with providers or investors — proprietary rate math and payout figures are hidden.")}
-            </div>
-            <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: C.inkSoft, fontWeight: 700, fontSize: 13 }}>
-              {t("Enter demo")} <ArrowRight size={13} />
-            </div>
-          </button>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: 14, marginBottom: 28 }}>
+          {[
+            { tier: "simple", meeting: false, icon: PlayCircle, tint: C.tealTint, fg: C.tealDark, link: C.teal, title: "Simple plan", body: "Core day-to-day operations — families, subsidy, check-in, and payments." },
+            { tier: "extended", meeting: false, icon: BarChart3, tint: C.amberTint, fg: C.amber, link: C.amber, title: "Extended plan", body: "Everything in Simple, plus staff, growth planning, and analytics." },
+            { tier: "simple", meeting: true, icon: Lock, tint: "#F1EEE5", fg: C.inkSoft, link: C.inkSoft, title: "Meeting-safe", body: "For screen-sharing with providers or investors — proprietary rate math and payout figures are hidden." },
+          ].map((d) => (
+            <button key={d.title} onClick={() => onDemo(d.tier, d.meeting || undefined)} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: 20, display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 11, background: d.tint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <d.icon size={19} color={d.fg} />
+                </div>
+                <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>{t(d.title)}</div>
+              </div>
+              <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.55 }}>{t(d.body)}</div>
+              <div style={{ marginTop: "auto", display: "flex", alignItems: "center", gap: 6, color: d.link, fontWeight: 700, fontSize: 13 }}>
+                {t("Enter demo")} <ArrowRight size={13} />
+              </div>
+            </button>
+          ))}
         </div>
 
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: C.inkSoft, marginBottom: 12 }}>
-          {t("Other ways in")}
+          {t("Are you a parent?")}
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: showAdmin ? "1fr 1fr 1fr" : "1fr 1fr", gap: 18 }}>
-          <button onClick={onSignUp} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
-            <div style={{ width: 46, height: 46, borderRadius: 12, background: C.skyTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <Rocket size={22} color={C.sky} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, fontSize: 15.5, color: C.ink }}>{t("I'm a new provider signing up")}</div>
-              <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 2 }}>{t("Create your account, then set up your own empty workspace.")}</div>
-            </div>
-            <ArrowRight size={16} color={C.sky} />
-          </button>
-
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 14 }}>
           <button onClick={onParentDemo} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 26, display: "flex", alignItems: "center", gap: 16 }}>
             <div style={{ width: 46, height: 46, borderRadius: 12, background: C.coralTint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <Users size={22} color={C.coral} />
@@ -3154,7 +3224,7 @@ function LandingChooser({ onDemo, onSignUp, onAdmin, onSignIn, onParentDemo, lan
   );
 }
 
-const WIZARD_STEPS = ["Your business", "License & care type", "Weekly hours", "Preferences", "Review"];
+const WIZARD_STEPS = ["Your business", "License & ages", "Days & hours", "Tuition", "Languages", "Review"];
 
 // California licensed capacity limits by home type — used to pre-fill and cap
 // the capacity field so a provider can't enter a number their license doesn't allow.
@@ -3162,215 +3232,271 @@ const CAPACITY_LIMITS = {
   [PROVIDER_TYPES[0]]: 8,
   [PROVIDER_TYPES[1]]: 14,
 };
+const DAY_SHORT = { Monday: "Mon", Tuesday: "Tue", Wednesday: "Wed", Thursday: "Thu", Friday: "Fri", Saturday: "Sat", Sunday: "Sun" };
+// Half-hour steps from 5:00 AM to 11:00 PM for the open / close pickers.
+const WIZARD_TIMES = Array.from({ length: 37 }, (_, i) => {
+  const mins = 5 * 60 + i * 30;
+  const h = Math.floor(mins / 60), m = mins % 60;
+  return `${((h + 11) % 12) + 1}:${m ? "30" : "00"} ${h < 12 ? "AM" : "PM"}`;
+});
+const WIZARD_LANGS = ["English", "Español", "Tagalog", "中文", "Tiếng Việt", "한국어"];
+const wizInput = { width: "100%", boxSizing: "border-box", border: `1px solid ${C.line}`, borderRadius: 9, padding: "10px 12px", fontSize: 14, fontFamily: "inherit", background: "#fff", color: C.ink };
 
-function OnboardingWizard({ onComplete, onBack, initialEmail = "" }) {
+function OnboardingWizard({ onComplete, onBack, initialEmail = "", language, setLanguage }) {
+  const t = useT();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     businessName: "", contactName: "", email: initialEmail, city: "",
     providerType: PROVIDER_TYPES[0], licenseNumber: "", capacity: 8,
-    classrooms: [], hours: "7:00 AM – 6:00 PM", days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-    language: "English", languagesOffered: ["English"], subsidyPrograms: [],
+    classrooms: [], openTime: "7:00 AM", closeTime: "6:00 PM", days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    language: language || "English", languagesOffered: [language || "English"], subsidyPrograms: [],
+    rates: {},
   });
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
-  const toggleProgram = (id) => setForm((f) => ({ ...f, subsidyPrograms: f.subsidyPrograms.includes(id) ? f.subsidyPrograms.filter((p) => p !== id) : [...f.subsidyPrograms, id] }));
-  const toggleClassroom = (id) => setForm((f) => ({ ...f, classrooms: f.classrooms.includes(id) ? f.classrooms.filter((c) => c !== id) : [...f.classrooms, id] }));
-  const toggleLanguageOffered = (lang) => setForm((f) => ({
-    ...f,
-    languagesOffered: f.languagesOffered.includes(lang) ? f.languagesOffered.filter((l) => l !== lang) : [...f.languagesOffered, lang],
-  }));
-  const toggleDay = (d) => setForm((f) => ({ ...f, days: f.days.includes(d) ? f.days.filter((x) => x !== d) : [...f.days, d] }));
+  const toggleIn = (k, v) => setForm((f) => ({ ...f, [k]: f[k].includes(v) ? f[k].filter((x) => x !== v) : [...f[k], v] }));
+  const setRate = (cls, field, v) => setForm((f) => ({ ...f, rates: { ...f.rates, [cls]: { ...(f.rates[cls] || {}), [field]: v.replace(/[^0-9.]/g, "") } } }));
+  const ageLabel = (c) => `${t(c.label)} (${t(c.range)})`;
+  const closeAfterOpen = WIZARD_TIMES.indexOf(form.closeTime) > WIZARD_TIMES.indexOf(form.openTime);
 
   const canNext = () => {
     if (step === 0) return form.businessName.trim() && form.contactName.trim();
     if (step === 1) return form.classrooms.length > 0;
+    if (step === 2) return form.days.length > 0 && closeAfterOpen;
     return true;
   };
+  const whyBlocked = () => {
+    if (step === 0) return t("Add your business name and your name to continue.");
+    if (step === 1) return t("Pick at least one age group to continue.");
+    if (step === 2) return !form.days.length ? t("Pick at least one day you're open.") : ""; // the time error already shows next to the pickers
+    return "";
+  };
+  const go = (n) => { setStep(n); if (typeof window !== "undefined") window.scrollTo(0, 0); };
 
   const finish = () => {
+    const tuitionRates = { siblingDiscount: { enabled: false, type: "percent", value: 10 } };
+    CLASSROOMS.forEach((c) => {
+      const r = form.rates[c.id] || {};
+      tuitionRates[c.id] = { fullTime: Number(r.fullTime) || 0, partTime: Number(r.partTime) || 0, hourly: Number(r.hourly) || 0 };
+    });
     onComplete({
-      name: form.businessName || "New Provider",
-      city: form.city || "—",
-      lic: form.licenseNumber ? `FCC License #${form.licenseNumber}` : "License pending",
+      name: form.businessName.trim() || "New Provider",
+      city: form.city.trim() || "—",
+      lic: form.licenseNumber.trim() ? `FCC License #${form.licenseNumber.trim()}` : "License pending",
       providerType: form.providerType,
       capacity: form.capacity,
       classrooms: form.classrooms,
-      hours: form.hours,
+      hours: `${form.openTime} – ${form.closeTime}`,
       days: form.days,
       language: form.language,
       languagesOffered: form.languagesOffered,
-      contactName: form.contactName,
+      contactName: form.contactName.trim(),
       email: form.email,
       subsidyPrograms: form.subsidyPrograms,
+      tuitionRates,
     });
   };
 
+  const chip = (on) => ({
+    padding: "9px 13px", borderRadius: 999, fontSize: 13, fontWeight: 600, cursor: "pointer",
+    border: `1px solid ${on ? C.teal : C.line}`, background: on ? C.tealTint : "#fff", color: on ? C.tealDark : C.inkSoft,
+  });
+  const hint = (text) => (
+    <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "flex-start", gap: 6, lineHeight: 1.45 }}>
+      <Info size={13} style={{ flexShrink: 0, marginTop: 1 }} /> <span>{text}</span>
+    </div>
+  );
+  const ratedClassrooms = CLASSROOMS.filter((c) => form.classrooms.includes(c.id));
+  const ratesEntered = ratedClassrooms.filter((c) => Number(form.rates[c.id]?.fullTime) > 0 || Number(form.rates[c.id]?.partTime) > 0 || Number(form.rates[c.id]?.hourly) > 0);
+
   return (
-    <div style={{ minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", justifyContent: "center", padding: "40px 20px" }}>
+    <div style={{ minHeight: "100vh", background: C.cream, fontFamily: "'Work Sans', sans-serif", display: "flex", justifyContent: "center", padding: "24px 16px 40px" }}>
       <style>{FONTS}</style>
       <div style={{ width: "100%", maxWidth: 560 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22 }}>
-          <button onClick={onBack} style={{ background: "none", border: "none", color: C.inkSoft, display: "flex", alignItems: "center", gap: 5, fontSize: 12.5, fontWeight: 600 }}>
-            <ArrowLeft size={14} /> Back
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginBottom: 18 }}>
+          <button onClick={step > 0 ? () => go(step - 1) : onBack} style={{ background: "none", border: "none", color: C.inkSoft, display: "flex", alignItems: "center", gap: 5, fontSize: 13, fontWeight: 600, padding: "6px 0" }}>
+            <ArrowLeft size={14} /> {t("Back")}
           </button>
+          {setLanguage && <LanguagePicker language={language} setLanguage={(l) => { setLanguage(l); setForm((f) => ({ ...f, language: l, languagesOffered: f.languagesOffered.includes(l) ? f.languagesOffered : [...f.languagesOffered, l] })); }} />}
         </div>
 
-        <div style={{ display: "flex", gap: 5, marginBottom: 22 }}>
+        <div style={{ display: "flex", gap: 5, marginBottom: 18 }}>
           {WIZARD_STEPS.map((s, i) => (
             <div key={s} style={{ flex: 1, height: 5, borderRadius: 999, background: i <= step ? C.teal : C.line }} />
           ))}
         </div>
         <div style={{ fontSize: 11.5, fontWeight: 700, color: C.tealDark, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>
-          Step {step + 1} of {WIZARD_STEPS.length}
+          {t("Step")} {step + 1} {t("of")} {WIZARD_STEPS.length}{step === 0 ? ` · ${t("about 3 minutes")}` : ""}
         </div>
-        <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, color: C.ink, margin: "0 0 22px" }}>{WIZARD_STEPS[step]}</h2>
+        <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: 25, fontWeight: 600, color: C.ink, margin: "0 0 18px" }}>{t(WIZARD_STEPS[step])}</h2>
 
-        <div style={{ background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: "20px 18px", display: "flex", flexDirection: "column", gap: 16 }}>
           {step === 0 && (
             <>
-              <Field label="Business / provider name"><input value={form.businessName} onChange={(e) => set("businessName", e.target.value)} placeholder="e.g. Tita's Family Child Care" style={inputStyle} /></Field>
-              <Field label="Your name"><input value={form.contactName} onChange={(e) => set("contactName", e.target.value)} placeholder="Your full name" style={inputStyle} /></Field>
+              <Field label={t("Business name")}><input value={form.businessName} onChange={(e) => set("businessName", e.target.value)} placeholder={t("e.g. Tita's Family Child Care")} style={wizInput} autoComplete="organization" /></Field>
+              <Field label={t("Your name")}><input value={form.contactName} onChange={(e) => set("contactName", e.target.value)} placeholder={t("Your full name")} style={wizInput} autoComplete="name" /></Field>
               {initialEmail ? (
-                <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
-                  <CheckCircle2 size={13} color={C.teal} /> Account created for <b style={{ color: C.ink }}>{initialEmail}</b>
+                <div style={{ fontSize: 12.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                  <CheckCircle2 size={14} color={C.teal} /> {t("Account created for")} <b style={{ color: C.ink, wordBreak: "break-all" }}>{initialEmail}</b>
                 </div>
               ) : (
-                <Field label="Email"><input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@example.com" style={inputStyle} /></Field>
+                <Field label={t("Email")}><input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@example.com" style={wizInput} /></Field>
               )}
-              <Field label="City"><input value={form.city} onChange={(e) => set("city", e.target.value)} placeholder="e.g. Culver City, CA" style={inputStyle} /></Field>
+              <Field label={t("City")}><input value={form.city} onChange={(e) => set("city", e.target.value)} placeholder={t("e.g. Chula Vista, CA")} style={wizInput} autoComplete="address-level2" /></Field>
             </>
           )}
 
           {step === 1 && (
             <>
-              <Field label="Provider type">
-                <Select value={form.providerType} onChange={(v) => setForm((f) => ({ ...f, providerType: v, capacity: CAPACITY_LIMITS[v] || f.capacity }))} options={PROVIDER_TYPES} />
+              <Field label={t("License type")}>
+                <Select value={form.providerType} onChange={(v) => setForm((f) => ({ ...f, providerType: v, capacity: CAPACITY_LIMITS[v] || f.capacity }))} options={PROVIDER_TYPES} labels={PROVIDER_TYPES.map((p) => t(p))} />
               </Field>
-              <Field label="License number (optional if pending)"><input value={form.licenseNumber} onChange={(e) => set("licenseNumber", e.target.value)} placeholder="e.g. 198-402-3211" style={inputStyle} /></Field>
-              <Field label="Total capacity">
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <Field label={t("License number")}>
+                <input value={form.licenseNumber} onChange={(e) => set("licenseNumber", e.target.value)} placeholder={t("e.g. 198-402-3211")} style={wizInput} inputMode="numeric" />
+                <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 5 }}>{t("Still waiting on it? Leave this blank — it'll stay on your setup list until you add it.")}</div>
+              </Field>
+              <Field label={t("How many children can you care for?")}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                   <input type="number" min={1} max={CAPACITY_LIMITS[form.providerType]} value={form.capacity}
                     onChange={(e) => {
                       const limit = CAPACITY_LIMITS[form.providerType];
                       const n = Number(e.target.value);
                       set("capacity", limit ? Math.min(n, limit) : n);
                     }}
-                    style={{ ...inputStyle, maxWidth: 100 }} />
+                    style={{ ...wizInput, width: 90 }} />
                   {CAPACITY_LIMITS[form.providerType] && (
-                    <span style={{ fontSize: 11.5, color: C.inkSoft }}>Up to {CAPACITY_LIMITS[form.providerType]} for this license type</span>
+                    <span style={{ fontSize: 12, color: C.inkSoft }}>{t("Up to")} {CAPACITY_LIMITS[form.providerType]} {t("for this license type")}</span>
                   )}
                 </div>
               </Field>
-              <Field label="Which age groups will you care for?">
+              <Field label={t("Which age groups will you care for?")}>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  {CLASSROOMS.map((c) => (
-                    <label key={c.id} style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 13, padding: "8px 10px", borderRadius: 9, border: `1px solid ${form.classrooms.includes(c.id) ? C.teal : C.line}`, background: form.classrooms.includes(c.id) ? C.tealTint : "#fff" }}>
-                      <input type="checkbox" checked={form.classrooms.includes(c.id)} onChange={() => toggleClassroom(c.id)} />
-                      <b>{c.label}</b> <span style={{ color: C.inkSoft }}>· {c.range}</span>
-                    </label>
-                  ))}
+                  {CLASSROOMS.map((c) => {
+                    const on = form.classrooms.includes(c.id);
+                    return (
+                      <label key={c.id} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, padding: "11px 12px", borderRadius: 10, cursor: "pointer", border: `1px solid ${on ? C.teal : C.line}`, background: on ? C.tealTint : "#fff" }}>
+                        <input type="checkbox" checked={on} onChange={() => toggleIn("classrooms", c.id)} style={{ width: 17, height: 17, accentColor: C.teal }} />
+                        <b>{t(c.label)}</b> <span style={{ color: C.inkSoft }}>· {t(c.range)}</span>
+                      </label>
+                    );
+                  })}
                 </div>
               </Field>
-              <Field label="Subsidy programs you accept (skip if private-pay only)">
+              <Field label={t("Do you accept any subsidy programs?")}>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                   {PROGRAMS.map((p) => (
-                    <button key={p.id} type="button" onClick={() => toggleProgram(p.id)} style={{
-                      padding: "7px 11px", borderRadius: 999, fontSize: 12.5, fontWeight: 600,
-                      border: `1px solid ${form.subsidyPrograms.includes(p.id) ? C.teal : C.line}`,
-                      background: form.subsidyPrograms.includes(p.id) ? C.tealTint : "#fff",
-                      color: form.subsidyPrograms.includes(p.id) ? C.tealDark : C.inkSoft,
-                    }}>{p.label}</button>
+                    <button key={p.id} type="button" onClick={() => toggleIn("subsidyPrograms", p.id)} style={chip(form.subsidyPrograms.includes(p.id))}>{p.label}</button>
                   ))}
                 </div>
+                <div style={{ fontSize: 11.5, color: C.inkSoft, marginTop: 6 }}>{t("Private-pay only? Leave these unselected.")}</div>
               </Field>
             </>
           )}
 
           {step === 2 && (
             <>
-              <Field label="Typical daily hours"><input value={form.hours} onChange={(e) => set("hours", e.target.value)} style={inputStyle} /></Field>
-              <Field label="Days open">
+              <Field label={t("Days you're open")}>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                   {ALL_DAYS.map((d) => (
-                    <button key={d} onClick={() => toggleDay(d)} type="button" style={{
-                      padding: "8px 12px", borderRadius: 8, fontSize: 12.5, fontWeight: 600,
-                      border: `1px solid ${form.days.includes(d) ? C.teal : C.line}`, background: form.days.includes(d) ? C.tealTint : "#fff", color: form.days.includes(d) ? C.tealDark : C.inkSoft,
-                    }}>{d}</button>
+                    <button key={d} onClick={() => toggleIn("days", d)} type="button" style={{ ...chip(form.days.includes(d)), borderRadius: 9, minWidth: 54 }}>{t(DAY_SHORT[d] || d)}</button>
                   ))}
                 </div>
               </Field>
-              <div style={{ fontSize: 11.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
-                <Info size={12} /> You can fine-tune per-day hours, care type, and open ages later in Calendar.
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <Field label={t("Opens at")}><Select value={form.openTime} onChange={(v) => set("openTime", v)} options={WIZARD_TIMES} /></Field>
+                <Field label={t("Closes at")}><Select value={form.closeTime} onChange={(v) => set("closeTime", v)} options={WIZARD_TIMES} /></Field>
               </div>
+              {!closeAfterOpen && <div style={{ fontSize: 12.5, color: C.danger }}>{t("Closing time needs to be after opening time.")}</div>}
+              {hint(t("Different hours on some days? You can set each day separately later in Calendar."))}
             </>
           )}
 
           {step === 3 && (
             <>
-              <Field label="Preferred language">
-                <Select value={form.language} onChange={(v) => set("language", v)} options={["English", "Español", "Tagalog", "中文", "Tiếng Việt", "한국어"]} />
-              </Field>
-              <div style={{ fontSize: 11.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
-                <Info size={12} /> This sets your dashboard language — families you enroll can each have their own preferred language too.
-              </div>
-
-              <Field label="Languages offered at your daycare">
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                  {["English", "Español", "Tagalog", "中文", "Tiếng Việt", "한국어"].map((lang) => (
-                    <label key={lang} style={{
-                      display: "flex", alignItems: "center", gap: 7, fontSize: 12.5, padding: "7px 11px", borderRadius: 999,
-                      border: `1px solid ${form.languagesOffered.includes(lang) ? C.teal : C.line}`,
-                      background: form.languagesOffered.includes(lang) ? C.tealTint : "#fff",
-                      color: form.languagesOffered.includes(lang) ? C.tealDark : C.inkSoft, fontWeight: 600,
-                    }}>
-                      <input type="checkbox" checked={form.languagesOffered.includes(lang)} onChange={() => toggleLanguageOffered(lang)} style={{ display: "none" }} />
-                      {lang}
-                    </label>
-                  ))}
+              <div style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.5 }}>{t("What do you charge? Only you can see these — families don't. Leave anything blank you don't offer.")}</div>
+              {ratedClassrooms.map((c) => (
+                <div key={c.id} style={{ border: `1px solid ${C.line}`, borderRadius: 12, padding: "12px 12px 14px" }}>
+                  <div style={{ fontSize: 13.5, fontWeight: 700, color: C.ink, marginBottom: 10 }}>{ageLabel(c)}</div>
+                  <div className="rate-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 8 }}>
+                    {[["fullTime", t("Full-time"), t("/month")], ["partTime", t("Part-time"), t("/month")], ["hourly", t("Drop-in"), t("/hour")]].map(([k, label, unit]) => (
+                      <Field key={k} label={label}>
+                        <div style={{ position: "relative" }}>
+                          <span style={{ position: "absolute", left: 9, top: 10, fontSize: 14, color: C.inkSoft }}>$</span>
+                          <input inputMode="decimal" value={form.rates[c.id]?.[k] || ""} onChange={(e) => setRate(c.id, k, e.target.value)} placeholder="—" style={{ ...wizInput, paddingLeft: 20 }} aria-label={`${ageLabel(c)} ${label}`} />
+                        </div>
+                        <div style={{ fontSize: 10.5, color: C.inkSoft, marginTop: 3 }}>{unit}</div>
+                      </Field>
+                    ))}
+                  </div>
                 </div>
-              </Field>
-              <div style={{ fontSize: 11.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
-                <Info size={12} /> Select every language spoken at your daycare — families searching can filter and match by this.
-              </div>
+              ))}
+              {hint(t("Not sure yet? Skip this — you can add or change rates anytime in Money → Tuition & Billing."))}
             </>
           )}
 
           {step === 4 && (
+            <>
+              <Field label={t("Your Alaga language")}>
+                <Select value={form.language} onChange={(v) => { set("language", v); if (setLanguage) setLanguage(v); }} options={WIZARD_LANGS} />
+              </Field>
+              {hint(t("This is the language you'll see. Each family can pick their own language too."))}
+              <Field label={t("Languages spoken at your daycare")}>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {WIZARD_LANGS.map((lang) => (
+                    <button key={lang} type="button" onClick={() => toggleIn("languagesOffered", lang)} style={chip(form.languagesOffered.includes(lang))}>{lang}</button>
+                  ))}
+                </div>
+              </Field>
+              {hint(t("Pick every language you or your staff speak with families."))}
+            </>
+          )}
+
+          {step === 5 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                <StatBlock label="Business" value={form.businessName || "—"} />
-                <StatBlock label="City" value={form.city || "—"} />
-                <StatBlock label="Provider type" value={form.providerType} />
-                <StatBlock label="License #" value={form.licenseNumber || "Pending"} />
-                <StatBlock label="Capacity" value={String(form.capacity)} />
-                <StatBlock label="Age groups" value={form.classrooms.map((c) => classroomOf(c)?.label).join(", ") || "None selected"} />
-                <StatBlock label="Hours" value={`${form.hours} · ${form.days.length} days/week`} />
-                <StatBlock label="Languages offered" value={form.languagesOffered.join(", ") || "—"} />
+              {[
+                [0, t("Business"), `${form.businessName || "—"}${form.city ? ` · ${form.city}` : ""}`],
+                [1, t("License"), `${t(form.providerType)} · ${form.licenseNumber || t("Number pending")} · ${t("up to")} ${form.capacity} ${t("children")}`],
+                [1, t("Age groups"), form.classrooms.map((c) => ageLabel(classroomOf(c))).join(", ")],
+                [1, t("Subsidy programs"), form.subsidyPrograms.map((id) => PROGRAMS.find((p) => p.id === id)?.label).join(", ") || t("Private-pay only")],
+                [2, t("Days & hours"), `${ALL_DAYS.filter((d) => form.days.includes(d)).map((d) => t(DAY_SHORT[d])).join(", ")} · ${form.openTime} – ${form.closeTime}`],
+                [3, t("Tuition"), ratesEntered.length ? `${ratesEntered.length} ${t("of")} ${ratedClassrooms.length} ${t("age groups set")}` : t("Not set yet — add later")],
+                [4, t("Languages"), form.languagesOffered.join(", ") || "—"],
+              ].map(([target, label, value]) => (
+                <div key={label} className="nowrap-mobile" style={{ background: C.cream, borderRadius: 10, padding: "10px 12px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10 }}>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: C.inkSoft, textTransform: "uppercase", letterSpacing: "0.04em" }}>{label}</div>
+                    <div style={{ fontSize: 13.5, fontWeight: 600, color: C.ink, marginTop: 2, lineHeight: 1.4 }}>{value}</div>
+                  </div>
+                  <button onClick={() => go(target)} style={{ background: "none", border: "none", color: C.teal, fontSize: 12.5, fontWeight: 700, flexShrink: 0, padding: "2px 0" }}>{t("Edit")}</button>
+                </div>
+              ))}
+              <div style={{ marginTop: 4, padding: "12px 14px", borderRadius: 12, border: `1px solid ${C.teal}`, background: C.tealTint }}>
+                <div style={{ fontSize: 13.5, fontWeight: 700, color: C.tealDark }}>{t("You're starting on the Simple plan")}</div>
+                <div style={{ fontSize: 12.5, color: C.ink, marginTop: 3, lineHeight: 1.5 }}>
+                  {t("Families, attendance, subsidy, paperwork and payments.")} {t("Need staff, growth planning or analytics? Switch to Extended anytime in Settings → Plan & Billing.")}
+                </div>
               </div>
-              <StatBlock label="Subsidy programs" value={form.subsidyPrograms.map((id) => PROGRAMS.find((p) => p.id === id)?.label).join(", ") || "Private-pay only"} />
-              <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
-                <CheckCircle2 size={13} color={C.teal} /> Everything here can be changed later in Settings and Calendar.
-              </div>
-              <div style={{ fontSize: 12, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}>
-                <Info size={12} /> Have families on paper or in a spreadsheet? Add them from Tours once you're in.
-              </div>
+              {hint(t("Everything here can be changed later. Have families on paper or in a spreadsheet? You'll add them from Families → Tours."))}
             </div>
           )}
         </div>
 
-        <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
+        {!canNext() && step < WIZARD_STEPS.length - 1 && (
+          <div style={{ fontSize: 12.5, color: C.inkSoft, marginTop: 12, textAlign: "center" }}>{whyBlocked()}</div>
+        )}
+        <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
           {step > 0 && (
-            <button onClick={() => setStep(step - 1)} style={{ flex: 1, padding: "12px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 13.5 }}>Back</button>
+            <button onClick={() => go(step - 1)} style={{ flex: 1, padding: "13px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 14 }}>{t("Back")}</button>
           )}
           {step < WIZARD_STEPS.length - 1 ? (
-            <button onClick={() => canNext() && setStep(step + 1)} disabled={!canNext()} style={{
-              flex: 2, padding: "12px 0", borderRadius: 10, border: "none", background: canNext() ? C.teal : "#C9C4B4", color: "#fff", fontWeight: 700, fontSize: 13.5,
+            <button onClick={() => canNext() && go(step + 1)} disabled={!canNext()} style={{
+              flex: 2, padding: "13px 0", borderRadius: 10, border: "none", background: canNext() ? C.teal : "#C9C4B4", color: "#fff", fontWeight: 700, fontSize: 14,
               display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
-            }}>Continue <ArrowRight size={14} /></button>
+            }}>{step === 3 && !ratesEntered.length ? t("Skip for now") : t("Continue")} <ArrowRight size={14} /></button>
           ) : (
             <button onClick={finish} style={{
-              flex: 2, padding: "12px 0", borderRadius: 10, border: "none", background: C.amber, color: "#fff", fontWeight: 700, fontSize: 13.5,
+              flex: 2, padding: "13px 0", borderRadius: 10, border: "none", background: C.amber, color: "#fff", fontWeight: 700, fontSize: 14,
               display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
-            }}><Rocket size={14} /> Enter your workspace</button>
+            }}><Rocket size={14} /> {t("Open my workspace")}</button>
           )}
         </div>
       </div>
@@ -4073,7 +4199,7 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
     kids: FAMILIES.filter((f) => f.household === "reyes").map((f) => f.id), oneTime: false, date: "", token: "ELENAREYES2026", code: "482913",
     createdBy: "Maria Reyes", createdAt: 1, created: shiftDemoString("09/02/2026"),
   }]);
-  const [tuitionRates, saveTuitionRates] = usePersistentState(`tuition-rates${sfx}`, TUITION_RATES_DEFAULT);
+  const [tuitionRates, saveTuitionRates] = usePersistentState(`tuition-rates${sfx}`, isEmpty ? (onboardingData?.tuitionRates || { infants: { fullTime: 0, partTime: 0, hourly: 0 }, toddlers: { fullTime: 0, partTime: 0, hourly: 0 }, preschool: { fullTime: 0, partTime: 0, hourly: 0 }, prek: { fullTime: 0, partTime: 0, hourly: 0 }, siblingDiscount: { enabled: false, type: "percent", value: 10 } }) : TUITION_RATES_DEFAULT);
 
   useEffect(() => {
     if (tier === "simple" && NAV.find((n) => n.id === screen)?.extended) setScreen("dashboard");
@@ -4110,7 +4236,7 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
   const [budgetPlan, saveBudgetPlan] = usePersistentState(`budget-plan${sfx}`, BUDGET_PLAN_DEFAULT);
   // Your own daily routine. Things Alaga already tracks (subsidies, messages,
   // paperwork) show in the briefing instead, so they aren't repeated here.
-  const [checklist, saveChecklist] = usePersistentState(`daily-checklist-v2${sfx}`, [
+  const [checklist, saveChecklist] = usePersistentState(`daily-checklist-v2${sfx}`, isEmpty ? [] : [
     { id: 1, text: "Put out the sign-in sheet", done: false },
     { id: 2, text: "Restock hand-washing & sanitizing supplies", done: false },
     { id: 3, text: "Prep afternoon snack", done: false },
@@ -4458,9 +4584,9 @@ export default function AlagaMockup() {
     return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><AdminScreen onBack={() => setEntry("landing")} /></LanguageContext.Provider>;
   }
   if (entry === "wizard") {
-    return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><OnboardingWizard
-      initialEmail={signupEmail}
-      onComplete={(info) => { setProviderInfo(info); setOnboardingData(info); registerWithAdmin(info); setIsEmptyWorkspace(true); setForcedTier(null); setMeetingMode(false); setEntry("workspace"); }}
+    return <LanguageContext.Provider value={publicCtx}><OnboardingWizard
+      initialEmail={signupEmail} language={publicLanguage} setLanguage={setPublicLanguage}
+      onComplete={(info) => { if (info.language) setPublicLanguage(info.language); setProviderInfo(info); setOnboardingData(info); registerWithAdmin(info); setIsEmptyWorkspace(true); setForcedTier(null); setMeetingMode(false); setEntry("workspace"); }}
       onBack={() => setEntry("landing")}
     /></LanguageContext.Provider>;
   }
@@ -4536,7 +4662,13 @@ function Sidebar({ screen, setScreen, mode, setMode, provider, onExitToLanding, 
               }, 0);
               return (
                 <div key={owningGroup.id}>
-                  <button onClick={() => setExpandedGroups((g) => ({ ...g, [owningGroup.id]: !isExpanded }))} style={{
+                  <button onClick={() => {
+                    // Opening a group also opens its first page, so one tap always takes you somewhere.
+                    if (isExpanded && groupActive) { setExpandedGroups((g) => ({ ...g, [owningGroup.id]: false })); return; }
+                    setExpandedGroups((g) => ({ ...g, [owningGroup.id]: true }));
+                    const first = visibleChildren[0];
+                    if (first && !groupActive) { setScreen(first.id); if (first.tab && setFinancesTab) setFinancesTab(first.tab); }
+                  }} style={{
                     width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "9px 10px", borderRadius: 9,
                     border: "none", background: groupActive && !isExpanded ? C.tealTint : "transparent",
                     color: groupActive ? C.tealDark : C.inkSoft, fontSize: 13.5, fontWeight: groupActive ? 600 : 500, textAlign: "left",
@@ -4843,10 +4975,13 @@ function HelpCenter({ goTo, available }) {
 /* -------------------------------- dashboard ----------------------------------- */
 // What "healthy and complete" means for a provider's record — five concrete,
 // independently-checkable facts about the account, not a vague completeness score.
-function computeSetupItems({ providerInfo, weeklySchedule, staff, families, prospects, compDocs }) {
+const ROUTINE_IDEAS = ["Put out the sign-in sheet", "Restock hand-washing & sanitizing supplies", "Prep afternoon snack", "Wipe down tables and toys"];
+
+function computeSetupItems({ providerInfo, weeklySchedule, staff, families, prospects, compDocs, tuitionRates }) {
   return [
-    { id: "license", label: "Add your license number", detail: "Needed before this account can represent a licensed business.", done: !!(providerInfo.lic && providerInfo.lic !== "License pending"), screen: "settings" },
+    { id: "license", label: "Add your license number", detail: "Add it in Settings once CCLD issues it.", done: !!(providerInfo.lic && providerInfo.lic !== "License pending"), screen: "settings" },
     { id: "hours", label: "Confirm your weekly hours", detail: "At least one open day with hours set.", done: weeklySchedule.some((d) => d.open), screen: "calendar" },
+    { id: "tuition", label: "Set your tuition rates", detail: "So Alaga can track what each family owes.", done: !tuitionRates || ["infants", "toddlers", "preschool", "prek"].some((k) => (tuitionRates[k]?.fullTime || 0) + (tuitionRates[k]?.partTime || 0) + (tuitionRates[k]?.hourly || 0) > 0), screen: "tuition" },
     { id: "staff", label: "Add yourself (and any staff) to Staff & Ratios", detail: "Needed for accurate ratio and payroll tracking.", done: staff.length > 0, screen: "staff" },
     { id: "family", label: "Add your first family or tour", detail: "Enrollment and subsidy tracking start here.", done: families.length > 0 || prospects.length > 0, screen: "tours" },
     { id: "compliance", label: "Upload at least one compliance document", detail: "Keeps you ready for a licensing visit from day one.", done: compDocs.some((d) => d.status === "submitted"), screen: "compliance" },
@@ -4872,7 +5007,10 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
   const flexNeedingAttention = [...pendingFlex, ...unpaidFlex];
   // Paperwork that's pending or missing — the licensing documents for the
   // business, and each child's own file (immunizations, enrollment forms, etc.).
-  const docsNeedingAttention = compDocs.filter((d) => (d.displayStatus || d.status) !== "submitted");
+  // A brand-new account has every licensing document blank. That's a setup
+  // step (covered by the setup checklist), not something they've fallen behind on.
+  const freshPaperwork = families.length === 0 && compDocs.every((d) => (d.displayStatus || d.status) === "missing");
+  const docsNeedingAttention = freshPaperwork ? [] : compDocs.filter((d) => (d.displayStatus || d.status) !== "submitted");
   // Missing documents, plus ones on file that have expired or are due for renewal within 30 days.
   const childrenMissingDocs = families
     .map((f) => ({ f, missing: defaultChildDocs(f).filter((d) => d.status === "missing" || ["expired", "expiring"].includes(docEffectiveStatus(d, 30))).length }))
@@ -4924,7 +5062,7 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
   const totalAttention = dueSoon.length + expiring.length + flexNeedingAttention.length + docsNeedingAttention.length + childrenMissingDocs.length + overdueTuition.length;
   const approveFlexInline = (id) => saveFlexCare(flexCareRequests.map((r) => (r.id === id ? { ...r, status: "approved" } : r)));
 
-  const setupItems = computeSetupItems({ providerInfo, weeklySchedule, staff, families, prospects, compDocs });
+  const setupItems = computeSetupItems({ providerInfo, weeklySchedule, staff, families, prospects, compDocs, tuitionRates });
   const setupDoneCount = setupItems.filter((i) => i.done).length;
   const setupPct = Math.round((setupDoneCount / setupItems.length) * 100);
 
@@ -5125,8 +5263,8 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
             </div>
           </div>
           {setupItems.map((item) => (
-            <button key={item.id} onClick={() => setScreen(item.screen)} style={{ width: "100%", textAlign: "left", background: "none", border: "none", borderRadius: 0, padding: 0 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 18px", borderBottom: `1px solid ${C.line}` }}>
+            <button key={item.id} onClick={() => (item.screen === "tuition" ? openTuition() : setScreen(item.screen))} style={{ width: "100%", textAlign: "left", background: "none", border: "none", borderRadius: 0, padding: 0 }}>
+              <div className="nowrap-mobile" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 18px", borderBottom: `1px solid ${C.line}` }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
                   {item.done ? <CheckCircle2 size={16} color={C.teal} style={{ flexShrink: 0 }} /> : <Circle size={16} color={C.inkSoft} style={{ flexShrink: 0 }} />}
                   <div style={{ minWidth: 0 }}>
@@ -5148,11 +5286,23 @@ function Dashboard({ setScreen, goToFamily, reminderSettings, openTuition, famil
             <div style={{ height: "100%", width: `${pct}%`, background: pct === 100 ? C.teal : C.amber, borderRadius: 999, transition: "width 0.3s" }} />
           </div>
         </div>
+        {checklist.length === 0 && (
+          <div style={{ padding: "4px 18px 10px" }}>
+            <div style={{ fontSize: 12.5, color: C.inkSoft, lineHeight: 1.5, marginBottom: 8 }}>{t("Add the things you do every day. They reset each morning so you can tick them off again.")}</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {ROUTINE_IDEAS.map((idea) => (
+                <button key={idea} onClick={() => saveChecklist([...checklist, { id: Date.now() + idea.length, text: idea, done: false }])} style={{ display: "flex", alignItems: "center", gap: 4, padding: "6px 10px", borderRadius: 999, border: `1px dashed ${C.line}`, background: "#fff", fontSize: 12, fontWeight: 600, color: C.tealDark }}>
+                  <Plus size={11} /> {t(idea)}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         {checklist.map((c) => (
           <div key={c.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "9px 18px", borderBottom: `1px solid ${C.line}` }}>
             <label style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13.5, cursor: "pointer", flex: 1 }}>
               <input type="checkbox" checked={isDoneToday(c)} onChange={() => toggleTask(c.id)} style={{ width: 16, height: 16, accentColor: C.teal }} />
-              <span style={{ textDecoration: isDoneToday(c) ? "line-through" : "none", color: isDoneToday(c) ? C.inkSoft : C.ink }}>{c.text}</span>
+              <span style={{ textDecoration: isDoneToday(c) ? "line-through" : "none", color: isDoneToday(c) ? C.inkSoft : C.ink }}>{t(c.text)}</span>
             </label>
             <button onClick={() => removeTask(c.id)} style={{ background: "none", border: "none", color: C.inkSoft }}><X size={13} /></button>
           </div>
@@ -6767,7 +6917,7 @@ function StaffScreen({ staff, families, updateStaffMember, addStaffMember, remov
       <div style={{ background: withinRatio ? C.tealTint : C.dangerTint, border: `1px solid ${withinRatio ? C.teal : C.danger}`, borderRadius: 14, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700, fontSize: 14, color: withinRatio ? C.tealDark : C.danger }}>
-            <Scale size={16} /> {withinRatio ? t("Within ratio") : t("Understaffed for current enrollment")}
+            <Scale size={16} /> {enrolledCount === 0 ? t("No children enrolled yet") : withinRatio ? t("Within ratio") : t("Understaffed for current enrollment")}
           </div>
           <div style={{ fontSize: 12, color: C.inkSoft, marginTop: 4, lineHeight: 1.5, maxWidth: 520 }}>
             {t("With")} {enrolledCount} {t("children enrolled, general guidance suggests at least")} {required} {t("qualified adult(s)")} ({t("Live Scan + CPR complete")}). {t("You currently have")} {qualified}. {t("This is a starting point, not a substitute for confirming your exact ratio requirement with CCLD.")}
@@ -9837,10 +9987,12 @@ function Compliance({ licensing = {}, saveLicensing, docs, onSave, families, pro
               {licensing.citations && <Row left={<b>{t("Citations / corrections")}</b>} right={<span style={{ fontSize: 12.5, color: C.inkSoft }}>{licensing.citations}</span>} />}
             </>
           )}
-          <Row left={<b>{t("Ratio compliance today")}</b>} right={<Pill label={withinRatio ? t("Within ratio") : t("Understaffed for current enrollment")} fg={withinRatio ? C.teal : C.danger} bg={withinRatio ? C.tealTint : C.dangerTint} />} />
+          <Row left={<b>{t("Ratio compliance today")}</b>} right={<Pill label={families.length === 0 ? t("No children enrolled yet") : withinRatio ? t("Within ratio") : t("Understaffed for current enrollment")} fg={families.length === 0 ? C.inkSoft : withinRatio ? C.teal : C.danger} bg={families.length === 0 ? "#F1EEE5" : withinRatio ? C.tealTint : C.dangerTint} />} />
           <Row left={<b>{t("Staff certifications")}</b>}
             right={<div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              {missingCertsTotal > 0
+              {staff.filter((s) => s.status === "active").length === 0
+                ? <Pill label={t("No staff added yet")} fg={C.inkSoft} bg="#F1EEE5" />
+                : missingCertsTotal > 0
                 ? <Pill label={`${missingCertsTotal} ${t("missing")}`} fg={C.danger} bg={C.dangerTint} />
                 : <Pill label={t("All current")} fg={C.teal} bg={C.tealTint} />}
               {setScreen && <button onClick={() => setScreen("staff")} style={{ fontSize: 11.5, fontWeight: 700, color: C.teal, background: "none", border: "none" }}>{t("View staff")}</button>}
@@ -10052,7 +10204,7 @@ function AuditMode({ licensing = {}, docs, families, onClose, provider, staff })
         <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: C.tealDark, marginTop: 26, marginBottom: 10 }}>{t("License & ratio status")}</h3>
         <Row left={<b>{t("License renewal")}</b>} right={<span style={{ fontSize: 13, color: C.inkSoft }}>{licensing.renewalDate || t("Not recorded yet")}</span>} />
         <Row left={<b>{t("Last inspection")}</b>} right={<span style={{ fontSize: 13, color: C.inkSoft }}>{[licensing.inspectionDate, licensing.inspectionResult].filter(Boolean).join(" — ") || t("Not recorded yet")}</span>} />
-        <Row left={<b>{t("Ratio compliance today")}</b>} right={<Pill label={withinRatio ? t("Within ratio") : t("Understaffed for current enrollment")} fg={withinRatio ? C.teal : C.danger} bg={withinRatio ? C.tealTint : C.dangerTint} />} />
+        <Row left={<b>{t("Ratio compliance today")}</b>} right={<Pill label={families.length === 0 ? t("No children enrolled yet") : withinRatio ? t("Within ratio") : t("Understaffed for current enrollment")} fg={families.length === 0 ? C.inkSoft : withinRatio ? C.teal : C.danger} bg={families.length === 0 ? "#F1EEE5" : withinRatio ? C.tealTint : C.dangerTint} />} />
         <Row left={<b>{t("Children enrolled / qualified adults on staff")}</b>} right={<span style={{ fontSize: 13 }}>{families.length} / {qualified} ({t("guidance suggests")} {required})</span>} />
 
         <h3 style={{ fontFamily: "'Fraunces', serif", fontSize: 16, color: C.tealDark, marginTop: 26, marginBottom: 10 }}>{t("Staff roster")}</h3>
