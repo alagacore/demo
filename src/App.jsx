@@ -1517,6 +1517,83 @@ const T = {
   "Thanksgiving Break": { es: "Vacaciones de Acción de Gracias", tl: "Thanksgiving Break", zh: "感恩节假期", vi: "Nghỉ lễ Tạ ơn", ko: "추수감사절 휴원" },
   "Winter Break": { es: "Vacaciones de invierno", tl: "Winter Break", zh: "寒假", vi: "Nghỉ đông", ko: "겨울 방학" },
   "Provider Professional Development Day": { es: "Día de capacitación del proveedor", tl: "Professional Development Day ng provider", zh: "托育者培训日", vi: "Ngày bồi dưỡng chuyên môn", ko: "운영자 연수일" },
+  "A little tired today.": { es: "Un poco cansado hoy.", tl: "Medyo pagod ngayon.", zh: "今天有点累。", vi: "Hôm nay hơi mệt.", ko: "오늘 조금 피곤해했어요." },
+  "Add a photo (optional)": { es: "Agregar una foto (opcional)", tl: "Magdagdag ng litrato (opsyonal)", zh: "添加照片（可选）", vi: "Thêm ảnh (không bắt buộc)", ko: "사진 추가 (선택)" },
+  "Allergies or medical conditions (write None if none)": { es: "Alergias o condiciones médicas (escriba Ninguna si no hay)", tl: "Allergy o kondisyong medikal (isulat ang Wala kung wala)", zh: "过敏或疾病（如无请填“无”）", vi: "Dị ứng hoặc bệnh lý (ghi Không nếu không có)", ko: "알레르기 또는 질환 (없으면 '없음')" },
+  "At": { es: "En", tl: "Sa", zh: "地点：", vi: "Tại", ko: "장소:" },
+  "Ate well at lunch.": { es: "Comió bien en el almuerzo.", tl: "Masarap kumain ng tanghalian.", zh: "午饭吃得很好。", vi: "Ăn trưa ngon miệng.", ko: "점심을 잘 먹었어요." },
+  "Check-in QR code": { es: "Código QR de entrada", tl: "QR code para check-in", zh: "签到二维码", vi: "Mã QR điểm danh", ko: "등하원 QR 코드" },
+  "Child's doctor": { es: "Médico del niño", tl: "Doktor ng bata", zh: "孩子的医生", vi: "Bác sĩ của trẻ", ko: "아이 담당 의사" },
+  "Clear signature": { es: "Borrar firma", tl: "Burahin ang pirma", zh: "清除签名", vi: "Xóa chữ ký", ko: "서명 지우기" },
+  "Copy": { es: "Copia", tl: "Kopya", zh: "副本", vi: "Bản sao", ko: "사본" },
+  "Couldn't open the camera. Allow camera access, or use your phone's camera app to scan the code.": { es: "No se pudo abrir la cámara. Permita el acceso o use la app de cámara de su teléfono para escanear el código.", tl: "Hindi mabuksan ang camera. Payagan ang camera, o gamitin ang camera app ng phone mo para i-scan ang code.", zh: "无法打开相机。请允许相机权限，或用手机相机扫描二维码。", vi: "Không mở được camera. Hãy cho phép camera, hoặc dùng ứng dụng camera của điện thoại để quét mã.", ko: "카메라를 열 수 없어요. 카메라 권한을 허용하거나 휴대폰 카메라 앱으로 코드를 스캔하세요." },
+  "Daily summary for parents": { es: "Resumen diario para padres", tl: "Pang-araw-araw na buod para sa magulang", zh: "给家长的每日小结", vi: "Tóm tắt hằng ngày cho phụ huynh", ko: "부모님께 보내는 하루 요약" },
+  "Delete": { es: "Eliminar", tl: "Burahin", zh: "删除", vi: "Xóa", ko: "삭제" },
+  "Demo: skip scanning": { es: "Demo: omitir escaneo", tl: "Demo: laktawan ang pag-scan", zh: "演示：跳过扫码", vi: "Demo: bỏ qua quét mã", ko: "데모: 스캔 건너뛰기" },
+  "Doctor's phone": { es: "Teléfono del médico", tl: "Telepono ng doktor", zh: "医生电话", vi: "Số điện thoại bác sĩ", ko: "의사 전화번호" },
+  "Drop off": { es: "Entregar", tl: "Ihatid", zh: "送托", vi: "Gửi trẻ", ko: "등원" },
+  "Drop off everyone": { es: "Entregar a todos", tl: "Ihatid lahat", zh: "全部送托", vi: "Gửi tất cả", ko: "모두 등원" },
+  "Drop-off & pickup": { es: "Entrega y recogida", tl: "Hatid at sundo", zh: "送托与接走", vi: "Gửi & đón trẻ", ko: "등원 & 하원" },
+  "Drop-off and pickup, right from your phone": { es: "Entrega y recogida desde su teléfono", tl: "Hatid at sundo, gamit lang ang phone mo", zh: "用手机完成送托和接走", vi: "Gửi và đón trẻ ngay trên điện thoại", ko: "휴대폰으로 바로 등하원" },
+  "Dropped off": { es: "Entregado", tl: "Inihatid", zh: "送托于", vi: "Gửi lúc", ko: "등원" },
+  "E-signed by": { es: "Firmado electrónicamente por", tl: "E-signed ni", zh: "电子签名人", vi: "Ký điện tử bởi", ko: "전자 서명:" },
+  "Earlier notes": { es: "Notas anteriores", tl: "Mga naunang note", zh: "之前的留言", vi: "Ghi chú trước", ko: "이전 메모" },
+  "Edit note for parents": { es: "Editar nota para padres", tl: "I-edit ang note para sa magulang", zh: "编辑给家长的留言", vi: "Sửa ghi chú cho phụ huynh", ko: "부모님 메모 수정" },
+  "Forms from your provider can be signed right here. Doctor's forms: send a photo or PDF, and your provider checks it before marking it on file.": { es: "Puede firmar aquí los formularios de su proveedor. Para formularios del médico, envíe una foto o PDF y su proveedor lo revisará antes de archivarlo.", tl: "Puwedeng pirmahan dito ang forms mula sa provider. Para sa forms ng doktor, magpadala ng litrato o PDF at susuriin ito ng provider bago i-file.", zh: "托育者的表格可以直接在这里签署。医生的表格请发送照片或 PDF，托育者审核后再归档。", vi: "Có thể ký các mẫu đơn của người giữ trẻ ngay tại đây. Giấy của bác sĩ: gửi ảnh hoặc PDF, người giữ trẻ sẽ kiểm tra trước khi lưu.", ko: "운영자 서류는 여기서 바로 서명할 수 있어요. 의사 서류는 사진이나 PDF로 보내면 운영자가 확인 후 보관합니다." },
+  "From": { es: "De", tl: "Mula sa", zh: "来自", vi: "Từ", ko: "보낸 곳:" },
+  "Had a great day!": { es: "¡Tuvo un gran día!", tl: "Masaya ang araw niya!", zh: "今天过得很开心！", vi: "Hôm nay rất vui!", ko: "즐거운 하루였어요!" },
+  "How was their day? (optional)": { es: "¿Cómo fue su día? (opcional)", tl: "Kumusta ang araw niya? (opsyonal)", zh: "今天过得怎么样？（可选）", vi: "Hôm nay của bé thế nào? (không bắt buộc)", ko: "오늘 하루 어땠나요? (선택)" },
+  "I agree that my electronic signature is the same as signing this form by hand.": { es: "Acepto que mi firma electrónica equivale a firmar este formulario a mano.", tl: "Sumasang-ayon ako na ang electronic signature ko ay katumbas ng pagpirma sa form na ito gamit ang kamay.", zh: "我同意电子签名与亲笔签署本表格具有同等效力。", vi: "Tôi đồng ý chữ ký điện tử có giá trị như ký tay trên mẫu đơn này.", ko: "전자 서명이 이 서류에 직접 서명한 것과 같다는 데 동의합니다." },
+  "Initial": { es: "Iniciales", tl: "Inisyal", zh: "签首字母", vi: "Ký tắt", ko: "이니셜" },
+  "Initialed terms": { es: "Condiciones con iniciales", tl: "Mga terms na may inisyal", zh: "已签首字母的条款", vi: "Các điều khoản đã ký tắt", ko: "이니셜 서명 조항" },
+  "Monthly tuition (your cost)": { es: "Colegiatura mensual (su costo)", tl: "Buwanang tuition (babayaran mo)", zh: "每月学费（自付）", vi: "Học phí hằng tháng (bạn trả)", ko: "월 수업료 (본인 부담)" },
+  "Napped well.": { es: "Durmió bien la siesta.", tl: "Mahimbing ang tulog.", zh: "午睡很好。", vi: "Ngủ trưa ngon.", ko: "낮잠을 잘 잤어요." },
+  "Not taken or shared": { es: "No tomar ni compartir", tl: "Huwag kunan o i-share", zh: "不拍摄也不分享", vi: "Không chụp hoặc chia sẻ", ko: "촬영 및 공유 안 함" },
+  "Note": { es: "Nota", tl: "Note", zh: "留言", vi: "Ghi chú", ko: "메모" },
+  "Note for parents": { es: "Nota para padres", tl: "Note para sa magulang", zh: "给家长的留言", vi: "Ghi chú cho phụ huynh", ko: "부모님께 메모" },
+  "Note shared": { es: "Nota compartida", tl: "Naipadala ang note", zh: "留言已分享", vi: "Đã gửi ghi chú", ko: "메모 공유됨" },
+  "Only this child's parents see it. Check-in and pickup times are added for you.": { es: "Solo los padres de este niño la ven. Las horas de entrada y recogida se agregan solas.", tl: "Ang mga magulang lang ng batang ito ang makakakita. Awtomatikong idinadagdag ang oras ng hatid at sundo.", zh: "只有该孩子的家长能看到。送托和接走时间会自动加上。", vi: "Chỉ phụ huynh của bé thấy được. Giờ gửi và đón được thêm tự động.", ko: "이 아이의 부모님만 볼 수 있어요. 등하원 시간은 자동으로 추가됩니다." },
+  "Open your phone's camera and point it at the code.": { es: "Abra la cámara de su teléfono y apunte al código.", tl: "Buksan ang camera ng phone at itutok sa code.", zh: "打开手机相机，对准二维码。", vi: "Mở camera điện thoại và hướng vào mã.", ko: "휴대폰 카메라를 열고 코드를 비추세요." },
+  "Parent check-in & notes": { es: "Entrada de padres y notas", tl: "Check-in ng magulang at notes", zh: "家长签到与留言", vi: "Phụ huynh điểm danh & ghi chú", ko: "부모 등하원 & 메모" },
+  "Parents check in and out with a QR code": { es: "Los padres registran entrada y salida con un código QR", tl: "Magche-check in at out ang magulang gamit ang QR code", zh: "家长用二维码签到签退", vi: "Phụ huynh điểm danh vào/ra bằng mã QR", ko: "부모님이 QR 코드로 등하원 체크" },
+  "Parents see drop-off and pickup times automatically. Add an optional note or photo from a child's ⋯ menu.": { es: "Los padres ven las horas de entrada y recogida automáticamente. Agregue una nota o foto opcional desde el menú ⋯ del niño.", tl: "Awtomatikong nakikita ng magulang ang oras ng hatid at sundo. Magdagdag ng note o litrato mula sa ⋯ menu ng bata.", zh: "家长会自动看到送托和接走时间。可在孩子的 ⋯ 菜单中添加留言或照片。", vi: "Phụ huynh tự động thấy giờ gửi và đón. Thêm ghi chú hoặc ảnh từ menu ⋯ của bé.", ko: "부모님은 등하원 시간을 자동으로 봅니다. 아이의 ⋯ 메뉴에서 메모나 사진을 추가하세요." },
+  "Payment due": { es: "Fecha de pago", tl: "Takdang bayad", zh: "付款日", vi: "Hạn thanh toán", ko: "납부일" },
+  "Photos of my child": { es: "Fotos de mi hijo", tl: "Mga litrato ng anak ko", zh: "我孩子的照片", vi: "Ảnh của con tôi", ko: "내 아이 사진" },
+  "Pick up": { es: "Recoger", tl: "Sunduin", zh: "接走", vi: "Đón", ko: "하원" },
+  "Pick up everyone": { es: "Recoger a todos", tl: "Sunduin lahat", zh: "全部接走", vi: "Đón tất cả", ko: "모두 하원" },
+  "Played outside a lot.": { es: "Jugó mucho afuera.", tl: "Maraming naglaro sa labas.", zh: "在户外玩了很久。", vi: "Chơi ngoài trời nhiều.", ko: "밖에서 많이 놀았어요." },
+  "Post this code by your door. Parents scan it with their phone at drop-off and pickup, and it shows up here with who did it.": { es: "Coloque este código junto a la puerta. Los padres lo escanean al entregar y recoger, y aparece aquí con quién lo hizo.", tl: "Idikit ang code na ito sa may pinto. I-scan ito ng magulang sa hatid at sundo, at lalabas dito kung sino ang gumawa.", zh: "把这个二维码贴在门口。家长送托和接走时用手机扫码，这里会显示是谁操作的。", vi: "Dán mã này cạnh cửa. Phụ huynh quét khi gửi và đón, và sẽ hiện ở đây kèm tên người thực hiện.", ko: "이 코드를 문 옆에 붙이세요. 부모님이 등하원 때 스캔하면 누가 했는지 여기에 표시됩니다." },
+  "Print door sign": { es: "Imprimir letrero", tl: "I-print ang karatula", zh: "打印门口标识", vi: "In biển dán cửa", ko: "문 안내문 인쇄" },
+  "Review & sign": { es: "Revisar y firmar", tl: "Suriin at pirmahan", zh: "查看并签署", vi: "Xem & ký", ko: "확인 후 서명" },
+  "Scan the QR code by the door to check in or out.": { es: "Escanee el código QR junto a la puerta para registrar entrada o salida.", tl: "I-scan ang QR code sa may pinto para mag-check in o out.", zh: "扫描门口的二维码来签到或签退。", vi: "Quét mã QR cạnh cửa để điểm danh vào hoặc ra.", ko: "문 옆 QR 코드를 스캔해 등하원하세요." },
+  "Scan to check in or out": { es: "Escanee para registrar entrada o salida", tl: "I-scan para mag-check in o out", zh: "扫码签到/签退", vi: "Quét để điểm danh", ko: "스캔해서 등하원" },
+  "Share with family": { es: "Compartir con la familia", tl: "I-share sa pamilya", zh: "分享给家长", vi: "Gửi cho gia đình", ko: "가족에게 공유" },
+  "Shared with families in the program": { es: "Compartir con las familias del programa", tl: "I-share sa mga pamilya sa program", zh: "分享给本托育的家庭", vi: "Chia sẻ với các gia đình trong chương trình", ko: "원 가족들과 공유" },
+  "Shared with my family only": { es: "Compartir solo con mi familia", tl: "I-share sa pamilya ko lang", zh: "仅分享给我家", vi: "Chỉ chia sẻ với gia đình tôi", ko: "우리 가족과만 공유" },
+  "Sign and send": { es: "Firmar y enviar", tl: "Pirmahan at ipadala", zh: "签署并发送", vi: "Ký và gửi", ko: "서명 후 보내기" },
+  "Sign here": { es: "Firme aquí", tl: "Pumirma dito", zh: "在此签名", vi: "Ký tại đây", ko: "여기에 서명" },
+  "Sign here with your finger or mouse": { es: "Firme aquí con el dedo o el ratón", tl: "Pumirma dito gamit ang daliri o mouse", zh: "用手指或鼠标在此签名", vi: "Ký bằng ngón tay hoặc chuột", ko: "손가락이나 마우스로 서명하세요" },
+  "Signed": { es: "Firmado", tl: "Napirmahan", zh: "已签署", vi: "Đã ký", ko: "서명 완료" },
+  "Signed copy": { es: "Copia firmada", tl: "Pirmadong kopya", zh: "签署副本", vi: "Bản đã ký", ko: "서명본" },
+  "Signed electronically in Alaga by": { es: "Firmado electrónicamente en Alaga por", tl: "Pinirmahan nang electronic sa Alaga ni", zh: "在 Alaga 中电子签署，签署人：", vi: "Ký điện tử trên Alaga bởi", ko: "Alaga 전자 서명:" },
+  "Tap Drop off or Pick up for your child.": { es: "Toque Entregar o Recoger para su hijo.", tl: "I-tap ang Ihatid o Sunduin para sa anak mo.", zh: "点“送托”或“接走”。", vi: "Chạm Gửi trẻ hoặc Đón cho con bạn.", ko: "아이의 등원 또는 하원을 누르세요." },
+  "Tap the link and sign in to Alaga.": { es: "Toque el enlace e inicie sesión en Alaga.", tl: "I-tap ang link at mag-sign in sa Alaga.", zh: "点开链接并登录 Alaga。", vi: "Chạm vào liên kết và đăng nhập Alaga.", ko: "링크를 눌러 Alaga에 로그인하세요." },
+  "That code isn't for this daycare. Scan the Alaga code by the door.": { es: "Ese código no es de esta guardería. Escanee el código de Alaga junto a la puerta.", tl: "Hindi para sa daycare na ito ang code. I-scan ang Alaga code sa may pinto.", zh: "这个二维码不属于本托育。请扫描门口的 Alaga 二维码。", vi: "Mã này không phải của nơi giữ trẻ này. Hãy quét mã Alaga cạnh cửa.", ko: "이 원의 코드가 아니에요. 문 옆 Alaga 코드를 스캔하세요." },
+  "To finish": { es: "Para terminar", tl: "Para matapos", zh: "还需", vi: "Để hoàn tất", ko: "완료하려면" },
+  "Your initials": { es: "Sus iniciales", tl: "Iyong inisyal", zh: "您的首字母", vi: "Chữ ký tắt của bạn", ko: "이니셜" },
+  "Your provider sees this right away. Someone else picking up? Message your provider first.": { es: "Su proveedor lo ve al instante. ¿Recoge otra persona? Avise primero a su proveedor.", tl: "Makikita agad ito ng provider. Iba ang susundo? Mag-message muna sa provider.", zh: "托育者会立即看到。由别人来接？请先给托育者发消息。", vi: "Người giữ trẻ thấy ngay. Người khác đón? Hãy nhắn cho người giữ trẻ trước.", ko: "운영자가 바로 확인해요. 다른 사람이 데려가나요? 먼저 운영자에게 메시지하세요." },
+  "agree to sign electronically": { es: "aceptar la firma electrónica", tl: "sumang-ayon sa electronic signature", zh: "同意电子签名", vi: "đồng ý ký điện tử", ko: "전자 서명 동의" },
+  "as": { es: "como", tl: "bilang", zh: "身份：", vi: "với tư cách", ko: "사용자:" },
+  "checked in at": { es: "entrada a las", tl: "naka-check in nang", zh: "签到于", vi: "đã vào lúc", ko: "등원 시간" },
+  "choose an option": { es: "elegir una opción", tl: "pumili ng isa", zh: "选择一项", vi: "chọn một mục", ko: "옵션 선택" },
+  "fill in the details": { es: "completar los datos", tl: "punan ang detalye", zh: "填写信息", vi: "điền thông tin", ko: "정보 입력" },
+  "form to sign": { es: "formulario por firmar", tl: "form na pipirmahan", zh: "份表格待签", vi: "mẫu đơn cần ký", ko: "개 서류 서명 필요" },
+  "forms to sign": { es: "formularios por firmar", tl: "forms na pipirmahan", zh: "份表格待签", vi: "mẫu đơn cần ký", ko: "개 서류 서명 필요" },
+  "initial each term": { es: "poner iniciales en cada condición", tl: "mag-inisyal sa bawat term", zh: "每条条款签首字母", vi: "ký tắt từng điều khoản", ko: "각 조항에 이니셜" },
+  "on": { es: "el", tl: "noong", zh: "日期：", vi: "vào", ko: "날짜:" },
+  "picked up at": { es: "recogido a las", tl: "nasundo nang", zh: "接走于", vi: "đã đón lúc", ko: "하원 시간" },
+  "sent by parent": { es: "enviado por el padre o madre", tl: "ipinadala ng magulang", zh: "家长已发送", vi: "phụ huynh đã gửi", ko: "부모가 보냄" },
+  "sign": { es: "firmar", tl: "pumirma", zh: "签名", vi: "ký tên", ko: "서명" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -3833,7 +3910,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   );
 }
 
-function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, providerInfo: initialProviderInfo, onboardingData, onExitToLanding, forceTier, meetingMode = false, startInParentMode = false }) {
+function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, providerInfo: initialProviderInfo, onboardingData, onExitToLanding, forceTier, meetingMode = false, startInParentMode = false, openCheckIn = false }) {
   const sfx = isEmpty ? "-empty" : "";
   const [providerInfo, saveProviderInfo] = usePersistentState(`provider-profile${sfx}`, {
     name: initialProviderInfo.name, city: initialProviderInfo.city, lic: initialProviderInfo.lic,
@@ -3920,6 +3997,10 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
   const [flexCareRequests, saveFlexCare] = usePersistentState(`flex-care${sfx}`, isEmpty ? [] : FLEX_CARE_DEFAULT);
   const [refunds, saveRefunds] = usePersistentState(`refunds${sfx}`, isEmpty ? [] : REFUNDS_DEFAULT);
   const [attendanceLog, saveAttendanceLog] = usePersistentState(`attendance${sfx}`, {});
+  // Notes (and photos) the provider shares with each family, by date then child.
+  const [dailyNotes, saveDailyNotes] = usePersistentState(`daily-notes${sfx}`, {});
+  // What the parent app offers: QR drop-off / pickup and the daily summary.
+  const [parentFeatures, saveParentFeatures] = usePersistentState(`parent-features${sfx}`, { qrCheckin: true, dailySummary: true });
   const [tuitionRates, saveTuitionRates] = usePersistentState(`tuition-rates${sfx}`, TUITION_RATES_DEFAULT);
 
   useEffect(() => {
@@ -4174,7 +4255,7 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
               {screen === "dashboard" && <Dashboard setScreen={setScreen} goToFamily={goToFamily} reminderSettings={reminderSettings} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} families={families} checklist={checklist} saveChecklist={saveChecklist} dismissedNotices={dismissedNotices} saveDismissedNotices={saveDismissedNotices} tuitionRates={tuitionRates} saveTuitionRates={saveTuitionRates} weeklySchedule={weeklySchedule} staff={staff} prospects={prospects} compDocs={compDocs} providerInfo={providerInfo} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} goToSubsidyFamily={goToSubsidyFamily} goToFlexRequest={goToFlexRequest} meetingMode={meetingMode} events={events} closures={closures} licensing={licensing} goToTour={() => setScreen("tours")} attendanceLog={attendanceLog} />}
               {FEATURES.checkin && screen === "checkin" && <CheckIn families={families} status={checkStatus} log={checkLog} setChildStatus={setChildStatus} />}
               {screen === "families" && <Families families={families} provider={providerInfo} onWithdraw={withdrawChild} openTuition={() => { setFinancesTab("tuition"); setScreen("payments"); }} goToSubsidy={(id) => { setScreen("subsidy"); setOpenFamId(id); }} onSave={saveOverride} logAccess={logAccess} setScreen={setScreen} openHousehold={openHousehold} setOpenHousehold={setOpenHousehold} tuitionRates={tuitionRates} alumni={alumni} />}
-              {screen === "bookings" && <Bookings families={families} schedule={fullWeek(weeklySchedule)} closures={closures} provider={providerInfo} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} />}
+              {screen === "bookings" && <Bookings families={families} schedule={fullWeek(weeklySchedule)} closures={closures} provider={providerInfo} staff={staff} tuitionRates={tuitionRates} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} attendanceLog={attendanceLog} saveAttendanceLog={saveAttendanceLog} onSave={saveOverride} highlightId={flexHighlightId} dailyNotes={dailyNotes} saveDailyNotes={saveDailyNotes} parentFeatures={parentFeatures} saveParentFeatures={saveParentFeatures} />}
               {screen === "staff" && <StaffScreen staff={staff} families={families} updateStaffMember={updateStaffMember} addStaffMember={addStaffMember} removeStaffMember={removeStaffMember} />}
               {screen === "calendar" && <CalendarScreen careSchedules={careSchedules} saveCareSchedules={saveCareSchedules} schedule={fullWeek(weeklySchedule)} saveSchedule={saveWeeklySchedule} closures={closures} saveClosures={saveClosures} events={events} saveEvents={saveEvents} families={families} threads={threads} saveThreads={saveThreads} />}
               {screen === "tours" && <ToursScreen providerInfo={providerInfo} prospects={prospects} updateProspect={updateProspect} addProspect={addProspect} removeProspect={removeProspect} logAccess={logAccess} startEnroll={(p) => setEnrollingProspectId(p.id)} />}
@@ -4217,7 +4298,7 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
           )}
         </>
       ) : (
-        <ParentApp careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} events={events} reminderSettings={reminderSettings} />
+        <ParentApp careCtx={{ attendanceLog, schedule: fullWeek(weeklySchedule), closures }} families={families} onExit={() => (startInParentMode ? (onExitToLanding && onExitToLanding()) : setMode("provider"))} showBackToProvider={!startInParentMode} status={checkStatus} setChildStatus={setChildStatus} provider={providerInfo} onSave={saveOverride} flexCareRequests={flexCareRequests} saveFlexCare={saveFlexCare} tuitionRates={tuitionRates} threads={threads} saveThreads={saveThreads} refunds={refunds} language={language} setLanguage={setLanguage} events={events} reminderSettings={reminderSettings} saveAttendanceLog={saveAttendanceLog} dailyNotes={dailyNotes} parentFeatures={parentFeatures} openCheckIn={openCheckIn} />
       )}
     </div>
     </LanguageContext.Provider>
@@ -4225,11 +4306,15 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
 }
 
 export default function AlagaMockup() {
-  const [entry, setEntry] = useState("landing"); // "landing" | "wizard" | "workspace" | "admin"
+  // Scanning the door code opens /?checkin=<daycare>. In the demo that goes
+  // straight to the sample daycare's parent check-in.
+  const fromDoorCode = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("checkin");
+  const [entry, setEntry] = useState(fromDoorCode ? "workspace" : "landing"); // "landing" | "wizard" | "workspace" | "admin"
   const [isEmptyWorkspace, setIsEmptyWorkspace] = useState(false);
-  const [forcedTier, setForcedTier] = useState(null);
+  const [forcedTier, setForcedTier] = useState(fromDoorCode ? "extended" : null);
   const [meetingMode, setMeetingMode] = useState(false);
-  const [startInParent, setStartInParent] = useState(false);
+  const [startInParent, setStartInParent] = useState(fromDoorCode);
+  const [openCheckIn, setOpenCheckIn] = useState(fromDoorCode);
   const [providerInfo, setProviderInfo] = useState(PROVIDER);
   const [onboardingData, setOnboardingData] = useState(null);
   const [authMode, setAuthMode] = useState("signin");
@@ -4300,7 +4385,7 @@ export default function AlagaMockup() {
       onBack={() => setEntry("landing")}
     /></LanguageContext.Provider>;
   }
-  return <Workspace initialLanguage={publicLanguage} onLanguageChange={setPublicLanguage} isEmpty={isEmptyWorkspace} providerInfo={providerInfo} onboardingData={onboardingData} onExitToLanding={() => setEntry("landing")} forceTier={forcedTier} meetingMode={meetingMode} startInParentMode={startInParent} />;
+  return <Workspace initialLanguage={publicLanguage} onLanguageChange={setPublicLanguage} isEmpty={isEmptyWorkspace} providerInfo={providerInfo} onboardingData={onboardingData} onExitToLanding={() => { setOpenCheckIn(false); if (fromDoorCode) window.history.replaceState(null, "", window.location.pathname); setEntry("landing"); }} forceTier={forcedTier} meetingMode={meetingMode} startInParentMode={startInParent} openCheckIn={openCheckIn} />;
 }
 
 /* --------------------------------- sidebar ------------------------------------ */
@@ -5879,7 +5964,8 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
                       <meta.icon size={14} color={meta.color} style={{ flexShrink: 0 }} />
                       <div style={{ minWidth: 0 }}>
                         <div style={{ fontSize: 12.5, fontWeight: 500 }}>{name}</div>
-                        {d.date && <div style={{ fontSize: 10.5, color: C.inkSoft }}>{d.fileName ? `${d.fileName} · ` : ""}{d.date}{d.expiresOn ? ` · ${t("renew by")} ${d.expiresOn}` : ""}</div>}
+                        {d.signed ? <div style={{ fontSize: 10.5, color: C.tealDark, fontWeight: 600 }}>✍️ {t("E-signed by")} {d.signed.by} · {d.signed.date} {d.signed.time || ""}{d.expiresOn ? ` · ${t("renew by")} ${d.expiresOn}` : ""}</div>
+                          : d.date && <div style={{ fontSize: 10.5, color: C.inkSoft }}>{d.fileName ? `${d.fileName} · ` : ""}{d.sentByParent ? `${t("sent by parent")} · ` : ""}{d.date}{d.expiresOn ? ` · ${t("renew by")} ${d.expiresOn}` : ""}</div>}
                       </div>
                     </button>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -5907,6 +5993,7 @@ function ChildDrawer({ child, onClose, goToSubsidy, onSave, logAccess, tuitionRa
                         <DateField value={d.expiresOn || ""} onChange={(v) => { const next = docs.map((x) => (x.id === d.id ? { ...x, expiresOn: v || "" } : x)); setDocs(next); onSave(child.id, { documents: next }); }} placeholder={t("e.g. when immunizations are next due")} />
                       </Field>
                       <div style={{ display: "flex", gap: 8 }}>
+                        {d.signed && <button onClick={() => printSignedForm(child, name, formSpec(d.id, { provider: provider || {}, f: child, parentName: d.signed.by, tuition: child.copay }), d.signed, { provider: provider || {}, t })} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.line}`, background: "#fff", fontSize: 11.5, fontWeight: 700, color: C.tealDark }}><Printer size={12} /> {t("Signed copy")}</button>}
                         {d.status === "submitted" && <IconBtn icon={Download} title={t("Download")} onClick={() => downloadCSV(`${(d.fileName || name).replace(/\s+/g, "-").toLowerCase()}-record.csv`, ["Document", "Status", "File on record", "Date"], [[name, trForm(t, d.status).label, d.fileName || "", d.date || ""]])} />}
                         <IconBtn icon={Upload} title={t("Replace file")} onClick={() => triggerDocUpload(d.id)} />
                       </div>
@@ -6002,7 +6089,7 @@ function StatBlock({ label, value }) {
 
 
 /* --------------------------------- bookings ------------------------------------ */
-function Bookings({ families, schedule = [], closures = [], provider, staff, tuitionRates, flexCareRequests, saveFlexCare, attendanceLog, saveAttendanceLog, onSave, highlightId }) {
+function Bookings({ families, schedule = [], closures = [], provider, staff, tuitionRates, flexCareRequests, saveFlexCare, attendanceLog, saveAttendanceLog, onSave, highlightId, dailyNotes = {}, saveDailyNotes, parentFeatures = {}, saveParentFeatures }) {
   const t = useT();
   const highlightRef = React.useRef(null);
   useEffect(() => {
@@ -6017,6 +6104,8 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
   const [selectedDate, setSelectedDate] = useState(TODAY);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [sheetsOpen, setSheetsOpen] = useState(false);
+  const [parentAppOpen, setParentAppOpen] = useState(false);
+  const [noteFor, setNoteFor] = useState(null);
   const [sheetMonth, setSheetMonth] = useState(0); // 0 = this month, -1 = last month
   const [sheetWho, setSheetWho] = useState("subsidized");
   const [bookingsTab, setBookingsTab] = useState(highlightId ? "flex" : "roster");
@@ -6141,6 +6230,10 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      {noteFor && (
+        <DailyNoteEditor f={noteFor} note={(dailyNotes[dateFull] || {})[noteFor.id]} t={t} onClose={() => setNoteFor(null)}
+          onSave={(n) => { const day = { ...(dailyNotes[dateFull] || {}) }; if (n) day[noteFor.id] = n; else delete day[noteFor.id]; saveDailyNotes({ ...dailyNotes, [dateFull]: day }); setNoteFor(null); }} />
+      )}
       <div style={{ display: "flex", gap: 6 }}>
         {[["roster", "Roster & Attendance"], ["flex", "Extra care"]].map(([id, label]) => (
           <button key={id} onClick={() => setBookingsTab(id)} style={{
@@ -6173,7 +6266,10 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
             </div>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
-            <button onClick={() => { setSheetsOpen(!sheetsOpen); setPickerOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: `1px solid ${C.line}`, background: sheetsOpen ? C.tealTint : "#fff", color: C.tealDark, fontWeight: 700, fontSize: 12.5 }}>
+            <button onClick={() => { setParentAppOpen(!parentAppOpen); setSheetsOpen(false); setPickerOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: `1px solid ${C.line}`, background: parentAppOpen ? C.tealTint : "#fff", fontSize: 12.5, fontWeight: 600, color: C.tealDark }}>
+              <ScanLine size={14} /> {t("Parent check-in & notes")}
+            </button>
+            <button onClick={() => { setSheetsOpen(!sheetsOpen); setPickerOpen(false); setParentAppOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: `1px solid ${C.line}`, background: sheetsOpen ? C.tealTint : "#fff", color: C.tealDark, fontWeight: 700, fontSize: 12.5 }}>
               <Printer size={14} /> {t("Sign-in sheets")}
             </button>
             <button onClick={() => { setPickerOpen(!pickerOpen); setSheetsOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: `1px solid ${C.line}`, background: pickerOpen ? C.tealTint : "#fff", color: C.tealDark, fontWeight: 700, fontSize: 12.5 }}>
@@ -6198,6 +6294,28 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
             </div>
           );
         })()}
+        {parentAppOpen && (
+          <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.line}`, display: "flex", gap: 18, flexWrap: "wrap", alignItems: "flex-start" }}>
+            <div style={{ background: "#fff", border: `1px solid ${C.line}`, borderRadius: 12, padding: 8, lineHeight: 0, opacity: parentFeatures.qrCheckin !== false ? 1 : 0.35 }}>
+              <QrImage text={checkinUrlOf(provider)} size={128} />
+            </div>
+            <div style={{ flex: 1, minWidth: 230, display: "flex", flexDirection: "column", gap: 10 }}>
+              <label style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 13 }}>
+                <input type="checkbox" checked={parentFeatures.qrCheckin !== false} onChange={(e) => saveParentFeatures({ ...parentFeatures, qrCheckin: e.target.checked })} style={{ width: 17, height: 17, marginTop: 1, accentColor: C.teal }} />
+                <span><b>{t("Parents check in and out with a QR code")}</b><br /><span style={{ color: C.inkSoft, fontSize: 12 }}>{t("Post this code by your door. Parents scan it with their phone at drop-off and pickup, and it shows up here with who did it.")}</span></span>
+              </label>
+              {parentFeatures.qrCheckin !== false && (
+                <button onClick={() => printDoorPoster(provider, t)} style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 6, padding: "7px 12px", borderRadius: 8, border: "none", background: C.teal, color: "#fff", fontSize: 12, fontWeight: 700 }}>
+                  <Printer size={13} /> {t("Print door sign")}
+                </button>
+              )}
+              <label style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 13 }}>
+                <input type="checkbox" checked={parentFeatures.dailySummary !== false} onChange={(e) => saveParentFeatures({ ...parentFeatures, dailySummary: e.target.checked })} style={{ width: 17, height: 17, marginTop: 1, accentColor: C.teal }} />
+                <span><b>{t("Daily summary for parents")}</b><br /><span style={{ color: C.inkSoft, fontSize: 12 }}>{t("Parents see drop-off and pickup times automatically. Add an optional note or photo from a child's ⋯ menu.")}</span></span>
+              </label>
+            </div>
+          </div>
+        )}
         {pickerOpen && (
           <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.line}`, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
             <input type="date" value={dateISO} onChange={(e) => { if (e.target.value) { const [y, m, d] = e.target.value.split("-").map(Number); setSelectedDate(new Date(y, m - 1, d)); } }} style={inputStyle} />
@@ -6237,9 +6355,9 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
               const st = quickState(f); const r = recordOf(f.id);
               const look = {
                 expected: { bg: "#fff", border: C.line, label: t("Tap to check in"), color: C.inkSoft },
-                here: { bg: C.tealTint, border: C.teal, label: `${t("Here since")} ${r.in && r.in !== "—" ? r.in : ""}`, color: C.tealDark },
+                here: { bg: C.tealTint, border: C.teal, label: `${t("Here since")} ${r.in && r.in !== "—" ? r.in : ""}${r.inBy ? ` · ${r.inBy.split(" ")[0]}` : ""}`, color: C.tealDark },
                 away: { bg: C.amberTint, border: C.amber, label: t("At appointment — tap when back"), color: "#7A5620" },
-                gone: { bg: "#F1EEE5", border: C.line, label: `${t("Picked up")} ${r.out || ""}`, color: C.inkSoft },
+                gone: { bg: "#F1EEE5", border: C.line, label: `${t("Picked up")} ${r.out || ""}${r.outBy ? ` · ${r.outBy.split(" ")[0]}` : ""}`, color: C.inkSoft },
                 absent: { bg: "#F1EEE5", border: C.line, label: t("Absent"), color: C.inkSoft },
               }[st];
               return (
@@ -6250,6 +6368,7 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
                     </div>
                     <div style={{ fontSize: 16, fontWeight: 700, color: C.ink, lineHeight: 1.2 }}>{f.child.split(" ")[0]}<div style={{ fontSize: 12, fontWeight: 500, color: C.inkSoft }}>{f.child.split(" ").slice(1).join(" ")}</div></div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: look.color }}>{look.label}</div>
+                    {(dailyNotes[dateFull] || {})[f.id] && <div style={{ fontSize: 11.5, fontWeight: 700, color: C.tealDark }}>💬 {t("Note shared")}</div>}
                   </button>
                   <button onClick={() => setQuickMenu(quickMenu === f.id ? null : f.id)} aria-label={t("More options")} style={{ position: "absolute", top: 6, right: 6, width: 34, height: 34, borderRadius: 10, border: "none", background: "rgba(255,255,255,0.85)", color: C.inkSoft, fontSize: 18, fontWeight: 700, lineHeight: 1 }}>⋯</button>
                   {quickMenu === f.id && (
@@ -6259,6 +6378,7 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
                         st === "here" && [t("Leaving for an appointment"), () => stepOut(f.id)],
                         st === "away" && [t("Not coming back today"), () => notReturning(f.id)],
                         st === "gone" && [t("Undo pickup"), () => { const { out, outReason, ...rest } = r; setRecord(f.id, rest); }],
+                        saveDailyNotes && parentFeatures.dailySummary !== false && [(dailyNotes[dateFull] || {})[f.id] ? t("Edit note for parents") : t("Note for parents"), () => setNoteFor(f)],
                         st !== "expected" && [t("Clear today's record"), () => clearRecord(f.id)],
                       ].filter(Boolean).map(([label, fn]) => (
                         <button key={label} onClick={() => { fn(); setQuickMenu(null); }} style={{ width: "100%", textAlign: "left", padding: "11px 12px", borderRadius: 8, border: "none", background: "none", fontSize: 14, fontWeight: 600, color: C.ink }}>{label}</button>
@@ -6318,6 +6438,11 @@ function Bookings({ families, schedule = [], closures = [], provider, staff, tui
                       </div>
                       <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
                         <span style={{ fontSize: 12.5, color: C.inkSoft }}>{childHours(f)}</span>
+                        {isToday && saveDailyNotes && parentFeatures.dailySummary !== false && (
+                          <button onClick={() => setNoteFor(f)} title={t("Note for parents")} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 8px", borderRadius: 7, border: `1px solid ${C.line}`, background: (dailyNotes[dateFull] || {})[f.id] ? C.tealTint : "#fff", fontSize: 11, fontWeight: 700, color: C.tealDark }}>
+                            <StickyNote size={12} /> <span className="icon-btn-label">{t("Note")}</span>
+                          </button>
+                        )}
                         <button onClick={() => (isMoving ? setMovingId(null) : startMove(f))} title={t("Move classroom")} style={{
                           display: "flex", alignItems: "center", gap: 5, padding: "5px 8px", borderRadius: 7, border: `1px solid ${C.line}`, background: isMoving ? C.tealTint : "#fff", fontSize: 11, fontWeight: 700, color: C.tealDark,
                         }}>
@@ -12094,6 +12219,426 @@ function SmallBtn({ icon: Icon, label }) {
 /* ===================================================================
    PARENT APP — read-only subsidy view for the family
    =================================================================== */
+/* ------------------- parent e-signing, QR check-in, daily notes ------------------- */
+// Forms a parent can review and sign in the app. The others (immunizations,
+// physician's report) come from a doctor, so parents send a photo or PDF.
+const SIGNABLE_DOCS = ["enroll", "emerg", "photo", "handbook"];
+
+// Sample wording for the demo daycare. A real provider replaces this with
+// their own forms (reviewed by their attorney) before using e-signing.
+function formSpec(docId, { provider = {}, f, parentName = "", tuition = 0, dueDay = 1, lateFee = "" }) {
+  const p = provider.name || "the provider";
+  const child = f?.child || "";
+  if (docId === "enroll") return {
+    intro: `This agreement is between ${parentName || "the parent / guardian"} and ${p} for the care of ${child}.`,
+    facts: [["Child", child], ["Schedule", [f?.sessionsApproved, f?.sessionLength].filter(Boolean).join(" · ") || "As agreed"], ["Monthly tuition (your cost)", tuition > 0 ? money(tuition) : "$0 — covered by care benefit"], ["Payment due", `Day ${dueDay} of each month`]],
+    clauses: [
+      { id: "pay", text: `Tuition is due on day ${dueDay} of each month whether or not ${child} attends every scheduled day.${lateFee ? ` A late fee of ${lateFee} applies after the due date.` : ""}`, initial: true },
+      { id: "closures", text: `${p} is closed on the holidays and dates shared in advance. Tuition is not reduced for scheduled closures.`, initial: true },
+      { id: "notice", text: "Either party may end this agreement with two weeks' written notice.", initial: true },
+      { id: "pickup", text: "Children are released only to the parents and authorized adults listed in the enrollment file. Photo ID may be requested.", initial: true },
+    ],
+  };
+  if (docId === "emerg") return {
+    intro: `I authorize ${p} to obtain emergency medical care for ${child} if I cannot be reached.`,
+    fields: [{ id: "doctor", label: "Child's doctor" }, { id: "doctorPhone", label: "Doctor's phone" }, { id: "medical", label: "Allergies or medical conditions (write None if none)" }],
+    clauses: [
+      { id: "consent", text: `In an emergency, ${p} may call 911 and have ${child} transported to the nearest hospital. I will be contacted as soon as possible.`, initial: true },
+      { id: "cost", text: "I am responsible for the cost of any emergency treatment.", initial: true },
+    ],
+  };
+  if (docId === "photo") return {
+    intro: `${p} sometimes takes photos of children during activities.`,
+    choice: { id: "photos", label: "Photos of my child", options: ["Shared with my family only", "Shared with families in the program", "Not taken or shared"] },
+    clauses: [{ id: "social", text: `${p} will never post ${child}'s photo publicly or on social media without asking me first.`, initial: true }],
+  };
+  return {
+    intro: `I received ${p}'s parent handbook and policies.`,
+    clauses: [
+      { id: "read", text: "I have read the handbook, including the illness, pickup, and payment policies.", initial: true },
+      { id: "ask", text: `I know I can ask ${p} about any policy I don't understand.`, initial: false },
+    ],
+  };
+}
+
+function printSignedForm(f, docName, spec, signed, { provider = {}, t = (x) => x } = {}) {
+  const rows = (spec.facts || []).map(([k, v]) => `<tr><th>${escapeHTML(t(k))}</th><td>${escapeHTML(v)}</td></tr>`).join("");
+  const fields = (spec.fields || []).map((x) => `<tr><th>${escapeHTML(t(x.label))}</th><td>${escapeHTML(signed.fields?.[x.id] || "—")}</td></tr>`).join("");
+  const clauses = (spec.clauses || []).map((c) => `<tr><td style="width:62px"><b>${escapeHTML(c.initial ? signed.initials || "" : "")}</b></td><td>${escapeHTML(c.text)}</td></tr>`).join("");
+  printHTML(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHTML(t(docName))} — ${escapeHTML(f.child)}</title><style>${PRINT_BASE_CSS}
+    .sig img { height: 60px; display: block; } .audit { margin-top: 14px; font-size: 8.5pt; color: #444; border-top: 1px solid #ccc; padding-top: 6px; }</style></head><body>
+    ${printHeader(provider, t(docName), `${t("Signed")} ${signed.date}`)}
+    <p>${escapeHTML(spec.intro)}</p>
+    ${rows || fields ? `<table class="kv">${rows}${fields}</table>` : ""}
+    ${spec.choice ? `<h2>${escapeHTML(t(spec.choice.label))}</h2><p>☑ ${escapeHTML(t(signed.choice || ""))}</p>` : ""}
+    ${clauses ? `<h2>${escapeHTML(t("Initialed terms"))}</h2><table class="grid">${clauses}</table>` : ""}
+    <div class="sign"><div class="sig">${signed.signature ? `<img src="${signed.signature}" alt="">` : '<span class="line"></span>'}${escapeHTML(t("Parent / guardian signature"))}: ${escapeHTML(signed.by)}</div><div><span class="line" style="border:none">${escapeHTML(signed.date)}</span>${escapeHTML(t("Date"))}</div></div>
+    <div class="audit">${escapeHTML(t("Signed electronically in Alaga by"))} ${escapeHTML(signed.by)} ${escapeHTML(t("on"))} ${escapeHTML(signed.date)} ${escapeHTML(signed.time || "")}.</div>
+  </body></html>`);
+}
+
+// A drawn signature (finger, stylus or mouse). Reports a PNG data URL, or "".
+function SignaturePad({ onChange, t }) {
+  const ref = React.useRef(null);
+  const drawing = React.useRef(false);
+  const dirty = React.useRef(false);
+  useEffect(() => {
+    const c = ref.current; if (!c) return;
+    const ratio = window.devicePixelRatio || 1;
+    const w = c.clientWidth, h = c.clientHeight;
+    c.width = w * ratio; c.height = h * ratio;
+    const ctx = c.getContext("2d"); ctx.scale(ratio, ratio);
+    ctx.lineWidth = 2.2; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.strokeStyle = "#1F2A24";
+  }, []);
+  const pos = (e) => { const r = ref.current.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  const down = (e) => { e.preventDefault(); drawing.current = true; ref.current.setPointerCapture?.(e.pointerId); const ctx = ref.current.getContext("2d"); const [x, y] = pos(e); ctx.beginPath(); ctx.moveTo(x, y); };
+  const move = (e) => { if (!drawing.current) return; e.preventDefault(); const ctx = ref.current.getContext("2d"); const [x, y] = pos(e); ctx.lineTo(x, y); ctx.stroke(); dirty.current = true; };
+  const up = () => { if (!drawing.current) return; drawing.current = false; if (dirty.current) onChange(ref.current.toDataURL("image/png")); };
+  const clear = () => { const c = ref.current; c.getContext("2d").clearRect(0, 0, c.width, c.height); dirty.current = false; onChange(""); };
+  return (
+    <div>
+      <div style={{ position: "relative", border: `1.5px dashed ${C.line}`, borderRadius: 12, background: "#fff" }}>
+        <canvas ref={ref} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerLeave={up} aria-label={t("Sign here")}
+          style={{ display: "block", width: "100%", height: 140, touchAction: "none", cursor: "crosshair" }} />
+        <div style={{ position: "absolute", left: 14, right: 14, bottom: 30, borderBottom: `1px solid ${C.line}`, pointerEvents: "none" }} />
+        <div style={{ position: "absolute", left: 14, bottom: 10, fontSize: 11, color: C.inkSoft, pointerEvents: "none" }}>✕ {t("Sign here with your finger or mouse")}</div>
+      </div>
+      <button onClick={clear} style={{ marginTop: 6, background: "none", border: "none", color: C.teal, fontSize: 12.5, fontWeight: 700, padding: 4 }}>{t("Clear signature")}</button>
+    </div>
+  );
+}
+
+// Full-screen form on phones, a centered panel on larger screens.
+function ParentSheet({ title, onClose, children, footer, isMobile, t }) {
+  useEffect(() => { const o = document.body.style.overflow; document.body.style.overflow = "hidden"; return () => { document.body.style.overflow = o; }; }, []);
+  return (
+    <div role="dialog" aria-modal="true" aria-label={title} style={{ position: "fixed", inset: 0, zIndex: 80, background: "rgba(31,42,36,0.45)", display: "flex", alignItems: isMobile ? "stretch" : "center", justifyContent: "center", padding: isMobile ? 0 : 24 }}>
+      <div style={{ background: C.cream, width: "100%", maxWidth: isMobile ? "none" : 600, maxHeight: isMobile ? "none" : "92vh", height: isMobile ? "100%" : "auto", borderRadius: isMobile ? 0 : 18, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "14px 16px", background: C.paper, borderBottom: `1px solid ${C.line}` }}>
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 18, fontWeight: 600, minWidth: 0 }}>{title}</div>
+          <button onClick={onClose} aria-label={t("Close")} style={{ width: 38, height: 38, borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><X size={17} /></button>
+        </div>
+        <div style={{ flex: 1, overflowY: "auto", padding: 16, display: "flex", flexDirection: "column", gap: 14 }}>{children}</div>
+        {footer && <div style={{ padding: "12px 16px", paddingBottom: "max(12px, env(safe-area-inset-bottom))", background: C.paper, borderTop: `1px solid ${C.line}` }}>{footer}</div>}
+      </div>
+    </div>
+  );
+}
+
+function SignFormSheet({ f, docName, spec, parentName, onClose, onSigned, isMobile, t }) {
+  const [initials, setInitials] = useState("");
+  const [initialed, setInitialed] = useState({});
+  const [fields, setFields] = useState({});
+  const [choice, setChoice] = useState("");
+  const [name, setName] = useState(parentName);
+  const [sig, setSig] = useState("");
+  const [agree, setAgree] = useState(false);
+  const needInitials = (spec.clauses || []).filter((c) => c.initial);
+  const ready = name.trim().length > 1 && sig && agree && (!needInitials.length || (initials.trim() && needInitials.every((c) => initialed[c.id])))
+    && (spec.fields || []).every((x) => (fields[x.id] || "").trim()) && (!spec.choice || choice);
+  const missing = [
+    (spec.fields || []).some((x) => !(fields[x.id] || "").trim()) && t("fill in the details"),
+    spec.choice && !choice && t("choose an option"),
+    needInitials.length > 0 && !(initials.trim() && needInitials.every((c) => initialed[c.id])) && t("initial each term"),
+    !sig && t("sign"),
+    !agree && t("agree to sign electronically"),
+  ].filter(Boolean);
+  const submit = () => {
+    if (!ready) return;
+    const now = new Date();
+    onSigned({ by: name.trim(), date: todayMDY(), time: now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }), initials: initials.trim().toUpperCase(), fields, choice, signature: sig });
+  };
+  const box = { background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, padding: 14 };
+  const inp = { ...inputStyle, width: "100%", padding: "10px 12px", borderRadius: 9, boxSizing: "border-box", fontSize: 14 };
+  return (
+    <ParentSheet title={t(docName)} onClose={onClose} isMobile={isMobile} t={t}
+      footer={
+        <>
+          {!ready && missing.length > 0 && <div style={{ fontSize: 12, color: C.inkSoft, marginBottom: 8 }}>{t("To finish")}: {missing.join(" · ")}</div>}
+          <button onClick={submit} disabled={!ready} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "13px 0", borderRadius: 11, border: "none", background: ready ? C.teal : "#C9C4B4", color: "#fff", fontWeight: 700, fontSize: 15, minHeight: 48 }}>
+            <Pencil size={15} /> {t("Sign and send")}
+          </button>
+        </>
+      }>
+      <div style={{ fontSize: 12.5, color: C.inkSoft }}>{f.child}</div>
+      <div style={{ ...box, fontSize: 14, lineHeight: 1.55 }}>
+        {spec.intro}
+        {spec.facts && (
+          <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.3fr)", gap: "6px 12px", fontSize: 13 }}>
+            {spec.facts.map(([k, v]) => <React.Fragment key={k}><div style={{ color: C.inkSoft }}>{t(k)}</div><div style={{ fontWeight: 600 }}>{v}</div></React.Fragment>)}
+          </div>
+        )}
+      </div>
+      {spec.fields && (
+        <div style={{ ...box, display: "flex", flexDirection: "column", gap: 10 }}>
+          {spec.fields.map((x) => <Field key={x.id} label={t(x.label)}><input value={fields[x.id] || ""} onChange={(e) => setFields({ ...fields, [x.id]: e.target.value })} style={inp} /></Field>)}
+        </div>
+      )}
+      {spec.choice && (
+        <div style={box}>
+          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>{t(spec.choice.label)}</div>
+          {spec.choice.options.map((o) => (
+            <label key={o} style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 0", fontSize: 14, minHeight: 40 }}>
+              <input type="radio" name="sign-choice" checked={choice === o} onChange={() => setChoice(o)} style={{ width: 18, height: 18, accentColor: C.teal }} /> {t(o)}
+            </label>
+          ))}
+        </div>
+      )}
+      {spec.clauses && spec.clauses.length > 0 && (
+        <div style={box}>
+          {needInitials.length > 0 && (
+            <Field label={t("Your initials")}>
+              <input value={initials} onChange={(e) => setInitials(e.target.value.slice(0, 4))} placeholder={initialsOf(parentName)} style={{ ...inp, width: 110, textTransform: "uppercase", fontWeight: 700 }} />
+            </Field>
+          )}
+          <div style={{ display: "flex", flexDirection: "column", marginTop: needInitials.length ? 10 : 0 }}>
+            {spec.clauses.map((c) => {
+              const on = !!initialed[c.id];
+              return (
+                <div key={c.id} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "10px 0", borderTop: `1px solid ${C.line}` }}>
+                  {c.initial ? (
+                    <button onClick={() => initials.trim() && setInitialed({ ...initialed, [c.id]: !on })} disabled={!initials.trim()} aria-pressed={on}
+                      style={{ width: 54, height: 40, flexShrink: 0, borderRadius: 9, border: `1.5px ${on ? "solid" : "dashed"} ${on ? C.teal : C.line}`, background: on ? C.tealTint : "#fff", color: on ? C.tealDark : C.inkSoft, fontWeight: 800, fontSize: on ? 14 : 11 }}>
+                      {on ? initials.toUpperCase() : t("Initial")}
+                    </button>
+                  ) : <div style={{ width: 54, flexShrink: 0 }} />}
+                  <div style={{ fontSize: 13.5, lineHeight: 1.5 }}>{c.text}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      <div style={{ ...box, display: "flex", flexDirection: "column", gap: 10 }}>
+        <Field label={t("Full name")}><input value={name} onChange={(e) => setName(e.target.value)} style={inp} /></Field>
+        <SignaturePad onChange={setSig} t={t} />
+        <label style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 13, lineHeight: 1.45 }}>
+          <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} style={{ width: 18, height: 18, marginTop: 1, accentColor: C.teal, flexShrink: 0 }} />
+          {t("I agree that my electronic signature is the same as signing this form by hand.")}
+        </label>
+        <div style={{ fontSize: 12, color: C.inkSoft }}>{t("Date")}: {todayMDY()}</div>
+      </div>
+    </ParentSheet>
+  );
+}
+
+// QR code drawn in the browser (no outside service).
+const checkinCodeOf = (provider) => String(provider?.name || "daycare").toLowerCase().replace(/['’]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "daycare";
+const checkinUrlOf = (provider) => `${typeof window !== "undefined" ? window.location.origin : "https://alagacore.com"}/?checkin=${checkinCodeOf(provider)}`;
+function QrImage({ text, size = 180 }) {
+  const [src, setSrc] = useState("");
+  useEffect(() => {
+    let alive = true;
+    import("qrcode").then((m) => (m.default || m).toDataURL(text, { margin: 1, width: size * 2, color: { dark: "#1F2A24", light: "#FFFFFF" } })).then((u) => { if (alive) setSrc(u); }).catch(() => {});
+    return () => { alive = false; };
+  }, [text, size]);
+  return src ? <img src={src} alt="QR code" width={size} height={size} style={{ display: "block" }} /> : <div style={{ width: size, height: size, background: "#fff" }} />;
+}
+async function printDoorPoster(provider, t = (x) => x) {
+  const m = await import("qrcode");
+  const url = checkinUrlOf(provider);
+  const src = await (m.default || m).toDataURL(url, { margin: 1, width: 900 });
+  printHTML(`<!doctype html><html><head><meta charset="utf-8"><title>${escapeHTML(t("Check-in QR code"))}</title><style>
+    @page { size: letter; margin: 0.6in; } body { font-family: Helvetica, Arial, sans-serif; text-align: center; color: #1F2A24; margin: 0; }
+    h1 { font-size: 34pt; margin: 30px 0 6px; } .sub { font-size: 15pt; color: #444; margin-bottom: 26px; } img { width: 5.2in; height: 5.2in; }
+    ol { text-align: left; display: inline-block; font-size: 13pt; line-height: 1.7; margin-top: 22px; } .name { font-size: 18pt; font-weight: bold; margin-top: 10px; }
+  </style></head><body>
+    <div class="name">${escapeHTML(provider.name || "")}</div>
+    <h1>${escapeHTML(t("Scan to check in or out"))}</h1>
+    <div class="sub">${escapeHTML(t("Drop-off and pickup, right from your phone"))}</div>
+    <img src="${src}" alt="">
+    <div><ol><li>${escapeHTML(t("Open your phone's camera and point it at the code."))}</li><li>${escapeHTML(t("Tap the link and sign in to Alaga."))}</li><li>${escapeHTML(t("Tap Drop off or Pick up for your child."))}</li></ol></div>
+  </body></html>`);
+}
+
+// Camera scanner for the code at the door. Uses the browser's built-in QR
+// reader where there is one, otherwise a small bundled one.
+function QrScanner({ onResult, t }) {
+  const videoRef = React.useRef(null);
+  const [err, setErr] = useState("");
+  useEffect(() => {
+    let stream, raf, stopped = false, detector = null, jsQR = null;
+    const canvas = document.createElement("canvas");
+    (async () => {
+      try {
+        if (!navigator.mediaDevices?.getUserMedia) throw new Error("no camera");
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+        if (stopped) return;
+        const v = videoRef.current; v.srcObject = stream; v.setAttribute("playsinline", ""); await v.play();
+        if ("BarcodeDetector" in window) { try { detector = new window.BarcodeDetector({ formats: ["qr_code"] }); } catch (e) { detector = null; } }
+        if (!detector) jsQR = (await import("jsqr")).default;
+        const tick = async () => {
+          if (stopped) return;
+          if (v.readyState >= 2) {
+            try {
+              if (detector) { const r = await detector.detect(v); if (r[0]?.rawValue) { onResult(r[0].rawValue); return; } }
+              else {
+                canvas.width = v.videoWidth; canvas.height = v.videoHeight;
+                const ctx = canvas.getContext("2d"); ctx.drawImage(v, 0, 0);
+                const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(img.data, img.width, img.height);
+                if (code?.data) { onResult(code.data); return; }
+              }
+            } catch (e) { /* keep trying */ }
+          }
+          raf = requestAnimationFrame(tick);
+        };
+        tick();
+      } catch (e) { if (!stopped) setErr(t("Couldn't open the camera. Allow camera access, or use your phone's camera app to scan the code.")); }
+    })();
+    return () => { stopped = true; cancelAnimationFrame(raf); stream && stream.getTracks().forEach((tr) => tr.stop()); };
+  }, []);
+  return (
+    <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", background: "#111", aspectRatio: "1 / 1", width: "100%", maxWidth: 360, margin: "0 auto" }}>
+      <video ref={videoRef} muted style={{ width: "100%", height: "100%", objectFit: "cover", display: err ? "none" : "block" }} />
+      {!err && <div style={{ position: "absolute", inset: "18%", border: "3px solid rgba(255,255,255,0.85)", borderRadius: 18, pointerEvents: "none" }} />}
+      {err && <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: 24, color: "#fff", fontSize: 13.5, textAlign: "center", lineHeight: 1.5 }}>{err}</div>}
+    </div>
+  );
+}
+
+// Parent drop-off / pickup. Opened by scanning the door code (with the phone's
+// camera app, or the scanner here). Records go straight to the provider's
+// Attendance with who did the drop-off or pickup.
+function CheckInSheet({ kids, parentName, provider, attendanceLog, saveAttendanceLog, scanned: scannedInitially, onClose, isMobile, t }) {
+  const [scanned, setScanned] = useState(!!scannedInitially);
+  const [scanErr, setScanErr] = useState("");
+  const [done, setDone] = useState("");
+  const today = todayMDY();
+  const day = (attendanceLog || {})[today] || {};
+  const rec = (id) => { const v = day[id]; return v === true ? { in: "—" } : v || {}; };
+  const now = () => new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  const stateOf = (f) => { const r = rec(f.id); return r.absent ? "absent" : r.out ? "gone" : r.in ? "here" : "expected"; };
+  const write = (changes) => {
+    const copy = { ...day };
+    changes.forEach(([id, next]) => { copy[id] = next; });
+    saveAttendanceLog({ ...(attendanceLog || {}), [today]: copy });
+  };
+  const act = (list) => {
+    const time = now();
+    const changes = list.map((f) => {
+      const st = stateOf(f); const r = rec(f.id);
+      if (st === "expected" || st === "absent") return [f.id, { in: time, inBy: parentName, via: "qr" }];
+      if (st === "here") return [f.id, { ...r, out: time, outBy: parentName, via: "qr" }];
+      return null;
+    }).filter(Boolean);
+    if (!changes.length) return;
+    write(changes);
+    const firstState = stateOf(list[0]);
+    setDone(`${list.map((f) => f.child.split(" ")[0]).join(" & ")} — ${firstState === "here" ? t("picked up at") : t("checked in at")} ${time}`);
+  };
+  const onScan = (text) => {
+    if (String(text).includes(`checkin=${checkinCodeOf(provider)}`)) { setScanned(true); setScanErr(""); }
+    else setScanErr(t("That code isn't for this daycare. Scan the Alaga code by the door."));
+  };
+  const actionable = kids.filter((f) => ["expected", "absent", "here"].includes(stateOf(f)));
+  const sameNext = actionable.length > 1 && actionable.every((f) => (stateOf(f) === "here") === (stateOf(actionable[0]) === "here"));
+  const big = { width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "14px 0", borderRadius: 12, border: "none", fontWeight: 700, fontSize: 15.5, minHeight: 52 };
+  return (
+    <ParentSheet title={t("Drop-off & pickup")} onClose={onClose} isMobile={isMobile} t={t}>
+      {!scanned ? (
+        <>
+          <div style={{ fontSize: 14, lineHeight: 1.5, textAlign: "center" }}>{t("Scan the QR code by the door to check in or out.")}</div>
+          <QrScanner onResult={onScan} t={t} />
+          {scanErr && <div style={{ fontSize: 13, color: C.danger, textAlign: "center" }}>{scanErr}</div>}
+          <button onClick={() => setScanned(true)} style={{ alignSelf: "center", background: "none", border: `1px dashed ${C.line}`, borderRadius: 9, padding: "8px 14px", fontSize: 12.5, fontWeight: 600, color: C.inkSoft }}>{t("Demo: skip scanning")}</button>
+        </>
+      ) : (
+        <>
+          {done && (
+            <div role="status" style={{ display: "flex", alignItems: "center", gap: 10, padding: "13px 14px", borderRadius: 12, background: C.tealTint, color: C.tealDark, fontWeight: 700, fontSize: 14 }}>
+              <CheckCircle2 size={20} /> {done}
+            </div>
+          )}
+          <div style={{ fontSize: 12.5, color: C.inkSoft, display: "flex", alignItems: "center", gap: 6 }}><CheckCircle2 size={13} color={C.teal} /> {t("At")} {provider.name} · {t("as")} {parentName}</div>
+          {sameNext && (
+            <button onClick={() => act(actionable)} style={{ ...big, background: C.teal, color: "#fff" }}>
+              {stateOf(actionable[0]) === "here" ? t("Pick up everyone") : t("Drop off everyone")} ({actionable.length})
+            </button>
+          )}
+          {kids.map((f) => {
+            const st = stateOf(f); const r = rec(f.id);
+            return (
+              <div key={f.id} style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 14, padding: 14, display: "flex", flexDirection: "column", gap: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ width: 44, height: 44, borderRadius: "50%", background: f.color, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: 18, flexShrink: 0 }}>{f.child[0]}</div>
+                  <div>
+                    <div style={{ fontSize: 15, fontWeight: 700 }}>{f.child}</div>
+                    <div style={{ fontSize: 12.5, color: C.inkSoft }}>
+                      {st === "here" ? `${t("Checked in at")} ${r.in}${r.inBy ? ` · ${r.inBy}` : ""}` : st === "gone" ? `${t("Picked up at")} ${r.out}${r.outBy ? ` · ${r.outBy}` : ""}` : st === "absent" ? t("Marked absent today") : t("Not checked in yet")}
+                    </div>
+                  </div>
+                </div>
+                {st === "gone" ? null : st === "here"
+                  ? <button onClick={() => act([f])} style={{ ...big, background: "#fff", color: C.tealDark, border: `2px solid ${C.teal}` }}><LogOut size={17} /> {t("Pick up")}</button>
+                  : <button onClick={() => act([f])} style={{ ...big, background: C.teal, color: "#fff" }}><CheckCircle2 size={17} /> {t("Drop off")}</button>}
+              </div>
+            );
+          })}
+          <div style={{ fontSize: 11.5, color: C.inkSoft, lineHeight: 1.5, display: "flex", gap: 6 }}><Info size={12} style={{ flexShrink: 0, marginTop: 2 }} /> {t("Your provider sees this right away. Someone else picking up? Message your provider first.")}</div>
+        </>
+      )}
+    </ParentSheet>
+  );
+}
+
+// Shrink a photo before saving so notes stay small.
+function shrinkImage(file, max = 900) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const s = Math.min(1, max / Math.max(img.width, img.height));
+        const c = document.createElement("canvas"); c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        resolve(c.toDataURL("image/jpeg", 0.8));
+      };
+      img.onerror = reject; img.src = r.result;
+    };
+    r.onerror = reject; r.readAsDataURL(file);
+  });
+}
+
+// Provider: today's note (and optional photo) for one child's family.
+function DailyNoteEditor({ f, note, onSave, onClose, t }) {
+  const [text, setText] = useState(note?.text || "");
+  const [photo, setPhoto] = useState(note?.photo || "");
+  const fileRef = React.useRef(null);
+  const pick = async (e) => { const file = e.target.files && e.target.files[0]; if (file) { try { setPhoto(await shrinkImage(file)); } catch (er) { /* ignore unreadable file */ } } };
+  const QUICK = ["Had a great day!", "Ate well at lunch.", "Napped well.", "A little tired today.", "Played outside a lot."];
+  return (
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 70, background: "rgba(31,42,36,0.4)", display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
+      <div onClick={(e) => e.stopPropagation()} style={{ background: C.paper, borderRadius: 16, width: "100%", maxWidth: 460, padding: 18, display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ fontWeight: 700, fontSize: 15 }}>{t("Note for parents")} · {f.child.split(" ")[0]}</div>
+          <button onClick={onClose} aria-label={t("Close")} style={{ background: "none", border: "none", color: C.inkSoft }}><X size={17} /></button>
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {QUICK.map((q) => <button key={q} onClick={() => setText((x) => (x ? `${x} ${t(q)}` : t(q)))} style={{ padding: "6px 10px", borderRadius: 999, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12, fontWeight: 600, color: C.tealDark }}>{t(q)}</button>)}
+        </div>
+        <textarea value={text} onChange={(e) => setText(e.target.value)} rows={3} placeholder={t("How was their day? (optional)")} style={{ ...inputStyle, width: "100%", boxSizing: "border-box", padding: "10px 12px", borderRadius: 10, resize: "vertical", fontSize: 14 }} />
+        <input ref={fileRef} type="file" accept="image/*" onChange={pick} style={{ display: "none" }} />
+        {photo ? (
+          <div style={{ position: "relative" }}>
+            <img src={photo} alt="" style={{ width: "100%", maxHeight: 220, objectFit: "cover", borderRadius: 12, display: "block" }} />
+            <button onClick={() => setPhoto("")} style={{ position: "absolute", top: 8, right: 8, padding: "5px 9px", borderRadius: 8, border: "none", background: "rgba(0,0,0,0.6)", color: "#fff", fontSize: 12, fontWeight: 700 }}>{t("Remove")}</button>
+          </div>
+        ) : (
+          <button onClick={() => fileRef.current && fileRef.current.click()} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7, padding: "10px 0", borderRadius: 10, border: `1px dashed ${C.line}`, background: "#fff", fontSize: 13, fontWeight: 600, color: C.tealDark }}>
+            <ImageIcon size={15} /> {t("Add a photo (optional)")}
+          </button>
+        )}
+        <div style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Only this child's parents see it. Check-in and pickup times are added for you.")}</div>
+        <div style={{ display: "flex", gap: 8 }}>
+          {note && <button onClick={() => onSave(null)} style={{ padding: "10px 14px", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", color: C.danger, fontWeight: 700, fontSize: 13 }}>{t("Delete")}</button>}
+          <button onClick={() => onSave(text.trim() || photo ? { text: text.trim(), photo, at: Date.now() } : null)} style={{ flex: 1, padding: "10px 0", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 13.5 }}>{t("Share with family")}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Parent / family app. A parent account covers their whole household, so
 // siblings show together. Five areas: Home (today, to-do, coming up),
 // Messages, Billing, Documents and Extra care. Phones get a bottom tab bar;
@@ -12114,7 +12659,7 @@ function inDateRange(dates, day = startOfToday()) {
   return day >= new Date(start.getFullYear(), start.getMonth(), start.getDate()) && day <= new Date(end.getFullYear(), end.getMonth(), end.getDate());
 }
 
-function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage, events = [], reminderSettings }) {
+function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provider, onSave, flexCareRequests, saveFlexCare, tuitionRates, threads, saveThreads, refunds, language, setLanguage, events = [], reminderSettings, saveAttendanceLog, dailyNotes = {}, parentFeatures = {}, openCheckIn = false }) {
   const t = useT();
   const lang = React.useContext(LanguageContext).lang;
   // Dates and month names in the parent's chosen language.
@@ -12133,6 +12678,11 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
   const [tab, setTab] = useState("home");
   const go = (id) => { setTab(id); if (typeof window !== "undefined") window.scrollTo({ top: 0 }); };
   useEffect(() => { setTab("home"); }, [hhId]);
+  const qrOn = parentFeatures.qrCheckin !== false;
+  const notesOn = parentFeatures.dailySummary !== false;
+  // Opened from the door code (?checkin=…): go straight to drop-off / pickup.
+  const [checkInOpen, setCheckInOpen] = useState(openCheckIn ? "scanned" : null);
+  const [signing, setSigning] = useState(null); // { famId, docId }
 
   // ---- billing
   const billing = reminderSettings ? currentBilling(reminderSettings) : null;
@@ -12175,9 +12725,10 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
     const rec = rec0 === true ? { in: "—" } : rec0;
     const away = !rec.out && isAway(rec);
     if (rec.absent) return { label: t("Marked absent today"), color: C.inkSoft };
-    if (rec.out) return { label: `${t("Picked up at")} ${rec.out}`, color: C.inkSoft, sub: outingsText(rec, t) };
-    if (away) return { label: `${t("Out for an appointment since")} ${(rec.outings || []).find((o) => !o.back)?.out}`, color: C.amber };
-    return { label: `${t("Checked in at")} ${rec.in}`, color: C.teal, sub: outingsText(rec, t), here: true };
+    const dropped = rec.in && rec.in !== "—" ? `${t("Dropped off")} ${rec.in}${rec.inBy ? ` · ${rec.inBy.split(" ")[0]}` : ""}` : "";
+    if (rec.out) return { label: `${t("Picked up at")} ${rec.out}${rec.outBy ? ` · ${rec.outBy.split(" ")[0]}` : ""}`, color: C.inkSoft, sub: [dropped, outingsText(rec, t)].filter(Boolean).join(" · ") };
+    if (away) return { label: `${t("Out for an appointment since")} ${(rec.outings || []).find((o) => !o.back)?.out}`, color: C.amber, sub: dropped };
+    return { label: `${t("Checked in at")} ${rec.in}${rec.inBy ? ` · ${rec.inBy.split(" ")[0]}` : ""}`, color: C.teal, sub: outingsText(rec, t), here: true };
   };
 
   // ---- documents
@@ -12198,8 +12749,12 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
         text: `${billing.overdue ? t("Overdue") : t("Due")} ${billing.dueDate}: ${money(dueAmount(f))} ${t("for")} ${f.child}`, sub: `${monthName(billing.key)} ${t("tuition")}${shareOf(f) ? ` · ${t("your share")}` : ""}` });
     }
     const need = docsOf(f).filter(docNeedsParent);
-    if (need.length) todos.push({ key: `docs-${f.id}`, tab: "docs", tone: "warn", icon: FileText,
-      text: `${need.length} ${need.length === 1 ? t("document needed") : t("documents needed")} ${t("for")} ${f.child}`, sub: need.map((d) => t(d.name)).join(", ") });
+    const toSign = need.filter((d) => SIGNABLE_DOCS.includes(d.id));
+    if (toSign.length) todos.push({ key: `sign-${f.id}`, tab: "docs", tone: "warn", icon: Pencil,
+      text: `${toSign.length} ${toSign.length === 1 ? t("form to sign") : t("forms to sign")} ${t("for")} ${f.child}`, sub: toSign.map((d) => t(d.name)).join(", ") });
+    const toSend = need.filter((d) => !SIGNABLE_DOCS.includes(d.id));
+    if (toSend.length) todos.push({ key: `docs-${f.id}`, tab: "docs", tone: "warn", icon: FileText,
+      text: `${toSend.length} ${toSend.length === 1 ? t("document needed") : t("documents needed")} ${t("for")} ${f.child}`, sub: toSend.map((d) => t(d.name)).join(", ") });
     if (f.subsidized && f.authEnd) {
       const left = daysUntil(f.authEnd);
       if (left !== 9999 && left <= 30) todos.push({ key: `benefit-${f.id}`, tab: "billing", tone: left <= 7 ? "danger" : "warn", icon: AlertTriangle,
@@ -12231,22 +12786,55 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
   const badges = { messages: unreadCount, billing: kids.filter((f) => owes(f) && !reportedOf(f)).length, docs: kids.reduce((n, f) => n + docsOf(f).filter(docNeedsParent).length, 0), care: needsPayMethod.length };
 
   /* ================================ HOME ================================ */
+  const noteFor = (f, date = today) => (notesOn ? (dailyNotes[date] || {})[f.id] : null);
+  const pastNotes = notesOn ? Object.keys(dailyNotes).filter((d) => d !== today && daysUntil(d) < 0 && daysUntil(d) >= -14)
+    .sort((a, b) => parseAnyDate(b) - parseAnyDate(a))
+    .flatMap((d) => kids.filter((f) => dailyNotes[d][f.id]).map((f) => ({ d, f, n: dailyNotes[d][f.id] }))) : [];
+  const fmtDay = (d) => parseAnyDate(d)?.toLocaleDateString(locale, { weekday: "short", month: "short", day: "numeric" }) || d;
+  const NoteBlock = ({ n }) => (
+    <div style={{ marginTop: 8, background: C.cream, borderRadius: 12, padding: "10px 12px" }}>
+      {n.text && <div style={{ fontSize: 13.5, lineHeight: 1.45 }}>💬 {n.text}</div>}
+      {n.photo && <img src={n.photo} alt="" style={{ marginTop: n.text ? 8 : 0, width: "100%", maxHeight: 260, objectFit: "cover", borderRadius: 10, display: "block" }} />}
+      <div style={{ fontSize: 11, color: C.inkSoft, marginTop: 5 }}>{t("From")} {provider.name}{n.at ? ` · ${new Date(n.at).toLocaleTimeString(locale, { hour: "numeric", minute: "2-digit" })}` : ""}</div>
+    </div>
+  );
   const TodayCard = (
     <div style={card}>
-      <div style={cardHead}><CalendarClock size={15} color={C.teal} /> {t("Today")} <span style={{ fontWeight: 500, color: C.inkSoft, fontSize: 12.5 }}>· {startOfToday().toLocaleDateString(locale, { weekday: "long", month: "short", day: "numeric" })}</span></div>
+      <div style={{ ...cardHead, justifyContent: "space-between", flexWrap: "wrap" }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 8 }}><CalendarClock size={15} color={C.teal} /> {t("Today")} <span style={{ fontWeight: 500, color: C.inkSoft, fontSize: 12.5 }}>· {startOfToday().toLocaleDateString(locale, { weekday: "long", month: "short", day: "numeric" })}</span></span>
+        {qrOn && saveAttendanceLog && (
+          <button onClick={() => setCheckInOpen("scan")} style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 12.5, minHeight: 36 }}>
+            <ScanLine size={14} /> {t("Check in / out")}
+          </button>
+        )}
+      </div>
       {kids.map((f) => {
-        const s = todayFor(f);
+        const s = todayFor(f); const n = noteFor(f);
         return (
-          <div key={f.id} style={{ ...row, display: "flex", alignItems: "center", gap: 12 }}>
-            <Avatar f={f} />
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: 13.5, fontWeight: 700 }}>{f.child}</div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: s.color, display: "flex", alignItems: "center", gap: 6 }}>{s.here && <Dot c={C.teal} />}{s.label}</div>
-              {s.sub && <div style={{ fontSize: 11.5, color: C.inkSoft }}>{s.sub}</div>}
+          <div key={f.id} style={{ ...row }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <Avatar f={f} />
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: 13.5, fontWeight: 700 }}>{f.child}</div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: s.color, display: "flex", alignItems: "center", gap: 6 }}>{s.here && <Dot c={C.teal} />}{s.label}</div>
+                {s.sub && <div style={{ fontSize: 11.5, color: C.inkSoft }}>{s.sub}</div>}
+              </div>
             </div>
+            {n && <NoteBlock n={n} />}
           </div>
         );
       })}
+      {pastNotes.length > 0 && (
+        <details>
+          <summary style={{ padding: "11px 18px", fontSize: 12.5, fontWeight: 700, color: C.tealDark, cursor: "pointer", minHeight: 40 }}>{t("Earlier notes")} ({pastNotes.length})</summary>
+          {pastNotes.slice(0, 10).map(({ d, f, n }) => (
+            <div key={`${d}-${f.id}`} style={{ padding: "0 18px 12px" }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft }}>{fmtDay(d)}{kids.length > 1 ? ` · ${f.child.split(" ")[0]}` : ""}</div>
+              <NoteBlock n={n} />
+            </div>
+          ))}
+        </details>
+      )}
     </div>
   );
 
@@ -12442,6 +13030,18 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
     sendMessage(`📎 ${t("Sent")} ${t(name)} ${t("for")} ${f.child}: ${file.name}`);
     setSending(null);
   };
+  const tuitionOf = (f) => (shareOf(f) ? shareOf(f).amount : amountFor(f));
+  const specFor = (f, docId) => formSpec(docId, { provider, f, parentName, tuition: tuitionOf(f),
+    dueDay: Number(reminderSettings?.dueDay || reminderSettings?.day) || 1,
+    lateFee: reminderSettings?.lateFeeEnabled ? (reminderSettings.lateFeeType === "percent" ? `${reminderSettings.lateFeePercent}%` : money(reminderSettings.lateFeeAmount)) : "" });
+  const finishSigning = (signed) => {
+    const f = kids.find((k) => k.id === signing.famId); if (!f) return;
+    const docs = defaultChildDocs(f).map((d) => (d.id === signing.docId ? { ...d, status: "submitted", date: signed.date, signed, sentByParent: false, fileName: undefined, expiresOn: d.id === "emerg" ? (() => { const x = startOfToday(); return `${pad2(x.getMonth() + 1)}/${pad2(x.getDate())}/${x.getFullYear() + 1}`; })() : d.expiresOn } : d));
+    onSave(f.id, { documents: docs });
+    const name = CHILD_DOC_TEMPLATES.find((x) => x.id === signing.docId)?.name || signing.docId;
+    sendMessage(`✍️ ${t("Signed")} ${t(name)} ${t("for")} ${f.child}`);
+    setSigning(null);
+  };
   const requestCopy = (f, name) => { sendMessage(`${t("Hi! Could I get a copy of this for")} ${f.child}: ${t(name)}?`); go("messages"); };
   const Documents = (
     <>
@@ -12455,7 +13055,9 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
             <div style={cardHead}><Avatar f={f} size={30} /> {f.child}</div>
             {sorted.map((d) => {
               const need = docNeedsParent(d);
-              const meta = d.sentByParent && d.status === "pending" ? { label: t("Sent — your provider is reviewing it"), color: C.amber, icon: Clock } : trForm(t, d.eff);
+              const canSign = SIGNABLE_DOCS.includes(d.id);
+              const meta = d.sentByParent && d.status === "pending" ? { label: t("Sent — your provider is reviewing it"), color: C.amber, icon: Clock }
+                : d.signed && d.eff === "submitted" ? { label: `${t("Signed")} · ${d.signed.date}`, color: C.teal, icon: CheckCircle2 } : trForm(t, d.eff);
               return (
                 <div key={d.id} style={{ ...row, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, background: need ? "#FFF8F0" : "transparent" }}>
                   <div style={{ display: "flex", alignItems: "flex-start", gap: 8, minWidth: 0 }}>
@@ -12465,7 +13067,9 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
                       <div style={{ fontSize: 11.5, color: meta.color, fontWeight: 600 }}>{meta.label}{d.expiresOn && d.eff !== "missing" ? ` · ${t("renew by")} ${d.expiresOn}` : ""}{d.sentOn ? ` · ${d.sentOn}` : ""}</div>
                     </div>
                   </div>
-                  {need && <button onClick={() => pickFile(f, d)} style={{ ...btnMain, padding: "8px 12px", minHeight: 38, fontSize: 12.5, flexShrink: 0 }}><Upload size={13} /> {t("Send")}</button>}
+                  {need && canSign && <button onClick={() => setSigning({ famId: f.id, docId: d.id })} style={{ ...btnMain, padding: "8px 12px", minHeight: 38, fontSize: 12.5, flexShrink: 0 }}><Pencil size={13} /> {t("Review & sign")}</button>}
+                  {need && !canSign && <button onClick={() => pickFile(f, d)} style={{ ...btnMain, padding: "8px 12px", minHeight: 38, fontSize: 12.5, flexShrink: 0 }}><Upload size={13} /> {t("Send")}</button>}
+                  {!need && d.signed && <button onClick={() => printSignedForm(f, d.name, specFor(f, d.id), d.signed, { provider, t })} style={{ ...btnSoft, flexShrink: 0 }}><Printer size={13} /> {t("Copy")}</button>}
                 </div>
               );
             })}
@@ -12492,7 +13096,7 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
           </div>
         );
       })}
-      <div style={{ gridColumn: "1 / -1", fontSize: 11.5, color: C.inkSoft, display: "flex", gap: 6, lineHeight: 1.5 }}><Info size={12} style={{ flexShrink: 0, marginTop: 2 }} /> {t("A photo or PDF works. Your provider checks each document before marking it on file.")}</div>
+      <div style={{ gridColumn: "1 / -1", fontSize: 11.5, color: C.inkSoft, display: "flex", gap: 6, lineHeight: 1.5 }}><Info size={12} style={{ flexShrink: 0, marginTop: 2 }} /> {t("Forms from your provider can be signed right here. Doctor's forms: send a photo or PDF, and your provider checks it before marking it on file.")}</div>
     </>
   );
 
@@ -12644,6 +13248,16 @@ function ParentApp({ careCtx, families, onExit, showBackToProvider = true, provi
         )}
       </div>
 
+      {checkInOpen && (
+        <CheckInSheet kids={kids} parentName={parentName} provider={provider} attendanceLog={careCtx?.attendanceLog || {}} saveAttendanceLog={saveAttendanceLog}
+          scanned={checkInOpen === "scanned"} onClose={() => setCheckInOpen(null)} isMobile={isMobile} t={t} />
+      )}
+      {signing && (() => {
+        const f = kids.find((k) => k.id === signing.famId);
+        if (!f) return null;
+        const name = CHILD_DOC_TEMPLATES.find((x) => x.id === signing.docId)?.name || signing.docId;
+        return <SignFormSheet f={f} docName={name} spec={specFor(f, signing.docId)} parentName={parentName} onClose={() => setSigning(null)} onSigned={finishSigning} isMobile={isMobile} t={t} />;
+      })()}
       {/* phone: bottom tab bar */}
       {isMobile && (
         <nav role="tablist" style={{ position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 40, background: C.paper, borderTop: `1px solid ${C.line}`, display: "flex", paddingBottom: "env(safe-area-inset-bottom)", boxShadow: "0 -4px 16px rgba(31,42,36,0.06)" }}>
