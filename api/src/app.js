@@ -20,6 +20,9 @@ const str = (v, max = 200) => (v == null ? null : String(v).trim().slice(0, max)
 const isUuid = (v) => /^[0-9a-f-]{36}$/i.test(String(v || ""));
 const isEmail = (v) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(v || ""));
 const dateOrNull = (v) => (v && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : null);
+// Child details a parent never sees (the provider's private notes and flags).
+const PRIVATE_DETAIL_KEYS = ["notes", "notices", "fromTourId", "custodyNotes", "providerNotes", "accessLog"];
+const forParent = (details) => Object.fromEntries(Object.entries(details || {}).filter(([k]) => !PRIVATE_DETAIL_KEYS.includes(k)));
 
 class HttpError extends Error { constructor(status, code) { super(code); this.status = status; this.code = code; } }
 
@@ -125,7 +128,7 @@ export function makeApp({ pool, env = process.env }) {
       const h = (await c.query("SELECT id, name FROM households ORDER BY name")).rows;
       const g = (await c.query("SELECT id, household_id, name, relationship, email, phone, (user_uid IS NOT NULL) AS has_access, linked_at FROM guardians ORDER BY created_at")).rows;
       const k = (await c.query("SELECT id, household_id, first_name, last_name, birth_date, classroom, enroll_date, status, details FROM children ORDER BY first_name")).rows;
-      const inv = (await c.query("SELECT DISTINCT ON (guardian_id) guardian_id, expires_at, used_at, revoked_at FROM invites ORDER BY guardian_id, created_at DESC")).rows;
+      const inv = (await c.query("SELECT DISTINCT ON (guardian_id) id, guardian_id, expires_at, used_at, revoked_at FROM invites ORDER BY guardian_id, created_at DESC")).rows;
       await audit(c, req, ctx.providerId, "families.view", null);
       return h.map((x) => ({
         ...x,
@@ -155,6 +158,22 @@ export function makeApp({ pool, env = process.env }) {
       }
       await audit(c, req, ctx.providerId, "household.create", h.id);
       return h;
+    });
+    res.status(201).json(out);
+  }));
+
+  app.post("/providers/:pid/households/:hid/guardians", requireUser, wrap(async (req, res) => {
+    const ctx = await staffContext(req);
+    if (!isUuid(req.params.hid)) throw new HttpError(404, "not_found");
+    const b = req.body || {};
+    if (!str(b.name)) throw new HttpError(400, "name_required");
+    if (b.email && !isEmail(b.email)) throw new HttpError(400, "bad_email");
+    const out = await withContext(pool, ctx, async (c) => {
+      if (!(await c.query("SELECT 1 FROM households WHERE id = $1", [req.params.hid])).rowCount) throw new HttpError(404, "not_found");
+      const r = await c.query("INSERT INTO guardians (provider_id, household_id, name, relationship, email, phone) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id, name, relationship, email, phone",
+        [ctx.providerId, req.params.hid, str(b.name), str(b.relationship, 60), b.email ? String(b.email).trim().toLowerCase() : null, str(b.phone, 40)]);
+      await audit(c, req, ctx.providerId, "guardian.create", r.rows[0].id);
+      return r.rows[0];
     });
     res.status(201).json(out);
   }));
@@ -283,7 +302,8 @@ export function makeApp({ pool, env = process.env }) {
       const p = (await c.query("SELECT id, name, city FROM providers WHERE id = $1", [pick.provider_id])).rows[0];
       const h = (await c.query("SELECT id, name FROM households WHERE id = $1", [pick.household_id])).rows[0];
       const g = (await c.query("SELECT id, name, relationship FROM guardians WHERE household_id = $1", [pick.household_id])).rows;
-      const k = (await c.query("SELECT id, first_name, last_name, birth_date, classroom, enroll_date, status FROM children WHERE household_id = $1 AND status <> 'withdrawn' ORDER BY first_name", [pick.household_id])).rows;
+      const k = (await c.query("SELECT id, first_name, last_name, birth_date, classroom, enroll_date, status, details FROM children WHERE household_id = $1 AND status <> 'withdrawn' ORDER BY first_name", [pick.household_id])).rows
+        .map((x) => ({ ...x, details: forParent(x.details) }));
       await audit(c, req, pick.provider_id, "parent.family_view", pick.household_id);
       return { provider: p, household: h, me: { id: pick.id, name: pick.name }, guardians: g, children: k };
     });
@@ -311,7 +331,7 @@ export function makeApp({ pool, env = process.env }) {
 function inviteState(inv) {
   if (!inv) return { status: "none" };
   if (inv.revoked_at) return { status: "revoked" };
-  if (inv.used_at) return { status: "accepted", usedAt: inv.used_at };
-  if (new Date(inv.expires_at) < new Date()) return { status: "expired" };
-  return { status: "pending", expiresAt: inv.expires_at };
+  if (inv.used_at) return { status: "accepted", usedAt: inv.used_at, id: inv.id };
+  if (new Date(inv.expires_at) < new Date()) return { status: "expired", id: inv.id };
+  return { status: "pending", expiresAt: inv.expires_at, id: inv.id };
 }
