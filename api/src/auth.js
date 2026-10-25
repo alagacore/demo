@@ -10,6 +10,11 @@ export function setupAuth(env = process.env) {
   if (env.AUTH_TEST_MODE === "1") {
     if (env.K_SERVICE || env.NODE_ENV === "production") throw new Error("AUTH_TEST_MODE cannot run in production");
     verify = async (token) => {
+      // Also accepts unsigned test JWTs from the website's browser tests.
+      if (token.split(".").length === 3) {
+        const c = JSON.parse(Buffer.from(token.split(".")[1], "base64url").toString());
+        return { uid: c.user_id || c.sub, email: c.email, email_verified: !!c.email_verified };
+      }
       const [tag, uid, email, verified] = token.split(":");
       if (tag !== "test" || !uid) throw new Error("bad test token");
       return { uid, email, email_verified: verified === "verified" };
@@ -18,7 +23,11 @@ export function setupAuth(env = process.env) {
   }
   const app = initializeApp({ credential: applicationDefault(), projectId: env.FIREBASE_PROJECT_ID || "alaga-production" });
   const auth = getAuth(app);
-  verify = (token) => auth.verifyIdToken(token, true); // true = also reject revoked sessions
+  // Checks the token's signature, expiry and project. (Also rejecting revoked
+  // sessions needs the "Firebase Authentication Viewer" role on the service
+  // account; set FIREBASE_CHECK_REVOKED=1 after granting it.)
+  const checkRevoked = env.FIREBASE_CHECK_REVOKED === "1";
+  verify = (token) => auth.verifyIdToken(token, checkRevoked);
 }
 
 export async function requireUser(req, res, next) {

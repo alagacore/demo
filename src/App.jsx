@@ -1844,6 +1844,12 @@ const T = {
   "on Alaga": { es: "en Alaga", tl: "sa Alaga", zh: "（Alaga）", vi: "trên Alaga", ko: "(Alaga)" },
   "on Alaga, the family app for": { es: "en Alaga, la app familiar de", tl: "sa Alaga, ang family app para kay", zh: "——Alaga 家长应用，孩子：", vi: "trên Alaga, ứng dụng gia đình cho", ko: "— Alaga 가족 앱, 아이:" },
   "for a verification link, then sign in again.": { es: "para el enlace de verificación y luego vuelva a iniciar sesión.", tl: "para sa verification link, tapos mag-sign in ulit.", zh: "中的验证链接，然后重新登录。", vi: "để lấy liên kết xác minh, rồi đăng nhập lại.", ko: "에서 인증 링크를 열고 다시 로그인하세요." },
+  "Couldn't save your daycare. Check your connection and try again.": { es: "No se pudo guardar su guardería. Revise su conexión e inténtelo de nuevo.", tl: "Hindi na-save ang daycare mo. Tingnan ang koneksyon at subukan ulit.", zh: "无法保存您的托育机构，请检查网络后重试。", vi: "Không lưu được nơi giữ trẻ. Hãy kiểm tra mạng và thử lại.", ko: "어린이집을 저장하지 못했어요. 연결을 확인하고 다시 시도하세요." },
+  "Can't reach Alaga right now. Changes may not be saved.": { es: "No se puede conectar con Alaga. Es posible que los cambios no se guarden.", tl: "Hindi maabot ang Alaga ngayon. Baka hindi ma-save ang mga pagbabago.", zh: "暂时无法连接 Alaga，更改可能不会保存。", vi: "Không kết nối được Alaga. Thay đổi có thể chưa được lưu.", ko: "지금 Alaga에 연결할 수 없어요. 변경 사항이 저장되지 않을 수 있어요." },
+  "Try again": { es: "Intentar de nuevo", tl: "Subukan ulit", zh: "重试", vi: "Thử lại", ko: "다시 시도" },
+  "This parent already has access.": { es: "Este padre o madre ya tiene acceso.", tl: "May access na ang magulang na ito.", zh: "该家长已开通。", vi: "Phụ huynh này đã có quyền.", ko: "이 부모님은 이미 접근 권한이 있어요." },
+  "Send it now — for security, this code is shown only once.": { es: "Envíelo ahora; por seguridad, este código solo se muestra una vez.", tl: "Ipadala na ngayon — para sa seguridad, isang beses lang ipapakita ang code.", zh: "请现在发送——出于安全考虑，此邀请码只显示一次。", vi: "Hãy gửi ngay — vì an toàn, mã này chỉ hiện một lần.", ko: "지금 보내세요 — 보안을 위해 이 코드는 한 번만 표시돼요." },
+  "This email is used for a daycare account. Ask your daycare to invite a different email.": { es: "Este correo es de una cuenta de guardería. Pida a su guardería que invite otro correo.", tl: "Ginagamit ang email na ito sa daycare account. Hilingin sa daycare na mag-invite ng ibang email.", zh: "此邮箱已用于托育机构账户，请让托育机构邀请其他邮箱。", vi: "Email này là tài khoản nơi giữ trẻ. Hãy nhờ nơi giữ trẻ mời email khác.", ko: "이 이메일은 어린이집 계정이에요. 다른 이메일로 초대해 달라고 하세요." },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -3197,6 +3203,28 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language
         ? await signInWithEmailAndPassword(auth, email, password)
         : await createUserWithEmailAndPassword(auth, email, password);
       if (role === "provider" && accounts[addr]) { await firebaseSignOut(); setError(t("This is a family account. Use the parent sign-in instead.")); return; }
+      // Real accounts: ask the server who this is.
+      if (role === "provider" || role === "parent") {
+        let me = null;
+        try { me = await api("/me"); } catch (er) {
+          // Demo families (kept in this browser) can still sign in without the server.
+          if (role === "parent" && accounts[addr]) me = { guardianOf: [], memberships: [] };
+          else { await firebaseSignOut(); setError(t("Can't reach Alaga right now. Check your connection.")); return; }
+        }
+        if (role === "provider") {
+          if (me.guardianOf.length) { await firebaseSignOut(); setError(t("This is a family account. Use the parent sign-in instead.")); return; }
+          if (me.memberships.length) {
+            let p; try { p = await api(`/providers/${me.memberships[0].provider_id}`); } catch (er) { await firebaseSignOut(); setError(t("Can't reach Alaga right now. Check your connection.")); return; }
+            onAuthenticated(cred.user, "signin", null, providerFromServer(p)); return;
+          }
+          // Signed in, but no daycare set up yet: go to setup.
+          onAuthenticated(cred.user, "signup"); return;
+        }
+        if (me.guardianOf.length) {
+          const g = me.guardianOf[0];
+          onAuthenticated(cred.user, mode, { server: true, household: g.household_id, providerId: g.provider_id, guardianId: g.id, parentName: g.name, provider: g.provider, email: addr }); return;
+        }
+      }
       if (role === "parent" && !accounts[addr]) { await firebaseSignOut(); setError(t("No family is linked to this account yet. Ask your daycare for an invite code.")); return; }
       // Team access needs a verified address: only someone who can open the
       // Alaga inbox gets in, even if another person created the account first.
@@ -3311,6 +3339,55 @@ function inviteStatus(inv) {
   return "pending";
 }
 const inviteLink = (code) => `${typeof window !== "undefined" ? window.location.origin : "https://alagacore.com"}/?invite=${code}`;
+// The Alaga API (Cloud Run). Real daycare and parent accounts use it; the
+// team's demos keep their sample data in the browser.
+const API_URL = String(import.meta.env.VITE_API_URL || "https://alaga-api-1017852082045.us-west1.run.app").replace(/\/$/, "");
+async function api(path, { method = "GET", body, auth = true } = {}) {
+  const headers = { "content-type": "application/json" };
+  if (auth) {
+    const { auth: fa } = await import("./firebase.js");
+    if (!fa.currentUser) throw Object.assign(new Error("sign_in_required"), { status: 401, code: "sign_in_required" });
+    headers.authorization = `Bearer ${await fa.currentUser.getIdToken()}`;
+  }
+  let r;
+  try { r = await fetch(API_URL + path, { method, headers, body: body ? JSON.stringify(body) : undefined }); }
+  catch (e) { throw Object.assign(new Error("offline"), { status: 0, code: "offline" }); }
+  const text = await r.text();
+  let data = null; try { data = text ? JSON.parse(text) : null; } catch (e) { data = null; }
+  if (!r.ok) throw Object.assign(new Error((data && (data.error || data.state)) || `http_${r.status}`), { status: r.status, code: (data && (data.error || data.state)) || "", data });
+  return data;
+}
+const isUuidStr = (v) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(v || ""));
+const isoDateToMdy = (iso) => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || "")); return m ? `${m[2]}/${m[3]}/${m[1]}` : ""; };
+const mdyToIsoDate = (mdy) => { const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(mdy || "")); return m ? `${m[3]}-${m[1]}-${m[2]}` : null; };
+// Fields kept in their own server columns (everything else rides in details).
+const SERVER_CHILD_KEYS = ["id", "child", "household", "householdName", "parents", "parent", "classroom", "enrollDate", "serverChild"];
+const childDetailsOf = (rec) => Object.fromEntries(Object.entries(rec).filter(([k]) => !SERVER_CHILD_KEYS.includes(k)));
+// Server households → the app's family records (one per child).
+function familiesFromServer(households) {
+  let i = 0;
+  return (households || []).flatMap((h) => (h.children || []).filter((k) => k.status !== "withdrawn").map((k) => {
+    const d = k.details || {};
+    const guardians = (h.guardians || []).map((g) => ({ id: g.id, name: g.name, relationship: g.relationship || "", email: g.email || "", phone: g.phone || "", hasAccess: !!g.has_access, invite: g.invite || null }));
+    i += 1;
+    return {
+      subsidized: false, age: "—", copay: 0, coverageAmount: 0, coverageBasis: "private-pay", programId: null, sessionsApproved: "", sessionLength: "",
+      authStart: "", authEnd: "Ongoing", status: "active", notices: [], forms: [], emergencyContact: { name: "", relationship: "", phone: "" },
+      ...d,
+      id: k.id, serverChild: true,
+      child: [k.first_name, k.last_name].filter(Boolean).join(" "),
+      classroom: k.classroom || d.classroom || "",
+      enrollDate: isoDateToMdy(k.enroll_date) || d.enrollDate || "",
+      household: h.id, householdName: h.name,
+      parents: guardians, parent: guardians[0]?.name || d.parent || "",
+      color: d.color || FAMILY_COLORS[(i - 1) % FAMILY_COLORS.length],
+    };
+  }));
+}
+const familiesChanged = () => { try { window.dispatchEvent(new Event("alaga:families-changed")); } catch (e) { /* ignore */ } };
+// A server daycare → the app's provider profile.
+const providerFromServer = (p) => ({ ...(p.settings || {}), name: p.name, city: p.city || "—", lic: p.license || (p.settings || {}).lic || "License pending", providerType: p.provider_type || (p.settings || {}).providerType, capacity: p.capacity || 8, serverId: p.id });
+
 async function firebaseSignOut() { try { const { signOut } = await import("firebase/auth"); const { auth } = await import("./firebase.js"); await signOut(auth); } catch (e) { /* already signed out */ } }
 
 // Wrong guesses on the invite screen lock it for a while (the server enforces
@@ -3402,8 +3479,19 @@ function ParentInviteScreen({ initialCode = "", onBack, onDone, onSignIn, langua
     const mins = lockedFor(); if (mins) { setErr(`${t("Too many tries. Try again in")} ${mins} ${t("min")}.`); return; }
     const c = normCode(raw);
     if (c.length !== 8) { setErr(t("Invite codes have 8 letters and numbers.")); return; }
+    // Real invites are checked by the server; demo invites live in this browser.
+    let serverState = "invalid";
+    try {
+      const pv = await api("/invites/preview", { method: "POST", body: { code: c }, auth: false });
+      writeAttempts({});
+      setInv({ server: true, code: c, provider: pv.provider, parentName: pv.guardianName, kidNames: pv.kidNames, email: pv.email });
+      return;
+    } catch (er) {
+      if (er.code === "too_many_tries") { setErr(`${t("Too many tries. Try again in")} 15 ${t("min")}.`); return; }
+      if (["accepted", "expired", "revoked"].includes(er.code)) serverState = er.code;
+    }
     const invites = await loadJSON(INVITES_KEY, []);
-    const found = invites.find((x) => x.code === c);
+    const found = invites.find((x) => x.code === c) || (serverState !== "invalid" ? { [serverState === "revoked" ? "revoked" : serverState === "accepted" ? "usedAt" : "expiresAt"]: serverState === "expired" ? 0 : true } : null);
     const st = inviteStatus(found);
     if (st !== "pending") {
       const a = readAttempts(); const count = (a.count || 0) + 1;
@@ -3431,6 +3519,19 @@ function ParentInviteScreen({ initialCode = "", onBack, onDone, onSignIn, langua
       } catch (er) {
         if (er.code === "auth/email-already-in-use") { setLinkMode(true); setErr(t("You already have an Alaga account with this email. Enter its password to add this family.")); setBusy(false); return; }
         throw er;
+      }
+      if (inv.server) {
+        try {
+          const r = await api("/invites/redeem", { method: "POST", body: { code: inv.code } });
+          onDone({ server: true, household: r.householdId, providerId: r.providerId, guardianId: r.guardianId, parentName: inv.parentName, provider: inv.provider, email: inv.email });
+        } catch (er) {
+          await firebaseSignOut();
+          setErr(er.code === "email_mismatch" ? t("This invite only works with the email your daycare has on file. Wrong email? Ask them to update it and resend.")
+            : er.code === "daycare_account" ? t("This email is used for a daycare account. Ask your daycare to invite a different email.")
+              : ["accepted", "expired", "revoked", "used", "invalid"].includes(er.code) ? t("This invite is no longer valid. Ask your daycare for a new one.")
+                : t("Can't reach Alaga right now. Check your connection."));
+        }
+        setBusy(false); return;
       }
       // Re-check the invite right before using it, then link the account.
       const invites = await loadJSON(INVITES_KEY, []);
@@ -3511,6 +3612,71 @@ function AdminHome({ email, onConsole, onDemo, onParentDemo, onDoorDemo, onSignO
 
 // Provider: give each parent access to the family app with an invite code.
 function FamilyAppAccess({ household, parents, provider, t }) {
+  // Real families (saved on the server) use server invites.
+  if (provider?.serverId && isUuidStr(household.household)) return <ServerFamilyAppAccess household={household} parents={parents} provider={provider} t={t} />;
+  return <LocalFamilyAppAccess household={household} parents={parents} provider={provider} t={t} />;
+}
+
+// Server invites: the code is shown once (only a hash is kept), works once,
+// for the email on file, and expires in 7 days.
+function ServerFamilyAppAccess({ household, parents, provider, t }) {
+  const pid = provider.serverId;
+  const [fresh, setFresh] = useState(null); // { guardianId, code, email, expiresAt }
+  const [busy, setBusy] = useState("");
+  const [err, setErr] = useState("");
+  const [copied, setCopied] = useState(false);
+  const kidNames = household.children.map((c) => c.child.split(" ")[0]).join(" & ");
+  const run = async (key, fn) => { setBusy(key); setErr(""); try { await fn(); } catch (e) { setErr(e.code === "email_required" ? t("Add an email under Contact information to invite them.") : e.code === "already_has_access" ? t("This parent already has access.") : t("Can't reach Alaga right now. Check your connection.")); } setBusy(""); };
+  const send = (g) => run(g.id, async () => { const r = await api(`/providers/${pid}/invites`, { method: "POST", body: { guardianId: g.id } }); setFresh({ guardianId: g.id, ...r }); familiesChanged(); });
+  const cancel = (g) => run(g.id, async () => { await api(`/providers/${pid}/invites/${g.invite.id}`, { method: "DELETE" }); if (fresh?.guardianId === g.id) setFresh(null); familiesChanged(); });
+  const remove = (g) => run(g.id, async () => { await api(`/providers/${pid}/guardians/${g.id}/access`, { method: "DELETE" }); familiesChanged(); });
+  const text = (f) => `${t("You're invited to")} ${provider.name} ${t("on Alaga, the family app for")} ${kidNames}.\n\n${t("Your invite code")}: ${fmtCode(f.code)}\n${inviteLink(f.code)}\n\n${t("Use it within 7 days with this email")}: ${f.email}`;
+  const pill = (label, fg, bg) => <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 999, color: fg, background: bg, whiteSpace: "nowrap" }}>{label}</span>;
+  const small = { display: "inline-flex", alignItems: "center", gap: 5, padding: "6px 10px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontSize: 12, fontWeight: 700, color: C.tealDark };
+  return (
+    <Section title={t("Family app access")} icon={Lock}>
+      <div style={{ fontSize: 12, color: C.inkSoft, marginBottom: 6, lineHeight: 1.5 }}>{t("Parents can only join with an invite from you. Each code works once, for one email, and expires in 7 days.")}</div>
+      {parents.filter((g) => g.name).map((g) => {
+        const st = g.hasAccess ? "access" : g.invite?.status || "none";
+        const isFresh = fresh && fresh.guardianId === g.id;
+        return (
+          <div key={g.id || g.name} style={{ padding: "10px 0", borderTop: `1px solid ${C.line}`, display: "flex", flexDirection: "column", gap: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
+              <div style={{ minWidth: 0 }}><div style={{ fontSize: 13, fontWeight: 600 }}>{g.name}</div><div style={{ fontSize: 11.5, color: C.inkSoft }}>{g.email || t("No email on file")}</div></div>
+              {st === "access" ? pill(t("Has access"), C.tealDark, C.tealTint)
+                : st === "pending" ? pill(`${t("Invited")} · ${t("expires")} ${new Date(g.invite.expiresAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`, "#7A5620", C.amberTint)
+                  : st === "expired" ? pill(t("Invite expired"), C.inkSoft, "#EFEBE1") : pill(t("Not invited"), C.inkSoft, "#EFEBE1")}
+            </div>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {!g.id ? <span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Saving…")}</span>
+                : st === "access" ? <button disabled={busy === g.id} onClick={() => remove(g)} style={{ ...small, color: C.danger }}>{t("Remove access")}</button>
+                  : !g.email ? <span style={{ fontSize: 11.5, color: C.inkSoft }}>{t("Add an email under Contact information to invite them.")}</span>
+                    : st === "pending" ? <>
+                      <button disabled={busy === g.id} onClick={() => send(g)} style={small}>{t("Send a new code")}</button>
+                      <button disabled={busy === g.id} onClick={() => cancel(g)} style={{ ...small, color: C.danger }}>{t("Cancel invite")}</button>
+                    </>
+                      : <button disabled={busy === g.id} onClick={() => send(g)} style={{ ...small, background: C.teal, color: "#fff", border: "none" }}><Send size={12} /> {busy === g.id ? t("Saving…") : t("Invite to the family app")}</button>}
+            </div>
+            {isFresh && (
+              <div style={{ background: C.cream, borderRadius: 12, padding: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+                <div style={{ fontFamily: "Menlo, monospace", fontSize: 22, fontWeight: 700, letterSpacing: "0.12em", textAlign: "center" }}>{fmtCode(fresh.code)}</div>
+                <div style={{ fontSize: 11.5, color: C.inkSoft, textAlign: "center", wordBreak: "break-all" }}>{inviteLink(fresh.code)}</div>
+                <div style={{ display: "flex", gap: 6, justifyContent: "center", flexWrap: "wrap" }}>
+                  <a href={`mailto:${encodeURIComponent(fresh.email)}?subject=${encodeURIComponent(`${t("Your invite to")} ${provider.name} ${t("on Alaga")}`)}&body=${encodeURIComponent(text(fresh))}`} style={{ ...small, textDecoration: "none" }}><Mail size={12} /> {t("Email invite")}</a>
+                  <button onClick={async () => { try { await navigator.clipboard.writeText(text(fresh)); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch (e) { /* code is on screen */ } }} style={small}>{copied ? <><Check size={12} /> {t("Copied")}</> : t("Copy invite")}</button>
+                </div>
+                <div style={{ fontSize: 11, color: "#7A5620", textAlign: "center", fontWeight: 600 }}>{t("Send it now — for security, this code is shown only once.")}</div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+      {err && <div role="alert" style={{ fontSize: 12.5, color: C.danger, marginTop: 6 }}>{err}</div>}
+    </Section>
+  );
+}
+
+function LocalFamilyAppAccess({ household, parents, provider, t }) {
   const [invites, saveInvites] = usePersistentState(INVITES_KEY, []);
   const [accounts, saveAccounts] = usePersistentState(ACCOUNTS_KEY, {});
   const [shown, setShown] = useState(null); // code just created
@@ -3624,13 +3790,16 @@ function OnboardingWizard({ onComplete, onBack, initialEmail = "", language, set
   };
   const go = (n) => { setStep(n); if (typeof window !== "undefined") window.scrollTo(0, 0); };
 
-  const finish = () => {
+  const [finishState, setFinishState] = useState({ busy: false, error: "" });
+  const finish = async () => {
+    if (finishState.busy) return;
     const tuitionRates = { siblingDiscount: { enabled: false, type: "percent", value: 10 } };
     CLASSROOMS.forEach((c) => {
       const r = form.rates[c.id] || {};
       tuitionRates[c.id] = { fullTime: Number(r.fullTime) || 0, partTime: Number(r.partTime) || 0, hourly: Number(r.hourly) || 0 };
     });
-    onComplete({
+    setFinishState({ busy: true, error: "" });
+    const result = await onComplete({
       name: form.businessName.trim() || "New Provider",
       city: form.city.trim() || "—",
       lic: form.licenseNumber.trim() ? `FCC License #${form.licenseNumber.trim()}` : "License pending",
@@ -3646,6 +3815,8 @@ function OnboardingWizard({ onComplete, onBack, initialEmail = "", language, set
       subsidyPrograms: form.subsidyPrograms,
       tuitionRates,
     });
+    if (result && result.error) setFinishState({ busy: false, error: result.error === "family_account" ? t("This email is used for a family account. Use a different email for your daycare.") : t("Couldn't save your daycare. Check your connection and try again.") });
+    else setFinishState({ busy: false, error: "" });
   };
 
   const chip = (on) => ({
@@ -3845,12 +4016,13 @@ function OnboardingWizard({ onComplete, onBack, initialEmail = "", language, set
               display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
             }}>{step === 3 && !ratesEntered.length ? t("Skip for now") : t("Continue")} <ArrowRight size={14} /></button>
           ) : (
-            <button onClick={finish} style={{
-              flex: 2, padding: "13px 0", borderRadius: 10, border: "none", background: C.amber, color: "#fff", fontWeight: 700, fontSize: 14,
+            <button onClick={finish} disabled={finishState.busy} style={{
+              flex: 2, padding: "13px 0", borderRadius: 10, border: "none", background: C.amber, color: "#fff", fontWeight: 700, fontSize: 14, opacity: finishState.busy ? 0.7 : 1,
               display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
-            }}><Rocket size={14} /> {t("Open my workspace")}</button>
+            }}><Rocket size={14} /> {finishState.busy ? t("Saving…") : t("Open my workspace")}</button>
           )}
         </div>
+        {finishState.error && <div role="alert" style={{ marginTop: 10, color: C.danger, fontSize: 13, textAlign: "center" }}>{finishState.error}</div>}
       </div>
     </div>
   );
@@ -4455,8 +4627,29 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
 }
 
 function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, providerInfo: initialProviderInfo, onboardingData, onExitToLanding, forceTier, meetingMode = false, startInParentMode = false, openCheckIn = false, parentAccount = null, isTeam = false }) {
-  const sfx = isEmpty ? "-empty" : "";
+  // A real daycare (or a real parent) keeps its browser-side data under its own
+  // key, so two accounts on one computer never mix.
+  const serverPid = initialProviderInfo.serverId || null;
+  const parentServer = !!(parentAccount && parentAccount.server);
+  const sfx = serverPid ? `-p-${serverPid}` : parentServer ? `-f-${parentAccount.household}` : isEmpty ? "-empty" : "";
+  const [serverFamilies, setServerFamilies] = useState([]);
+  const [serverState, setServerState] = useState(serverPid || parentServer ? "loading" : "off"); // off | loading | ok | error
+  const [parentProvider, setParentProvider] = useState(null);
+  const loadServerFamilies = useCallback(async () => {
+    try {
+      if (serverPid) setServerFamilies(familiesFromServer(await api(`/providers/${serverPid}/families`)));
+      else if (parentServer) {
+        const f = await api(`/parent/family${parentAccount.household ? `?household=${parentAccount.household}` : ""}`);
+        setServerFamilies(familiesFromServer([{ ...f.household, guardians: f.guardians, children: f.children }]));
+        setParentProvider(f.provider);
+      } else return;
+      setServerState("ok");
+    } catch (e) { setServerState("error"); }
+  }, [serverPid, parentServer]);
+  useEffect(() => { loadServerFamilies(); }, [loadServerFamilies]);
+  useEffect(() => { const on = () => loadServerFamilies(); window.addEventListener("alaga:families-changed", on); return () => window.removeEventListener("alaga:families-changed", on); }, [loadServerFamilies]);
   const [providerInfo, saveProviderInfo] = usePersistentState(`provider-profile${sfx}`, {
+    serverId: serverPid || undefined,
     name: initialProviderInfo.name, city: initialProviderInfo.city, lic: initialProviderInfo.lic,
     providerType: initialProviderInfo.providerType || PROVIDER_TYPES[0], capacity: initialProviderInfo.capacity || 8,
     contactName: initialProviderInfo.contactName || "", email: initialProviderInfo.email || "",
@@ -4471,7 +4664,10 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
 
   // Families enrolled through the app (from Tours or the Waitlist). The sample
   // daycare's families come from built-in data; these are the provider's own.
-  const [addedFamilies, saveAddedFamilies] = usePersistentState(`added-families${sfx}`, []);
+  const [localAddedFamilies, saveLocalAddedFamilies] = usePersistentState(`added-families${sfx}`, []);
+  // Real accounts' families come from the server; demos keep theirs here.
+  const addedFamilies = serverPid || parentServer ? serverFamilies : localAddedFamilies;
+  const saveAddedFamilies = serverPid || parentServer ? async (list) => { setServerFamilies(list); return true; } : saveLocalAddedFamilies;
   const [enrollingProspectId, setEnrollingProspectId] = useState(null);
   const [mode, setMode] = useState(startInParentMode ? "parent" : "provider"); // "provider" | "parent"
   // Providers land on the welcome briefing every time they open the workspace —
@@ -4640,7 +4836,35 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
   }, []);
 
   const saveOverride = useCallback(async (famId, fields) => {
-    if (addedFamilies.some((f) => f.id === famId)) {
+    // A real daycare's child: update on screen, then save to the server.
+    if (serverPid && serverFamilies.some((f) => f.id === famId)) {
+      const before = serverFamilies.find((f) => f.id === famId);
+      setServerFamilies((list) => list.map((f) => (f.id === famId ? { ...f, ...fields } : f)));
+      try {
+        const { parents, ...rest } = fields;
+        if (parents) {
+          for (const g of parents.filter((x) => x.name && x.name.trim())) {
+            const body = { name: g.name.trim(), relationship: g.relationship || "", email: (g.email || "").trim() || undefined, phone: g.phone || "" };
+            if (g.id && isUuidStr(g.id)) await api(`/providers/${serverPid}/guardians/${g.id}`, { method: "PATCH", body });
+            else await api(`/providers/${serverPid}/households/${before.household}/guardians`, { method: "POST", body });
+          }
+        }
+        const patch = {};
+        if (rest.child) { const [first, ...last] = String(rest.child).trim().split(/\s+/); patch.firstName = first; patch.lastName = last.join(" "); }
+        if (rest.classroom) patch.classroom = rest.classroom;
+        if (rest.enrollDate) patch.enrollDate = mdyToIsoDate(rest.enrollDate) || undefined;
+        if ("departedOn" in rest) patch.status = rest.departedOn && daysUntil(rest.departedOn) < 0 ? "withdrawn" : "active";
+        const details = childDetailsOf(rest);
+        if (Object.keys(details).length) patch.details = details;
+        if (Object.keys(patch).length) await api(`/providers/${serverPid}/children/${famId}`, { method: "PATCH", body: patch });
+        if (parents) familiesChanged();
+        return true;
+      } catch (e) {
+        setServerFamilies((list) => list.map((f) => (f.id === famId ? before : f)));
+        return false;
+      }
+    }
+    if (addedFamilies.some((f) => f.id === famId) && !parentServer) {
       return saveAddedFamilies(addedFamilies.map((f) => (f.id === famId ? { ...f, ...fields } : f)));
     }
     const merged = { ...(overrides[famId] || {}), ...fields };
@@ -4651,7 +4875,7 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
     } catch (e) {
       return false;
     }
-  }, [overrides, addedFamilies, saveAddedFamilies]);
+  }, [overrides, addedFamilies, saveAddedFamilies, serverPid, serverFamilies, parentServer]);
   // leftDate = null undoes a withdrawal and removes its departure entry.
   const withdrawChild = useCallback(async (child, leftDate, reason) => {
     if (!leftDate) {
@@ -4679,12 +4903,29 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
   // Turning a tour family into enrolled children: creates one family record per
   // child (sharing a household), marks the tour as Enrolled, and opens the record.
   const enrollProspect = useCallback(async (prospect, records) => {
+    if (serverPid) {
+      // Real daycare: create the family on the server, then show it.
+      try {
+        const r0 = records[0];
+        const h = await api(`/providers/${serverPid}/households`, { method: "POST", body: {
+          name: r0.householdName,
+          guardians: (r0.parents || []).map((g) => ({ name: g.name, relationship: g.relationship, email: (g.email || "").trim() || undefined, phone: g.phone })),
+          children: records.map((r) => { const [first, ...last] = r.child.split(/\s+/); return { firstName: first, lastName: last.join(" "), classroom: r.classroom, enrollDate: mdyToIsoDate(r.enrollDate), status: daysUntil(r.enrollDate) > 0 && daysUntil(r.enrollDate) !== 9999 ? "pending" : "active", details: childDetailsOf(r) }; }),
+        } });
+        await loadServerFamilies();
+        saveProspects(prospects.map((p) => (p.id === prospect.id ? { ...p, stage: "Enrolled" } : p)));
+        setEnrollingProspectId(null);
+        setOpenHousehold(h.id);
+        navigateToScreen("families");
+      } catch (e) { setServerState("error"); }
+      return;
+    }
     await saveAddedFamilies([...addedFamilies, ...records]);
     saveProspects(prospects.map((p) => (p.id === prospect.id ? { ...p, stage: "Enrolled", familyIds: records.map((r) => r.id) } : p)));
     setEnrollingProspectId(null);
     setOpenHousehold(records[0].household);
     navigateToScreen("families");
-  }, [addedFamilies, saveAddedFamilies, prospects, saveProspects, navigateToScreen]);
+  }, [addedFamilies, saveAddedFamilies, prospects, saveProspects, navigateToScreen, serverPid, loadServerFamilies]);
   const addProspect = useCallback(() => {
     tourSeq += 1;
     saveProspects([{ id: `t${tourSeq}`, name: "New family", stage: "Inquiry", tourDate: "Not scheduled", careType: "Full-time", children: "Not entered", start: "Not entered", language: "English", contact: "", email: "", notes: "", followup: "", addedOn: todayMDY() }, ...prospects]);
@@ -4705,6 +4946,12 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
   }, [staff, saveStaff]);
 
   // A withdrawn child stays on the roster through their last day, then moves to Deenrolled.
+  const serverBanner = serverState === "error" ? (
+    <div role="alert" style={{ position: "fixed", left: "50%", transform: "translateX(-50%)", bottom: 16, zIndex: 80, background: C.dangerTint, color: C.danger, border: `1px solid ${C.danger}`, borderRadius: 12, padding: "10px 14px", fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 10, maxWidth: "calc(100vw - 32px)" }}>
+      <AlertTriangle size={15} style={{ flexShrink: 0 }} /> {tAlert("Can't reach Alaga right now. Changes may not be saved.")}
+      <button onClick={() => { setServerState("loading"); loadServerFamilies(); }} style={{ padding: "5px 10px", borderRadius: 8, border: "none", background: "#fff", color: C.danger, fontWeight: 700, fontSize: 12 }}>{tAlert("Try again")}</button>
+    </div>
+  ) : null;
   const families = [...baseFamilies, ...addedFamilies].map((f) => mergeFam(f, overrides))
     .filter((f) => !(f.departedOn && daysUntil(f.departedOn) < 0))
     .map((f) => (f.subsidized ? { ...f, status: subsidyStatus(f) } : f));
@@ -4828,6 +5075,7 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-thumb { background: ${C.line}; border-radius: 8px; }
       `}</style>
+      {serverBanner}
 
       {mode === "provider" ? (
         <>
@@ -4961,7 +5209,7 @@ export default function AlagaMockup() {
     setForcedTier(tier); setMeetingMode(meeting); setStartInParent(parent); setOpenCheckIn(checkIn); setEntry("workspace");
   };
   const enterAsParent = (acct) => {
-    setParentAccount(acct); setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null);
+    setParentAccount(acct); setProviderInfo(acct.server ? { ...PROVIDER, name: acct.provider || "Your daycare", city: "", lic: "" } : PROVIDER); setIsEmptyWorkspace(!!acct.server); setOnboardingData(null);
     setForcedTier("extended"); setMeetingMode(false); setStartInParent(true); setOpenCheckIn(pendingCheckIn); setPendingCheckIn(false); clearLinkParams(); setEntry("workspace");
   };
   const toLanding = () => { clearLinkParams(); setPendingCheckIn(false); setEntry("landing"); };
@@ -4989,11 +5237,13 @@ export default function AlagaMockup() {
       initialMode={authMode}
       notice={authRole === "parent" && pendingCheckIn ? publicCtx.t("Sign in to check your child in or out.") : ""}
       onInvite={() => setEntry("invite")}
-      onAuthenticated={(user, mode, acct) => {
+      onAuthenticated={(user, mode, acct, serverProvider) => {
         if (authRole === "parent") { enterAsParent(acct); return; }
         if (authRole === "admin") { setTeamEmail(user?.email || ""); setEntry("teamHome"); return; }
         if (mode === "signup") { setSignupEmail(user?.email || ""); setEntry("wizard"); return; }
-        setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); setParentAccount(null); setForcedTier(null); setMeetingMode(false); setStartInParent(false); setEntry("workspace");
+        if (serverProvider && serverProvider.serverId) { setProviderInfo(serverProvider); setOnboardingData(serverProvider); setIsEmptyWorkspace(true); }
+        else { setProviderInfo(PROVIDER); setIsEmptyWorkspace(false); setOnboardingData(null); }
+        setParentAccount(null); setForcedTier(null); setMeetingMode(false); setStartInParent(false); setEntry("workspace");
       }}
       onBack={toLanding}
     /></LanguageContext.Provider>;
@@ -5014,7 +5264,22 @@ export default function AlagaMockup() {
   if (entry === "wizard") {
     return <LanguageContext.Provider value={publicCtx}><OnboardingWizard
       initialEmail={signupEmail} language={publicLanguage} setLanguage={setPublicLanguage}
-      onComplete={(info) => { if (info.language) setPublicLanguage(info.language); setProviderInfo(info); setOnboardingData(info); registerWithAdmin(info); setIsEmptyWorkspace(true); setForcedTier(null); setMeetingMode(false); setEntry("workspace"); }}
+      onComplete={async (info) => {
+        // Save the new daycare to the server, then open its workspace.
+        let saved;
+        try {
+          const { name, city, lic, providerType, capacity, ...rest } = info;
+          saved = await api("/providers", { method: "POST", body: { name, city, license: lic, providerType, capacity, settings: { ...rest, lic } } });
+        } catch (er) {
+          if (er.code === "already_has_daycare") {
+            try { const me = await api("/me"); saved = await api(`/providers/${me.memberships[0].provider_id}`); } catch (e2) { return { error: "offline" }; }
+          } else return { error: er.code === "family_account" ? "family_account" : "offline" };
+        }
+        const full = providerFromServer(saved);
+        if (info.language) setPublicLanguage(info.language);
+        setProviderInfo(full); setOnboardingData(full); registerWithAdmin(info); setIsEmptyWorkspace(true); setParentAccount(null); setForcedTier(null); setMeetingMode(false); setStartInParent(false); setEntry("workspace");
+        return null;
+      }}
       onBack={() => setEntry("landing")}
     /></LanguageContext.Provider>;
   }

@@ -6,6 +6,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const { Pool } = pg;
+// DATE columns come back as "YYYY-MM-DD" text, not shifted by time zones.
+pg.types.setTypeParser(1082, (v) => v);
 
 export function makePool(env = process.env) {
   if (env.DATABASE_URL) return new Pool({ connectionString: env.DATABASE_URL, max: 5 });

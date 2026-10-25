@@ -109,6 +109,14 @@ test("invites: one use, right email only, and parents see only their family", as
   assert.equal((await call("GET", "/parent/family", { as: STRANGER })).status, 404);
   assert.equal((await call("POST", "/providers", { as: PARENT, body: { name: "x" } })).body.error, "family_account");
 
+  // parents get child details, minus the provider's private notes
+  await call("PATCH", `/providers/${state.A}/children/${fam.body.children[0].id}`, { as: OWNER_A, body: { details: { copay: 120, notes: "private note" } } });
+  const fam2 = await call("GET", "/parent/family", { as: PARENT });
+  assert.equal(fam2.body.children[0].details.copay, 120);
+  assert.equal(fam2.body.children[0].details.notes, undefined);
+  const g3 = await call("POST", `/providers/${state.A}/households/${fam.body.household.id}/guardians`, { as: OWNER_A, body: { name: "Elena Reyes", relationship: "Grandmother" } });
+  assert.equal(g3.status, 201);
+  assert.equal((await call("POST", `/providers/${state.B}/households/${fam.body.household.id}/guardians`, { as: OWNER_B, body: { name: "x" } })).status, 404);
   const me = await call("GET", "/me", { as: PARENT });
   assert.equal(me.body.guardianOf.length, 1); assert.equal(me.body.memberships.length, 0);
   const famView = await call("GET", `/providers/${state.A}/families`, { as: OWNER_A });
