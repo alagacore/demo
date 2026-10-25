@@ -46,12 +46,30 @@ const OWNER_A = tok("uA", "tita@daycare.com"), OWNER_B = tok("uB", "other@daycar
 const PARENT = tok("uP", "maria@example.com"), STRANGER = tok("uS", "nobody@example.com");
 const state = {};
 
+const TEAM = tok("uT", "hello@alagacore.com", true);
+
+test("private beta: daycares need a valid code", async () => {
+  assert.equal((await call("POST", "/providers", { as: OWNER_A, body: { name: "No code" } })).body.error, "beta_code_required");
+  assert.equal((await call("POST", "/providers", { as: OWNER_A, body: { name: "Bad", betaCode: "ZZZZ-ZZZZ" } })).body.error, "beta_code_invalid");
+  assert.equal((await call("POST", "/admin/beta-codes", { as: OWNER_A, body: { label: "x" } })).status, 403);
+  const c = await call("POST", "/admin/beta-codes", { as: TEAM, body: { label: "First cohort", maxUses: 2 } });
+  assert.equal(c.status, 201); state.beta = c.body.code;
+  assert.equal((await call("POST", "/beta/check", { body: { code: state.beta } })).status, 200);
+  assert.equal((await call("POST", "/beta/check", { body: { code: "NOPE1234" } })).status, 404);
+  const one = await call("POST", "/admin/beta-codes", { as: TEAM, body: { label: "Revoked" } });
+  assert.equal((await call("DELETE", `/admin/beta-codes/${one.body.id}`, { as: TEAM })).status, 204);
+  assert.equal((await call("POST", "/beta/check", { body: { code: one.body.code } })).status, 404);
+});
+
 test("daycares sign up and see only their own families", async () => {
-  const a = await call("POST", "/providers", { as: OWNER_A, body: { name: "Tita's Family Child Care", city: "Culver City", capacity: 8 } });
+  const a = await call("POST", "/providers", { as: OWNER_A, body: { name: "Tita's Family Child Care", city: "Culver City", capacity: 8, betaCode: state.beta } });
   assert.equal(a.status, 201); state.A = a.body.id;
-  const b = await call("POST", "/providers", { as: OWNER_B, body: { name: "Other Daycare" } });
+  const b = await call("POST", "/providers", { as: OWNER_B, body: { name: "Other Daycare", betaCode: state.beta } });
   assert.equal(b.status, 201); state.B = b.body.id;
-  assert.equal((await call("POST", "/providers", { as: OWNER_A, body: { name: "Second" } })).status, 409);
+  assert.equal((await call("POST", "/providers", { as: OWNER_A, body: { name: "Second", betaCode: state.beta } })).status, 409);
+  assert.equal((await call("POST", "/providers", { as: STRANGER, body: { name: "Third", betaCode: state.beta } })).body.error, "beta_code_invalid", "code used up after 2");
+  const codes = await call("GET", "/admin/beta-codes", { as: TEAM });
+  assert.equal(codes.body.find((x) => x.label === "First cohort").uses, 2);
 
   const h = await call("POST", `/providers/${state.A}/households`, { as: OWNER_A, body: { name: "Reyes Family",
     guardians: [{ name: "Maria Reyes", relationship: "Mother", email: "Maria@Example.com" }, { name: "Daniel Reyes", relationship: "Father" }],
@@ -151,10 +169,31 @@ test("audit log records access and can't be edited", async () => {
   assert.ok(after >= n);
 });
 
+test("demo links and feedback", async () => {
+  const d = await call("POST", "/admin/demo-links", { as: TEAM, body: { label: "Facebook group" } });
+  assert.equal(d.status, 201);
+  assert.equal((await call("POST", "/demo/check", { body: { token: d.body.token } })).status, 200);
+  assert.equal((await call("POST", "/demo/check", { body: { token: "nope-nope-nope" } })).status, 404);
+  await call("PATCH", `/admin/demo-links/${d.body.id}`, { as: TEAM, body: { active: false } });
+  assert.equal((await call("POST", "/demo/check", { body: { token: d.body.token } })).status, 404);
+  assert.equal((await call("POST", "/feedback", { body: {} })).status, 400);
+  assert.equal((await call("POST", "/feedback", { body: { kind: "demo_survey", rating: 5, answers: { useMost: ["Billing"] }, contact: "rosa@example.com", demoToken: d.body.token } })).status, 201);
+  assert.equal((await call("POST", "/feedback", { as: OWNER_A, body: { rating: 4, message: "Love the receipts", screen: "payments", role: "provider" } })).status, 201);
+  assert.equal((await call("GET", "/admin/feedback", { as: OWNER_A })).status, 403);
+  const fb = await call("GET", "/admin/feedback", { as: TEAM });
+  assert.equal(fb.body.length, 2);
+  assert.equal(fb.body.find((x) => x.kind === "demo_survey").demo_label, "Facebook group");
+  assert.equal(fb.body.find((x) => x.kind === "feedback").provider, "Tita's Family Child Care");
+  const links = await call("GET", "/admin/demo-links", { as: TEAM });
+  assert.equal(links.body[0].views, 1); assert.equal(links.body[0].surveys, 1);
+});
+
 test("team view needs a verified team email", async () => {
   assert.equal((await call("GET", "/admin/providers", { as: tok("uT", "hello@alagacore.com") })).status, 403);
   const r = await call("GET", "/admin/providers", { as: tok("uT", "hello@alagacore.com", true) });
   assert.equal(r.status, 200); assert.equal(r.body.length, 2);
+  assert.equal((await call("GET", "/me", { as: TEAM })).body.isTeam, true);
+  assert.equal((await call("GET", "/me", { as: tok("uT", "hello@alagacore.com") })).body.isTeam, false);
   assert.equal((await call("GET", "/admin/providers", { as: OWNER_A })).status, 403);
 });
 

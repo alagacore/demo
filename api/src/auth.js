@@ -42,3 +42,14 @@ export async function requireUser(req, res, next) {
     res.status(401).json({ error: "sign_in_expired" });
   }
 }
+
+// Like requireUser, but lets the request through without a sign-in.
+export async function optionalUser(req, res, next) {
+  const h = req.get("authorization") || "";
+  if (!h.startsWith("Bearer ")) return next();
+  try {
+    const d = await verify(h.slice(7));
+    req.user = { uid: d.uid, email: String(d.email || "").toLowerCase(), emailVerified: !!d.email_verified };
+  } catch (e) { /* treat as signed out */ }
+  next();
+}

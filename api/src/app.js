@@ -5,12 +5,13 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import crypto from "node:crypto";
 import { withContext } from "./db.js";
-import { requireUser } from "./auth.js";
+import { requireUser, optionalUser } from "./auth.js";
 
 const INVITE_DAYS = 7;
 const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
 const hashCode = (code) => crypto.createHash("sha256").update(`alaga-invite:${code}`).digest("hex");
+const hashBeta = (code) => crypto.createHash("sha256").update(`alaga-beta:${code}`).digest("hex");
 const normCode = (s) => String(s || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 function newCode() {
   const bytes = crypto.randomBytes(8);
@@ -36,7 +37,13 @@ export function makeApp({ pool, env = process.env }) {
   app.use(cors({ origin: (o, cb) => cb(null, !o || origins.includes(o)), allowedHeaders: ["Authorization", "Content-Type"], methods: ["GET", "POST", "PATCH", "DELETE"] }));
   app.use(express.json({ limit: "100kb" }));
   app.use(rateLimit({ windowMs: 60_000, limit: 300, standardHeaders: true, legacyHeaders: false }));
-  const inviteLimiter = rateLimit({ windowMs: 15 * 60_000, limit: 10, standardHeaders: true, legacyHeaders: false, message: { error: "too_many_tries" } });
+  const betaRequired = env.BETA_REQUIRED !== "0";
+  const isTeam = (req) => !!(req.user && req.user.emailVerified && admins.includes(req.user.email));
+  const requireTeam = (req, res, next) => (isTeam(req) ? next() : res.status(403).json({ error: "no_access" }));
+  const feedbackLimiter = rateLimit({ windowMs: 60 * 60_000, limit: 20, standardHeaders: true, legacyHeaders: false, message: { error: "too_many_tries" } });
+  // Separate limits for guessing invite codes, beta codes and demo links.
+  const guessLimiter = () => rateLimit({ windowMs: 15 * 60_000, limit: 10, standardHeaders: true, legacyHeaders: false, message: { error: "too_many_tries" } });
+  const inviteLimiter = guessLimiter(), betaLimiter = guessLimiter(), demoLimiter = guessLimiter();
 
   const audit = (client, req, providerId, action, target, meta = {}) =>
     client.query("INSERT INTO audit_log (provider_id, actor_uid, action, target, meta, ip) VALUES ($1,$2,$3,$4,$5,$6)",
@@ -87,11 +94,21 @@ export function makeApp({ pool, env = process.env }) {
     const out = await withContext(pool, { role: "system", uid: req.user.uid }, async (c) => {
       if ((await c.query("SELECT 1 FROM guardians WHERE user_uid = $1", [req.user.uid])).rowCount) throw new HttpError(409, "family_account");
       if ((await c.query("SELECT 1 FROM memberships WHERE user_uid = $1", [req.user.uid])).rowCount) throw new HttpError(409, "already_has_daycare");
+      // Private beta: a valid code is used up as the daycare is created.
+      let betaId = null;
+      if (betaRequired && !isTeam(req)) {
+        const code = normCode(b.betaCode);
+        if (!code) throw new HttpError(403, "beta_code_required");
+        const r = await c.query("UPDATE beta_codes SET uses = uses + 1 WHERE code_hash = $1 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at > now()) AND uses < max_uses RETURNING id", [hashBeta(code)]);
+        if (!r.rowCount) throw new HttpError(403, "beta_code_invalid");
+        betaId = r.rows[0].id;
+      }
       const p = await c.query(
         "INSERT INTO providers (name, city, license, provider_type, capacity, settings) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id, name, city, license, provider_type, capacity, settings",
         [name, str(b.city), str(b.license), str(b.providerType), Number.isFinite(+b.capacity) ? Math.max(0, Math.min(500, +b.capacity)) : null, b.settings && typeof b.settings === "object" ? b.settings : {}],
       );
       await c.query("INSERT INTO memberships (provider_id, user_uid, email, role) VALUES ($1,$2,$3,'owner')", [p.rows[0].id, req.user.uid, req.user.email]);
+      if (betaId) await c.query("INSERT INTO beta_code_uses (beta_code_id, provider_id, user_uid) VALUES ($1,$2,$3)", [betaId, p.rows[0].id, req.user.uid]);
       await audit(c, req, p.rows[0].id, "provider.create", p.rows[0].id);
       return p.rows[0];
     });
@@ -308,6 +325,103 @@ export function makeApp({ pool, env = process.env }) {
       return { provider: p, household: h, me: { id: pick.id, name: pick.name }, guardians: g, children: k };
     });
     res.json(out);
+  }));
+
+  // Private beta: check a code before creating an account (doesn't use it).
+  app.post("/beta/check", betaLimiter, wrap(async (req, res) => {
+    const code = normCode(req.body?.code);
+    const ok = code.length >= 6 && await withContext(pool, { role: "system" }, async (c) =>
+      (await c.query("SELECT 1 FROM beta_codes WHERE code_hash = $1 AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at > now()) AND uses < max_uses", [hashBeta(code)])).rowCount > 0);
+    res.status(ok ? 200 : 404).json({ ok: !!ok, required: betaRequired });
+  }));
+
+  // Private demo links open the sample daycare (sample data only).
+  app.post("/demo/check", demoLimiter, wrap(async (req, res) => {
+    const token = String(req.body?.token || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 64);
+    const row = token.length >= 12 && await withContext(pool, { role: "system" }, async (c) =>
+      (await c.query("UPDATE demo_links SET views = views + 1 WHERE token = $1 AND active AND (expires_at IS NULL OR expires_at > now()) RETURNING id, label", [token])).rows[0]);
+    if (!row) return res.status(404).json({ ok: false });
+    res.json({ ok: true });
+  }));
+
+  // Feedback and post-demo surveys. Signed-in users are recorded with it.
+  app.post("/feedback", feedbackLimiter, optionalUser, wrap(async (req, res) => {
+    const b = req.body || {};
+    const kind = b.kind === "demo_survey" ? "demo_survey" : "feedback";
+    const rating = Number.isInteger(b.rating) && b.rating >= 1 && b.rating <= 5 ? b.rating : null;
+    const message = str(b.message, 4000);
+    const answers = b.answers && typeof b.answers === "object" && !Array.isArray(b.answers) ? JSON.parse(JSON.stringify(b.answers).slice(0, 4000)) : {};
+    if (!rating && !message && !Object.keys(answers).length) throw new HttpError(400, "empty");
+    await withContext(pool, { role: "system", uid: req.user?.uid }, async (c) => {
+      let providerId = null, demoId = null;
+      if (req.user) providerId = (await c.query("SELECT provider_id FROM memberships WHERE user_uid = $1 LIMIT 1", [req.user.uid])).rows[0]?.provider_id
+        || (await c.query("SELECT provider_id FROM guardians WHERE user_uid = $1 LIMIT 1", [req.user.uid])).rows[0]?.provider_id || null;
+      if (b.demoToken) demoId = (await c.query("SELECT id FROM demo_links WHERE token = $1", [String(b.demoToken).slice(0, 64)])).rows[0]?.id || null;
+      await c.query("INSERT INTO feedback (kind, rating, message, answers, contact, screen, role, user_uid, user_email, provider_id, demo_link_id, language) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)",
+        [kind, rating, message, answers, str(b.contact, 200), str(b.screen, 80), str(b.role, 20), req.user?.uid || null, req.user?.email || null, providerId, demoId, str(b.language, 20)]);
+    });
+    res.status(201).json({ ok: true });
+  }));
+
+  // Alaga team tools ---------------------------------------------------------
+  app.get("/admin/beta-codes", requireUser, requireTeam, wrap(async (req, res) => {
+    res.json(await withContext(pool, { role: "system", uid: req.user.uid }, async (c) => (await c.query(
+      `SELECT b.id, b.label, b.max_uses, b.uses, b.expires_at, b.revoked_at, b.created_at,
+         coalesce((SELECT json_agg(json_build_object('provider', p.name, 'used_at', u.used_at) ORDER BY u.used_at) FROM beta_code_uses u LEFT JOIN providers p ON p.id = u.provider_id WHERE u.beta_code_id = b.id), '[]') AS used_by
+       FROM beta_codes b ORDER BY b.created_at DESC`)).rows));
+  }));
+  app.post("/admin/beta-codes", requireUser, requireTeam, wrap(async (req, res) => {
+    const b = req.body || {};
+    const label = str(b.label) || "Beta code";
+    const maxUses = Math.max(1, Math.min(1000, parseInt(b.maxUses, 10) || 1));
+    const days = Math.max(0, Math.min(365, parseInt(b.expiresInDays, 10) || 0));
+    const code = newCode();
+    const row = await withContext(pool, { role: "system", uid: req.user.uid }, async (c) => {
+      const r = await c.query("INSERT INTO beta_codes (code_hash, label, max_uses, expires_at, created_by) VALUES ($1,$2,$3, CASE WHEN $4::int > 0 THEN now() + ($4 || ' days')::interval ELSE NULL END, $5) RETURNING id, label, max_uses, expires_at",
+        [hashBeta(code), label, maxUses, days, req.user.email]);
+      await audit(c, req, null, "admin.beta_code_create", r.rows[0].id);
+      return r.rows[0];
+    });
+    res.status(201).json({ ...row, code });
+  }));
+  app.delete("/admin/beta-codes/:id", requireUser, requireTeam, wrap(async (req, res) => {
+    if (!isUuid(req.params.id)) throw new HttpError(404, "not_found");
+    await withContext(pool, { role: "system", uid: req.user.uid }, async (c) => {
+      const r = await c.query("UPDATE beta_codes SET revoked_at = now() WHERE id = $1 AND revoked_at IS NULL", [req.params.id]);
+      if (!r.rowCount) throw new HttpError(404, "not_found");
+      await audit(c, req, null, "admin.beta_code_revoke", req.params.id);
+    });
+    res.status(204).end();
+  }));
+  app.get("/admin/demo-links", requireUser, requireTeam, wrap(async (req, res) => {
+    res.json(await withContext(pool, { role: "system", uid: req.user.uid }, async (c) => (await c.query(
+      "SELECT d.id, d.token, d.label, d.active, d.views, d.expires_at, d.created_at, (SELECT count(*)::int FROM feedback f WHERE f.demo_link_id = d.id) AS surveys FROM demo_links d ORDER BY d.created_at DESC")).rows));
+  }));
+  app.post("/admin/demo-links", requireUser, requireTeam, wrap(async (req, res) => {
+    const label = str(req.body?.label) || "Demo link";
+    const token = crypto.randomBytes(12).toString("base64url");
+    const row = await withContext(pool, { role: "system", uid: req.user.uid }, async (c) => {
+      const r = await c.query("INSERT INTO demo_links (token, label, created_by) VALUES ($1,$2,$3) RETURNING id, token, label, active, views, created_at", [token, label, req.user.email]);
+      await audit(c, req, null, "admin.demo_link_create", r.rows[0].id);
+      return r.rows[0];
+    });
+    res.status(201).json(row);
+  }));
+  app.patch("/admin/demo-links/:id", requireUser, requireTeam, wrap(async (req, res) => {
+    if (!isUuid(req.params.id)) throw new HttpError(404, "not_found");
+    const row = await withContext(pool, { role: "system", uid: req.user.uid }, async (c) => {
+      const r = await c.query("UPDATE demo_links SET active = $2 WHERE id = $1 RETURNING id, token, label, active, views", [req.params.id, !!req.body?.active]);
+      if (!r.rowCount) throw new HttpError(404, "not_found");
+      await audit(c, req, null, "admin.demo_link_update", req.params.id, { active: !!req.body?.active });
+      return r.rows[0];
+    });
+    res.json(row);
+  }));
+  app.get("/admin/feedback", requireUser, requireTeam, wrap(async (req, res) => {
+    res.json(await withContext(pool, { role: "system", uid: req.user.uid }, async (c) => (await c.query(
+      `SELECT f.id, f.kind, f.rating, f.message, f.answers, f.contact, f.screen, f.role, f.user_email, f.language, f.created_at, p.name AS provider, d.label AS demo_label
+       FROM feedback f LEFT JOIN providers p ON p.id = f.provider_id LEFT JOIN demo_links d ON d.id = f.demo_link_id
+       ORDER BY f.created_at DESC LIMIT 500`)).rows));
   }));
 
   // Alaga team: every daycare, with counts. Verified team emails only.
