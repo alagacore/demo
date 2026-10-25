@@ -1850,6 +1850,49 @@ const T = {
   "This parent already has access.": { es: "Este padre o madre ya tiene acceso.", tl: "May access na ang magulang na ito.", zh: "该家长已开通。", vi: "Phụ huynh này đã có quyền.", ko: "이 부모님은 이미 접근 권한이 있어요." },
   "Send it now — for security, this code is shown only once.": { es: "Envíelo ahora; por seguridad, este código solo se muestra una vez.", tl: "Ipadala na ngayon — para sa seguridad, isang beses lang ipapakita ang code.", zh: "请现在发送——出于安全考虑，此邀请码只显示一次。", vi: "Hãy gửi ngay — vì an toàn, mã này chỉ hiện một lần.", ko: "지금 보내세요 — 보안을 위해 이 코드는 한 번만 표시돼요." },
   "This email is used for a daycare account. Ask your daycare to invite a different email.": { es: "Este correo es de una cuenta de guardería. Pida a su guardería que invite otro correo.", tl: "Ginagamit ang email na ito sa daycare account. Hilingin sa daycare na mag-invite ng ibang email.", zh: "此邮箱已用于托育机构账户，请让托育机构邀请其他邮箱。", vi: "Email này là tài khoản nơi giữ trẻ. Hãy nhờ nơi giữ trẻ mời email khác.", ko: "이 이메일은 어린이집 계정이에요. 다른 이메일로 초대해 달라고 하세요." },
+  "About a minute. It helps us build what home daycares actually need.": { es: "Toma un minuto. Nos ayuda a crear lo que las guarderías en casa realmente necesitan.", tl: "Mga isang minuto lang. Tinutulungan kami nitong buuin ang talagang kailangan ng home daycare.", zh: "大约一分钟，帮助我们打造家庭托育真正需要的功能。", vi: "Khoảng một phút. Giúp chúng tôi xây dựng điều nơi giữ trẻ tại nhà thật sự cần.", ko: "1분 정도면 돼요. 가정 어린이집에 꼭 필요한 기능을 만드는 데 도움이 돼요." },
+  "Alaga is in private beta. Enter the beta code you received to create your daycare's account.": { es: "Alaga está en beta privada. Escriba el código beta que recibió para crear la cuenta de su guardería.", tl: "Nasa private beta ang Alaga. Ilagay ang beta code na natanggap mo para gawin ang account ng daycare mo.", zh: "Alaga 正处于内测阶段。请输入您收到的内测码来创建托育机构账户。", vi: "Alaga đang thử nghiệm riêng. Nhập mã beta bạn nhận được để tạo tài khoản nơi giữ trẻ.", ko: "Alaga는 비공개 베타 중이에요. 받은 베타 코드를 입력해 어린이집 계정을 만드세요." },
+  "Attendance, families, tuition and subsidies, documents, and more.": { es: "Asistencia, familias, colegiaturas y subsidios, documentos y más.", tl: "Attendance, pamilya, tuition at subsidy, dokumento, at iba pa.", zh: "考勤、家庭、学费与补贴、文件等。", vi: "Điểm danh, gia đình, học phí và trợ cấp, giấy tờ, và hơn thế.", ko: "출석, 가족, 수업료와 보조금, 서류 등." },
+  "Before you go — 4 quick questions": { es: "Antes de irse: 4 preguntas rápidas", tl: "Bago ka umalis — 4 mabilis na tanong", zh: "离开前，4 个简短问题", vi: "Trước khi đi — 4 câu hỏi nhanh", ko: "가기 전에 — 짧은 질문 4개" },
+  "Beta code": { es: "Código beta", tl: "Beta code", zh: "内测码", vi: "Mã beta", ko: "베타 코드" },
+  "Can we follow up? Email or phone (optional)": { es: "¿Podemos contactarle? Correo o teléfono (opcional)", tl: "Puwede ka ba naming kontakin? Email o phone (opsyonal)", zh: "可以联系您吗？邮箱或电话（选填）", vi: "Chúng tôi có thể liên hệ lại? Email hoặc điện thoại (tùy chọn)", ko: "연락드려도 될까요? 이메일 또는 전화번호(선택)" },
+  "Couldn't send. Check your connection and try again.": { es: "No se pudo enviar. Revise su conexión e intente de nuevo.", tl: "Hindi naipadala. Tingnan ang koneksyon at subukan ulit.", zh: "发送失败，请检查网络后重试。", vi: "Không gửi được. Kiểm tra mạng và thử lại.", ko: "보내지 못했어요. 연결을 확인하고 다시 시도하세요." },
+  "Do you run a home daycare?": { es: "¿Tiene una guardería en casa?", tl: "May home daycare ka ba?", zh: "您经营家庭托育吗？", vi: "Bạn có điều hành nơi giữ trẻ tại nhà không?", ko: "가정 어린이집을 운영하세요?" },
+  "Enter a valid beta code to finish setting up.": { es: "Escriba un código beta válido para terminar la configuración.", tl: "Maglagay ng valid na beta code para matapos ang setup.", zh: "请输入有效的内测码以完成设置。", vi: "Nhập mã beta hợp lệ để hoàn tất thiết lập.", ko: "설정을 마치려면 유효한 베타 코드를 입력하세요." },
+  "Explore as a daycare": { es: "Explorar como guardería", tl: "Tingnan bilang daycare", zh: "以托育机构身份体验", vi: "Khám phá với vai trò nơi giữ trẻ", ko: "어린이집으로 둘러보기" },
+  "Explore as a parent": { es: "Explorar como padre o madre", tl: "Tingnan bilang magulang", zh: "以家长身份体验", vi: "Khám phá với vai trò phụ huynh", ko: "부모로 둘러보기" },
+  "Feedback": { es: "Comentarios", tl: "Feedback", zh: "反馈", vi: "Góp ý", ko: "피드백" },
+  "Go to Alaga": { es: "Ir a Alaga", tl: "Pumunta sa Alaga", zh: "前往 Alaga", vi: "Đến Alaga", ko: "Alaga로 가기" },
+  "Goes to the Alaga team, not your daycare or families.": { es: "Llega al equipo de Alaga, no a su guardería ni a las familias.", tl: "Mapupunta sa Alaga team, hindi sa daycare o mga pamilya.", zh: "发送给 Alaga 团队，不会发给托育机构或家庭。", vi: "Gửi đến nhóm Alaga, không phải nơi giữ trẻ hay gia đình.", ko: "Alaga 팀에게만 전달되며 어린이집이나 가족에게는 가지 않아요." },
+  "How useful would Alaga be for your daycare?": { es: "¿Qué tan útil sería Alaga para su guardería?", tl: "Gaano kapaki-pakinabang ang Alaga sa daycare mo?", zh: "Alaga 对您的托育机构有多大帮助？", vi: "Alaga hữu ích thế nào cho nơi giữ trẻ của bạn?", ko: "Alaga가 어린이집에 얼마나 도움이 될까요?" },
+  "How's Alaga working for you?": { es: "¿Cómo le está funcionando Alaga?", tl: "Kumusta ang Alaga para sa iyo?", zh: "Alaga 用起来怎么样？", vi: "Alaga dùng thế nào với bạn?", ko: "Alaga 사용은 어떠세요?" },
+  "It may have expired. Ask the person who sent it for a new link.": { es: "Puede que haya vencido. Pida un enlace nuevo a quien se lo envió.", tl: "Baka expired na. Humingi ng bagong link sa nagpadala.", zh: "链接可能已过期，请向发送者索取新链接。", vi: "Có thể đã hết hạn. Hãy xin liên kết mới từ người gửi.", ko: "만료되었을 수 있어요. 보낸 분께 새 링크를 요청하세요." },
+  "Look around a sample home daycare. Everything here is made-up sample data, and nothing you change is shared.": { es: "Recorra una guardería de ejemplo. Todo son datos inventados y nada de lo que cambie se comparte.", tl: "Tingnan ang isang sample na home daycare. Gawa-gawa lang ang lahat ng data, at walang binabago mong ishe-share.", zh: "浏览一个示例家庭托育。这里全是虚构的示例数据，您的改动不会被分享。", vi: "Xem thử một nơi giữ trẻ mẫu. Mọi dữ liệu đều là mẫu, và thay đổi của bạn không được chia sẻ.", ko: "샘플 가정 어린이집을 둘러보세요. 모두 가상의 데이터이며 변경한 내용은 공유되지 않아요." },
+  "Not useful": { es: "Nada útil", tl: "Hindi kapaki-pakinabang", zh: "没帮助", vi: "Không hữu ích", ko: "도움 안 됨" },
+  "Opening the demo…": { es: "Abriendo la demostración…", tl: "Binubuksan ang demo…", zh: "正在打开演示…", vi: "Đang mở bản demo…", ko: "데모를 여는 중…" },
+  "Send feedback": { es: "Enviar comentarios", tl: "Magpadala ng feedback", zh: "发送反馈", vi: "Gửi góp ý", ko: "피드백 보내기" },
+  "Sending…": { es: "Enviando…", tl: "Ipinapadala…", zh: "正在发送…", vi: "Đang gửi…", ko: "보내는 중…" },
+  "Sign in to your daycare. New daycares join with a beta code during our private beta.": { es: "Inicie sesión en su guardería. Las guarderías nuevas se unen con un código beta durante la beta privada.", tl: "Mag-sign in sa daycare mo. Sumasali ang mga bagong daycare gamit ang beta code habang private beta.", zh: "登录您的托育机构。内测期间，新机构需凭内测码加入。", vi: "Đăng nhập nơi giữ trẻ của bạn. Nơi giữ trẻ mới tham gia bằng mã beta trong giai đoạn thử nghiệm.", ko: "어린이집에 로그인하세요. 비공개 베타 기간에는 베타 코드로 새로 가입해요." },
+  "Skip": { es: "Omitir", tl: "Laktawan", zh: "跳过", vi: "Bỏ qua", ko: "건너뛰기" },
+  "Tell us what you think": { es: "Díganos qué opina", tl: "Sabihin sa amin ang palagay mo", zh: "告诉我们您的想法", vi: "Cho chúng tôi biết ý kiến", ko: "의견을 들려주세요" },
+  "Thank you! We read every note.": { es: "¡Gracias! Leemos cada mensaje.", tl: "Salamat! Binabasa namin ang bawat mensahe.", zh: "谢谢！每条反馈我们都会阅读。", vi: "Cảm ơn! Chúng tôi đọc mọi góp ý.", ko: "감사합니다! 모든 의견을 읽어요." },
+  "Thanks for your feedback! Keep exploring if you like.": { es: "¡Gracias por sus comentarios! Siga explorando si quiere.", tl: "Salamat sa feedback! Puwede ka pang mag-explore.", zh: "感谢反馈！欢迎继续体验。", vi: "Cảm ơn góp ý! Bạn có thể tiếp tục khám phá.", ko: "피드백 감사합니다! 더 둘러보셔도 돼요." },
+  "That beta code isn't valid. Check it, or ask the Alaga team for one.": { es: "Ese código beta no es válido. Revíselo o pida uno al equipo de Alaga.", tl: "Hindi valid ang beta code. Tingnan ulit, o humingi sa Alaga team.", zh: "该内测码无效。请检查，或向 Alaga 团队索取。", vi: "Mã beta không hợp lệ. Kiểm tra lại hoặc xin mã từ nhóm Alaga.", ko: "유효하지 않은 베타 코드예요. 확인하거나 Alaga 팀에 요청하세요." },
+  "This demo link isn't active": { es: "Este enlace de demostración no está activo", tl: "Hindi active ang demo link na ito", zh: "此演示链接已失效", vi: "Liên kết demo này không còn hoạt động", ko: "이 데모 링크는 사용할 수 없어요" },
+  "Very useful": { es: "Muy útil", tl: "Napaka-kapaki-pakinabang", zh: "很有帮助", vi: "Rất hữu ích", ko: "매우 도움 됨" },
+  "Welcome to the Alaga demo": { es: "Bienvenido a la demostración de Alaga", tl: "Welcome sa Alaga demo", zh: "欢迎体验 Alaga 演示", vi: "Chào mừng đến bản demo Alaga", ko: "Alaga 데모에 오신 것을 환영해요" },
+  "What families see: check-in, billing, forms to sign, pickup passes.": { es: "Lo que ven las familias: registro de entrada, pagos, formularios para firmar, pases de recogida.", tl: "Ang nakikita ng pamilya: check-in, billing, forms na pipirmahan, pickup pass.", zh: "家长看到的内容：签到、账单、待签表格、接送通行证。", vi: "Những gì gia đình thấy: điểm danh, hóa đơn, biểu mẫu cần ký, thẻ đón trẻ.", ko: "가족이 보는 화면: 체크인, 청구, 서명할 서류, 픽업 패스." },
+  "What would you use most?": { es: "¿Qué usaría más?", tl: "Ano ang pinakagagamitin mo?", zh: "您最常用哪些功能？", vi: "Bạn sẽ dùng gì nhiều nhất?", ko: "무엇을 가장 많이 쓰실 것 같나요?" },
+  "What's missing or confusing?": { es: "¿Qué falta o qué es confuso?", tl: "Ano ang kulang o nakakalito?", zh: "缺少什么或哪里让人困惑？", vi: "Còn thiếu gì hoặc chỗ nào khó hiểu?", ko: "부족하거나 헷갈리는 점이 있나요?" },
+  "What's working, what's confusing, what's missing?": { es: "¿Qué funciona, qué confunde, qué falta?", tl: "Ano ang gumagana, nakakalito, kulang?", zh: "哪些好用、哪些困惑、缺少什么？", vi: "Điều gì ổn, điều gì khó hiểu, còn thiếu gì?", ko: "좋은 점, 헷갈리는 점, 부족한 점은요?" },
+  "Yes": { es: "Sí", tl: "Oo", zh: "是", vi: "Có", ko: "네" },
+  "No": { es: "No", tl: "Hindi", zh: "否", vi: "Không", ko: "아니요" },
+  "I'm opening one": { es: "Voy a abrir una", tl: "Magbubukas pa lang ako", zh: "正在筹备", vi: "Tôi sắp mở", ko: "곧 열 예정이에요" },
+  "Tuition & receipts": { es: "Colegiaturas y recibos", tl: "Tuition at resibo", zh: "学费与收据", vi: "Học phí & biên lai", ko: "수업료 및 영수증" },
+  "Subsidy tracking": { es: "Seguimiento de subsidios", tl: "Pag-track ng subsidy", zh: "补贴追踪", vi: "Theo dõi trợ cấp", ko: "보조금 관리" },
+  "Attendance & check-in": { es: "Asistencia y registro", tl: "Attendance at check-in", zh: "考勤与签到", vi: "Điểm danh & check-in", ko: "출석 및 체크인" },
+  "Parent app": { es: "App para padres", tl: "Parent app", zh: "家长应用", vi: "Ứng dụng phụ huynh", ko: "부모 앱" },
+  "Documents & forms": { es: "Documentos y formularios", tl: "Dokumento at forms", zh: "文件与表格", vi: "Giấy tờ & biểu mẫu", ko: "서류 및 양식" },
   "Nurturing the foundation for your childcare business": { es: "Nutriendo la base de su negocio de cuidado infantil", tl: "Inaalagaan ang pundasyon ng negosyo mo sa childcare", zh: "滋养您托育事业的基石", vi: "Nuôi dưỡng nền tảng cho doanh nghiệp chăm sóc trẻ của bạn", ko: "귀하의 보육 사업의 토대를 가꿉니다" },
   "Documents": { es: "Documentos", tl: "Mga dokumento", zh: "文件", vi: "Hồ sơ", ko: "서류" },
   "Child records": { es: "Expedientes de niños", tl: "Rekord ng mga bata", zh: "儿童档案", vi: "Hồ sơ trẻ", ko: "아동 기록" },
@@ -3151,11 +3194,12 @@ function usePersistentState(key, initial) {
 // provider's real data instead of dropping into the shared demo dataset.
 // role: "provider" (sign in or create), "parent" (sign in only — accounts come
 // from invites), "admin" (Alaga team addresses only).
-function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language, setLanguage, role = "provider", onInvite, notice: introNotice }) {
+function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language, setLanguage, role = "provider", onInvite, notice: introNotice, initialBetaCode = "" }) {
   const t = useT();
   const [mode, setMode] = useState(role === "parent" ? "signin" : initialMode); // "signin" | "signup"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [betaCode, setBetaCode] = useState(initialBetaCode ? fmtCode(normCode(initialBetaCode)) : "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -3191,8 +3235,12 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language
     e.preventDefault();
     setError("");
     const addr = email.trim().toLowerCase();
-    if (role === "admin" && !ADMIN_EMAILS.includes(addr)) { setError(t("This account doesn't have Alaga team access.")); return; }
     setBusy(true);
+    // Private beta: a daycare needs a valid beta code before an account is made.
+    if (role === "provider" && mode === "signup") {
+      try { await api("/beta/check", { method: "POST", auth: false, body: { code: normCode(betaCode) } }); }
+      catch (er) { setBusy(false); setError(er.code === "offline" ? t("Can't reach Alaga right now. Check your connection.") : er.code === "too_many_tries" ? `${t("Too many tries. Try again in")} 15 ${t("min")}.` : t("That beta code isn't valid. Check it, or ask the Alaga team for one.")); return; }
+    }
     try {
       const { signInWithEmailAndPassword, createUserWithEmailAndPassword } = await import("firebase/auth");
       const { auth } = await import("./firebase.js");
@@ -3218,7 +3266,7 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language
             onAuthenticated(cred.user, "signin", null, providerFromServer(p)); return;
           }
           // Signed in, but no daycare set up yet: go to setup.
-          onAuthenticated(cred.user, "signup"); return;
+          onAuthenticated(cred.user, "signup", null, null, normCode(betaCode)); return;
         }
         if (me.guardianOf.length) {
           const g = me.guardianOf[0];
@@ -3228,6 +3276,11 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language
       if (role === "parent" && !accounts[addr]) { await firebaseSignOut(); setError(t("No family is linked to this account yet. Ask your daycare for an invite code.")); return; }
       // Team access needs a verified address: only someone who can open the
       // Alaga inbox gets in, even if another person created the account first.
+      if (role === "admin" && cred.user.emailVerified) {
+        // The server decides who's on the Alaga team.
+        let me = null; try { me = await api("/me"); } catch (er) { /* offline */ }
+        if (!me || !me.isTeam) { await firebaseSignOut(); setError(me ? t("This account doesn't have Alaga team access.") : t("Can't reach Alaga right now. Check your connection.")); return; }
+      }
       if (role === "admin" && !cred.user.emailVerified) {
         try { const { sendEmailVerification } = await import("firebase/auth"); await sendEmailVerification(cred.user); } catch (er) { /* sent recently */ }
         await firebaseSignOut();
@@ -3271,6 +3324,14 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language
           ))}
         </div>}
 
+        {role === "provider" && mode === "signup" && (
+          <>
+            <div style={{ fontSize: 12.5, color: C.tealDark, background: C.tealTint, borderRadius: 9, padding: "9px 11px", marginBottom: 12, lineHeight: 1.45 }}>{t("Alaga is in private beta. Enter the beta code you received to create your daycare's account.")}</div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft, marginBottom: 6 }}>{t("Beta code")}</div>
+            <input required value={betaCode} onChange={(e) => { const c = normCode(e.target.value).slice(0, 8); setBetaCode(c.length > 4 ? fmtCode(c) : c); }} placeholder="ABCD-2345" autoCapitalize="characters"
+              style={{ width: "100%", boxSizing: "border-box", padding: "11px 12px", borderRadius: 9, border: `1px solid ${C.line}`, fontSize: 16, marginBottom: 14, fontFamily: "Menlo, monospace", letterSpacing: "0.1em", fontWeight: 700 }} />
+          </>
+        )}
         <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft, marginBottom: 6 }}>{t("Email")}</div>
         <input type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)}
           placeholder={role === "parent" ? "you@email.com" : role === "admin" ? "you@alagacore.com" : "you@yourdaycare.com"}
@@ -3316,7 +3377,7 @@ function LoginScreen({ onAuthenticated, onBack, initialMode = "signin", language
 /* ------------------------ accounts, invites, team access ------------------------ */
 // Alaga team sign-in is limited to these addresses. (In production the server
 // also checks a role on the account; a list in the page alone isn't enough.)
-const ADMIN_EMAILS = ["hello@alagacore.com"];
+// Who's on the Alaga team is decided by the server (ADMIN_EMAILS on Cloud Run).
 // Parent invites and which family each parent account belongs to. In the demo
 // they live in this browser; in production the server creates, checks and
 // expires invites, and links accounts to families.
@@ -3446,7 +3507,7 @@ function LandingChooser({ onProvider, onParent, onTeam, language, setLanguage })
         {t("Nurturing the foundation for your childcare business")}.
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 16, width: "100%", maxWidth: 760 }}>
-        {door(Building2, C.tealTint, C.tealDark, t("I run a daycare"), t("Sign in to your daycare, or set one up in a few minutes."), <>
+        {door(Building2, C.tealTint, C.tealDark, t("I run a daycare"), t("Sign in to your daycare. New daycares join with a beta code during our private beta."), <>
           <button onClick={() => onProvider("signin")} style={primary}>{t("Sign in")}</button>
           <button onClick={() => onProvider("signup")} style={secondary}>{t("Create account")}</button>
         </>)}
@@ -3584,7 +3645,7 @@ function ParentInviteScreen({ initialCode = "", onBack, onDone, onSignIn, langua
 }
 
 // Alaga team home: the admin console and every demo, kept off the public page.
-function AdminHome({ email, onConsole, onDemo, onParentDemo, onDoorDemo, onSignOut }) {
+function AdminHome({ email, onConsole, onDemo, onParentDemo, onDoorDemo, onSignOut, onTool }) {
   const tile = (icon, tint, fg, title, body, onClick) => (
     <button onClick={onClick} style={{ textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: 18, display: "flex", gap: 12, alignItems: "flex-start", minHeight: 96 }}>
       <div style={{ width: 40, height: 40, borderRadius: 11, background: tint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{React.createElement(icon, { size: 19, color: fg })}</div>
@@ -3599,6 +3660,9 @@ function AdminHome({ email, onConsole, onDemo, onParentDemo, onDoorDemo, onSignO
         <button onClick={onSignOut} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 9, border: `1px solid ${C.line}`, background: "#fff", color: C.inkSoft, fontWeight: 600, fontSize: 13 }}><LogOut size={14} /> Sign out</button>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 12 }}>
+        {tile(Rocket, C.tealTint, C.tealDark, "Beta codes", "Create sign-up codes for beta daycares and see who used them.", () => onTool("beta"))}
+        {tile(PlayCircle, C.amberTint, C.amber, "Demo links", "Private links that open the sample daycare without an account.", () => onTool("demo"))}
+        {tile(MessageSquare, C.coralTint, C.coral, "Feedback", "In-app feedback and post-demo surveys, newest first.", () => onTool("feedback"))}
         {tile(Building2, "#F1EEE5", C.inkSoft, "Admin console", "Every provider account, plans, revenue, and support tickets.", onConsole)}
         {tile(PlayCircle, C.tealTint, C.tealDark, "Demo — Simple plan", "Sample daycare with the core day-to-day screens.", () => onDemo("simple"))}
         {tile(BarChart3, C.amberTint, C.amber, "Demo — Extended plan", "Everything, including staff, growth and analytics.", () => onDemo("extended"))}
@@ -3798,7 +3862,7 @@ function OnboardingWizard({ onComplete, onBack, initialEmail = "", language, set
       const r = form.rates[c.id] || {};
       tuitionRates[c.id] = { fullTime: Number(r.fullTime) || 0, partTime: Number(r.partTime) || 0, hourly: Number(r.hourly) || 0 };
     });
-    setFinishState({ busy: true, error: "" });
+    setFinishState((f) => ({ ...f, busy: true, error: "" }));
     const result = await onComplete({
       name: form.businessName.trim() || "New Provider",
       city: form.city.trim() || "—",
@@ -3814,9 +3878,11 @@ function OnboardingWizard({ onComplete, onBack, initialEmail = "", language, set
       email: form.email,
       subsidyPrograms: form.subsidyPrograms,
       tuitionRates,
-    });
-    if (result && result.error) setFinishState({ busy: false, error: result.error === "family_account" ? t("This email is used for a family account. Use a different email for your daycare.") : t("Couldn't save your daycare. Check your connection and try again.") });
-    else setFinishState({ busy: false, error: "" });
+    }, normCode(finishState.betaCode || ""));
+    if (result && result.error) setFinishState((f) => ({ ...f, busy: false, askBeta: f.askBeta || result.error === "beta",
+      error: result.error === "family_account" ? t("This email is used for a family account. Use a different email for your daycare.")
+        : result.error === "beta" ? t("Enter a valid beta code to finish setting up.") : t("Couldn't save your daycare. Check your connection and try again.") }));
+    else setFinishState((f) => ({ ...f, busy: false, error: "" }));
   };
 
   const chip = (on) => ({
@@ -4022,6 +4088,12 @@ function OnboardingWizard({ onComplete, onBack, initialEmail = "", language, set
             }}><Rocket size={14} /> {finishState.busy ? t("Saving…") : t("Open my workspace")}</button>
           )}
         </div>
+        {finishState.askBeta && (
+          <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: C.inkSoft }}>{t("Beta code")}</div>
+            <input value={finishState.betaCode || ""} onChange={(e) => { const c = normCode(e.target.value).slice(0, 8); setFinishState((f) => ({ ...f, betaCode: c.length > 4 ? fmtCode(c) : c })); }} placeholder="ABCD-2345" style={{ ...wizInput, fontFamily: "Menlo, monospace", letterSpacing: "0.1em", fontWeight: 700 }} />
+          </div>
+        )}
         {finishState.error && <div role="alert" style={{ marginTop: 10, color: C.danger, fontSize: 13, textAlign: "center" }}>{finishState.error}</div>}
       </div>
     </div>
@@ -4626,7 +4698,7 @@ function WelcomeBriefing({ providerInfo, families, staff, prospects, threads, fl
   );
 }
 
-function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, providerInfo: initialProviderInfo, onboardingData, onExitToLanding, forceTier, meetingMode = false, startInParentMode = false, openCheckIn = false, parentAccount = null, isTeam = false }) {
+function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, providerInfo: initialProviderInfo, onboardingData, onExitToLanding, forceTier, meetingMode = false, startInParentMode = false, openCheckIn = false, parentAccount = null, isTeam = false, demoToken = "" }) {
   // A real daycare (or a real parent) keeps its browser-side data under its own
   // key, so two accounts on one computer never mix.
   const serverPid = initialProviderInfo.serverId || null;
@@ -5076,6 +5148,8 @@ function Workspace({ initialLanguage = "English", onLanguageChange, isEmpty, pro
         ::-webkit-scrollbar-thumb { background: ${C.line}; border-radius: 8px; }
       `}</style>
       {serverBanner}
+      <FeedbackButton t={t} role={mode} screen={mode === "provider" ? screen : "parent"} demoToken={demoToken || undefined} language={language}
+        style={mode === "provider" ? (isMobile ? { right: 14, bottom: 14 } : { left: 248, bottom: 16 }) : (isMobile ? { right: 12, bottom: 76 } : { right: 20, bottom: 20 })} />
 
       {mode === "provider" ? (
         <>
@@ -5155,10 +5229,21 @@ export default function AlagaMockup() {
   const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : new URLSearchParams();
   const fromDoorCode = params.has("checkin");
   const inviteFromLink = params.get("invite") || "";
-  const clearLinkParams = () => { if ((fromDoorCode || inviteFromLink) && typeof window !== "undefined") window.history.replaceState(null, "", window.location.pathname); };
+  const betaFromLink = params.get("beta") || "";
+  const demoFromLink = params.get("demo") || "";
+  const clearLinkParams = () => { if ((fromDoorCode || inviteFromLink || betaFromLink) && typeof window !== "undefined") window.history.replaceState(null, "", window.location.pathname); };
   // "landing" | "auth" | "invite" | "teamHome" | "admin" | "wizard" | "workspace"
-  const [entry, setEntry] = useState(inviteFromLink ? "invite" : fromDoorCode ? "auth" : "landing");
+  const [entry, setEntry] = useState(demoFromLink ? "demo" : inviteFromLink ? "invite" : (fromDoorCode || betaFromLink) ? "auth" : "landing");
   const [authRole, setAuthRole] = useState(fromDoorCode ? "parent" : "provider");
+  const [betaCode, setBetaCode] = useState(betaFromLink);
+  // Private demo link: checked once, then the visitor explores sample data.
+  const [demoStatus, setDemoStatus] = useState(demoFromLink ? "checking" : "off"); // off | checking | ok | invalid
+  const [demoSurveyed, setDemoSurveyed] = useState(false);
+  const [demoThanked, setDemoThanked] = useState(false);
+  useEffect(() => {
+    if (!demoFromLink) return;
+    api("/demo/check", { method: "POST", auth: false, body: { token: demoFromLink } }).then(() => setDemoStatus("ok")).catch(() => setDemoStatus("invalid"));
+  }, []);
   const [isEmptyWorkspace, setIsEmptyWorkspace] = useState(false);
   const [forcedTier, setForcedTier] = useState(null);
   const [meetingMode, setMeetingMode] = useState(false);
@@ -5169,7 +5254,7 @@ export default function AlagaMockup() {
   const [teamEmail, setTeamEmail] = useState(""); // signed-in Alaga team member
   const [providerInfo, setProviderInfo] = useState(PROVIDER);
   const [onboardingData, setOnboardingData] = useState(null);
-  const [authMode, setAuthMode] = useState("signin");
+  const [authMode, setAuthMode] = useState(betaFromLink ? "signup" : "signin");
   const [publicLanguage, setPublicLanguage] = usePersistentState("app-language-public", detectLanguage());
   const tPublic = makeT(publicLanguage);
   const publicCtx = { lang: LANG_CODES[publicLanguage] || "en", t: tPublic };
@@ -5235,9 +5320,11 @@ export default function AlagaMockup() {
       key={`${authRole}-${authMode}`}
       role={authRole}
       initialMode={authMode}
+      initialBetaCode={authRole === "provider" ? betaCode : ""}
       notice={authRole === "parent" && pendingCheckIn ? publicCtx.t("Sign in to check your child in or out.") : ""}
       onInvite={() => setEntry("invite")}
-      onAuthenticated={(user, mode, acct, serverProvider) => {
+      onAuthenticated={(user, mode, acct, serverProvider, code) => {
+        if (code) setBetaCode(code);
         if (authRole === "parent") { enterAsParent(acct); return; }
         if (authRole === "admin") { setTeamEmail(user?.email || ""); setEntry("teamHome"); return; }
         if (mode === "signup") { setSignupEmail(user?.email || ""); setEntry("wizard"); return; }
@@ -5248,10 +5335,23 @@ export default function AlagaMockup() {
       onBack={toLanding}
     /></LanguageContext.Provider>;
   }
+  if (entry === "demo") {
+    return <LanguageContext.Provider value={publicCtx}><DemoLanding token={demoFromLink} status={demoStatus} thanked={demoThanked} language={publicLanguage} setLanguage={setPublicLanguage}
+      onDaycare={() => openDemo({ tier: "extended" })} onParent={() => openDemo({ parent: true })} onFeedback={() => setEntry("demoSurvey")} /></LanguageContext.Provider>;
+  }
+  if (entry === "demoSurvey") {
+    return <LanguageContext.Provider value={publicCtx}><DemoSurvey token={demoFromLink} language={publicLanguage} setLanguage={setPublicLanguage}
+      onDone={(sent) => { setDemoSurveyed(true); setDemoThanked(sent); setEntry("demo"); }} /></LanguageContext.Provider>;
+  }
+  if (entry === "teamTool") {
+    if (!teamEmail) { setEntry("landing"); return null; }
+    return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><TeamTools tool={authMode} onBack={() => setEntry("teamHome")} /></LanguageContext.Provider>;
+  }
   if (entry === "teamHome") {
     if (!teamEmail) { setEntry("landing"); return null; }
     return <LanguageContext.Provider value={{ lang: "en", t: (s) => s }}><AdminHome email={teamEmail}
       onConsole={() => setEntry("admin")}
+      onTool={(tool) => { setAuthMode(tool); setEntry("teamTool"); }}
       onDemo={(tier, meeting) => openDemo({ tier, meeting: !!meeting })}
       onParentDemo={() => openDemo({ parent: true })}
       onDoorDemo={() => openDemo({ parent: true, checkIn: true })}
@@ -5264,16 +5364,16 @@ export default function AlagaMockup() {
   if (entry === "wizard") {
     return <LanguageContext.Provider value={publicCtx}><OnboardingWizard
       initialEmail={signupEmail} language={publicLanguage} setLanguage={setPublicLanguage}
-      onComplete={async (info) => {
+      onComplete={async (info, codeOverride) => {
         // Save the new daycare to the server, then open its workspace.
         let saved;
         try {
           const { name, city, lic, providerType, capacity, ...rest } = info;
-          saved = await api("/providers", { method: "POST", body: { name, city, license: lic, providerType, capacity, settings: { ...rest, lic } } });
+          saved = await api("/providers", { method: "POST", body: { name, city, license: lic, providerType, capacity, settings: { ...rest, lic }, betaCode: codeOverride || betaCode || undefined } });
         } catch (er) {
           if (er.code === "already_has_daycare") {
             try { const me = await api("/me"); saved = await api(`/providers/${me.memberships[0].provider_id}`); } catch (e2) { return { error: "offline" }; }
-          } else return { error: er.code === "family_account" ? "family_account" : "offline" };
+          } else return { error: er.code === "family_account" ? "family_account" : ["beta_code_required", "beta_code_invalid"].includes(er.code) ? "beta" : "offline" };
         }
         const full = providerFromServer(saved);
         if (info.language) setPublicLanguage(info.language);
@@ -5283,7 +5383,7 @@ export default function AlagaMockup() {
       onBack={() => setEntry("landing")}
     /></LanguageContext.Provider>;
   }
-  return <Workspace initialLanguage={publicLanguage} onLanguageChange={setPublicLanguage} isEmpty={isEmptyWorkspace} providerInfo={providerInfo} onboardingData={onboardingData} onExitToLanding={async () => { setOpenCheckIn(false); clearLinkParams(); if (teamEmail) { setEntry("teamHome"); return; } await firebaseSignOut(); setParentAccount(null); setEntry("landing"); }} forceTier={forcedTier} meetingMode={meetingMode} startInParentMode={startInParent} openCheckIn={openCheckIn} parentAccount={parentAccount} isTeam={!!teamEmail} />;
+  return <Workspace initialLanguage={publicLanguage} onLanguageChange={setPublicLanguage} isEmpty={isEmptyWorkspace} providerInfo={providerInfo} onboardingData={onboardingData} onExitToLanding={async () => { setOpenCheckIn(false); clearLinkParams(); if (demoStatus === "ok") { setEntry(demoSurveyed ? "demo" : "demoSurvey"); return; } if (teamEmail) { setEntry("teamHome"); return; } await firebaseSignOut(); setParentAccount(null); setEntry("landing"); }} forceTier={forcedTier} meetingMode={meetingMode} startInParentMode={startInParent} openCheckIn={openCheckIn} parentAccount={parentAccount} isTeam={!!teamEmail} demoToken={demoStatus === "ok" ? demoFromLink : ""} />;
 }
 
 /* --------------------------------- sidebar ------------------------------------ */
@@ -13932,6 +14032,259 @@ function PassScanSheet({ passes, savePasses, families, attendanceLog, saveAttend
         </>
       )}
     </ParentSheet>
+  );
+}
+
+/* ------------------------- private beta: demo, feedback, team tools ------------------------- */
+// Sends with the sign-in when there is one (so feedback knows who sent it).
+async function apiMaybeAuth(path, opts = {}) {
+  let signedIn = false;
+  try { const { auth: fa } = await import("./firebase.js"); signedIn = !!fa.currentUser; } catch (e) { /* signed out */ }
+  return api(path, { ...opts, auth: signedIn });
+}
+
+// Feedback from anywhere in the app: a 1–5 rating and a note, with the
+// screen it came from.
+function FeedbackButton({ t, role, screen, demoToken, language, style }) {
+  const [open, setOpen] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [message, setMessage] = useState("");
+  const [state, setState] = useState("idle"); // idle | sending | sent | error
+  const send = async () => {
+    if (!rating && !message.trim()) return;
+    setState("sending");
+    try {
+      await apiMaybeAuth("/feedback", { method: "POST", body: { kind: "feedback", rating: rating || undefined, message: message.trim() || undefined, screen, role, demoToken, language } });
+      setState("sent"); setRating(0); setMessage("");
+    } catch (e) { setState("error"); }
+  };
+  const faces = ["😞", "😕", "😐", "🙂", "😍"];
+  return (
+    <>
+      <button onClick={() => { setOpen(true); setState("idle"); }} aria-label={t("Send feedback")} style={{ position: "fixed", zIndex: 45, display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 999, border: `1px solid ${C.line}`, background: C.paper, color: C.tealDark, fontWeight: 700, fontSize: 12.5, boxShadow: "0 4px 14px rgba(31,42,36,0.12)", ...style }}>
+        <MessageSquare size={14} /> {t("Feedback")}
+      </button>
+      {open && (
+        <div onClick={() => setOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 85, background: "rgba(31,42,36,0.4)", display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
+          <div role="dialog" aria-label={t("Send feedback")} onClick={(e) => e.stopPropagation()} style={{ background: C.paper, borderRadius: 16, width: "100%", maxWidth: 420, padding: 20, display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ fontFamily: "'Fraunces', serif", fontSize: 19, fontWeight: 600 }}>{t("How's Alaga working for you?")}</div>
+              <button onClick={() => setOpen(false)} aria-label={t("Close")} style={{ background: "none", border: "none", color: C.inkSoft }}><X size={17} /></button>
+            </div>
+            {state === "sent" ? (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, padding: "16px 0", textAlign: "center" }}>
+                <CheckCircle2 size={30} color={C.teal} />
+                <div style={{ fontWeight: 700 }}>{t("Thank you! We read every note.")}</div>
+                <button onClick={() => setOpen(false)} style={{ marginTop: 6, padding: "9px 18px", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700 }}>{t("Close")}</button>
+              </div>
+            ) : (
+              <>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 6 }}>
+                  {faces.map((f, i) => (
+                    <button key={i} onClick={() => setRating(i + 1)} aria-label={`${i + 1}`} aria-pressed={rating === i + 1} style={{ flex: 1, padding: "10px 0", borderRadius: 12, fontSize: 24, border: `1.5px solid ${rating === i + 1 ? C.teal : C.line}`, background: rating === i + 1 ? C.tealTint : "#fff" }}>{f}</button>
+                  ))}
+                </div>
+                <textarea value={message} onChange={(e) => setMessage(e.target.value.slice(0, 4000))} rows={4} placeholder={t("What's working, what's confusing, what's missing?")} style={{ ...inputStyle, width: "100%", boxSizing: "border-box", padding: "10px 12px", borderRadius: 10, fontSize: 14, resize: "vertical" }} />
+                {state === "error" && <div role="alert" style={{ fontSize: 12.5, color: C.danger }}>{t("Couldn't send. Check your connection and try again.")}</div>}
+                <button onClick={send} disabled={state === "sending" || (!rating && !message.trim())} style={{ padding: "11px 0", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 14, opacity: state === "sending" || (!rating && !message.trim()) ? 0.55 : 1 }}>{state === "sending" ? t("Sending…") : t("Send feedback")}</button>
+                <div style={{ fontSize: 11, color: C.inkSoft }}>{t("Goes to the Alaga team, not your daycare or families.")}</div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// Private demo link: check it, then let the visitor explore as a daycare or a parent.
+function DemoLanding({ token, status, thanked, onDaycare, onParent, onFeedback, language, setLanguage }) {
+  const t = useT();
+  const card = (icon, tint, fg, title, body, onClick) => (
+    <button onClick={onClick} style={{ flex: "1 1 260px", textAlign: "left", background: "#fff", border: `1px solid ${C.line}`, borderRadius: 18, padding: 22, display: "flex", gap: 14, alignItems: "flex-start" }}>
+      <div style={{ width: 46, height: 46, borderRadius: 12, background: tint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{React.createElement(icon, { size: 22, color: fg })}</div>
+      <div style={{ flex: 1 }}><div style={{ fontWeight: 700, fontSize: 16.5 }}>{title}</div><div style={{ fontSize: 13, color: C.inkSoft, marginTop: 3, lineHeight: 1.5 }}>{body}</div></div>
+      <ArrowRight size={16} color={C.inkSoft} style={{ marginTop: 4 }} />
+    </button>
+  );
+  return (
+    <EntryShell t={t} language={language} setLanguage={setLanguage} wide>
+      {status === "checking" && <div style={{ textAlign: "center", color: C.inkSoft }}>{t("Opening the demo…")}</div>}
+      {status === "invalid" && (
+        <div style={{ background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: 24, textAlign: "center", display: "flex", flexDirection: "column", gap: 10 }}>
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 600 }}>{t("This demo link isn't active")}</div>
+          <div style={{ fontSize: 13.5, color: C.inkSoft }}>{t("It may have expired. Ask the person who sent it for a new link.")}</div>
+          <a href="/" style={{ color: C.tealDark, fontWeight: 700, fontSize: 13.5 }}>{t("Go to Alaga")}</a>
+        </div>
+      )}
+      {status === "ok" && (
+        <>
+          {thanked && <div role="status" style={{ marginBottom: 14, padding: "11px 14px", borderRadius: 12, background: C.tealTint, color: C.tealDark, fontWeight: 600, fontSize: 13.5, display: "flex", gap: 8, alignItems: "center" }}><CheckCircle2 size={17} /> {t("Thanks for your feedback! Keep exploring if you like.")}</div>}
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600, marginBottom: 4 }}>{t("Welcome to the Alaga demo")}</div>
+          <div style={{ fontSize: 14, color: C.inkSoft, marginBottom: 18, lineHeight: 1.5 }}>{t("Look around a sample home daycare. Everything here is made-up sample data, and nothing you change is shared.")}</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 14 }}>
+            {card(Building2, C.tealTint, C.tealDark, t("Explore as a daycare"), t("Attendance, families, tuition and subsidies, documents, and more."), onDaycare)}
+            {card(Users, C.coralTint, C.coral, t("Explore as a parent"), t("What families see: check-in, billing, forms to sign, pickup passes."), onParent)}
+          </div>
+          <div style={{ marginTop: 18, textAlign: "center" }}><button onClick={onFeedback} style={{ background: "none", border: "none", color: C.tealDark, fontWeight: 700, fontSize: 13.5, textDecoration: "underline" }}>{t("Tell us what you think")}</button></div>
+        </>
+      )}
+    </EntryShell>
+  );
+}
+
+const DEMO_USES = ["Tuition & receipts", "Subsidy tracking", "Attendance & check-in", "Parent app", "Documents & forms", "Messages", "Pickup passes"];
+function DemoSurvey({ token, onDone, language, setLanguage }) {
+  const t = useT();
+  const [a, setA] = useState({ rating: 0, uses: [], missing: "", runsDaycare: "", contact: "" });
+  const [state, setState] = useState("idle");
+  const send = async () => {
+    setState("sending");
+    try {
+      await api("/feedback", { method: "POST", auth: false, body: { kind: "demo_survey", rating: a.rating || undefined, message: a.missing.trim() || undefined, contact: a.contact.trim() || undefined, answers: { useMost: a.uses, runsDaycare: a.runsDaycare }, demoToken: token, language } });
+      onDone(true);
+    } catch (e) { setState("error"); }
+  };
+  const chip = (on) => ({ padding: "8px 12px", borderRadius: 999, fontSize: 13, fontWeight: 600, border: `1.5px solid ${on ? C.teal : C.line}`, background: on ? C.tealTint : "#fff", color: on ? C.tealDark : C.ink, minHeight: 38 });
+  const q = { fontSize: 14, fontWeight: 700, marginBottom: 8 };
+  return (
+    <EntryShell t={t} language={language} setLanguage={setLanguage}>
+      <div style={{ background: "#fff", border: `1px solid ${C.line}`, borderRadius: 16, padding: 22, display: "flex", flexDirection: "column", gap: 18 }}>
+        <div><div style={{ fontFamily: "'Fraunces', serif", fontSize: 21, fontWeight: 600 }}>{t("Before you go — 4 quick questions")}</div><div style={{ fontSize: 13, color: C.inkSoft, marginTop: 4 }}>{t("About a minute. It helps us build what home daycares actually need.")}</div></div>
+        <div>
+          <div style={q}>{t("How useful would Alaga be for your daycare?")}</div>
+          <div style={{ display: "flex", gap: 6 }}>{[1, 2, 3, 4, 5].map((n) => <button key={n} onClick={() => setA({ ...a, rating: n })} aria-pressed={a.rating === n} style={{ ...chip(a.rating === n), flex: 1, fontSize: 15 }}>{n}</button>)}</div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: C.inkSoft, marginTop: 4 }}><span>{t("Not useful")}</span><span>{t("Very useful")}</span></div>
+        </div>
+        <div>
+          <div style={q}>{t("What would you use most?")}</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>{DEMO_USES.map((u) => { const on = a.uses.includes(u); return <button key={u} onClick={() => setA({ ...a, uses: on ? a.uses.filter((x) => x !== u) : [...a.uses, u] })} aria-pressed={on} style={chip(on)}>{on ? "✓ " : ""}{t(u)}</button>; })}</div>
+        </div>
+        <div>
+          <div style={q}>{t("What's missing or confusing?")}</div>
+          <textarea value={a.missing} onChange={(e) => setA({ ...a, missing: e.target.value.slice(0, 4000) })} rows={3} style={{ ...inputStyle, width: "100%", boxSizing: "border-box", padding: "10px 12px", borderRadius: 10, fontSize: 14 }} />
+        </div>
+        <div>
+          <div style={q}>{t("Do you run a home daycare?")}</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>{["Yes", "I'm opening one", "No"].map((o) => <button key={o} onClick={() => setA({ ...a, runsDaycare: o })} aria-pressed={a.runsDaycare === o} style={chip(a.runsDaycare === o)}>{t(o)}</button>)}</div>
+        </div>
+        <Field label={t("Can we follow up? Email or phone (optional)")}><input value={a.contact} onChange={(e) => setA({ ...a, contact: e.target.value.slice(0, 200) })} style={{ ...inputStyle, width: "100%", boxSizing: "border-box", padding: "10px 12px", borderRadius: 10, fontSize: 15 }} /></Field>
+        {state === "error" && <div role="alert" style={{ fontSize: 13, color: C.danger }}>{t("Couldn't send. Check your connection and try again.")}</div>}
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={() => onDone(false)} style={{ flex: 1, padding: "12px 0", borderRadius: 10, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 14 }}>{t("Skip")}</button>
+          <button onClick={send} disabled={state === "sending" || (!a.rating && !a.uses.length && !a.missing.trim())} style={{ flex: 2, padding: "12px 0", borderRadius: 10, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 14, opacity: state === "sending" || (!a.rating && !a.uses.length && !a.missing.trim()) ? 0.55 : 1 }}>{state === "sending" ? t("Sending…") : t("Send")}</button>
+        </div>
+      </div>
+    </EntryShell>
+  );
+}
+
+// Alaga team: beta codes, demo links and feedback (English only).
+function TeamTools({ tool, onBack }) {
+  const [rows, setRows] = useState(null);
+  const [err, setErr] = useState("");
+  const [fresh, setFresh] = useState(null);
+  const [form, setForm] = useState({ label: "", maxUses: "1", days: "30" });
+  const [filter, setFilter] = useState("all");
+  const [copied, setCopied] = useState("");
+  const path = { beta: "/admin/beta-codes", demo: "/admin/demo-links", feedback: "/admin/feedback" }[tool];
+  const load = useCallback(async () => { setErr(""); try { setRows(await api(path)); } catch (e) { setErr(e.status === 403 ? "This account doesn't have team access." : "Can't reach the Alaga API."); setRows([]); } }, [path]);
+  useEffect(() => { load(); }, [load]);
+  const copy = async (text, key) => { try { await navigator.clipboard.writeText(text); setCopied(key); setTimeout(() => setCopied(""), 1800); } catch (e) { /* shown on screen */ } };
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const fmt = (d) => (d ? new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—");
+  const box = { background: "#fff", border: `1px solid ${C.line}`, borderRadius: 14, padding: 16 };
+  const btn = { padding: "8px 12px", borderRadius: 9, border: "none", background: C.teal, color: "#fff", fontWeight: 700, fontSize: 13 };
+  const soft = { padding: "6px 10px", borderRadius: 8, border: `1px solid ${C.line}`, background: "#fff", fontWeight: 600, fontSize: 12, color: C.tealDark };
+  const inp = { ...inputStyle, padding: "9px 11px", borderRadius: 9, fontSize: 14 };
+  const title = { beta: "Beta codes", demo: "Demo links", feedback: "Feedback" }[tool];
+  const createBeta = async () => { try { const r = await api("/admin/beta-codes", { method: "POST", body: { label: form.label || "Beta code", maxUses: Number(form.maxUses), expiresInDays: Number(form.days) } }); setFresh(r); setForm({ ...form, label: "" }); load(); } catch (e) { setErr("Couldn't create the code."); } };
+  const createDemo = async () => { try { await api("/admin/demo-links", { method: "POST", body: { label: form.label || "Demo link" } }); setForm({ ...form, label: "" }); load(); } catch (e) { setErr("Couldn't create the link."); } };
+  const shown = tool === "feedback" && rows ? rows.filter((r) => filter === "all" || r.kind === filter) : rows;
+  return (
+    <EntryShell t={(x) => x} onBack={onBack} wide>
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ fontFamily: "'Fraunces', serif", fontSize: 24, fontWeight: 600 }}>{title}</div>
+        {err && <div role="alert" style={{ color: C.danger, fontSize: 13 }}>{err}</div>}
+        {tool === "beta" && (
+          <div style={{ ...box, display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ fontSize: 13, color: C.inkSoft }}>A daycare needs a beta code to create an account. Codes are shown once; only a hash is stored.</div>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder="Who it's for (e.g. Rosa — San Diego)" style={{ ...inp, flex: "2 1 220px" }} />
+              <select value={form.maxUses} onChange={(e) => setForm({ ...form, maxUses: e.target.value })} style={{ ...inp, flex: "1 1 110px" }}>{["1", "5", "10", "25", "100"].map((n) => <option key={n} value={n}>{n} {n === "1" ? "use" : "uses"}</option>)}</select>
+              <select value={form.days} onChange={(e) => setForm({ ...form, days: e.target.value })} style={{ ...inp, flex: "1 1 140px" }}>{[["14", "Expires in 14 days"], ["30", "Expires in 30 days"], ["90", "Expires in 90 days"], ["0", "Never expires"]].map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
+              <button onClick={createBeta} style={btn}>Create code</button>
+            </div>
+            {fresh && (
+              <div style={{ background: C.cream, borderRadius: 12, padding: 12, display: "flex", flexDirection: "column", gap: 6, alignItems: "center" }}>
+                <div style={{ fontFamily: "Menlo, monospace", fontSize: 22, fontWeight: 700, letterSpacing: "0.12em" }}>{fmtCode(fresh.code)}</div>
+                <div style={{ fontSize: 12, color: C.inkSoft, wordBreak: "break-all" }}>{origin}/?beta={fresh.code}</div>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button onClick={() => copy(`${origin}/?beta=${fresh.code}`, "link")} style={soft}>{copied === "link" ? "Copied" : "Copy sign-up link"}</button>
+                  <button onClick={() => copy(fmtCode(fresh.code), "code")} style={soft}>{copied === "code" ? "Copied" : "Copy code"}</button>
+                </div>
+                <div style={{ fontSize: 11.5, color: "#7A5620", fontWeight: 600 }}>Copy it now — it's shown only once.</div>
+              </div>
+            )}
+          </div>
+        )}
+        {tool === "demo" && (
+          <div style={{ ...box, display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ fontSize: 13, color: C.inkSoft }}>A demo link opens the sample daycare and parent view without an account, and asks for feedback at the end. Turn a link off any time.</div>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder="Where you'll share it (e.g. SD providers Facebook group)" style={{ ...inp, flex: "2 1 260px" }} />
+              <button onClick={createDemo} style={btn}>Create link</button>
+            </div>
+          </div>
+        )}
+        {tool === "feedback" && (
+          <div style={{ display: "flex", gap: 6 }}>{[["all", "All"], ["feedback", "In-app feedback"], ["demo_survey", "Demo surveys"]].map(([v, l]) => <button key={v} onClick={() => setFilter(v)} style={{ ...soft, background: filter === v ? C.tealTint : "#fff" }}>{l}</button>)}</div>
+        )}
+        {rows === null ? <div style={{ color: C.inkSoft, fontSize: 13 }}>Loading…</div> : shown.length === 0 ? <div style={{ color: C.inkSoft, fontSize: 13 }}>Nothing yet.</div> : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {tool === "beta" && shown.map((r) => {
+              const status = r.revoked_at ? "Turned off" : r.expires_at && new Date(r.expires_at) < new Date() ? "Expired" : r.uses >= r.max_uses ? "Used up" : "Active";
+              return (
+                <div key={r.id} style={{ ...box, display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontWeight: 700 }}>{r.label} <span style={{ fontWeight: 500, color: C.inkSoft, fontSize: 12.5 }}>· {status}</span></div>
+                    <div style={{ fontSize: 12.5, color: C.inkSoft }}>{r.uses} / {r.max_uses} used · created {fmt(r.created_at)}{r.expires_at ? ` · expires ${fmt(r.expires_at)}` : ""}</div>
+                    {r.used_by.length > 0 && <div style={{ fontSize: 12.5, color: C.tealDark }}>Signed up: {r.used_by.map((u) => u.provider || "—").join(", ")}</div>}
+                  </div>
+                  {status === "Active" && <button onClick={async () => { await api(`/admin/beta-codes/${r.id}`, { method: "DELETE" }).catch(() => {}); load(); }} style={{ ...soft, color: C.danger }}>Turn off</button>}
+                </div>
+              );
+            })}
+            {tool === "demo" && shown.map((r) => (
+              <div key={r.id} style={{ ...box, display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontWeight: 700 }}>{r.label} <span style={{ fontWeight: 500, color: r.active ? C.teal : C.inkSoft, fontSize: 12.5 }}>· {r.active ? "On" : "Off"}</span></div>
+                  <div style={{ fontSize: 12, color: C.inkSoft, wordBreak: "break-all" }}>{origin}/?demo={r.token}</div>
+                  <div style={{ fontSize: 12.5, color: C.inkSoft }}>{r.views} opened · {r.surveys} surveys · created {fmt(r.created_at)}</div>
+                </div>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button onClick={() => copy(`${origin}/?demo=${r.token}`, r.id)} style={soft}>{copied === r.id ? "Copied" : "Copy link"}</button>
+                  <button onClick={async () => { await api(`/admin/demo-links/${r.id}`, { method: "PATCH", body: { active: !r.active } }).catch(() => {}); load(); }} style={{ ...soft, color: r.active ? C.danger : C.tealDark }}>{r.active ? "Turn off" : "Turn on"}</button>
+                </div>
+              </div>
+            ))}
+            {tool === "feedback" && shown.map((r) => (
+              <div key={r.id} style={{ ...box, display: "flex", flexDirection: "column", gap: 4 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
+                  <div style={{ fontWeight: 700 }}>{r.kind === "demo_survey" ? "Demo survey" : "Feedback"}{r.rating ? ` · ${r.rating}/5` : ""}</div>
+                  <div style={{ fontSize: 12, color: C.inkSoft }}>{new Date(r.created_at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}</div>
+                </div>
+                {r.message && <div style={{ fontSize: 14, lineHeight: 1.5, whiteSpace: "pre-wrap" }}>{r.message}</div>}
+                {r.answers && r.answers.useMost && r.answers.useMost.length > 0 && <div style={{ fontSize: 12.5 }}>Would use most: {r.answers.useMost.join(", ")}</div>}
+                {r.answers && r.answers.runsDaycare && <div style={{ fontSize: 12.5 }}>Runs a home daycare: {r.answers.runsDaycare}</div>}
+                <div style={{ fontSize: 12, color: C.inkSoft }}>{[r.role, r.screen && `screen: ${r.screen}`, r.provider, r.user_email, r.demo_label && `demo: ${r.demo_label}`, r.language].filter(Boolean).join(" · ")}</div>
+                {r.contact && <div style={{ fontSize: 12.5, color: C.tealDark, fontWeight: 600 }}>Follow up: {r.contact}</div>}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </EntryShell>
   );
 }
 
